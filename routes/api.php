@@ -14,6 +14,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+// Route::get('/helloworld', function () {
+//     return response()->json(['message' => 'Hello, world!']);
+// });
+
+Route::namespace('App\Http\Controllers')->group(function () {
+    Route::prefix('sinkronasi')->group(function () {
+        Route::get('/', "SinkronasiController@index");
+        Route::get('/getToken', "SinkronasiController@getToken");
+        Route::get('/getDataDosen', "SinkronasiController@getDataDosen");
+    });
 });

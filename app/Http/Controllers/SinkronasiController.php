@@ -60,11 +60,11 @@ class SinkronasiController extends Controller
         }
     }
 
-    function getDataDosen()
+    function getDataDosen(Request $request)
     {
         try {
             // Ambil access token yang sudah disimpan
-            $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTcwNzUzOTg3MCwiZXhwIjoxNzA3NTQzNDcwfQ.TjQiYDCTrS6pmivQrs5t0QFbQZObJ5XjgGG3FMSUces";
+            $accessToken = $request->get("access_token");
 
             // Jika access token tidak ada, kembalikan pesan kesalahan
             if (!$accessToken) {

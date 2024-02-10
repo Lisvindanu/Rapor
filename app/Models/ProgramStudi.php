@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Fakultas;
 use App\Models\Jenjang;
 
 class ProgramStudi extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     /**
      * The table associated with the model.
@@ -23,7 +24,7 @@ class ProgramStudi extends Model
      *
      * @var array
      */
-    protected $fillable = ['kode', 'nama', 'jenjang_id', 'fakultas_id'];
+    protected $fillable = ['id', 'kode', 'nama', 'jenjang_id', 'fakultas_id'];
 
     /**
      * Get the jenjang that owns the program studi.

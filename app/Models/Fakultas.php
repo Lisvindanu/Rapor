@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Fakultas extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
     /**
      * The table associated with the model.
      *
@@ -20,7 +21,7 @@ class Fakultas extends Model
      *
      * @var array
      */
-    protected $fillable = ['kode', 'nama'];
+    protected $fillable = ['id', 'kode', 'nama'];
 
     /**
      * Get the program studis for the fakultas.

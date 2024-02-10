@@ -107,48 +107,9 @@ class SinkronasiController extends Controller
                     $dosenData['id'] = Str::uuid();
                     Dosen::create($dosenData);
                 }
-
-                // Dosen::create([
-                //     'id' => Str::uuid(),
-                //     'agama' => $dosenData['agama'],
-                //     'alamat' => $dosenData['alamat'],
-                //     'email' => $dosenData['email'],
-                //     'golpangkat' => $dosenData['golpangkat'],
-                //     'homebase' => $dosenData['homebase'],
-                //     'jabatanfungsional' => $dosenData['jabatanfungsional'],
-                //     'jabatanstruktural' => $dosenData['jabatanstruktural'],
-                //     'jeniskelamin' => $dosenData['jeniskelamin'],
-                //     'jenispegawai' => $dosenData['jenispegawai'],
-                //     'nama' => $dosenData['nama'],
-                //     'nidn' => $dosenData['nidn'],
-                //     'nip' => $dosenData['nip'],
-                //     'nohp' => $dosenData['nohp'],
-                //     'pendidikanterakhir' => $dosenData['pendidikanterakhir'],
-                //     'tanggallahir' => $dosenData['tanggallahir'],
-                //     'tempatlahir' => $dosenData['tempatlahir'],
-                // ]);
             }
-
-            // Mendapatkan data dari respons
-            // $body = $response->getBody()->getContents();
-            // $responseData = json_encode($response['data']);
-            // $body = $response->getBody()->getContents();
-
-            // Mendapatkan data dari body respons
-            // $data = json_encode($body, true);
-
-            // print_r($response);
-            // $data = $body['data'];
-
-            // // Loop melalui setiap item data
-            // foreach ($data as $item) {
-            //     // Simpan data ke dalam tabel dengan menggunakan metode create()
-            //     Dosen::create($item);
-            // }
-
-            // return $response;
             // Tampilkan data yang diperoleh dari request
-            return response()->json(['message' => 'Data dosen berhasil didapatkan', 'data' => json_decode($body, true)]);
+            return response()->json(['message' => 'Data dosen berhasil disinkronkan', 'data' => json_decode($body, true)]);
         } catch (Exception $e) {
             // Tangani kesalahan jika permintaan gagal
             return response()->json(['error' => $e->getMessage()], 500);

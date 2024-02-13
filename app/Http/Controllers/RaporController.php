@@ -23,4 +23,9 @@ class RaporController extends Controller
         // }
         // return view('index', $data);
     }
+
+    function dashboard()
+    {
+        return view('layouts.header');
+    }
 }

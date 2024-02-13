@@ -26,12 +26,13 @@ Route::post('/login/exit', [LoginController::class, 'logout']);
 // Route::get('/login', "LoginController@showLoginForm")->name('login');
 
 
-Route::namespace('App\Http\Controllers')->group(function () {
-    Route::prefix('gate')->middleware('auth')->group(function () {
+Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () {
+    Route::prefix('gate')->group(function () {
         Route::get('/', "GateController@index");
     });
 
     Route::prefix('rapor')->group(function () {
         Route::get('/', "RaporController@index");
+        Route::get('/dashboard', "RaporController@dashboard");
     });
 });

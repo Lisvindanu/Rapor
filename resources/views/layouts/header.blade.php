@@ -96,6 +96,29 @@
           color: white; /* Mengubah warna teks menjadi putih */
           border-radius: 5px; /* Menambahkan border radius */
         }
+
+        @media all and (min-width: 992px) {
+          .dropdown-menu li{ position: relative; 	}
+          .nav-item .submenu{ 
+            display: none;
+            position: absolute;
+            left:100%; top:-7px;
+          }
+          .nav-item .submenu-left{ 
+            right:100%; left:auto;
+          }
+          .dropdown-menu > li:hover{ background-color: #f1f1f1 }
+          .dropdown-menu > li:hover > .submenu{ display: block; }
+        }	
+        /* ============ desktop view .end// ============ */
+
+        /* ============ small devices ============ */
+        @media (max-width: 991px) {
+          .dropdown-menu .dropdown-menu{
+              margin-left:0.7rem; margin-right:0.7rem; margin-bottom: .5rem;
+          }
+        }	
+
     </style>
   </head>
   <body>
@@ -148,7 +171,22 @@
                       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#">Action</a></li>
                         <li><a class="dropdown-item" href="#">Another action</a></li>
+                        {{-- <li><hr class="dropdown-divider"></li> --}}
                         <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li> <a class="dropdown-item" href="#"> Dropdown item 2 &raquo;</a>
+                          <ul class="submenu dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Submenu item 1</a></li>
+                            <li><a class="dropdown-item" href="#">Submenu item 2</a></li>
+                            <li><a class="dropdown-item" href="#">Submenu item 3 &raquo; </a>
+                              <ul class="submenu dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Multi level 1</a></li>
+                                <li><a class="dropdown-item" href="#">Multi level 2</a></li>
+                              </ul>
+                            </li>
+                            <li><a class="dropdown-item" href="#">Submenu item 4</a></li>
+                            <li><a class="dropdown-item" href="#">Submenu item 5</a></li>
+                          </ul>
+                        </li>
                       </ul>
                     </li>
                   </ul>
@@ -175,5 +213,41 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
     -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function(){
+      // make it as accordion for smaller screens
+      if (window.innerWidth < 992) {
+
+        // close all inner dropdowns when parent is closed
+        document.querySelectorAll('.navbar .dropdown').forEach(function(everydropdown){
+          everydropdown.addEventListener('hidden.bs.dropdown', function () {
+            // after dropdown is hidden, then find all submenus
+              this.querySelectorAll('.submenu').forEach(function(everysubmenu){
+                // hide every submenu as well
+                everysubmenu.style.display = 'none';
+              });
+          })
+        });
+
+        document.querySelectorAll('.dropdown-menu a').forEach(function(element){
+          element.addEventListener('click', function (e) {
+              let nextEl = this.nextElementSibling;
+              if(nextEl && nextEl.classList.contains('submenu')) {	
+                // prevent opening link if link needs to open dropdown
+                e.preventDefault();
+                if(nextEl.style.display == 'block'){
+                  nextEl.style.display = 'none';
+                } else {
+                  nextEl.style.display = 'block';
+                }
+
+              }
+          });
+        })
+      }
+      // end if innerWidth
+      }); 
+      // DOMContentLoaded  end
+    </script>
   </body>
 </html>

@@ -156,25 +156,32 @@
         <div class="login-right">
             <h2>Masuk dan Verifikasi</h2>
             <p style="text-align: center">Baru! Nikmati kemudahan sistem autentikasi tunggal untuk mengakses semua layanan dengan satu akun.</p>
-            <form method="POST" action="#">
+            
+            @if(session('login_error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('login_error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ url('login/verify') }}">
                 @csrf
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan email/NIM/NIP/username yang terdaftar" required>
+                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="Masukkan email/NIM/NIP/username yang terdaftar" autofocus required>
+                    @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="form-group position-relative">
                     <label for="password">Password</label>
                     <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password" required>
                 </div>
-                <button type="submit">Masuk</button>
+                <button type="submit" class="btn btn-primary">Masuk</button>
                 <div class="forgot-password" style="text-align: left">
                     <a href="#">Lupa Kata Sandi?</a>
                 </div>
-                {{-- <div class="create-account">
-                    <span>Don't have an account?</span>
-                    <a href="#">Create one</a>
-                </div> --}}
-            </form>
+            </form>            
         </div>
     </div>
     

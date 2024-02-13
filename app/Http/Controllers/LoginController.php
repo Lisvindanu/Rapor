@@ -12,15 +12,26 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function verify(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
             // Authentication passed...
-            return redirect()->intended('/');
+            return redirect()->intended('/gate');
         }
 
-        return redirect()->back()->withInput($request->only('email'));
+        return back()->withErrors([
+            'email' => 'Email atau password tidak sesuai.',
+        ]);
+    }
+
+    function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
     }
 }

@@ -94,11 +94,14 @@
 
         .modul {
             display: flex;
+            text-decoration: none; 
+            color: black;
+            font-size: 14px;
             flex-direction: column; /* Menetapkan tata letak kolom untuk isi modul */
             justify-content: center; /* Menyusun isi secara vertikal di tengah */
             align-items: center; /* Menyusun isi secara horizontal di tengah */
-            width: calc(33.33% - 10px); /* 33.33% untuk tiga kotak per baris, -10px untuk margin antar kotak */
-            margin: 5px;
+            width: calc(30% - 10px); /* 33.33% untuk tiga kotak per baris, -10px untuk margin antar kotak */
+            margin: 10px;
             padding: 10px;
             background-color: white;
             border-radius: 5px;
@@ -175,7 +178,10 @@
                                     </div>
                                     <div class="button-app">
                                         <button class="exit-button">Halaman Profil</button>
-                                        <button class="exit-button">Keluar</button>
+                                        <form action="{{ url('/login/exit') }}" method="post">
+                                            @csrf
+                                            <button type="submit" class="exit-button">Keluar</button>
+                                        </form>
                                     </div>
                                 </div>
                                 <div class="col-2">
@@ -189,22 +195,27 @@
                             <div class="row">
                                 <div class="col-7 daftar-modul" >
                                     <h4 class="card-title">Daftar Modul</h4>
+                                    <h5 style="margin-bottom:20px">Selamat datang, {{ auth()->user()->name }}</h5>
                                     <div class="kotak-modul">
-                                        <div class="modul">
+                                        <a href="#" class="modul">
                                             <img src="{{ asset('storage/images/modul-logo/rapor.svg') }}" alt="Logo Rapor">
                                             <p>Rapor Dosen</p>
-                                        </div>
-                                        <div class="modul">
+                                        </a>
+                                        <a href="#" class="modul">
                                             <img src="{{ asset('storage/images/modul-logo/vakasi.svg') }}" alt="Logo Rapor">
                                             <p>Vakasi</p>
-                                        </div>
+                                        </a>
                                     </div>
                                     
                                 </div>
                                 <div class="col-5 daftar-role">
                                     <h4 class="card-title">Daftar Role</h4>
-                                    <h5>Vakasi</h5>
+                                    <h5 style="margin-bottom:20px">Vakasi</h5>
                                     <div class="kotak-role">
+                                        <div class="role">
+                                            <p class="role-judul"><strong>Admin</strong></p>
+                                            <span class="role-bidang">Fakultas Teknik</span>
+                                        </div>
                                         <div class="role">
                                             <p class="role-judul"><strong>Admin</strong></p>
                                             <span class="role-bidang">Fakultas Teknik</span>

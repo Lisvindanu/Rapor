@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,18 +15,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    // redirect to login pag
+    return redirect('/gate');
+    // return view('welcome');
 });
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('/login/verify', [LoginController::class, 'verify']);
+Route::post('/login/exit', [LoginController::class, 'logout']);
+// Route::get('/login', "LoginController@showLoginForm")->name('login');
 
 
 Route::namespace('App\Http\Controllers')->group(function () {
-    Route::prefix('login')->group(function () {
-        Route::get('/', "LoginController@showLoginForm");
-        Route::get('/getToken', "SinkronasiController@getToken");
-        Route::get('/getDataDosen', "SinkronasiController@getDataDosen");
-    });
-
-    Route::prefix('gate')->group(function () {
+    Route::prefix('gate')->middleware('auth')->group(function () {
         Route::get('/', "GateController@index");
     });
 

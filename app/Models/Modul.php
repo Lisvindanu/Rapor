@@ -13,7 +13,7 @@ class Modul extends Model
     protected $table = 'moduls';
 
     protected $fillable = [
-        'id', 'nama_modul', 'tautan', 'urutan'
+        'id', 'nama_modul', 'tautan', 'icon', 'urutan'
     ];
 
     public function menus()

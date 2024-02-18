@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('submenus', function (Blueprint $table) {
+        Schema::create('subsubmenus', function (Blueprint $table) {
             $table->uuid('id')->primary();;
-            $table->string('nama_submenu');
-            $table->string('tautan_submenu')->nullable();
-            $table->integer('urutan_submenu')->default(0);
-            $table->uuid('menu_id');
-            $table->foreign('menu_id')->references('id')->on('menus')->onDelete('cascade');
+            $table->string('nama_subsubmenu');
+            $table->string('tautan_subsubmenu')->nullable();
+            $table->integer('urutan_subsubmenu')->default(0);
+            $table->uuid('submenu_id');
+            $table->foreign('submenu_id')->references('id')->on('submenus')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('submenus');
+        Schema::dropIfExists('subsubmenus');
     }
 };

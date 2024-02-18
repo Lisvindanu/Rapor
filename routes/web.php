@@ -32,7 +32,19 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     });
 
     Route::prefix('rapor')->group(function () {
-        Route::get('/', "RaporController@index");
+        // Route::get('/', "RaporController@index");
+        Route::get('/', "RaporController@dashboard")->name('rapor');
         Route::get('/dashboard', "RaporController@dashboard");
+        Route::get('/pengaturan', "RaporController@dashboard");
+
+        // komponen indikator kinerja
+        Route::get('/indikator-kinerja', "KomponenIndikatorKinerjaController@index")->name('indikator-kinerja');
+        Route::get('/indikator-kinerja/create', "KomponenIndikatorKinerjaController@create")->name('indikator-kinerja.create');
+        Route::post('/indikator-kinerja/store', "KomponenIndikatorKinerjaController@store");
+        Route::put('/indikator-kinerja/{id}', "KomponenIndikatorKinerjaController@update");
+        Route::delete('/indikator-kinerja/{id}', "KomponenIndikatorKinerjaController@destroy");
+
+        // sub komponen indikator kinerja
+        Route::get('/subindikator-kinerja', "SubkomponenIndikatorKinerjaController@index")->name('subindikator-kinerja');
     });
 });

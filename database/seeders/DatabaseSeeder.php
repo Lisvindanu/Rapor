@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use PhpParser\Node\Expr\AssignOp\Mod;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +24,8 @@ class DatabaseSeeder extends Seeder
             ProgramStudiSeeder::class,
             ModulSeeder::class,
             UsersTableSeeder::class,
+            ModulsTableSeeder::class,
+            MenusTableSeeder::class,
             // Panggil Seeder lainnya jika ada
         ]);
     }

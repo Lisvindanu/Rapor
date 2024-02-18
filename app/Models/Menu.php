@@ -13,7 +13,7 @@ class Menu extends Model
     protected $table = 'menus';
 
     protected $fillable = [
-        'id', 'nama_menu', 'tautan', 'urutan'
+        'id', 'nama_menu', 'tautan', 'urutan', 'modul_id'
     ];
 
     public function submenus()

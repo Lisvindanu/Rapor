@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Modul;
 use Illuminate\Http\Request;
 
-class GateController extends Controller
+class SubkomponenIndikatorKinerjaController extends Controller
 {
     public function index()
     {
-        return view('dashboard-menu.index');
+        return view('subindikator-kinerja.index');
     }
 }

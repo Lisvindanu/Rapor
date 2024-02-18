@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('submenus', function (Blueprint $table) {
+        Schema::create('komponen_indikator_kinerjas', function (Blueprint $table) {
             $table->uuid('id')->primary();;
-            $table->string('nama_submenu');
-            $table->string('tautan_submenu')->nullable();
-            $table->integer('urutan_submenu')->default(0);
-            $table->uuid('menu_id');
-            $table->foreign('menu_id')->references('id')->on('menus')->onDelete('cascade');
+            $table->string('nama_indikator_kinerja')->nullable();
+            $table->integer('bobot')->default(0);
+            $table->integer('urutan')->default(0);
+            $table->string('type_indikator')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('submenus');
+        Schema::dropIfExists('komponen_indikator_kinerjas');
     }
 };

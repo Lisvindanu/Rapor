@@ -27,6 +27,8 @@ Route::namespace('App\Http\Controllers')->group(function () {
         Route::get('/', "SinkronasiController@index");
         Route::get('/getToken', "SinkronasiController@getToken");
         Route::get('/getDataDosen', "SinkronasiController@getDataDosen");
+        Route::get('/getDataPeriode', "SinkronasiController@getDataPeriode");
+        Route::get('/getDataKelasKuliah', "SinkronasiController@getDataKelasKuliah");
     });
 
     Route::prefix('rapor')->group(function () {

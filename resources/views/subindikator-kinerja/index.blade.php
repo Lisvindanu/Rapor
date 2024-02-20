@@ -32,9 +32,9 @@
                             <div class="filter col-4">
                                 <select class="form-select" aria-label="Default select example">
                                     <option selected>Pilih Indikator Kinerja</option>
-                                    <option value="1">2019/2020</option>
-                                    <option value="2">2020/2021</option>
-                                    <option value="3">2021/2022</option>
+                                    <option value="1">Unsur BKD Sister</option>
+                                    <option value="2">EDOM</option>
+                                    <option value="3">EDASEP</option>
                                 </select>
                             </div>
                         </div>

@@ -9,6 +9,8 @@ use Exception;
 use App\Models\Fakultas;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use App\Models\Periode;
+use App\Models\KelasKuliah;
 
 class SinkronasiController extends Controller
 {
@@ -110,6 +112,120 @@ class SinkronasiController extends Controller
             }
             // Tampilkan data yang diperoleh dari request
             return response()->json(['message' => 'Data dosen berhasil disinkronkan', 'data' => json_decode($body, true)]);
+        } catch (Exception $e) {
+            // Tangani kesalahan jika permintaan gagal
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    // fungsi getdataperiode
+    function getDataPeriode(Request $request)
+    {
+        try {
+            // Ambil access token yang sudah disimpan
+            $accessToken = $request->get("access_token");
+
+            // Jika access token tidak ada, kembalikan pesan kesalahan
+            if (!$accessToken) {
+                return response()->json(['error' => 'Access token tidak tersedia'], 500);
+            }
+
+            // Parameter form yang akan dikirim
+            $formData = [
+                'limit' => 10000,
+            ];
+
+            // Buat instance dari Guzzle Client
+            $client = new Client();
+
+            // Menggunakan access token untuk request mendapatkan data periode
+            $response = $client->request('GET', 'https://unpas.siakadcloud.com/live/dataperiode', [
+                'query' => $formData,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken // Gunakan access token yang sudah ada
+                ]
+            ]);
+
+            // Mendapatkan body respons sebagai string
+            $body = $response->getBody()->getContents();
+
+            // Mendapatkan data dari body respons
+            $data = json_decode($body, true);
+
+            // Simpan data periode ke dalam tabel Periode
+            foreach ($data as $periodeData) {
+                $periode = Periode::where('kode_periode', $periodeData['kode_periode'])->first();
+
+                // Jika data periode sudah ada, perbarui
+                if ($periode) {
+                    $periode->update($periodeData);
+                } else {
+                    // Jika tidak, buat data periode baru
+                    $periodeData['id'] = Str::uuid();
+                    Periode::create($periodeData);
+                }
+            }
+            // Tampilkan data yang diperoleh dari request
+            return response()->json(['message' => 'Data periode berhasil disinkronkan', 'data' => json_decode($body, true)]);
+        } catch (Exception $e) {
+            // Tangani kesalahan jika permintaan gagal
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    // fungsi get data kelas kuliah
+    function getDataKelasKuliah(Request $request)
+    {
+        try {
+            // Ambil access token yang sudah disimpan
+            $accessToken = $request->get("access_token");
+            $programstudi = $request->get("programstudi");
+            $periodeakademik = $request->get("periodeakademik");
+
+            // Jika access token tidak ada, kembalikan pesan kesalahan
+            if (!$accessToken) {
+                return response()->json(['error' => 'Access token tidak tersedia'], 500);
+            }
+
+            // Parameter form yang akan dikirim
+            $formData = [
+                'limit' => 10000,
+                'programstudi' => $programstudi,
+                'periodeakademik' => $periodeakademik,
+            ];
+
+            // Buat instance dari Guzzle Client
+            $client = new Client();
+
+            // Menggunakan access token untuk request mendapatkan data kelas kuliah
+            $response = $client->request('GET', 'https://unpas.siakadcloud.com/live/kelaskuliah', [
+                'query' => $formData,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken // Gunakan access token yang sudah ada
+                ]
+            ]);
+
+            // Mendapatkan body respons sebagai string
+            $body = $response->getBody()->getContents();
+
+            // Mendapatkan data dari body respons
+            $data = json_decode($body, true);
+
+            // Simpan data kelas kuliah ke dalam tabel KelasKuliah
+            foreach ($data as $kelasKuliahData) {
+                $kelasKuliah = KelasKuliah::where('kelasid', $kelasKuliahData['kelasid'])->first();
+
+                // Jika data kelas kuliah sudah ada, perbarui
+                if ($kelasKuliah) {
+                    $kelasKuliah->update($kelasKuliahData);
+                } else {
+                    // Jika tidak, buat data kelas kuliah baru
+                    $kelasKuliahData['id'] = Str::uuid();
+                    KelasKuliah::create($kelasKuliahData);
+                }
+            }
+            // Tampilkan data yang diperoleh dari request
+            return response()->json(['message' => 'Data kelas kuliah berhasil disinkronkan', 'data' => json_decode($body, true)]);
         } catch (Exception $e) {
             // Tangani kesalahan jika permintaan gagal
             return response()->json(['error' => $e->getMessage()], 500);

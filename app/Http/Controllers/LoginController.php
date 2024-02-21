@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -33,5 +34,32 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/login');
+    }
+
+    function ApiVerify(Request $request)
+    {
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        // Jika validasi gagal, kirim respons dengan pesan error
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        // Coba melakukan autentikasi
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            // Jika autentikasi berhasil, buat token untuk pengguna
+            $user = Auth::user();
+            $token = $user->createToken('Personal Access Token')->accessToken;
+
+            // Kirim respons dengan token bearer
+            return response()->json(['token' => $token], 200);
+        } else {
+            // Jika autentikasi gagal, kirim respons dengan pesan error
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
     }
 }

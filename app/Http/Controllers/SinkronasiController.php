@@ -67,6 +67,7 @@ class SinkronasiController extends Controller
         try {
             // Ambil access token yang sudah disimpan
             $accessToken = $request->get("access_token");
+            $homebase = $request->get("homebase");
 
             // Jika access token tidak ada, kembalikan pesan kesalahan
             if (!$accessToken) {
@@ -76,6 +77,7 @@ class SinkronasiController extends Controller
             // Parameter form yang akan dikirim
             $formData = [
                 // 'homebase' => 'Teknik Informatika',
+                'homebase' => $homebase,
                 'limit' => 10000,
             ];
 
@@ -213,7 +215,9 @@ class SinkronasiController extends Controller
 
             // Simpan data kelas kuliah ke dalam tabel KelasKuliah
             foreach ($data as $kelasKuliahData) {
-                $kelasKuliah = KelasKuliah::where('kelasid', $kelasKuliahData['kelasid'])->first();
+                $kelasKuliah = KelasKuliah::where('kelasid', $kelasKuliahData['kelasid'])
+                    ->where('nip', $kelasKuliahData['nip'])
+                    ->first();
 
                 // Jika data kelas kuliah sudah ada, perbarui
                 if ($kelasKuliah) {

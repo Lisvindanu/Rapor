@@ -33,5 +33,6 @@ Route::namespace('App\Http\Controllers')->group(function () {
 
     Route::prefix('rapor')->group(function () {
         Route::get('/', "RaporController@index");
+        Route::post('/generateDataRapor', "RaporController@generateDataRapor");
     });
 });

@@ -36,6 +36,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::get('/', "RaporController@dashboard")->name('rapor');
         Route::get('/dashboard', "RaporController@dashboard");
         Route::get('/pengaturan', "RaporController@dashboard");
+        Route::post('/generateDataRapor', "RaporController@generateDataRapor");
 
         // komponen indikator kinerja
         Route::get('/indikator-kinerja', "KomponenIndikatorKinerjaController@index")->name('indikator-kinerja');

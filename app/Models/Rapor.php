@@ -16,6 +16,7 @@ class Rapor extends Model
         'id',
         'periode_rapor',
         'dosen_nip',
+        'programstudi',
         'bkd_pendidikan',
         'bkd_penelitian',
         'bkd_ppm',
@@ -29,4 +30,10 @@ class Rapor extends Model
         'edasep_sejawat',
         'edasep_bawahan',
     ];
+
+    //dapatkan nama dosen dan prodi
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class, 'dosen_nip', 'nip');
+    }
 }

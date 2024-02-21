@@ -54,7 +54,7 @@
         }
 
         .table-container {
-            max-height: 400px;
+            max-height: 600px;
             /* Atur tinggi maksimum kontainer */
             overflow: auto;
             /* Tambahkan scrollbar jika konten melebihi tinggi maksimum */
@@ -85,27 +85,34 @@
                                     </label>
                                 </div>
                                 <div class="filter">
-                                    <select class="form-select" aria-label="Default select example">
-                                        <option selected>Pilih Unit Kerja</option>
-                                        {{-- <option value="1">Unsur BKD Sister</option>
-                                        <option value="2">EDOM</option>
-                                        <option value="3">EDASEP</option> --}}
+                                    <select id="periode-dropdown" class="form-select" aria-label="Default select example">
+                                        @foreach ($daftar_periode as $periode)
+                                            <option value="{{ $periode->kode_periode }}">{{ $periode->nama_periode }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-6" style="padding: 10px">
                                 <div class="form-label">
                                     <label>
-                                        <p> <strong>Unit Kerja</strong></p>
+                                        <p> <strong>Program Studi</strong></p>
                                     </label>
                                 </div>
                                 <div class="filter">
-                                    <select class="form-select" aria-label="Default select example">
-                                        <option selected>Pilih Unit Kerja</option>
-                                        {{-- <option value="1">Unsur BKD Sister</option>
-                                        <option value="2">EDOM</option>
-                                        <option value="3">EDASEP</option> --}}
+                                    <select id="program-studi-dropdown" class="form-select"
+                                        aria-label="Default select example">
+                                        @foreach ($daftar_programstudi as $programstudi)
+                                            <option value="{{ $programstudi->nama }}">{{ $programstudi->nama }}
+                                            </option>
+                                        @endforeach
                                     </select>
+                                </div>
+
+                                {{-- style untuk tombol upload data --}}
+                                <div class="pull-right" style="margin-top:10px;float: right;">
+                                    <button id="btn-cari-filter" style="width: 100px; color:white" class="btn btn-primary"
+                                        type="button" form="form-indikator">Cari</button>
                                 </div>
                             </div>
                         </div>
@@ -118,17 +125,24 @@
             <div class="row justify-content-md-center">
                 <div class="col-11">
                     <div class="card">
-                        <div class="card-header" style="background-color: #fff">
+                        <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
                                 <div class="col-6">
-                                    {{-- <h5>Indikator Kinerja</h5> --}}
+                                    <div class="mb-3">
+                                        <div class="input-group">
+                                            <input type="text" name="query" id="querySearch" class="form-control"
+                                                placeholder="Cari berdasarkan NIP atau Nama Dosen">
+                                            <button id="btn-cari-search" type="button"
+                                                class="btn btn-primary">Cari</button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
                                         <a href="{{ route('indikator-kinerja') }}" class="btn btn-info"
                                             style="color:#fff">Generate Data</a>
 
-                                        <button class="btn btn-success" type="submit" form="form-indikator">Upload
+                                        <button class="btn btn-success" type="submit" form="form-indikator">Unggah
                                             Data</button>
                                     </div>
                                 </div>
@@ -162,35 +176,70 @@
                                                 <th>Bawahan</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>IF397</td>
-                                                <td>Moch. Ilham Anugrah S.T., M.Sc.Eng</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>3.00</td>
-                                                <td>3.00</td>
-                                                <td>3.00</td>
-                                                <td>3.00</td>
-                                                <td>80</td>
-                                                <td>80</td>
-                                                <td>80</td>
-                                                <td>
-                                                    <button type="button" class="btn btn-sm btn-danger delete">
-                                                        <i class="fas fa-trash-alt fa-xs"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-primary save">
-                                                        <i class="fas fa-save fa-xs"></i>
-                                                    </button>
-                                                    <a href="#" class="btn btn-sm btn-info detail">
-                                                        <i class="fas fa-link fa-xs"></i>
-                                                    </a>
-                                            </tr>
+                                        <tbody id="tabel-body">
+                                            {{-- foreach untuk data rapor --}}
+                                            @if (count($data) == 0)
+                                                <tr>
+                                                    <td colspan="14">Tidak ada data</td>
+                                                </tr>
+                                            @else
+                                                @foreach ($data as $rapor)
+                                                    <tr>
+                                                        <td>{{ $rapor->dosen_nip }}</td>
+                                                        <td>{{ $rapor->dosen->nama }}</td>
+                                                        <td>{{ $rapor->bkd_pendidikan }}</td>
+                                                        <td>{{ $rapor->bkd_penelitian }}</td>
+                                                        <td>{{ $rapor->bkd_ppm }}</td>
+                                                        <td>{{ $rapor->bkd_penunjang }}</td>
+                                                        <td>{{ $rapor->bkd_kewajibankhusus }}</td>
+                                                        <td>{{ $rapor->edom_materipembelajaran }}</td>
+                                                        <td>{{ $rapor->edom_pengelolaankelas }}</td>
+                                                        <td>{{ $rapor->edom_prosespengajaran }}</td>
+                                                        <td>{{ $rapor->edom_penilaian }}</td>
+                                                        <td>{{ $rapor->edasep_atasan }}</td>
+                                                        <td>{{ $rapor->edasep_sejawat }}</td>
+                                                        <td>{{ $rapor->edasep_bawahan }}</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-danger delete">
+                                                                <i class="fas fa-trash-alt fa-xs"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-primary save">
+                                                                <i class="fas fa-save fa-xs"></i>
+                                                            </button>
+                                                            <a href="#" class="btn btn-sm btn-info detail">
+                                                                <i class="fas fa-link fa-xs"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
                                         </tbody>
                                     </table>
+                                </div>
+                                <!-- Tambahkan container untuk pagination di bawah tabel -->
+                                <div id="pagination-container" class="mt-3">
+                                    <!-- Tempat untuk menampilkan pagination links -->
+                                    <!-- Bagian tombol pagination pada tabel -->
+                                    <ul class="pagination justify-content-center">
+                                        <!-- Tombol Previous -->
+                                        <li class="page-item {{ $data->currentPage() == 1 ? 'disabled' : '' }}">
+                                            <a href="{{ $data->url(1) }}" class="page-link">Previous</a>
+                                        </li>
+
+                                        <!-- Nomor Halaman -->
+                                        @for ($i = 1; $i <= $data->lastPage(); $i++)
+                                            <li class="page-item {{ $data->currentPage() == $i ? 'active' : '' }}">
+                                                <a href="{{ $data->url($i) }}" class="page-link">{{ $i }}</a>
+                                            </li>
+                                        @endfor
+
+                                        <!-- Tombol Next -->
+                                        <li
+                                            class="page-item {{ $data->currentPage() == $data->lastPage() ? 'disabled' : '' }}">
+                                            <a href="{{ $data->url($data->currentPage() + 1) }}" class="page-link">Next</a>
+                                        </li>
+                                    </ul>
+
                                 </div>
 
                             </div>
@@ -204,6 +253,152 @@
 
 @section('js-tambahan')
     <script>
+        const periodeDropdown = document.querySelector("#periode-dropdown");
+        const programStudiDropdown = document.querySelector("#program-studi-dropdown");
+        const btnCari1 = document.querySelector("#btn-cari-filter");
+        const btnCari2 = document.querySelector("#btn-cari-search");
+
+        btnCari1.addEventListener("click", function() {
+            fetchData(1); // Memanggil fetchData dengan parameter 1 untuk halaman pertama
+        });
+
+        btnCari2.addEventListener("click", function() {
+            searchData(1); // Memanggil searchData dengan parameter 1 untuk halaman pertama
+        });
+
+        function fetchData(page) {
+            const selectedPeriode = periodeDropdown.value;
+            const selectedProgramStudi = programStudiDropdown.value;
+
+            // Kirim permintaan AJAX ke server dengan opsi yang dipilih
+            $.ajax({
+                url: "{{ url('api/rapor/rapor-kinerja') }}",
+                method: "GET",
+                data: {
+                    perioderapor: selectedPeriode,
+                    programstudi: selectedProgramStudi,
+                    page: page // Mengirimkan parameter page
+                },
+                success: function(response) {
+                    updateTable(response);
+                    updatePagination(response); // Memanggil fungsi updatePagination dengan response
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("Terjadi kesalahan, silakan coba lagi.");
+                }
+            });
+        }
+
+        function searchData(page) {
+            const selectedPeriode = periodeDropdown.value;
+            const selectedProgramStudi = programStudiDropdown.value;
+            const query = document.querySelector("input[name='query']").value;
+
+            // Kirim permintaan AJAX ke server dengan opsi yang dipilih
+            $.ajax({
+                url: "{{ url('api/rapor/rapor-kinerja') }}",
+                method: "GET",
+                data: {
+                    perioderapor: selectedPeriode,
+                    programstudi: selectedProgramStudi,
+                    search: query,
+                    page: page // Mengirimkan parameter page
+                },
+                success: function(response) {
+                    updateTable(response);
+                    updatePagination(response); // Memanggil fungsi updatePagination dengan response
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("Terjadi kesalahan, silakan coba lagi.");
+                }
+            });
+        }
+
+        function updateTable(response) {
+            const tableBody = document.querySelector("#tabel-body");
+            tableBody.innerHTML = "";
+
+            const dataRapor = response.data;
+
+            if (dataRapor.length === 0) {
+                const emptyRow = document.createElement("tr");
+                emptyRow.innerHTML = `
+                <td colspan="14" class="text-center">No data available</td>
+            `;
+                tableBody.appendChild(emptyRow);
+                return;
+            }
+
+            dataRapor.forEach(function(rapor) {
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                <td>${rapor.dosen_nip}</td>
+                <td>${rapor.dosen.nama}</td>
+                <td>${rapor.bkd_pendidikan}</td>
+                <td>${rapor.bkd_penelitian}</td>
+                <td>${rapor.bkd_ppm}</td>
+                <td>${rapor.bkd_penunjangan}</td>
+                <td>${rapor.bkd_kewajibankhusus}</td>
+                <td>${rapor.edom_materipembelajaran}</td>
+                <td>${rapor.edom_pengelolaankelas}</td>
+                <td>${rapor.edom_prosespengajaran}</td>
+                <td>${rapor.edom_penilaian}</td>
+                <td>${rapor.edasep_atasan}</td>
+                <td>${rapor.edasep_sejawat}</td>
+                <td>${rapor.edasep_bawahan}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger delete">
+                        <i class="fas fa-trash-alt fa-xs"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary save">
+                        <i class="fas fa-save fa-xs"></i>
+                    </button>
+                    <a href="#" class="btn btn-sm btn-info detail">
+                        <i class="fas fa-link fa-xs"></i>
+                    </a>
+                </td>
+            `;
+
+                tableBody.appendChild(newRow);
+            });
+        }
+        // Script untuk pagination
+        function updatePagination(response) {
+            const paginationContainer = document.querySelector("#pagination-container");
+            paginationContainer.innerHTML = '';
+
+            const totalPages = response.last_page;
+            const currentPage = response.current_page;
+
+            let paginationHTML = '';
+
+            if (totalPages > 1) {
+                paginationHTML += `
+            <ul class="pagination justify-content-center">
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="fetchData(${currentPage - 1})">Previous</a>
+                </li>`;
+
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHTML += `
+                <li class="page-item ${currentPage === i ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="fetchData(${i})">${i}</a>
+                </li>`;
+                }
+
+                paginationHTML += `
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="fetchData(${currentPage + 1})">Next</a>
+            </li>
+        </ul>`;
+            }
+            paginationContainer.innerHTML = paginationHTML;
+        }
+
+
+
         $(document).ready(function() {
             // Simpan data setelah mengedit
             $('#editableTable').on('click', '.save', function() {

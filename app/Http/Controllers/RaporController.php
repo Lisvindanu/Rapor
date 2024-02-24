@@ -19,13 +19,9 @@ class RaporController extends Controller
             'date' => date('d/m/Y'),
         ];
 
-        // if ($request->has('download')) {
-
         $pdf = Pdf::loadView('pdf.rapor',);
         // $pdf = Pdf::loadView('pdf.document', $data);
         return $pdf->download('document.pdf');
-        // }
-        // return view('index', $data);
     }
 
     function dashboard(Request $request)
@@ -36,24 +32,27 @@ class RaporController extends Controller
             $programstudi = $request->programstudi;
         } else {
             //dapatkan data kode_periode dari model periode paling akhir
-            // $periode = Periode::orderBy('kode_periode', 'desc')->pluck('kode_periode')->first();
+            $periode = Periode::orderBy('kode_periode', 'desc')->pluck('kode_periode')->first();
 
             // dapatkan 10 data paling akhir dari Periode
             $daftar_periode = Periode::orderBy('kode_periode', 'desc')->take(10)->get();
 
             // dapatkan data dari model Program Studi
             $daftar_programstudi = ProgramStudi::all();
-            $periode = 20231;
+            // $periode = 20231;
 
             $dataRapor = Rapor::with('dosen')
                 ->where('periode_rapor', $periode)
                 ->paginate(10);
 
+            $total = $dataRapor->total(); // Mendapatkan total data
+
             // return response()->json($dataRapor);
             return view('rapor-kinerja.index', [
                 'data' => $dataRapor,
                 'daftar_periode' => $daftar_periode,
-                'daftar_programstudi' => $daftar_programstudi
+                'daftar_programstudi' => $daftar_programstudi,
+                'total' => $total,
             ]);
         }
 
@@ -128,68 +127,5 @@ class RaporController extends Controller
             ->paginate($perPage); // Menggunakan paginate untuk pagination
 
         return response()->json($dataRapor);
-        // $perPage = $request->has('limit') ? $request->get('limit') : 10;
-        // $page = $request->has('page') ? $request->get('page') : 1;
-        // $offset = ($page - 1) * $perPage;
-
-        // $dataRapor = Rapor::when($request->has('search'), function ($query) use ($request) {
-        //     $search = $request->get('search');
-        //     $query->where(function ($query) use ($search) {
-        //         $query->where('dosen_nip', 'ilike', "%$search%")
-        //             ->orWhereHas('dosen', function ($query) use ($search) {
-        //                 $query->where('nama', 'ilike', "%$search%");
-        //             });
-        //     });
-        // })->when($request->has('perioderapor'), function ($query) use ($request) {
-        //     $perioderapor = $request->get('perioderapor');
-        //     $query->where('periode_rapor', $perioderapor);
-        // })->when($request->has('programstudi'), function ($query) use ($request) {
-        //     $programstudi = $request->get('programstudi');
-        //     $query->where('programstudi', $programstudi);
-        // })->with('dosen')
-        //     ->offset($offset)
-        //     ->limit($perPage)
-        //     ->get();
-
-        // Menghitung total data untuk pagination
-        // $total = Rapor::count();
-
-        // Mengembalikan data dalam bentuk array yang sesuai dengan format pagination
-        // $data = [
-        //     'current_page' => $page,
-        //     'data' => $dataRapor,
-        //     'from' => $offset + 1,
-        //     'to' => $offset + count($dataRapor),
-        //     'per_page' => $perPage,
-        //     'total' => $total,
-        //     'last_page' => ceil($total / $perPage)
-        // ];
-
-        // return response()->json($data);
-
-        // $perPage = $request->has('limit') ? $request->get('limit') : 10;
-        // $page = $request->has('page') ? $request->get('page') : 1;
-        // $offset = ($page - 1) * $perPage;
-
-        // $dataRapor = Rapor::when($request->has('search'), function ($query) use ($request) {
-        //     $search = $request->get('search');
-        //     $query->where(function ($query) use ($search) {
-        //         $query->where('dosen_nip', 'ilike', "%$search%")
-        //             ->orWhereHas('dosen', function ($query) use ($search) {
-        //                 $query->where('nama', 'ilike', "%$search%");
-        //             });
-        //     });
-        // })->when($request->has('perioderapor'), function ($query) use ($request) {
-        //     $perioderapor = $request->get('perioderapor');
-        //     $query->where('periode_rapor', $perioderapor);
-        // })->when($request->has('programstudi'), function ($query) use ($request) {
-        //     $programstudi = $request->get('programstudi');
-        //     $query->where('programstudi', $programstudi);
-        // })->with('dosen')
-        //     ->offset($offset)
-        //     ->limit($perPage)
-        //     ->get();
-
-        // return response()->json($dataRapor);
     }
 }

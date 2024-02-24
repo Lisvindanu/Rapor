@@ -142,8 +142,10 @@
                                         <a href="{{ route('indikator-kinerja') }}" class="btn btn-info"
                                             style="color:#fff">Generate Data</a>
 
-                                        <button class="btn btn-success" type="submit" form="form-indikator">Unggah
-                                            Data</button>
+                                        <button class="btn btn-success" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#uploadModal">
+                                            Unggah Data
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -217,7 +219,11 @@
                                     </table>
                                 </div>
                                 <!-- Tambahkan container untuk pagination di bawah tabel -->
+                                <div id="data-info">
+                                    Total data: <span id="total-data">{{ $total }}</span>
+                                </div>
                                 <div id="pagination-container" class="mt-3">
+
                                     <!-- Tempat untuk menampilkan pagination links -->
                                     <!-- Bagian tombol pagination pada tabel -->
                                     <ul class="pagination justify-content-center">
@@ -247,6 +253,37 @@
                     </div>
                 </div>
             </div>
+            <!-- Modal -->
+            <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="uploadModalLabel">Unggah Data</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Form untuk mengunggah file -->
+                            <form id="uploadForm" action="#" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="fileUpload" class="form-label">Pilih File:</label>
+                                    <input type="file" class="form-control" id="fileUpload" name="fileUpload"
+                                        required>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Tutup</button>
+                                    <a href="#" style"color: white" class="btn btn-info">Template Dokumen</a>
+                                    <button type="submit" class="btn btn-primary">Unggah</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 @endsection
@@ -371,6 +408,7 @@
 
             const totalPages = response.last_page;
             const currentPage = response.current_page;
+            const totalData = response.total; // Menambah total data dari respons
 
             let paginationHTML = '';
 
@@ -395,6 +433,10 @@
         </ul>`;
             }
             paginationContainer.innerHTML = paginationHTML;
+
+            // Menampilkan total data
+            const totalDataElement = document.querySelector("#total-data");
+            totalDataElement.textContent = totalData;
         }
 
 

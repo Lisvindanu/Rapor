@@ -36,4 +36,8 @@ Route::namespace('App\Http\Controllers')->group(function () {
         Route::get('/rapor-kinerja', "RaporController@getAllDataRapor");
         Route::post('/generateDataRapor', "RaporController@generateDataRapor");
     });
+
+    Route::prefix('laporan')->group(function () {
+        Route::post('/generate-laporan-kinerja', "LaporanController@generateLaporanKinerja")->name('laporan.generate');
+    });
 });

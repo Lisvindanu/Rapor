@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use FontLib\Table\Type\name;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,5 +48,13 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         // sub komponen indikator kinerja
         Route::get('/subindikator-kinerja', "SubkomponenIndikatorKinerjaController@index")->name('subindikator-kinerja');
+
+        // laporan
+        Route::get('/laporan', "LaporanController@index")->name('laporan');
+        Route::get('/generate-laporan-kinerja', "LaporanController@generateLaporanKinerja");
+    });
+
+    Route::prefix('dosen')->group(function () {
+        Route::get('/get-nama-dosen', "DosenController@getNamaDosen")->name('getNamaDosen');
     });
 });

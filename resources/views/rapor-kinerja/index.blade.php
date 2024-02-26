@@ -59,6 +59,20 @@
             overflow: auto;
             /* Tambahkan scrollbar jika konten melebihi tinggi maksimum */
         }
+
+        .vertical-text {
+            font-size: 12px;
+            writing-mode: vertical-rl;
+            /* Menjadikan teks vertikal dari atas ke bawah */
+            text-orientation: mixed;
+            /* Mengatur orientasi teks */
+            white-space: nowrap;
+            /* Menjaga teks tetap dalam satu baris */
+            transform: rotate(180deg);
+            /* Rotasi teks 180 derajat (tegak lurus) */
+            transform-origin: 50% 50%;
+            /* Pusat rotasi */
+        }
     </style>
 @endsection
 
@@ -163,6 +177,20 @@
                                                 <th colspan="3">EDASEP</th>
                                                 <th rowspan="2">Aksi</th>
                                             </tr>
+                                            {{-- <tr>
+                                                <th class="vertical-text">Pendidikan</th>
+                                                <th class="vertical-text">Penelitian</th>
+                                                <th class="vertical-text">PPM</th>
+                                                <th class="vertical-text">Penunjangan</th>
+                                                <th class="vertical-text">Kewajiban Khusus</th>
+                                                <th class="vertical-text">Materi Pembelajaran</th>
+                                                <th class="vertical-text">Pengelolaan Kelas</th>
+                                                <th class="vertical-text">Proses Pengajaran</th>
+                                                <th class="vertical-text">Penilaian</th>
+                                                <th class="vertical-text">Atasan</th>
+                                                <th class="vertical-text">Sejawat</th>
+                                                <th class="vertical-text">Bawahan</th>
+                                            </tr> --}}
                                             <tr>
                                                 <th>Pendidikan</th>
                                                 <th>Penelitian</th>
@@ -272,10 +300,14 @@
                                     <input type="file" class="form-control" id="fileUpload" name="fileUpload"
                                         required>
                                 </div>
+                                {{-- <div class="mb-3">
+                                    <button type="button" class="btn btn-success" id="exportExcelModalBtn">Export to
+                                        Excel</button>
+                                </div> --}}
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Tutup</button>
-                                    <a href="#" style"color: white" class="btn btn-info">Template Dokumen</a>
+                                    {{-- <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Tutup</button> --}}
+                                    <a href="#" style="color: white" class="btn btn-info">Template Dokumen</a>
                                     <button type="submit" class="btn btn-primary">Unggah</button>
                                 </div>
                             </form>
@@ -289,6 +321,7 @@
 @endsection
 
 @section('js-tambahan')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
     <script>
         const periodeDropdown = document.querySelector("#periode-dropdown");
         const programStudiDropdown = document.querySelector("#program-studi-dropdown");
@@ -498,6 +531,21 @@
                     });
                 }
             });
+        });
+
+        document.getElementById("exportExcelModalBtn").addEventListener("click", function() {
+            /* Ambil elemen tabel yang akan diekspor */
+            var table = document.querySelector(".table");
+
+            /* Buat objek worksheet */
+            var ws = XLSX.utils.table_to_sheet(table);
+
+            /* Buat objek workbook */
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+            /* Konversi workbook ke file Excel dan unduh */
+            XLSX.writeFile(wb, 'exported_data_modal.xlsx');
         });
     </script>
 @endsection

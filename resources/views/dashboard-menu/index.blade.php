@@ -239,11 +239,11 @@
                                                 alt="Logo Rapor">
                                             <p>Rapor Dosen</p>
                                         </a>
-                                        <a href="#" class="modul">
+                                        {{-- <a href="#" class="modul">
                                             <img src="{{ asset('storage/images/modul-logo/vakasi.svg') }}"
                                                 alt="Logo Rapor">
                                             <p>Vakasi</p>
-                                        </a>
+                                        </a> --}}
                                     </div>
 
                                 </div>
@@ -251,14 +251,14 @@
                                     <h4 class="card-title">Daftar Role</h4>
                                     <h5 style="margin-bottom:20px">Vakasi</h5>
                                     <div class="kotak-role">
-                                        <div class="role">
+                                        {{-- <div class="role">
                                             <p class="role-judul"><strong>Admin</strong></p>
                                             <span class="role-bidang">Fakultas Teknik</span>
                                         </div>
                                         <div class="role">
                                             <p class="role-judul"><strong>Admin</strong></p>
                                             <span class="role-bidang">Fakultas Teknik</span>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
 

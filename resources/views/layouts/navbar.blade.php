@@ -83,8 +83,8 @@
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ url('/rapor/laporan') }}">Laporan
                                                 Kinerja</a></li>
-                                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                                        {{-- <li><hr class="dropdown-divider"></li> --}}
+                                        {{-- <li><a class="dropdown-item" href="#">Another action</a></li>
+                                        <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" href="#">Rapor Kinerja</a></li>
                                         <li> <a class="dropdown-item" href="#">Rapor Kinerja &raquo;</a>
                                             <ul class="submenu dropdown-menu">
@@ -106,7 +106,7 @@
                                                 <li><a class="dropdown-item" href="#">Submenu item 5</a>
                                                 </li>
                                             </ul>
-                                        </li>
+                                        </li> --}}
                                     </ul>
                                 </li>
                             </ul>

@@ -80,8 +80,7 @@
         <div class="container" style="max-height: 1200px;">
             <div style="width: 100%;height:80px; background-color: bisque">
                 <header>
-                    <img src="{{ public_path('storage/images/Kop-FT.png') }}" style="width: 100%" alt="Logo"
-                        class="logo">
+                    <img src="{{ asset('storage/images/Kop-FT.png') }}" style="width: 100%" alt="Logo" class="logo">
                 </header>
             </div>
             <div class="header-judul">
@@ -239,14 +238,13 @@
             </table>
             <div class="ttd-bawah" style="text-align:right;margin-top:5px">
                 <p style="padding-right: 50;">Bandung,
-                    {{ $tanggal }}</p><img src="{{ public_path('storage/images/ttd-pa-yusman.png') }}"
-                    alt="Logo" style="width: 40%;padding-right:60px">
+                    {{ $tanggal }}</p><img src="{{ asset('storage/images/ttd-pa-yusman.png') }}" alt="Logo"
+                    style="width: 40%;padding-right:60px">
             </div>
         </div>
         <footer>
             {{-- <p>Ini adalah footer</p> --}}
-            <img src="{{ public_path('storage/images/footer-ft.png') }}" style="width: 100%" alt="Logo"
-                class="logo">
+            <img src="{{ asset('storage/images/footer-ft.png') }}" style="width: 100%" alt="Logo" class="logo">
         </footer>
     @endforeach
 </body>

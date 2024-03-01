@@ -2,31 +2,27 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\FromView;
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-
-class RaporExport implements WithHeadings
+class RaporExport implements FromView, ShouldAutoSize
 {
-    public function collection()
+    protected $data;
+
+    public function __construct($data = null)
     {
-        // return User::all();
+        $this->data = $data;
     }
 
-    public function headings(): array
+    public function view(): View
     {
-        return [
-            'No',
-            'Periode',
-            'ID Kelas',
-            'Kode MK',
-            'Nama Matakuliah',
-            'Nama Kelas',
-            'Jumlah Peserta',
-            'NIP',
-            'Dosen Pengajar',
-            'NIDN',
-            'Prodi',
-        ];
+        if ($this->data) {
+            return View('exports.template-rapor-kinerja', [
+                'data' => $this->data
+            ]);
+        }
+        // return View('exports.template-rapor-kinerja');
     }
 }

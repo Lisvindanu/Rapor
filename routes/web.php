@@ -55,6 +55,9 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         // export excel
         Route::get('/download-template-rapor-kinerja', "ExcelController@RaporTemplate");
+
+        // import excel
+        Route::post('/import-rapor-kinerja', "ImportController@importRaporKinerja")->named('rapor.import-rapor-kinerja');
     });
 
     Route::prefix('dosen')->group(function () {

@@ -52,6 +52,9 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         // laporan
         Route::get('/laporan', "LaporanController@index")->name('laporan');
         Route::get('/generate-laporan-kinerja', "LaporanController@generateLaporanKinerja");
+
+        // export excel
+        Route::get('/download-template-rapor-kinerja', "ExcelController@RaporTemplate");
     });
 
     Route::prefix('dosen')->group(function () {

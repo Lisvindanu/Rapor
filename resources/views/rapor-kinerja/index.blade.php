@@ -307,7 +307,8 @@
                                 <div class="modal-footer">
                                     {{-- <button type="button" class="btn btn-secondary"
                                         data-bs-dismiss="modal">Tutup</button> --}}
-                                    <a href="#" style="color: white" class="btn btn-info">Template Dokumen</a>
+                                    <a href="{{ url('/rapor/download-template-rapor-kinerja') }}" style="color: white"
+                                        class="btn btn-info">Template Dokumen</a>
                                     <button type="submit" class="btn btn-primary">Unggah</button>
                                 </div>
                             </form>

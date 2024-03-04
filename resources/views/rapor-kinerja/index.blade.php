@@ -135,6 +135,20 @@
             </div>
         </div>
 
+        {{-- tampilkan message session success/error jika ada --}}
+        @if (session('message'))
+            <div class="isi-konten">
+                <div class="row justify-content-md-center">
+                    <div class="col-11">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('message') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <div class="isi-konten">
             <div class="row justify-content-md-center">
                 <div class="col-11">
@@ -153,8 +167,8 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-                                        <a href="{{ route('indikator-kinerja') }}" class="btn btn-info"
-                                            style="color:#fff">Generate Data</a>
+                                        {{-- <a href="{{ route('indikator-kinerja') }}" class="btn btn-info"
+                                            style="color:#fff">Generate Data</a> --}}
 
                                         <button class="btn btn-success" type="button" data-bs-toggle="modal"
                                             data-bs-target="#uploadModal">
@@ -170,12 +184,24 @@
                                     <table class="table table-hover">
                                         <thead class="text-center">
                                             <tr>
-                                                <th rowspan="2">NIP</th>
-                                                <th rowspan="2" class="nama-dosen-col">Nama Dosen</th>
-                                                <th colspan="5">Unsur BKD Sister</th>
-                                                <th colspan="4">EDOM</th>
-                                                <th colspan="3">EDASEP</th>
-                                                <th rowspan="2">Aksi</th>
+                                                <th rowspan="2" style="text-align: center;vertical-align: middle;">
+                                                    NIP
+                                                </th>
+                                                <th rowspan="2" class="nama-dosen-col"
+                                                    style="text-align: center;vertical-align: middle;">Nama
+                                                    Dosen</th>
+                                                <th rowspan="2" style="text-align: center;vertical-align: middle;">
+                                                    Nilai
+                                                    BKD</th>
+                                                <th colspan="4" style="text-align: center;vertical-align: middle;">
+                                                    EDOM
+                                                </th>
+                                                <th colspan="3" style="text-align: center;vertical-align: middle;">
+                                                    EDASEP
+                                                </th>
+                                                <th rowspan="2" style="text-align: center;vertical-align: middle;">
+                                                    Aksi
+                                                </th>
                                             </tr>
                                             {{-- <tr>
                                                 <th class="vertical-text">Pendidikan</th>
@@ -192,15 +218,15 @@
                                                 <th class="vertical-text">Bawahan</th>
                                             </tr> --}}
                                             <tr>
-                                                <th>Pendidikan</th>
+                                                {{-- <th>Pendidikan</th>
                                                 <th>Penelitian</th>
                                                 <th>PPM</th>
                                                 <th>Penunjangan</th>
-                                                <th>Kewajiban Khusus</th>
+                                                <th>Kewajiban Khusus</th> --}}
                                                 <th>Materi Pembelajaran</th>
                                                 <th>Pengelolaan Kelas</th>
                                                 <th>Proses Pengajaran</th>
-                                                <th>Penilaian</th>
+                                                <th>Penilaian Mahasiswa</th>
                                                 <th>Atasan</th>
                                                 <th>Sejawat</th>
                                                 <th>Bawahan</th>
@@ -217,11 +243,11 @@
                                                     <tr>
                                                         <td>{{ $rapor->dosen_nip }}</td>
                                                         <td>{{ $rapor->dosen->nama }}</td>
-                                                        <td>{{ $rapor->bkd_pendidikan }}</td>
-                                                        <td>{{ $rapor->bkd_penelitian }}</td>
+                                                        <td>{{ $rapor->bkd_total }}</td>
+                                                        {{-- <td>{{ $rapor->bkd_penelitian }}</td>
                                                         <td>{{ $rapor->bkd_ppm }}</td>
                                                         <td>{{ $rapor->bkd_penunjang }}</td>
-                                                        <td>{{ $rapor->bkd_kewajibankhusus }}</td>
+                                                        <td>{{ $rapor->bkd_kewajibankhusus }}</td> --}}
                                                         <td>{{ $rapor->edom_materipembelajaran }}</td>
                                                         <td>{{ $rapor->edom_pengelolaankelas }}</td>
                                                         <td>{{ $rapor->edom_prosespengajaran }}</td>
@@ -270,12 +296,11 @@
                                         <!-- Tombol Next -->
                                         <li
                                             class="page-item {{ $data->currentPage() == $data->lastPage() ? 'disabled' : '' }}">
-                                            <a href="{{ $data->url($data->currentPage() + 1) }}" class="page-link">Next</a>
+                                            <a href="{{ $data->url($data->currentPage() + 1) }}"
+                                                class="page-link">Next</a>
                                         </li>
                                     </ul>
-
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -293,21 +318,22 @@
                         </div>
                         <div class="modal-body">
                             <!-- Form untuk mengunggah file -->
-                            <form id="uploadForm" action="#" method="POST" enctype="multipart/form-data">
+                            <form id="uploadForm" action="{{ url('/rapor/import-rapor-kinerja') }}" method="POST"
+                                enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="fileUpload" class="form-label">Pilih File:</label>
-                                    <input type="file" class="form-control" id="fileUpload" name="fileUpload"
-                                        required>
+                                    <label for="file" class="form-label">Pilih File:</label>
+                                    <input type="file" class="form-control" id="file" name="file" required>
                                 </div>
                                 {{-- <div class="mb-3">
                                     <button type="button" class="btn btn-success" id="exportExcelModalBtn">Export to
                                         Excel</button>
                                 </div> --}}
                                 <div class="modal-footer">
-                                    {{-- <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Tutup</button> --}}
-                                    <a href="#" style="color: white" class="btn btn-info">Template Dokumen</a>
+                                    <button type="button" class="btn btn-info" id="btn-template-dokumen"
+                                        style="color: white">Template
+                                        Dokumen</button>
+
                                     <button type="submit" class="btn btn-primary">Unggah</button>
                                 </div>
                             </form>
@@ -406,11 +432,7 @@
                 newRow.innerHTML = `
                 <td>${rapor.dosen_nip}</td>
                 <td>${rapor.dosen.nama}</td>
-                <td>${rapor.bkd_pendidikan}</td>
-                <td>${rapor.bkd_penelitian}</td>
-                <td>${rapor.bkd_ppm}</td>
-                <td>${rapor.bkd_penunjangan}</td>
-                <td>${rapor.bkd_kewajibankhusus}</td>
+                <td>${rapor.bkd_total}</td>
                 <td>${rapor.edom_materipembelajaran}</td>
                 <td>${rapor.edom_pengelolaankelas}</td>
                 <td>${rapor.edom_prosespengajaran}</td>
@@ -533,19 +555,31 @@
             });
         });
 
-        document.getElementById("exportExcelModalBtn").addEventListener("click", function() {
-            /* Ambil elemen tabel yang akan diekspor */
-            var table = document.querySelector(".table");
+        // document.getElementById("exportExcelModalBtn").addEventListener("click", function() {
+        //     /* Ambil elemen tabel yang akan diekspor */
+        //     var table = document.querySelector(".table");
 
-            /* Buat objek worksheet */
-            var ws = XLSX.utils.table_to_sheet(table);
+        //     /* Buat objek worksheet */
+        //     var ws = XLSX.utils.table_to_sheet(table);
 
-            /* Buat objek workbook */
-            var wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        //     /* Buat objek workbook */
+        //     var wb = XLSX.utils.book_new();
+        //     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
 
-            /* Konversi workbook ke file Excel dan unduh */
-            XLSX.writeFile(wb, 'exported_data_modal.xlsx');
+        //     /* Konversi workbook ke file Excel dan unduh */
+        //     XLSX.writeFile(wb, 'exported_data_modal.xlsx');
+        // });
+
+        // Fungsi untuk menangani ketika tombol template dokumen ditekan
+        document.getElementById("btn-template-dokumen").addEventListener("click", function() {
+            // Mendapatkan nilai dari periode-dropdown dan program-studi-dropdown
+            var selectedPeriode = document.getElementById("periode-dropdown").value;
+            var selectedProgramStudi = document.getElementById("program-studi-dropdown").value;
+
+            // Mengarahkan pengguna ke URL yang tepat dengan parameter periode dan program studi
+            window.location.href = "{{ url('/rapor/download-template-rapor-kinerja') }}?periode=" +
+                selectedPeriode + "&program_studi=" + selectedProgramStudi;
+
         });
     </script>
 @endsection

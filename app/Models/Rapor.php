@@ -18,11 +18,12 @@ class Rapor extends Model
         'periode_rapor',
         'dosen_nip',
         'programstudi',
-        'bkd_pendidikan',
-        'bkd_penelitian',
-        'bkd_ppm',
-        'bkd_penunjangan',
-        'bkd_kewajibankhusus',
+        // 'bkd_pendidikan',
+        // 'bkd_penelitian',
+        // 'bkd_ppm',
+        // 'bkd_penunjangan',
+        // 'bkd_kewajibankhusus',
+        'bkd_total',
         'edom_materipembelajaran',
         'edom_pengelolaankelas',
         'edom_prosespengajaran',
@@ -48,13 +49,14 @@ class Rapor extends Model
     {
 
         // if ternari jika $this->bkd_pendidikan; jika bernilai M maka nilai 100, jika tidak ada maka 0
-        $pendidikan = $this->bkd_pendidikan == 'M' ? 100 : 0;
-        $penelitian = $this->bkd_penelitian == 'M' ? 100 : 0;
-        $ppm = $this->bkd_ppm == 'M' ? 100 : 0;
-        $penunjangan = $this->bkd_penunjangan == 'M' ? 100 : 0;
-        $kewajibankhusus = $this->bkd_kewajibankhusus == 'M' ? 100 : 0;
+        // $pendidikan = $this->bkd_pendidikan == 'M' ? 100 : 0;
+        // $penelitian = $this->bkd_penelitian == 'M' ? 100 : 0;
+        // $ppm = $this->bkd_ppm == 'M' ? 100 : 0;
+        // $penunjangan = $this->bkd_penunjangan == 'M' ? 100 : 0;
+        // $kewajibankhusus = $this->bkd_kewajibankhusus == 'M' ? 100 : 0;
 
-        $total_bkd = ($pendidikan + $penelitian + $ppm + $penunjangan + $kewajibankhusus) / 5;
+        // $total_bkd = ($pendidikan + $penelitian + $ppm + $penunjangan + $kewajibankhusus) / 5;
+        $total_bkd = $this->bkd_total >= 12 ? 100 : ($this->bkd_total / 12) * 100;
         return $total_bkd * 0.5;
     }
 

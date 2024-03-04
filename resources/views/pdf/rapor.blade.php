@@ -72,6 +72,11 @@
             /* background-color: #f2f2f2; */
             text-align: center;
         }
+
+        .tengah {
+            text-align: center;
+            vertical-align: middle;
+        }
     </style>
 </head>
 
@@ -113,54 +118,54 @@
                 <th>Bobot(%)</th>
                 <th>Nilai Per Indikator</th>
                 <tr>
-                    <td colspan="5">a. Unsur BKD Sister</td>{{-- {{-- <td rowspan="6">50</td> --}} <td class="kolom-tengah"
-                        rowspan="6">50</td>
-                    <td class="kolom-tengah" rowspan="6">{{ $rapor->nilai_bkd }}</td>
+                    <td colspan="5">a. Unsur BKD Sister</td>
+                    <td class="kolom-tengah" rowspan="6">50</td>
+                    <td class="kolom-tengah" rowspan="6">{{ number_format($rapor->nilai_bkd, 2) }}</td>
                 </tr>
                 <tr>
                     <td class="kolom-nomor">1.</td>
                     <td>Pendidikan</td>
-                    <td style="text-align: center">M</td>
-                    <td style="text-align: center">{{ $rapor->bkd_pendidikan }}</td>
-                    <td style="text-align: center">
-                        {{ $rapor->bkd_pendidikan == 'M' ? '100' : '0' }}
+                    <td class="tengah" rowspan="5">12.00</td>
+                    <td class="tengah" rowspan="5">{{ $rapor->bkd_total }}</td>
+                    <td class="tengah" rowspan="5">
+                        {{ number_format($rapor->bkd_total >= 12 ? 100 : ($rapor->bkd_total / 12) * 100, 2) }}
                     </td>
                 </tr>
                 <tr>
                     <td>2.</td>
                     <td>Penelitian</td>
-                    <td style="text-align: center">M</td>
+                    {{-- <td style="text-align: center">M</td>
                     <td style="text-align: center">{{ $rapor->bkd_penelitian }}</td>
                     <td style="text-align: center">
                         {{ $rapor->bkd_penelitian == 'M' ? '100' : '0' }}
-                    </td>
+                    </td> --}}
                 </tr>
                 <tr>
                     <td>3.</td>
                     <td>PPM</td>
-                    <td style="text-align: center">M</td>
+                    {{-- <td style="text-align: center">M</td>
                     <td style="text-align: center">{{ $rapor->bkd_ppm }}</td>
                     <td style="text-align: center">
                         {{ $rapor->bkd_ppm == 'M' ? '100' : '0' }}
-                    </td>
+                    </td> --}}
                 </tr>
                 <tr>
                     <td>4.</td>
                     <td>Penunjang</td>
-                    <td style="text-align: center">M</td>
+                    {{-- <td style="text-align: center">M</td>
                     <td style="text-align: center">{{ $rapor->bkd_penunjangan }}</td>
                     <td style="text-align: center">
                         {{ $rapor->bkd_penunjangan == 'M' ? '100' : '0' }}
-                    </td>
+                    </td> --}}
                 </tr>
                 <tr>
                     <td>5.</td>
                     <td>Kewajiban Khusus</td>
-                    <td style="text-align: center">M</td>
+                    {{-- <td style="text-align: center">M</td>
                     <td style="text-align: center">{{ $rapor->bkd_kewajibankhusus }}</td>
                     <td style="text-align: center">
                         {{ $rapor->bkd_kewajibankhusus == 'M' ? '100' : '0' }}
-                    </td>
+                    </td> --}}
                 </tr>
                 <tr>
                     <td colspan="5">b. EDOM</td>

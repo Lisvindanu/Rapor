@@ -131,6 +131,16 @@
                 }
             });
 
+            // Validasi form saat blur dari input nama-dosen
+            $('#nama-dosen').blur(function() {
+                var value = $(this).val();
+                var data = $('#nama-dosen').data('typeahead').source;
+                if ($.inArray(value, data) === -1) {
+                    $(this).val(''); // Kosongkan nilai input jika tidak ada di autocomplete
+                    $('#dosen_nip').val(''); // Kosongkan nilai hidden nip-dosen
+                    // alert('Silakan pilih nama dosen dari autocomplete!');
+                }
+            });
         });
     </script>
 @endsection

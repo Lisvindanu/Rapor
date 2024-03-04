@@ -322,9 +322,8 @@
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="fileUpload" class="form-label">Pilih File:</label>
-                                    <input type="file" class="form-control" id="fileUpload" name="fileUpload"
-                                        required>
+                                    <label for="file" class="form-label">Pilih File:</label>
+                                    <input type="file" class="form-control" id="file" name="file" required>
                                 </div>
                                 {{-- <div class="mb-3">
                                     <button type="button" class="btn btn-success" id="exportExcelModalBtn">Export to

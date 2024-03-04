@@ -60,6 +60,7 @@
                             </div>
                             <div class="card-footer" style="background-color: white">
                                 <button type="submit" class="btn btn-primary float-end">Tampilkan</button>
+                                <button type="reset" class="btn btn-secondary float-end me-2">Reset</button>
                             </div>
                     </form>
                 </div>
@@ -131,15 +132,21 @@
                 }
             });
 
-            // Validasi form saat blur dari input nama-dosen
-            $('#nama-dosen').blur(function() {
-                var value = $(this).val();
-                var data = $('#nama-dosen').data('typeahead').source;
-                if ($.inArray(value, data) === -1) {
-                    $(this).val(''); // Kosongkan nilai input jika tidak ada di autocomplete
-                    $('#dosen_nip').val(''); // Kosongkan nilai hidden nip-dosen
-                    // alert('Silakan pilih nama dosen dari autocomplete!');
-                }
+            // Validasi form saat change dari input nama - dosen
+            // $('#nama-dosen').change(function() {
+            //     var value = $(this).val();
+            //     var data = $('#nama-dosen').data('typeahead').source;
+            //     if ($.inArray(value, data) === -1) {
+            //         $(this).val(''); // Kosongkan nilai input jika tidak ada di autocomplete
+            //         $('#dosen_nip').val(''); // Kosongkan nilai hidden nip-dosen
+            //         // alert('Silakan pilih nama dosen dari autocomplete!');
+            //     }
+            // });
+
+            // Fungsi untuk reset formulir
+            $('#form-filter').on('reset', function() {
+                $('#nama-dosen').val(''); // Kosongkan nilai input nama-dosen
+                $('#dosen_nip').val(''); // Kosongkan nilai input hidden nip-dosen
             });
         });
     </script>

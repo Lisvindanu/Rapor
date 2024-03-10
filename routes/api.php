@@ -40,4 +40,10 @@ Route::namespace('App\Http\Controllers')->group(function () {
     Route::prefix('laporan')->group(function () {
         Route::post('/generate-laporan-kinerja', "LaporanController@generateLaporanKinerja")->name('laporan.generate');
     });
+
+    Route::prefix('unit-kerja')->group(function () {
+        Route::get('/', "UnitKerjaController@index");
+        Route::get('/getUnitKerja', "UnitKerjaController@getUnitKerja");
+        Route::get('/getUnitKerjaByParent', "UnitKerjaController@getUnitKerjaByParent");
+    });
 });

@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use FontLib\Table\Type\name;
-
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\RaporController;
+use App\Http\Controllers\KuisionerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -58,6 +60,21 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         // import excel
         Route::post('/import-rapor-kinerja', "ImportController@importRaporKinerja")->named('rapor.import-rapor-kinerja');
+    });
+
+    Route::prefix('kuisioner')->group(function () {
+        Route::get('/', "KuisionerController@dashboard");
+
+        Route::get('/banksoal', "BankSoalController@index");
+        Route::get('/banksoal/create', "BankSoalController@create");
+        Route::post('/banksoal/store', "BankSoalController@store");
+        // detail
+        Route::get('/banksoal/data-soal/{id}', "BankSoalController@show")->name('kuisioner.banksoal.show');;
+        // edit
+        Route::get('/banksoal/data-soal/{id}/edit', "BankSoalController@edit");
+        Route::put('/banksoal/{id}', "BankSoalController@update");
+
+        Route::get('/banksoal/list-pertanyaan/{id}', "pertanyaanController@show")->name('kuisioner.banksoal.list-pertanyaan');
     });
 
     Route::prefix('dosen')->group(function () {

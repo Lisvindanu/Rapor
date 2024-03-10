@@ -3,8 +3,11 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use Database\Seeders\UnitKerjaSeeder;
 use Illuminate\Database\Seeder;
 use PhpParser\Node\Expr\AssignOp\Mod;
+use SebastianBergmann\CodeCoverage\Report\Xml\Unit;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,13 +23,13 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call([
-            FakultasSeeder::class,
-            ProgramStudiSeeder::class,
-            ModulSeeder::class,
-            UsersTableSeeder::class,
-            ModulsTableSeeder::class,
-            MenusTableSeeder::class,
-            // Panggil Seeder lainnya jika ada
+            // FakultasSeeder::class,
+            // ProgramStudiSeeder::class,
+            // ModulSeeder::class,
+            // UsersTableSeeder::class,
+            // ModulsTableSeeder::class,
+            // MenusTableSeeder::class,
+            UnitKerjaSeeder::class,
         ]);
     }
 }

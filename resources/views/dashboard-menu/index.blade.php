@@ -239,17 +239,22 @@
                                                 alt="Logo Rapor">
                                             <p>Rapor Dosen</p>
                                         </a>
-                                        {{-- <a href="#" class="modul">
+                                        <a href="#" class="modul">
                                             <img src="{{ asset('storage/images/modul-logo/vakasi.svg') }}"
                                                 alt="Logo Rapor">
                                             <p>Vakasi</p>
-                                        </a> --}}
+                                        </a>
+                                        <a href="#" class="modul">
+                                            <img src="{{ asset('storage/images/modul-logo/kuisioner.svg') }}"
+                                                alt="Logo Kuisioner">
+                                            <p>Kuisioner</p>
+                                        </a>
                                     </div>
 
                                 </div>
                                 <div class="col-5 daftar-role">
                                     <h4 class="card-title">Daftar Role</h4>
-                                    <h5 style="margin-bottom:20px">Vakasi</h5>
+                                    {{-- <h5 style="margin-bottom:20px">Vakasi</h5> --}}
                                     <div class="kotak-role">
                                         {{-- <div class="role">
                                             <p class="role-judul"><strong>Admin</strong></p>

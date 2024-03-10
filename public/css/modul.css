@@ -195,3 +195,23 @@ body {
 .isi-konten .form-group {
     margin: 15px; /* Atur margin bawah untuk setiap form-group */
 }
+
+.sub-konten {
+    margin-left: 20px;
+}
+
+.sub-konten .form-group {
+    margin-bottom: 10px;
+}
+
+.create-label {
+    /* tulisan berwarna biru, bold, dan besar */
+    color: #338be9;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+label.required::after {
+    content: " *";
+    color: red;
+}

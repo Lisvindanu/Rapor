@@ -11,44 +11,21 @@ use App\Models\Soal;
 
 class BankSoalController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        //cek apakah request kosong
-        if ($request->has('periodeakademik') && $request->has('programstudi')) {
-            $periodeakademik = $request->periodeakademik;
-            $programstudi = $request->programstudi;
-        } else {
-            //dapatkan data kode_periode dari model periode paling akhir
-            // $periode = Periode::orderBy('kode_periode', 'desc')->pluck('kode_periode')->first();
+        $dataSoal = Soal::with(['pertanyaan'])->paginate(10);
+        $total = $dataSoal->total(); // Mendapatkan total data
 
-            // dapatkan 10 data paling akhir dari Periode
-            $daftar_periode = Periode::orderBy('kode_periode', 'desc')->take(10)->get();
-
-            // dapatkan data dari model Program Studi
-            $daftar_programstudi = ProgramStudi::all();
-            $periode = 20231;
-
-            $dataRapor = Rapor::with('dosen')
-                ->where('periode_rapor', $periode)
-                ->paginate(10);
-
-            $total = $dataRapor->total(); // Mendapatkan total data
-
-            // return response()->json($dataRapor);
-            return view('kuisioner.banksoal.index', [
-                'data' => $dataRapor,
-                'daftar_periode' => $daftar_periode,
-                'daftar_programstudi' => $daftar_programstudi,
-                'total' => $total,
-            ]);
-        }
-
-        return view('kuisioner.banksoal.index');
+        // return response()->json($dataRapor);
+        return view('kuesioner.banksoal.index', [
+            'data' => $dataSoal,
+            'total' => $total,
+        ]);
     }
 
     public function create()
     {
-        return view('kuisioner.banksoal.create');
+        return view('kuesioner.banksoal.create');
     }
 
     public function store(Request $request)
@@ -83,18 +60,41 @@ class BankSoalController extends Controller
         try {
             $soal = Soal::find($id);
             if ($soal) {
-                return view('kuisioner.banksoal.show', [
+                return view('kuesioner.banksoal.show', [
                     'data' => $soal,
                 ]);
             }
         } catch (\Throwable $th) {
             return back();
         }
+    }
 
+    // destroy
+    public function destroy($id)
+    {
+        // Temukan data indikator kinerja yang akan dihapus
+        $soal = Soal::findOrFail($id);
 
-        // return view('kuisioner.banksoal.create');
-        // echo "show";
-        // $soal = Soal::find($id);
-        // return view('kuisioner.banksoal.show', ['soal' => $soal]);
+        // Data tidak ditemukan
+        if (!$soal) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        // Hapus data indikator kinerja
+        $soal->delete();
+
+        // Kirim respon berhasil
+        return response()->json(['message' => 'Data berhasil dihapus'], 200);
+    }
+
+    public function getAllDataSoal(Request $request)
+    {
+        $query = $request->input('query');
+
+        $soal = Soal::where(function ($q) use ($query) {
+            $q->where('nama_soal', 'ilike', "%{$query}%");
+        })->select('id', 'nama_soal')->get();
+
+        return response()->json($soal);
     }
 }

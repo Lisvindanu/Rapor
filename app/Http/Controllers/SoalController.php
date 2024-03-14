@@ -17,16 +17,16 @@ class SoalController extends Controller
             'publik' => 'required',
         ]);
 
-        return $request->all();
+        // return $request->all();
 
-        // $soal = new Soal;
-        // $soal->nama_soal = $request->nama_soal;
-        // $soal->keterangan = $request->keterangan;
-        // $soal->soal_acak = $request->soal_acak;
-        // $soal->publik = $request->publik;
-        // $soal->save();
+        $soal = new Soal;
+        $soal->nama_soal = $request->nama_soal;
+        $soal->keterangan = $request->keterangan;
+        $soal->soal_acak = $request->soal_acak;
+        $soal->publik = $request->publik;
+        $soal->save();
 
-        // return redirect()->route('soal.index')
-        //     ->with('success', 'Soal created successfully.');
+        return redirect()->route('soal.index')
+            ->with('success', 'Soal created successfully.');
     }
 }

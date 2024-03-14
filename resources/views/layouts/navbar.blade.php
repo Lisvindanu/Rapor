@@ -18,11 +18,11 @@
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        Kuisioner
+                                        Kuesioner
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="#">Bank Soal</a></li>
-                                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                                        <li><a class="dropdown-item" href="#">Kegiatan Kuesioner</a></li>
                                         <li><a class="dropdown-item" href="#">Something else here</a></li>
                                         <li> <a class="dropdown-item" href="#"> Dropdown item 2 &raquo;</a>
                                             <ul class="submenu dropdown-menu">

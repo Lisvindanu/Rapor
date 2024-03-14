@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class KuesionerSDM extends Model
+{
+    use HasFactory, HasUuids;
+
+    protected $table = 'kuesioner_sdm';
+
+    protected $fillable = [
+        'id',
+        'kode_periode',
+        'nama_kuesioner',
+        'subjek_penilaian',
+        'jenis_kuesioner',
+        'jadwal_kegiatan',
+        'nilai_akhir'
+    ];
+
+    public function periode()
+    {
+        return $this->belongsTo(Periode::class, 'kode_periode', 'kode_periode');
+    }
+
+    public function pegawai()
+    {
+        return $this->belongsTo(Pegawai::class, 'subjek_penilaian', 'nip');
+    }
+
+    public function soalKuisionerSDM()
+    {
+        return $this->hasMany(SoalKuesionerSDM::class, 'kuesioner_sdm_id', 'id');
+    }
+
+    public function soal()
+    {
+        return $this->belongsToMany(Soal::class, 'soal_kuesionerSDM', 'kuesioner_sdm_id', 'soal_id');
+    }
+}

@@ -6,23 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class Pertanyaan extends Model
+class SoalKuesionerSDM extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'pertanyaan';
+    protected $table = 'soal_kuesionerSDM';
 
     protected $fillable = [
         'id',
-        'no_pertanyaan',
-        'jenis_pertanyaan',
-        'pertanyaan',
-        'scale_range_min',
-        'scale_range_max',
-        'scale_text_min',
-        'scale_text_max',
+        'kuesioner_sdm_id',
         'soal_id',
     ];
+
+    public function kuesionerSDM()
+    {
+        return $this->belongsTo(KuesionerSDM::class, 'kuesioner_sdm_id', 'id');
+    }
 
     public function soal()
     {

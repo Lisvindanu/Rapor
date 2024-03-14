@@ -46,17 +46,18 @@
                                     </div>
                                 </div>
                                 <div class="col-8">
-                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-
-                                        {{-- //back button  --}}
-                                        <a href="/kuisioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <a href="/kuesioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
+                                        <a href="{{ route('kuesioner.banksoal.create-pertanyaan', ['id' => $data->id]) }}"
+                                            class="btn btn-primary" style="color:#fff">Tambah
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body" style="display: flex;">
                             <div class="col-2">
-                                @include('kuisioner.banksoal.sidebar')
+                                @include('kuesioner.banksoal.sidebar')
                             </div>
                             <div class="col-10">
                                 <div class="sub-konten">
@@ -72,32 +73,6 @@
                                     </div>
                                     <!-- keterangan -->
                                     <div class="card">
-                                        <div class="card-header" style="background-color: #fff; margin-top:10px">
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <div class="mb-3">
-                                                        <div class="input-group">
-                                                            <input type="text" name="query" id="querySearch"
-                                                                class="form-control"
-                                                                placeholder="Cari berdasarkan NIP atau Nama Dosen">
-                                                            <button id="btn-cari-search" type="button"
-                                                                class="btn btn-primary">Cari</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-                                                        {{-- <a href="{{ route('indikator-kinerja') }}" class="btn btn-info"
-                                                            style="color:#fff">Generate Data</a> --}}
-
-                                                        <button class="btn btn-success" type="button"
-                                                            data-bs-toggle="modal" data-bs-target="#uploadModal">
-                                                            Unggah Data
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="card-body" style="display: flex">
                                             <div class="col-md-12">
                                                 <div class="table-container">
@@ -115,9 +90,6 @@
                                                                 <th style="text-align: center;vertical-align: middle;">
                                                                     Waktu Pembuatan</th>
                                                                 <th style="text-align: center;vertical-align: middle;">
-                                                                    Publik
-                                                                </th>
-                                                                <th style="text-align: center;vertical-align: middle;">
                                                                     Aksi
                                                                 </th>
                                                             </tr>
@@ -126,20 +98,17 @@
                                                             {{-- foreach untuk data rapor --}}
                                                             @if (count($data1) == 0)
                                                                 <tr>
-                                                                    <td colspan="14">Tidak ada data</td>
+                                                                    <td colspan="5">Tidak ada data</td>
                                                                 </tr>
                                                             @else
-                                                                @foreach ($data1 as $rapor)
-                                                                    <tr style="text-align: center;vertical-align: middle;">
-                                                                        <td>{{ $rapor->dosen_nip }}</td>
-                                                                        <td>{{ $rapor->dosen->nama }}</td>
-                                                                        <td>{{ $rapor->bkd_total }}</td>
-                                                                        {{-- <td>{{ $rapor->bkd_penelitian }}</td>
-                                                                        <td>{{ $rapor->bkd_ppm }}</td>
-                                                                        <td>{{ $rapor->bkd_penunjang }}</td>
-                                                                        <td>{{ $rapor->bkd_kewajibankhusus }}</td> --}}
-                                                                        <td>{{ $rapor->edom_materipembelajaran }}</td>
-                                                                        <td>{{ $rapor->edom_pengelolaankelas }}</td>
+                                                                @foreach ($data1 as $pertanyaan)
+                                                                    <tr>
+                                                                        <td style="text-align: center">
+                                                                            {{ $pertanyaan->no_pertanyaan }}</td>
+                                                                        <td style="text-align: justify;">
+                                                                            {!! htmlspecialchars_decode($pertanyaan->pertanyaan) !!}</td>
+                                                                        <td>{{ $pertanyaan->jenis_pertanyaan }}</td>
+                                                                        <td>{{ $pertanyaan->created_at }}</td>
                                                                         <td>
                                                                             <button type="button"
                                                                                 class="btn btn-sm btn-danger delete">
@@ -160,7 +129,8 @@
                                                 <div id="data-info">
                                                     Total data: <span id="total-data">{{ $total }}</span>
                                                 </div>
-                                                <div id="pagination-container" class="mt-3">
+                                                <div id="pagination-container"
+                                                    class="d-grid gap-2 d-md-flex justify-content-md-end">
 
                                                     <!-- Tempat untuk menampilkan pagination links -->
                                                     <!-- Bagian tombol pagination pada tabel -->

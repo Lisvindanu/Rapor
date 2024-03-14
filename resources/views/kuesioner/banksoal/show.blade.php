@@ -49,14 +49,14 @@
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
 
                                         {{-- //back button  --}}
-                                        <a href="/kuisioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
+                                        <a href="{{ URL::previous() }}" class="btn btn-secondary" type="button">Kembali</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body" style="display: flex;">
                             <div class="col-2">
-                                @include('kuisioner.banksoal.sidebar')
+                                @include('kuesioner.banksoal.sidebar')
                             </div>
                             <div class="col-10">
                                 <div class="sub-konten">

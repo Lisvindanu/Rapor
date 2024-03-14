@@ -7,7 +7,7 @@ use App\Models\Periode;
 use App\Models\ProgramStudi;
 use App\Models\Rapor;
 
-class KuisionerController extends Controller
+class KuesionerController extends Controller
 {
     //index
     public function dashboard(Request $request)
@@ -34,7 +34,7 @@ class KuisionerController extends Controller
             $total = $dataRapor->total(); // Mendapatkan total data
 
             // return response()->json($dataRapor);
-            return view('kuisioner.dashboard', [
+            return view('kuesioner.dashboard', [
                 'data' => $dataRapor,
                 'daftar_periode' => $daftar_periode,
                 'daftar_programstudi' => $daftar_programstudi,
@@ -42,6 +42,6 @@ class KuisionerController extends Controller
             ]);
         }
 
-        return view('kuisioner.dashboard');
+        return view('kuesioner.dashboard');
     }
 }

@@ -24,10 +24,130 @@
             <div class="container">
                 <div class="judul-modul">
                     <span>
-                        <h3>Bank Soal</h3>
-                        <p>Daftar Soal</p>
+                        <h3>Beranda</h3>
+                        <p>Selamat Datang di Sistem Kuesioner</p>
                     </span>
                 </div>
+            </div>
+        </div>
+
+        <div class="filter-konten">
+            <div class="row justify-content-md-center">
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="col-12" style="padding: 10px">
+                                <div class="row align-items-center">
+                                    <div class="col-2">
+                                        <label for="inputPassword6" class="col-form-label"><strong>Periode</strong></label>
+                                    </div>
+                                    <div class="col-5">
+                                        <select id="periode-dropdown" class="form-select"
+                                            aria-label="Default select example">
+                                            @foreach ($daftar_periode as $periode)
+                                                <option value="{{ $periode->kode_periode }}">{{ $periode->nama_periode }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="pull-right">
+                                            <button id="btn-cari-filter" style="width: 100px; color:white"
+                                                class="btn btn-primary" type="button" form="form-indikator">Cari</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="" style="margin-top: 10px">
+            <div class="row justify-content-md-center">
+                <div class="col-3">
+                    <div class="card bg-primary text-white mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Informasi 1</h5>
+                            <p class="card-text">Isi informasi singkat untuk informasi 1.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="card bg-secondary text-white mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Informasi 2</h5>
+                            <p class="card-text">Isi informasi singkat untuk informasi 2.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="card bg-success text-white mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Informasi 3</h5>
+                            <p class="card-text">Isi informasi singkat untuk informasi 3.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="card bg-danger text-white mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Informasi 4</h5>
+                            <p class="card-text">Isi informasi singkat untuk informasi 4.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="" style="margin-top: 10px">
+            <div class="row justify-content-md-center">
+                <div class="col-9">
+                    <div class="card">
+                        <div class="card-header" style="background-color: #fff; margin-top:10px">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <div class="input-group">
+                                            <input type="text" name="query" id="querySearch" class="form-control"
+                                                placeholder="Cari berdasarkan NIP atau Nama Dosen">
+                                            <button id="btn-cari-search" type="button"
+                                                class="btn btn-primary">Cari</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
+
+                                        <button class="btn btn-success" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#uploadModal">
+                                            Unggah Data
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="card">
+                        <div class="card-header" style="background-color: #fff; margin-top:10px">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4>Informasi</h4>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="card-body">
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -44,160 +164,6 @@
                 </div>
             </div>
         @endif
-
-        <div class="isi-konten">
-            <div class="row justify-content-md-center">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header" style="background-color: #fff; margin-top:10px">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <div class="input-group">
-                                            <input type="text" name="query" id="querySearch" class="form-control"
-                                                placeholder="Cari berdasarkan NIP atau Nama Dosen">
-                                            <button id="btn-cari-search" type="button"
-                                                class="btn btn-primary">Cari</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-                                        {{-- <a href="{{ route('indikator-kinerja') }}" class="btn btn-info"
-                                            style="color:#fff">Generate Data</a> --}}
-
-                                        <button class="btn btn-success" type="button" data-bs-toggle="modal"
-                                            data-bs-target="#uploadModal">
-                                            Unggah Data
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body" style="display: flex">
-                            <div class="col-md-12">
-                                <div class="table-container">
-                                    <table class="table table-hover">
-                                        <thead class="text-center">
-                                            <tr>
-                                                <th style="text-align: center;vertical-align: middle;">
-                                                    Nama Soal
-                                                </th>
-                                                <th style="text-align: center;vertical-align: middle;">
-                                                    Keterangan
-                                                </th>
-                                                <th style="text-align: center;vertical-align: middle;">Jml. Soal</th>
-                                                <th style="text-align: center;vertical-align: middle;">
-                                                    Waktu Pembuatan</th>
-
-                                                <th style="text-align: center;vertical-align: middle;">
-                                                    Publik
-                                                </th>
-                                                <th style="text-align: center;vertical-align: middle;">
-                                                    Aksi
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tabel-body">
-                                            {{-- foreach untuk data rapor --}}
-                                            @if (count($data) == 0)
-                                                <tr>
-                                                    <td colspan="14">Tidak ada data</td>
-                                                </tr>
-                                            @else
-                                                @foreach ($data as $rapor)
-                                                    <tr style="text-align: center;vertical-align: middle;">
-                                                        <td>{{ $rapor->dosen_nip }}</td>
-                                                        <td>{{ $rapor->dosen->nama }}</td>
-                                                        <td>{{ $rapor->bkd_total }}</td>
-                                                        {{-- <td>{{ $rapor->bkd_penelitian }}</td>
-                                                        <td>{{ $rapor->bkd_ppm }}</td>
-                                                        <td>{{ $rapor->bkd_penunjang }}</td>
-                                                        <td>{{ $rapor->bkd_kewajibankhusus }}</td> --}}
-                                                        <td>{{ $rapor->edom_materipembelajaran }}</td>
-                                                        <td>{{ $rapor->edom_pengelolaankelas }}</td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-sm btn-danger delete">
-                                                                <i class="fas fa-trash-alt fa-xs"></i>
-                                                            </button>
-                                                            <a href="#" class="btn btn-sm btn-info detail">
-                                                                <i class="fas fa-link fa-xs"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <!-- Tambahkan container untuk pagination di bawah tabel -->
-                                <div id="data-info">
-                                    Total data: <span id="total-data">{{ $total }}</span>
-                                </div>
-                                <div id="pagination-container" class="mt-3">
-
-                                    <!-- Tempat untuk menampilkan pagination links -->
-                                    <!-- Bagian tombol pagination pada tabel -->
-                                    <ul class="pagination justify-content-center">
-                                        <!-- Tombol Previous -->
-                                        <li class="page-item {{ $data->currentPage() == 1 ? 'disabled' : '' }}">
-                                            <a href="{{ $data->url(1) }}" class="page-link">Previous</a>
-                                        </li>
-
-                                        <!-- Nomor Halaman -->
-                                        @for ($i = 1; $i <= $data->lastPage(); $i++)
-                                            <li class="page-item {{ $data->currentPage() == $i ? 'active' : '' }}">
-                                                <a href="{{ $data->url($i) }}" class="page-link">{{ $i }}</a>
-                                            </li>
-                                        @endfor
-
-                                        <!-- Tombol Next -->
-                                        <li
-                                            class="page-item {{ $data->currentPage() == $data->lastPage() ? 'disabled' : '' }}">
-                                            <a href="{{ $data->url($data->currentPage() + 1) }}" class="page-link">Next</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Modal -->
-            <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="uploadModalLabel">Unggah Data</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- Form untuk mengunggah file -->
-                            <form id="uploadForm" action="{{ url('/rapor/import-rapor-kinerja') }}" method="POST"
-                                enctype="multipart/form-data">
-                                @csrf
-                                <div class="mb-3">
-                                    <label for="file" class="form-label">Pilih File:</label>
-                                    <input type="file" class="form-control" id="file" name="file" required>
-                                </div>
-                                {{-- <div class="mb-3">
-                                    <button type="button" class="btn btn-success" id="exportExcelModalBtn">Export to
-                                        Excel</button>
-                                </div> --}}
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-info" id="btn-template-dokumen"
-                                        style="color: white">Template
-                                        Dokumen</button>
-
-                                    <button type="submit" class="btn btn-primary">Unggah</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
     </div>
 @endsection
 
@@ -348,5 +314,93 @@
             const totalDataElement = document.querySelector("#total-data");
             totalDataElement.textContent = totalData;
         }
+
+
+
+        $(document).ready(function() {
+            // Simpan data setelah mengedit
+            $('#editableTable').on('click', '.save', function() {
+                var row = $(this).closest('tr');
+                var id = row.find('td:eq(0)').text();
+                var nama_indikator_kinerja = row.find('td:eq(2)').text();
+                var bobot = row.find('td:eq(3)').text();
+                var urutan = row.find('td:eq(4)').text();
+                var type_indikator = row.find('td:eq(5)').text();
+
+                $.ajax({
+                    type: "PUT",
+                    url: "/rapor/indikator-kinerja/" + id,
+                    data: {
+                        nama_indikator_kinerja: nama_indikator_kinerja,
+                        bobot: bobot,
+                        urutan: urutan,
+                        type_indikator: type_indikator,
+                        _token: '{{ csrf_token() }}',
+                        _method: 'PUT'
+                    },
+                    success: function(response) {
+                        alert('Data berhasil diupdate');
+                        // Lakukan sesuatu setelah data berhasil diupdate
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert('Terjadi kesalahan, silakan coba lagi.');
+                    }
+                });
+            });
+
+            // Hapus baris tabel
+            $('#editableTable').on('click', '.delete', function() {
+                if (confirm('Apakah Anda yakin ingin menghapus baris ini?')) {
+                    var row = $(this).closest('tr');
+                    var id = row.find('td:eq(0)').text(); // Ambil id data yang akan dihapus
+
+                    // Kirim permintaan penghapusan ke server menggunakan Ajax
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/rapor/indikator-kinerja/" + id,
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            _method: 'DELETE'
+                        },
+                        success: function(response) {
+                            alert('Data berhasil dihapus');
+                            row.remove(); // Hapus baris dari tabel setelah berhasil dihapus
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText);
+                            alert('Terjadi kesalahan, silakan coba lagi.');
+                        }
+                    });
+                }
+            });
+        });
+
+        // document.getElementById("exportExcelModalBtn").addEventListener("click", function() {
+        //     /* Ambil elemen tabel yang akan diekspor */
+        //     var table = document.querySelector(".table");
+
+        //     /* Buat objek worksheet */
+        //     var ws = XLSX.utils.table_to_sheet(table);
+
+        //     /* Buat objek workbook */
+        //     var wb = XLSX.utils.book_new();
+        //     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+        //     /* Konversi workbook ke file Excel dan unduh */
+        //     XLSX.writeFile(wb, 'exported_data_modal.xlsx');
+        // });
+
+        // Fungsi untuk menangani ketika tombol template dokumen ditekan
+        document.getElementById("btn-template-dokumen").addEventListener("click", function() {
+            // Mendapatkan nilai dari periode-dropdown dan program-studi-dropdown
+            var selectedPeriode = document.getElementById("periode-dropdown").value;
+            var selectedProgramStudi = document.getElementById("program-studi-dropdown").value;
+
+            // Mengarahkan pengguna ke URL yang tepat dengan parameter periode dan program studi
+            window.location.href = "{{ url('/rapor/download-template-rapor-kinerja') }}?periode=" +
+                selectedPeriode + "&program_studi=" + selectedProgramStudi;
+
+        });
     </script>
 @endsection

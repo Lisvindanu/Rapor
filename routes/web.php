@@ -62,22 +62,56 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::post('/import-rapor-kinerja', "ImportController@importRaporKinerja")->named('rapor.import-rapor-kinerja');
     });
 
-    Route::prefix('kuisioner')->group(function () {
-        Route::get('/', "KuisionerController@dashboard");
+    Route::prefix('kuesioner')->group(function () {
+        Route::get('/', "KuesionerController@dashboard");
 
-        Route::get('/banksoal', "BankSoalController@index");
-        Route::get('/banksoal/create', "BankSoalController@create");
+        Route::get('/banksoal', "BankSoalController@index")->name('kuesioner.banksoal');
+        Route::get('/banksoal/create', "BankSoalController@create")->name('kuesioner.banksoal.create');
         Route::post('/banksoal/store', "BankSoalController@store");
+        Route::delete('/banksoal/{id}', "BankSoalController@destroy");
+
+        Route::get('/banksoal/data', "BankSoalController@getAllDataSoal")->name('kuesioner.banksoal.data');
+
         // detail
-        Route::get('/banksoal/data-soal/{id}', "BankSoalController@show")->name('kuisioner.banksoal.show');;
-        // edit
+        Route::get('/banksoal/data-soal/{id}', "BankSoalController@show")->name('kuesioner.banksoal.show');
         Route::get('/banksoal/data-soal/{id}/edit', "BankSoalController@edit");
         Route::put('/banksoal/{id}', "BankSoalController@update");
 
-        Route::get('/banksoal/list-pertanyaan/{id}', "pertanyaanController@show")->name('kuisioner.banksoal.list-pertanyaan');
+        Route::get('/banksoal/pertanyaan/create/{id}', "pertanyaanController@create")->name('kuesioner.banksoal.create-pertanyaan');
+        Route::post('/banksoal/pertanyaan/store', "pertanyaanController@store");
+        Route::get('/banksoal/pertanyaan/{id}', "pertanyaanController@show")->name('kuesioner.banksoal.list-pertanyaan');
+
+        //kuesioner-sdm
+        Route::get('/kuesioner-sdm', "KuesionerSDMController@index")->name('kuesioner.kuesioner-sdm');
+        Route::get('/kuesioner-sdm/create', "KuesionerSDMController@create")->name('kuesioner.sdm.create');
+        Route::post('/kuesioner-sdm/store', "KuesionerSDMController@store")->name('kuesioner.kuesioner-sdm.store');
+
+        // json
+        Route::get('/kuesioner-sdm/data', "KuesionerSDMController@getAllDataKuesionerSDM")->name('kuesioner.kuesioner-sdm.data');
+
+        //edit
+        Route::get('/kuesioner-sdm/{id}', "KuesionerSDMController@edit")->name('kuesioner.kuesioner-sdm.edit');
+        Route::post('/kuesioner-sdm/update', "KuesionerSDMController@update")->name('kuesioner.kuesioner-sdm.update');
+
+        //delete
+        Route::delete('/kuesioner-sdm/{id}', "KuesionerSDMController@destroy")->name('kuesioner.kuesioner-sdm.delete');
+
+        Route::get('/kuesioner-sdm/detail/{id}', "KuesionerSDMController@show")->name('kuesioner.kuesioner-sdm.detail');
+        Route::get('/kuesioner-sdm/responden/{id}', "KuesionerSDMController@responden")->name('kuesioner.kuesioner-sdm.responden');
+        Route::post('/kuesioner-sdm/responden/tambah-responden', "KuesionerSDMController@tambahResponden")->name('tambahResponden');
+        Route::delete('/kuesioner-sdm/responden/{id}', "KuesionerSDMController@deleteResponden")->name('kuesioner.kuesioner-sdm.responden.delete');
+
+        //SoalKuesionerSDM
+        Route::post('/soalkuesionersdm/store', "KuesionerSDMController@createSoalKuesionerSDM")->name('kuesioner.soalkuesionersdm.store');
+        Route::delete('/soalkuesionersdm/{id}', "KuesionerSDMController@deleteSoalKuesionerSDM")->name('kuesioner.soalkuesionersdm.delete');
     });
 
     Route::prefix('dosen')->group(function () {
         Route::get('/get-nama-dosen', "DosenController@getNamaDosen")->name('getNamaDosen');
+    });
+
+    Route::prefix('pegawai')->group(function () {
+        Route::get('/get-nama-pegawai', "PegawaiController@getNamaPegawai")->name('getNamaPegawai');
+        Route::get('/get-data-pegawai', "PegawaiController@getDataPegawai")->name('getDataPegawai');
     });
 });

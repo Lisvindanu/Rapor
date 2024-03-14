@@ -11,6 +11,7 @@ class Soal extends Model
     use HasFactory, HasUuids;
 
     protected $table = 'soal';
+    protected $appends = ['jumlah_pertanyaan'];
 
     protected $fillable = [
         'id',
@@ -23,5 +24,11 @@ class Soal extends Model
     public function pertanyaan()
     {
         return $this->hasMany(Pertanyaan::class);
+    }
+
+    // Accessor untuk mengambil jumlah pertanyaan
+    public function getJumlahPertanyaanAttribute()
+    {
+        return $this->pertanyaan->count();
     }
 }

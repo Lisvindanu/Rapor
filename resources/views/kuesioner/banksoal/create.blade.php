@@ -70,14 +70,15 @@
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
 
                                         {{-- //back button  --}}
-                                        <a href="/kuisioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
+                                        <a href="/kuesioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
+                                        <button type="submit" class="btn btn-primary" form="form-soal">Simpan</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         {{-- <div class="card-body" style="display: flex; margin-left:30px"> --}}
                         <div class="card-body" style="">
-                            <form action="/kuisioner/banksoal/store" method="POST">
+                            <form action="/kuesioner/banksoal/store" method="POST" id="form-soal">
                                 <div class="">
                                     @csrf
                                     <!-- Nama Indikator -->
@@ -121,9 +122,6 @@
                                             <div class="form-check form-switch">
                                                 <input name="publik" class="form-check-input" type="checkbox"
                                                     role="switch" id="flexSwitchCheckChecked">
-                                            </div>
-                                            <div class="mt-3">
-                                                <button type="submit" class="btn btn-primary">Simpan</button>
                                             </div>
                                         </div>
                                     </div>

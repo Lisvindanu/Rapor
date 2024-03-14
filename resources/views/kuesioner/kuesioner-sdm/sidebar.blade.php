@@ -56,12 +56,13 @@
     <div class="sidebar-konten">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('*/banksoal/data-soal/*') ? 'active' : '' }}" href="#">Detail
-                    Soal</a>
+                <a class="nav-link {{ Request::is('*/kuesioner-sdm/detail/*') ? 'active' : '' }}"
+                    href="{{ route('kuesioner.kuesioner-sdm.detail', ['id' => $data->id]) }}">Detail
+                    Kuisioner</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('*/banksoal/list-pertanyaan/*') ? 'active' : '' }}""
-                    href="#">Pertanyaan</a>
+                <a class="nav-link {{ Request::is('*/kuesioner-sdm/responden/*') ? 'active' : '' }}""
+                    href="{{ route('kuesioner.kuesioner-sdm.responden', ['id' => $data->id]) }}">Responden</a>
             </li>
         </ul>
     </div>

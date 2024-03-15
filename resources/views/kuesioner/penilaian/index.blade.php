@@ -90,7 +90,7 @@
                                                 {{ $item->kuesionerSDM->nama_kuesioner }}
                                             </h5>
                                             <div class="row align-items-center">
-                                                <div class="col-sm-2 col-form-label" style="margin-bottom: 5px;">
+                                                <div class="col-sm-2 col-form-label">
                                                     <label for="nama_kuesioner" class="create-label">
                                                         Periode</label>
                                                 </div>
@@ -128,8 +128,13 @@
                                             </div>
                                         </div>
                                         <div class="card-footer bg-transparent">
-                                            <a href="#" class="btn btn-success">Mulai</a>
-                                            <a href="#" class="btn btn-success">Lanjutkan</a>
+                                            {{-- jika data penilaian masih kosong, maka tampilkan tombol mulai --}}
+                                            {{-- jika data penilaian sudah ada, maka tampilkan tombol lanjutkan --}}
+                                            @if ($item->penilaian->isEmpty())
+                                                <a href="#" class="btn btn-success">Mulai</a>
+                                            @else
+                                                <a href="#" class="btn btn-success">Lanjutkan</a>
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach

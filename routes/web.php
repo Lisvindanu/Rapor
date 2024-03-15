@@ -107,6 +107,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         //penilaian
         Route::get('/penilaian', "PenilaianController@index")->name('kuesioner.penilaian');
+        Route::get('/penilaian/mulai/{id}', "PenilaianController@mulaiPenilaian")->name('kuesioner.penilaian.mulai');
     });
 
     Route::prefix('dosen')->group(function () {

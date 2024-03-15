@@ -20,8 +20,10 @@ class PertanyaanController extends Controller
         try {
             $soal = Soal::find($id);
 
-            // pernyataan paginate and orderby no_pertanyaan
-            $dataPertanyaan = Pertanyaan::with('soal')->orderBy('no_pertanyaan', 'asc')->paginate(10);
+            // // pernyataan paginate and orderby no_pertanyaan where soal_id
+            $dataPertanyaan = Pertanyaan::with('soal')->orderBy('no_pertanyaan', 'asc')
+                ->where('soal_id', $id)
+                ->paginate(10);
 
             $total = $dataPertanyaan->total(); // Mendapatkan total data
 
@@ -30,8 +32,6 @@ class PertanyaanController extends Controller
                 'data1' => $dataPertanyaan,
                 'total' => $total,
             ]);
-            //cek apakah soal kosong
-
         } catch (\Throwable $th) {
             return back();
         }

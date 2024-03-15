@@ -40,4 +40,10 @@ class Pegawai extends Model
     {
         return $this->hasOne(Dosen::class, 'pegawai_id', 'id');
     }
+
+    // user
+    public function user()
+    {
+        return $this->hasOne(User::class, 'username', 'nip');
+    }
 }

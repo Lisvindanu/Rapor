@@ -26,10 +26,10 @@ class DatabaseSeeder extends Seeder
             // FakultasSeeder::class,
             // ProgramStudiSeeder::class,
             // ModulSeeder::class,
-            // UsersTableSeeder::class,
+            UsersTableSeeder::class,
             // ModulsTableSeeder::class,
             // MenusTableSeeder::class,
-            UnitKerjaSeeder::class,
+            // UnitKerjaSeeder::class,
         ]);
     }
 }

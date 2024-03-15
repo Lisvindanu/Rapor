@@ -16,6 +16,7 @@ class Responden extends Model
         'id',
         'kuesioner_sdm_id',
         'pegawai_nip',
+        'status_selesai',
     ];
 
     public function kuesionerSDM()
@@ -26,5 +27,10 @@ class Responden extends Model
     public function pegawai()
     {
         return $this->belongsTo(Pegawai::class, 'pegawai_nip', 'nip');
+    }
+
+    public function penilaian()
+    {
+        return $this->hasMany(Penilaian::class, 'responden_id', 'id');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -18,6 +19,16 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            // Authentication passed...
+            return redirect()->intended('/gate');
+        }
+
+        // Coba autentikasi berdasarkan username
+        $username = $request->input('email');
+        $user = User::where('username', $username)->first();
+
+        if ($user && Auth::attempt(['email' => $user->email, 'password' => $request->input('password')])) {
             $request->session()->regenerate();
             // Authentication passed...
             return redirect()->intended('/gate');

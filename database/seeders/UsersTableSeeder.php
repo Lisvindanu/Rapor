@@ -19,6 +19,7 @@ class UsersTableSeeder extends Seeder
             DB::table('users')->insert([
                 'id' => Str::uuid(),
                 'name' => 'User ' . ($i + 1),
+                'username' => 'user' . ($i + 1),
                 'email' => 'user' . ($i + 1) . '@example.com',
                 'password' => Hash::make('password'), // You can change 'password' with any password you want
             ]);

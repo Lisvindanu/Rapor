@@ -104,6 +104,9 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         //SoalKuesionerSDM
         Route::post('/soalkuesionersdm/store', "KuesionerSDMController@createSoalKuesionerSDM")->name('kuesioner.soalkuesionersdm.store');
         Route::delete('/soalkuesionersdm/{id}', "KuesionerSDMController@deleteSoalKuesionerSDM")->name('kuesioner.soalkuesionersdm.delete');
+
+        //penilaian
+        Route::get('/penilaian', "PenilaianController@index")->name('kuesioner.penilaian');
     });
 
     Route::prefix('dosen')->group(function () {

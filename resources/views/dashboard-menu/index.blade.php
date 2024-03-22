@@ -235,6 +235,11 @@
                                     <h5 style="margin-bottom:20px">Selamat datang, {{ auth()->user()->name }}</h5>
                                     <div class="kotak-modul">
                                         <a href="{{ route('rapor') }}" class="modul">
+                                            <img src="{{ asset('storage/images/modul-logo/admin.svg') }}"
+                                                alt="Logo Rapor">
+                                            <p>Master</p>
+                                        </a>
+                                        <a href="{{ route('rapor') }}" class="modul">
                                             <img src="{{ asset('storage/images/modul-logo/rapor.svg') }}"
                                                 alt="Logo Rapor">
                                             <p>Rapor Dosen</p>

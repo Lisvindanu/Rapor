@@ -131,7 +131,8 @@
                                             {{-- jika data penilaian masih kosong, maka tampilkan tombol mulai --}}
                                             {{-- jika data penilaian sudah ada, maka tampilkan tombol lanjutkan --}}
                                             @if ($item->penilaian->isEmpty())
-                                                <a href="#" class="btn btn-success">Mulai</a>
+                                                <a href="{{ route('kuesioner.penilaian.mulai', $item->id) }}"
+                                                    class="btn btn-primary">Mulai</a>
                                             @else
                                                 <a href="#" class="btn btn-success">Lanjutkan</a>
                                             @endif

@@ -6,6 +6,8 @@ use FontLib\Table\Type\name;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\RaporController;
 use App\Http\Controllers\KuisionerController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,6 +34,33 @@ Route::post('/login/exit', [LoginController::class, 'logout']);
 Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () {
     Route::prefix('gate')->group(function () {
         Route::get('/', "GateController@index");
+    });
+
+    Route::prefix('master')->group(function () {
+        // Dashboard
+        Route::get('/', "MasterController@index")->name('master.dashboard');
+
+        // modul
+        Route::get('/modul', "MasterController@modul")->name('master.modul');
+        Route::get('/modul/create', "MasterController@createModul")->name('master.modul.create');
+        Route::post('/modul/store', "MasterController@storeModul")->name('master.modul.store');
+        Route::get('/modul/edit/{id}', "MasterController@editModul")->name('master.modul.edit');
+        Route::put('/modul/{id}', "MasterController@updateModul")->name('master.modul.update');
+        Route::delete('/modul/{id}', "MasterController@destroyModul")->name('master.modul.delete');
+
+        // menu
+
+        // role
+        Route::get('/role', "MasterController@role")->name('master.role');
+        Route::get('/role/create', "MasterController@createRole")->name('master.role.create');
+        Route::post('/role/store', "MasterController@storeRole")->name('master.role.store');
+        Route::get('/role/edit/{id}', "MasterController@editRole")->name('master.role.edit');
+        Route::put('/role/{id}', "MasterController@updateRole")->name('master.role.update');
+        Route::delete('/role/{id}', "MasterController@destroyRole")->name('master.role.delete');
+
+
+        // user
+        // unitkerja
     });
 
     Route::prefix('rapor')->group(function () {
@@ -63,7 +92,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     });
 
     Route::prefix('kuesioner')->group(function () {
-        Route::get('/', "KuesionerController@dashboard");
+        Route::get('/', "KuesionerController@dashboard")->name('kuesioner.dashboard');
 
         Route::get('/banksoal', "BankSoalController@index")->name('kuesioner.banksoal');
         Route::get('/banksoal/create', "BankSoalController@create")->name('kuesioner.banksoal.create');
@@ -108,6 +137,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         //penilaian
         Route::get('/penilaian', "PenilaianController@index")->name('kuesioner.penilaian');
         Route::get('/penilaian/mulai/{id}', "PenilaianController@mulaiPenilaian")->name('kuesioner.penilaian.mulai');
+        Route::post('/penilaian/store', "PenilaianController@store")->name('kuesioner.penilaian.store');
     });
 
     Route::prefix('dosen')->group(function () {

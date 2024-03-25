@@ -23,8 +23,13 @@ class PenilaianController extends Controller
     // generate penilaian
     public function mulaiPenilaian($id)
     {
-        $responden = Responden::with(['kuesionerSDM', 'pegawai', 'penilaian'])->where('pegawai_nip', auth()->user()->username)->get();
+        $responden = Responden::with(['kuesionerSDM', 'pegawai', 'penilaian'])->where('pegawai_nip', auth()->user()->username)->first();
 
+        // tampilkan responden id dari $responden
+        $responden_id = $responden->id;
+        $kuesioner_sdm_id = $responden->kuesioner_sdm_id;
+
+        // echo $responden;
         // dd($responden);
         // return responden json format
         // return response()->json($responden);
@@ -35,24 +40,23 @@ class PenilaianController extends Controller
         // $responden = Responden::with('penilaian')->find($id);
 
         // // cek jika penilaian sudah di generate
-        // if ($responden->penilaian->count() == 0) {
-        //     // echo "penilaian belum di generate";
-        //     $this->generatePertanyaan($responden);
-        // }
+        if ($responden->penilaian->count() == 0) {
+            // echo "penilaian belum di generate";
+            $this->generatePertanyaan($kuesioner_sdm_id, $responden_id);
+        }
 
-        // $penilaian = Penilaian::with(['pertanyaan'])->where('responden_id', $id)->get();
+        // // $penilaian = Penilaian::with(['pertanyaan'])->where('responden_id', $id)->get();
 
         return view('kuesioner.penilaian.penilaian', [
             'data' => $responden
         ]);
-        return response()->json($responden);
     }
 
     // fungsi generate pertanyaan
-    private function generatePertanyaan(Responden $responden)
+    private function generatePertanyaan($kuesioner_sdm_id, $responden_id)
     {
         // ambil dulu kuisoner_sdm_id dari model Responden where id
-        $kuesioner_sdm_id = $responden->kuesioner_sdm_id;
+        // $kuesioner_sdm_id = $kuesioner_sdm_id;
 
         // ambil soal_id dari model SoalKuesionerSDM where kuesioner_sdm_id
         $daftarsoal = SoalKuesionerSDM::with('soal')->where('kuesioner_sdm_id', $kuesioner_sdm_id)->get();
@@ -63,7 +67,7 @@ class PenilaianController extends Controller
             foreach ($soal['soal']['pertanyaan'] as $pertanyaan) {
                 // buat data penilaian dengan $id dan  $pertanyaan['id'];
                 $penilaian = new Penilaian();
-                $penilaian->responden_id = $responden->id;
+                $penilaian->responden_id = $responden_id;
                 $penilaian->pertanyaan_id = $pertanyaan['id'];
                 $penilaian->save();
             }

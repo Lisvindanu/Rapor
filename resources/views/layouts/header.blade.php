@@ -14,6 +14,9 @@
 
                     <div class="button-app" style="float: right">
                         <button class="exit-button">Halaman Profil</button>
+                        {{-- to gate --}}
+                        <a href="{{ url('/gate') }}" style="text-decoration: none" class="exit-button">Menu</a>
+                        {{-- to logout --}}
                         <form action="{{ url('/login/exit') }}" method="post">
                             @csrf
                             <button type="submit" class="exit-button">Keluar</button>

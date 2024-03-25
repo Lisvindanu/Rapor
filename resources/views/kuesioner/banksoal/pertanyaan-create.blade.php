@@ -1,7 +1,11 @@
-@extends('layouts.main')
+@extends('layouts.main2')
 
 @section('css-tambahan')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tinymce@5.10.2/themes/content/default/content.min.css">
+@endsection
+
+@section('navbar')
+    @include('kuesioner.navbar')
 @endsection
 
 @section('konten')

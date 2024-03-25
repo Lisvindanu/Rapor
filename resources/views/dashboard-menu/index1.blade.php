@@ -234,7 +234,22 @@
                                     <h4 class="card-title">Daftar Modul</h4>
                                     <p style="margin-bottom:20px">Selamat datang, {{ auth()->user()->name }}</p>
                                     <div class="kotak-modul">
-                                        <a href="#" class="modul" onclick="showRoles('Kuisioner')">
+                                        {{-- <a href="{{ route('rapor') }}" class="modul">
+                                            <img src="{{ asset('storage/images/modul-logo/admin.svg') }}"
+                                                alt="Logo Rapor">
+                                            <p>Master</p>
+                                        </a>
+                                        <a href="{{ route('rapor') }}" class="modul">
+                                            <img src="{{ asset('storage/images/modul-logo/rapor.svg') }}"
+                                                alt="Logo Rapor">
+                                            <p>Rapor Dosen</p>
+                                        </a>
+                                        <a href="#" class="modul">
+                                            <img src="{{ asset('storage/images/modul-logo/vakasi.svg') }}"
+                                                alt="Logo Rapor">
+                                            <p>Vakasi</p>
+                                        </a> --}}
+                                        <a href="#" class="modul">
                                             <img src="{{ asset('storage/images/modul-logo/kuisioner.svg') }}"
                                                 alt="Logo Kuisioner">
                                             <p>Kuisioner</p>
@@ -243,17 +258,16 @@
                                 </div>
                                 <div class="col-5 daftar-role">
                                     <h4 class="card-title">Daftar Role</h4>
-                                    <p style="margin-bottom:20px" id="judul-role"></p>
-                                    <div class="kotak-role" id="daftar-role" style="display: none;">
-                                        @foreach (auth()->user()->roles as $role)
-                                            <div class="role">
-                                                <span class="role-link" style="text-decoration: none; cursor: pointer;"
-                                                    onclick="setRole('{{ $role['id'] }}', '{{ route('kuesioner') }}')">
-                                                    <p class="role-judul"><strong>{{ $role['name'] }}</strong></p>
-                                                    <span class="role-bidang">{{ $role['deskripsi'] }}</span>
-                                                </span>
-                                            </div>
-                                        @endforeach
+                                    <p style="margin-bottom:20px">Vakasi</p>
+                                    <div class="kotak-role">
+                                        <div class="role">
+                                            <p class="role-judul"><strong>Admin</strong></p>
+                                            <span class="role-bidang">Fakultas Teknik</span>
+                                        </div>
+                                        <div class="role">
+                                            <p class="role-judul"><strong>Admin</strong></p>
+                                            <span class="role-bidang">Fakultas Teknik</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -265,43 +279,6 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
-    <script>
-        function showRoles(namaModul) {
-            var daftarRole = document.getElementById('daftar-role');
-            var judulRole = document.getElementById('judul-role');
-            if (daftarRole.style.display === 'none') {
-                judulRole.innerText = namaModul;
-                daftarRole.style.display = 'block';
-            } else {
-                daftarRole.style.display = 'none';
-            }
-        }
-
-        function setRole(role, route) {
-            // Mengatur session role dengan nilai role yang dipilih
-            fetch('{{ route('gate.setRole') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        role: role,
-                    })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Jika session role diatur dengan sukses, redirect ke route yang ditentukan
-                        window.location.href = route;
-                    } else {
-                        console.error('Gagal mengatur session role');
-                    }
-                })
-                .catch(error => {
-                    console.error('Terjadi kesalahan:', error);
-                });
-        }
     </script>
 </body>
 

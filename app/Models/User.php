@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -47,9 +48,26 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    // public function getIsDefaultPasswordAttribute()
+    // {
+    //     // Ubah sesuai dengan logika pengecekan password default
+    //     // return $this->password === Hash::make('password');
+    //     // Ganti 'password_default' dengan hash password default yang Anda gunakan
+    //     $defaultPasswordHash = Hash::make('password');
+
+    //     // Gunakan Hash::check() untuk membandingkan
+    //     return Hash::check($this->password, $defaultPasswordHash);
+    // }
+
     // pegawai
     public function pegawai()
     {
-        return $this->hasOne(Pegawai::class);
+        return $this->hasOne(Pegawai::class, 'nip', 'username');
+    }
+
+    // role
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
     }
 }

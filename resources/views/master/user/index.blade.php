@@ -13,8 +13,8 @@
             <div class="container">
                 <div class="judul-modul">
                     <span>
-                        <h3>Modul</h3>
-                        <p>Daftar Modul</p>
+                        <h3>User</h3>
+                        <p>Daftar User</p>
                     </span>
                 </div>
             </div>
@@ -41,17 +41,24 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="mb-3">
+                                        <div class="input-group">
+                                            <input type="text" name="query" id="querySearch" class="form-control"
+                                                placeholder="Cari berdasarkan NIP/Nama/Email">
+                                            <button id="btn-cari-search" type="button"
+                                                class="btn btn-primary">Cari</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-2"></div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         {{-- backbutton --}}
-                                        <a href="{{ route('master') }}" class="btn btn-secondary" type="button">Kembali</a>
+                                        <a href="{{ route('master.dashboard') }}" class="btn btn-secondary"
+                                            type="button">Kembali</a>
                                         {{-- addbutton --}}
-                                        <a href="{{ route('master.modul.create') }}" class="btn btn-primary"
+                                        <a href="{{ route('master.role.create') }}" class="btn btn-primary"
                                             style="color:#fff">Tambah
-                                            Modul</a>
+                                            User</a>
                                     </div>
                                 </div>
                             </div>
@@ -62,45 +69,48 @@
                                     <thead class="text-center">
                                         <tr>
                                             <th style="text-align: center;vertical-align: middle;">
-                                                Nama Modul
+                                                NIP
                                             </th>
                                             <th style="text-align: center;vertical-align: middle;">
-                                                Tautan
+                                                Nama
                                             </th>
-                                            <th style="text-align: center;vertical-align: middle;">Icon</th>
                                             <th style="text-align: center;vertical-align: middle;">
-                                                Urutan</th>
+                                                Email
+                                            </th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Aksi
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($moduls as $modul)
+                                        @foreach ($data as $user)
                                             <tr>
-                                                <td class="text-center">{{ $modul->nama_modul }}</td>
-                                                <td class="text-center"><a
-                                                        href="{{ route($modul->tautan) }}">{{ $modul->tautan }}</a></td>
-                                                <td class="text-center">
-                                                    @if ($modul->icon)
-                                                        <img src="{{ asset('path/to/icon/' . $modul->icon) }}"
-                                                            alt="Icon" style="max-width: 50px; max-height: 50px;">
-                                                    @else
-                                                        <span class="text-muted">Tidak ada icon</span>
-                                                    @endif
+                                                <td style="text-align: center;vertical-align: middle;">
+                                                    {{ $user->username }}
                                                 </td>
-                                                <td class="text-center">{{ $modul->urutan }}</td>
-                                                <td class="text-center">
-                                                    <a href="{{ route('master.modul.edit', $modul->id) }}"
+                                                <td style="text-align: center;vertical-align: middle;">
+                                                    {{ $user->name }}
+                                                </td>
+                                                <td style="text-align: center;vertical-align: middle;">
+                                                    {{ $user->email }}
+                                                </td>
+                                                <td style="text-align: center;vertical-align: middle;">
+                                                    <a href="{{ route('master.user.edit', $user->id) }}"
                                                         class="btn btn-sm btn-warning">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <form action="{{ route('master.modul.delete', $modul->id) }}"
+                                                    {{-- detail button --}}
+                                                    <a href="{{ route('master.user.detail', $user->id) }}"
+                                                        class="btn btn-sm btn-info">
+                                                        <i class="fas fa-link"></i>
+                                                    </a>
+
+                                                    <form action="{{ route('master.user.delete', $user->id) }}"
                                                         method="POST" style="display: inline-block;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Anda yakin ingin menghapus modul ini?')">
+                                                            onclick="return confirm('Anda yakin ingin menghapus role ini?')">
                                                             <i class="fas fa-trash-alt"></i>
                                                         </button>
                                                     </form>
@@ -110,6 +120,7 @@
                                     </tbody>
                                 </table>
                             </div>
+                            @include('komponen.pagination')
                         </div>
                     </div>
                 </div>

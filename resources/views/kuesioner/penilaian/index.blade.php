@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.main2')
 
 @section('css-tambahan')
     <style>
@@ -9,6 +9,10 @@
             margin-bottom: 10px;
         }
     </style>
+@endsection
+
+@section('navbar')
+    @include('kuesioner.penilaian.navbar')
 @endsection
 
 @section('konten')
@@ -134,7 +138,8 @@
                                                 <a href="{{ route('kuesioner.penilaian.mulai', $item->id) }}"
                                                     class="btn btn-primary">Mulai</a>
                                             @else
-                                                <a href="#" class="btn btn-success">Lanjutkan</a>
+                                                <a href="{{ route('kuesioner.penilaian.mulai', $item->id) }}"
+                                                    class="btn btn-success">Lanjutkan</a>
                                             @endif
                                         </div>
                                     </div>

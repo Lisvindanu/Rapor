@@ -4,18 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Ganti Password</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* body {
-            background: #f5f5f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        } */
-
         body {
             background-image: url('{{ asset('storage/images/bg-pattern.png') }}');
             /* URL gambar latar belakang */
@@ -190,41 +181,46 @@
             <p>LINK APP<br><strong>UNIVERSITAS PASUNDAN</strong></p>
         </div>
         <div class="login-right">
-            <h2>Masuk dan Verifikasi</h2>
-            <p style="text-align: center">Baru! Nikmati kemudahan sistem autentikasi tunggal untuk mengakses semua
-                layanan dengan satu akun.</p>
+            <h2>Ganti Password</h2>
+            <p style="text-align: center">Lebih aman untuk mengganti password secara berkala dan jangan menggunakan
+                password yang mudah ditebak.</p>
 
-            @if (session('login_error'))
+            @if (session('message'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('login_error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    {{ session('message') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
                 </div>
             @endif
 
-            <form method="POST" action="{{ url('login/verify') }}">
+            <form method="POST" action="{{ route('updatePassword') }}">
                 @csrf
                 <div class="form-group position-relative">
-                    <label for="email">Email/NIP</label>
-                    <input type="text" class="form-control @error('email') is-invalid @enderror" id="email"
-                        name="email" value="{{ old('email') }}"
-                        placeholder="Masukkan email/NIM/NIP/username yang terdaftar" required>
-                    @error('email')
+                    <label for="old_password">Password Lama</label>
+                    <input type="password"
+                        class="form-control @error('old_password') is-invalid
+                    @enderror"
+                        id="old_password" name="old_password" placeholder="Masukkan password lama" required>
+                    @error('old_password')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="form-group position-relative">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" name="password"
-                        placeholder="Masukkan password" required>
+                    <label for="password">Password Baru</label>
+                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
+                        name="password" placeholder="Masukkan password baru" required>
+                    @error('password')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
-                <button type="submit" class="btn btn-primary">Masuk</button>
-                {{-- <div class="forgot-password" style="text-align: left">
-                    <a href="#">Lupa Kata Sandi?</a>
-                </div> --}}
+                <div class="form-group position-relative">
+                    <label for="password_confirmation">Ulangi Password Baru</label>
+                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
+                        placeholder="Ulangi password baru" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
             </form>
         </div>
     </div>
-
 </body>
 
 </html>

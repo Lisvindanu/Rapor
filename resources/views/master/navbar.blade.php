@@ -8,7 +8,7 @@
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li class="nav-item">
                                     <a class="nav-link active" aria-current="page"
-                                        href="{{ route('master.dashboard') }}">Dashboard</a>
+                                        href="{{ route('master') }}">Dashboard</a>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -17,24 +17,8 @@
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ route('master.modul') }}">Modul</a></li>
                                         <li><a class="dropdown-item" href="{{ route('master.role') }}">Role</a></li>
-                                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        <li> <a class="dropdown-item" href="#"> Dropdown item 2 &raquo;</a>
-                                            <ul class="submenu dropdown-menu">
-                                                <li><a class="dropdown-item" href="#">Submenu item 1</a></li>
-                                                <li><a class="dropdown-item" href="#">Submenu item 2</a></li>
-                                                <li><a class="dropdown-item" href="#">Submenu item 3 &raquo;
-                                                    </a>
-                                                    <ul class="submenu dropdown-menu">
-                                                        <li><a class="dropdown-item" href="#">Multi level
-                                                                1</a></li>
-                                                        <li><a class="dropdown-item" href="#">Multi level
-                                                                2</a></li>
-                                                    </ul>
-                                                </li>
-                                                <li><a class="dropdown-item" href="#">Submenu item 4</a></li>
-                                                <li><a class="dropdown-item" href="#">Submenu item 5</a></li>
-                                            </ul>
-                                        </li>
+                                        <li><a class="dropdown-item" href="{{ route('master.user') }}">User</a></li>
+
                                     </ul>
                                 </li>
                             </ul>

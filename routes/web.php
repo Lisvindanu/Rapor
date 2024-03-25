@@ -32,13 +32,17 @@ Route::post('/login/exit', [LoginController::class, 'logout']);
 
 
 Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () {
+    Route::get('/auth/change-password', "LoginController@changePassword")->name('changePassword');
+    Route::post('/auth/update-password', "LoginController@updatePassword")->name('updatePassword');
+
     Route::prefix('gate')->group(function () {
         Route::get('/', "GateController@index");
+        Route::post('/set-role', "GateController@setRole")->name('gate.setRole');
     });
 
     Route::prefix('master')->group(function () {
         // Dashboard
-        Route::get('/', "MasterController@index")->name('master.dashboard');
+        Route::get('/', "MasterController@index")->name('master');
 
         // modul
         Route::get('/modul', "MasterController@modul")->name('master.modul');
@@ -58,8 +62,15 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::put('/role/{id}', "MasterController@updateRole")->name('master.role.update');
         Route::delete('/role/{id}', "MasterController@destroyRole")->name('master.role.delete');
 
-
         // user
+        Route::get('/user', "MasterController@user")->name('master.user');
+        Route::get('/user/create', "MasterController@createUser")->name('master.user.create');
+        Route::post('/user/store', "MasterController@storeUser")->name('master.user.store');
+        Route::get('/user/detail/{id}', "MasterController@showUser")->name('master.user.detail');
+        Route::get('/user/edit/{id}', "MasterController@editUser")->name('master.user.edit');
+        Route::put('/user/{id}', "MasterController@updateUser")->name('master.user.update');
+        Route::delete('/user/{id}', "MasterController@destroyUser")->name('master.user.delete');
+
         // unitkerja
     });
 
@@ -92,7 +103,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     });
 
     Route::prefix('kuesioner')->group(function () {
-        Route::get('/', "KuesionerController@dashboard")->name('kuesioner.dashboard');
+        Route::get('/', "KuesionerController@dashboard")->name('kuesioner');
 
         Route::get('/banksoal', "BankSoalController@index")->name('kuesioner.banksoal');
         Route::get('/banksoal/create', "BankSoalController@create")->name('kuesioner.banksoal.create');

@@ -57,10 +57,10 @@
     <div class="container">
         <div class="row justify-content-md-center">
             <div class="container">
-                <div class="judul-modul">
+                <div class="judul-modul" style="margin-bottom: 20px">
                     <span>
-                        <h3>Kegiatan kuesioner</h3>
-                        <p>Penilaian</p>
+                        <h3>{{ $data->kuesionerSDM->nama_kuesioner }}</h3>
+                        {{-- <p>Penilaian</p> --}}
                     </span>
                 </div>
             </div>
@@ -87,7 +87,8 @@
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
                                 <div class="col-12">
-                                    <h5 class="card-title">Penilaian</h5>
+                                    <h5 class="card-title">Penilaian {{ $data->kuesionerSDM->jenis_kuesioner }} :
+                                        {{ $data->kuesionerSDM->pegawai->nama }} </h5>
                                 </div>
                             </div>
                         </div>
@@ -96,37 +97,34 @@
                                 <form id="form-penilaian" action="{{ route('kuesioner.penilaian.store') }}" method="POST">
                                     @csrf
                                     <ol>
-                                        @foreach ($data as $item)
-                                            <!-- Loop pertama untuk setiap respons -->
-                                            @foreach ($item->penilaian as $penilaian)
-                                                <div class="pertanyaan" data-pertanyaan="{{ $penilaian->pertanyaan->id }}">
-                                                    {{-- tampilkan count iteration --}}
-                                                    <span style="">
-                                                        <p><strong>Penilaian ke-{{ $loop->iteration }} </strong></p>
-                                                    </span>
-                                                    {!! htmlspecialchars_decode($penilaian->pertanyaan->pertanyaan) !!}
-                                                    <div class="mb-3">
-                                                        {{-- <label for="jawaban" class="form-label">Jawaban : </label> --}}
+                                        @foreach ($data->penilaian as $penilaian)
+                                            <div class="pertanyaan" data-pertanyaan="{{ $penilaian->pertanyaan->id }}">
+                                                {{-- tampilkan count iteration --}}
+                                                <span style="">
+                                                    <p><strong>Penilaian ke-{{ $loop->iteration }} </strong></p>
+                                                </span>
+                                                {!! htmlspecialchars_decode($penilaian->pertanyaan->pertanyaan) !!}
+                                                <div class="mb-3">
+                                                    {{-- <label for="jawaban" class="form-label">Jawaban : </label> --}}
 
-                                                        @if ($penilaian->pertanyaan->jenis_pertanyaan == 'range_nilai')
-                                                            <div class="rating-form" action="">
-                                                                <label for=""
-                                                                    style="margin-right: 50px">{{ $penilaian->pertanyaan->scale_text_min }}</label>
-                                                                @for ($i = $penilaian->pertanyaan->scale_range_min; $i <= $penilaian->pertanyaan->scale_range_max; $i++)
-                                                                    <input type="radio"
-                                                                        name="{{ $penilaian->pertanyaan->id }}"
-                                                                        value="{{ $i }}">
-                                                                    {{ $i }}
-                                                                @endfor
-                                                                <label for=""
-                                                                    style="margin-left: 50px">{{ $penilaian->pertanyaan->scale_text_max }}</label>
-                                                            </div>
-                                                        @else
-                                                            <textarea class="form-control" name="{{ $penilaian->pertanyaan->id }}" rows="3"></textarea>
-                                                        @endif
-                                                    </div>
+                                                    @if ($penilaian->pertanyaan->jenis_pertanyaan == 'range_nilai')
+                                                        <div class="rating-form" action="">
+                                                            <label for=""
+                                                                style="margin-right: 50px">{{ $penilaian->pertanyaan->scale_text_min }}</label>
+                                                            @for ($i = $penilaian->pertanyaan->scale_range_min; $i <= $penilaian->pertanyaan->scale_range_max; $i++)
+                                                                <input type="radio"
+                                                                    name="{{ $penilaian->pertanyaan->id }}"
+                                                                    value="{{ $i }}">
+                                                                {{ $i }}
+                                                            @endfor
+                                                            <label for=""
+                                                                style="margin-left: 50px">{{ $penilaian->pertanyaan->scale_text_max }}</label>
+                                                        </div>
+                                                    @else
+                                                        <textarea class="form-control" name="{{ $penilaian->pertanyaan->id }}" rows="3"></textarea>
+                                                    @endif
                                                 </div>
-                                            @endforeach
+                                            </div>
                                         @endforeach
                                     </ol>
                                 </form>
@@ -146,15 +144,13 @@
                         <div class="card-body" style="">
                             <div class="col-md-12" style="text-align: center">
                                 <ul class="list-unstyled">
-                                    @foreach ($data as $item)
-                                        @foreach ($item['penilaian'] as $index => $penilaian)
-                                            <li style="float: left">
-                                                <a href="#" class="btn-soal"
-                                                    data-pertanyaan="{{ $penilaian->pertanyaan->id }}">
-                                                    {{ $index + 1 }}
-                                                </a>
-                                            </li>
-                                        @endforeach
+                                    @foreach ($data->penilaian as $index => $penilaian)
+                                        <li style="float: left">
+                                            <a href="#" class="btn-soal"
+                                                data-pertanyaan="{{ $penilaian->pertanyaan->id }}">
+                                                {{ $index + 1 }}
+                                            </a>
+                                        </li>
                                     @endforeach
                                 </ul>
                                 <div style="clear: both"></div>

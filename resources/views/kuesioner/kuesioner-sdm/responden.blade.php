@@ -1,6 +1,10 @@
-@extends('layouts.main')
+@extends('layouts.main2')
 
 @section('css-tambahan')
+@endsection
+
+@section('navbar')
+    @include('kuesioner.navbar')
 @endsection
 
 @section('konten')

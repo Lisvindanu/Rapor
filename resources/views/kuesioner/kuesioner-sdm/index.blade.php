@@ -1,6 +1,10 @@
-@extends('layouts.main')
+@extends('layouts.main2')
 
 @section('css-tambahan')
+@endsection
+
+@section('navbar')
+    @include('kuesioner.navbar')
 @endsection
 
 @section('konten')
@@ -16,7 +20,7 @@
             </div>
         </div>
 
-        <div class="filter-konten">
+        <div class="filter-konten" style="margin-bottom: 10px">
             <div class="row justify-content-md-center">
                 <div class="container">
                     <div class="card">

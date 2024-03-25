@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -16,21 +17,26 @@ class LoginController extends Controller
 
     public function verify(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        // $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            // Authentication passed...
-            return redirect()->intended('/gate');
-        }
+        // if (Auth::attempt($credentials)) {
+        //     $request->session()->regenerate();
+        //     // Authentication passed...
+        //     return redirect()->intended('/gate');
+        // }
 
         // Coba autentikasi berdasarkan username
         $username = $request->input('email');
         $user = User::where('username', $username)->first();
 
+        // return response()->json($user);
+
         if ($user && Auth::attempt(['email' => $user->email, 'password' => $request->input('password')])) {
             $request->session()->regenerate();
             // Authentication passed...
+            if ($user->is_default_password) {
+                return redirect()->route('changePassword');
+            }
             return redirect()->intended('/gate');
         }
 
@@ -72,5 +78,35 @@ class LoginController extends Controller
             // Jika autentikasi gagal, kirim respons dengan pesan error
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+    }
+
+    // changepassword
+    public function changePassword()
+    {
+        return view('auth.changepassword');
+    }
+
+    // updatePassword
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'password' => 'required|confirmed|min:8',
+        ]);
+
+        $user = Auth::user();
+
+        // Periksa apakah password lama cocok
+        if (!Hash::check($request->old_password, $user->password)) {
+            return redirect()->back()->with('message', 'Password lama tidak cocok.');
+        }
+
+        // Update password baru
+        $user->password = Hash::make($request->password);
+        $user->is_default_password = false; // tandai bahwa password sudah diubah
+        $user->save();
+
+        // Kirim respons dengan pesan sukses
+        return redirect('/gate');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Modul;
 use App\Models\Role;
+use App\Models\User;
 
 class MasterController extends Controller
 {
@@ -186,5 +187,63 @@ class MasterController extends Controller
             // Tangkap error dan tampilkan pesan error
             return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
+    }
+
+    //user
+    public function user()
+    {
+        // get data role
+        $users = User::paginate(5);
+        $total = $users->total(); // Mendapatkan total data
+        return view('master.user.index', [
+            'data' => $users,
+            'total' => $total
+        ]);
+    }
+
+    public function createUser()
+    {
+        $mode = 'tambah';
+
+        return view('master.user.create', [
+            'mode' => $mode
+        ]);
+    }
+
+    public function storeUser(Request $request)
+    {
+        try {
+            // Validasi data yang dikirim
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:8',
+                'role_id' => 'required|integer',
+            ]);
+
+            // Simpan data role baru
+            User::create($validatedData);
+
+            // Redirect dengan pesan sukses
+            return redirect()->route('master.user')->with('message', 'User berhasil ditambahkan');
+        } catch (\Exception $e) {
+            // Tangkap error dan tampilkan pesan error
+            return redirect()->back()->withInput()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function showUser($id)
+    {
+        $user = User::with('pegawai')->find($id);
+
+        // return $user format json;
+        // return response()->json($user);
+
+
+        return view('master.user.detail', [
+            'data' => $user
+        ]);
+
+        // return view('master.user.detail');
     }
 }

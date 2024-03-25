@@ -1,10 +1,6 @@
-@extends('layouts.main2')
+@extends('layouts.main')
 
 @section('css-tambahan')
-@endsection
-
-@section('navbar')
-    @include('kuesioner.navbar')
 @endsection
 
 @section('konten')
@@ -13,8 +9,8 @@
             <div class="col-12">
                 <div class="judul-modul">
                     <span>
-                        <h3>Kuesioner SDM</h3>
-                        <p>Detail Kegiatan Kuesioner</p>
+                        <h3>User</h3>
+                        <p>Detail User</p>
                     </span>
                 </div>
             </div>
@@ -52,7 +48,7 @@
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <a href="/kuesioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <button class="btn btn-primary" id="btnTambahSoal">Tambah Soal</button>
+                                        <button class="btn btn-primary" id="btnTambahSoal">Tambah Role</button>
                                     </div>
 
                                     {{-- <a href="{{ route('kuesioner.banksoal.create-pertanyaan', ['id' => $data->id]) }}"
@@ -64,7 +60,7 @@
                     </div>
                     <div class="card-body" style="display: flex;">
                         <div class="col-2">
-                            @include('kuesioner.kuesioner-sdm.sidebar')
+                            @include('master.user.sidebar')
                         </div>
                         <div class="col-10">
                             <div class="sub-konten">
@@ -72,47 +68,31 @@
                                 <div class="form-group row">
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                         <label for="nama_kuesioner" class=" create-label">
-                                            Periode</label>
+                                            NIP</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <span class="input-group-text">{{ $data->periode->nama_periode }}</span>
+                                        <span class="input-group-text">{{ $data->username }}</span>
                                     </div>
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                         <label for="nama_kuesioner" class=" create-label">
-                                            Kuisioner</label>
+                                            Nama</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <span class="input-group-text">{{ $data->nama_kuesioner }}</span>
+                                        <span class="input-group-text">{{ $data->name }}</span>
                                     </div>
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                         <label for="nama_kuesioner" class=" create-label">
-                                            Subjek Penilaian</label>
+                                            Email</label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <span class="input-group-text">{{ $data->email }}</span>
+                                    </div>
+                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                        <label for="nama_kuesioner" class=" create-label">
+                                            Akun Pegawai</label>
                                     </div>
                                     <div class="col-sm-4">
                                         <span class="input-group-text">{{ $data->pegawai->nama }}</span>
-                                    </div>
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="nama_kuesioner" class=" create-label">
-                                            Jenis Penilaian</label>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <span class="input-group-text">{{ $data->jenis_kuesioner }}</span>
-                                    </div>
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="nama_kuesioner" class=" create-label">
-                                            Unit Kerja</label>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <span class="input-group-text">{{ $data->pegawai->unitKerja->nama_unit }}</span>
-                                    </div>
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="nama_kuesioner" class=" create-label">
-                                            Jadwal Penilaian</label>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <span class="input-group-text">
-                                            {{ \Carbon\Carbon::parse($data->jadwal_kegiatan)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
-                                        </span>
                                     </div>
                                 </div>
                                 <!-- keterangan -->
@@ -127,11 +107,9 @@
                                                                 No.
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
-                                                                Nama Soal
+                                                                Nama Role
                                                             </th>
-                                                            <th style="text-align: center;vertical-align: middle;">
-                                                                Jumlah Soal
-                                                            </th>
+
 
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Aksi
@@ -139,27 +117,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="tabel-body">
-                                                        {{-- foreach untuk soalKuesionerSDM --}}
-                                                        @foreach ($soalKuesionerSDM as $item)
-                                                            <tr>
-                                                                <td hidden>{{ $item->id }}</td>
-                                                                <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $loop->iteration }}
-                                                                </td>
-                                                                <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->soal->nama_soal }}
-                                                                </td>
-                                                                <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->soal->jumlah_pertanyaan }}
-                                                                </td>
-                                                                <td style="text-align: center;vertical-align: middle;">
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-danger delete">
-                                                                        <i class="fas fa-trash-alt fa-xs"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
+
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -170,35 +128,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal Tambah Soal -->
-    <div class="modal fade" id="modalTambahSoal" tabindex="-1" aria-labelledby="modalTambahSoalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahSoalLabel">Tambah Soal</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="formTambahSoal" action="{{ route('kuesioner.soalkuesionersdm.store') }}" method="POST">
-                    @csrf
-
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="namaSoal" class="form-label">Nama Soal</label>
-                            <input type="text" class="form-control typeahead" id="namaSoal" name="nama_soal"
-                                required autocomplete="off" placeholder="Tuliskan nama soal yang dibuat pada Banksoal">
-                            <input type="hidden" id="idSoal" name="id_soal">
-                            <input type="hidden" id="idKuesionerSDM" name="id_kuesionerSDM"
-                                value="{{ $data->id }}">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>

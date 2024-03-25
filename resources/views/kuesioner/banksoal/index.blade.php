@@ -1,6 +1,10 @@
-@extends('layouts.main')
+@extends('layouts.main2')
 
 @section('css-tambahan')
+@endsection
+
+@section('navbar')
+    @include('kuesioner.navbar')
 @endsection
 
 @section('konten')
@@ -38,12 +42,12 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="mb-3">
-                                        <div class="input-group">
+                                        {{-- <div class="input-group">
                                             <input type="text" name="query" id="querySearch" class="form-control"
                                                 placeholder="Cari berdasarkan Nama Soal">
                                             <button id="btn-cari-search" type="button"
                                                 class="btn btn-primary">Cari</button>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                                 <div class="col-2"></div>
@@ -309,64 +313,5 @@
             const totalDataElement = document.querySelector("#total-data");
             totalDataElement.textContent = totalData;
         }
-
-        $(document).ready(function() {
-            // Simpan data setelah mengedit
-            $('#editableTable').on('click', '.save', function() {
-                var row = $(this).closest('tr');
-                var id = row.find('td:eq(0)').text();
-                var nama_indikator_kinerja = row.find('td:eq(2)').text();
-                var bobot = row.find('td:eq(3)').text();
-                var urutan = row.find('td:eq(4)').text();
-                var type_indikator = row.find('td:eq(5)').text();
-
-                $.ajax({
-                    type: "PUT",
-                    url: "/rapor/indikator-kinerja/" + id,
-                    data: {
-                        nama_indikator_kinerja: nama_indikator_kinerja,
-                        bobot: bobot,
-                        urutan: urutan,
-                        type_indikator: type_indikator,
-                        _token: '{{ csrf_token() }}',
-                        _method: 'PUT'
-                    },
-                    success: function(response) {
-                        alert('Data berhasil diupdate');
-                        // Lakukan sesuatu setelah data berhasil diupdate
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        alert('Terjadi kesalahan, silakan coba lagi.');
-                    }
-                });
-            });
-
-            // Hapus baris tabel
-            $('#editableTable').on('click', '.delete', function() {
-                if (confirm('Apakah Anda yakin ingin menghapus baris ini?')) {
-                    var row = $(this).closest('tr');
-                    var id = row.find('td:eq(0)').text(); // Ambil id data yang akan dihapus
-
-                    // Kirim permintaan penghapusan ke server menggunakan Ajax
-                    $.ajax({
-                        type: "DELETE",
-                        url: "/kuesioner/banksoal/" + id,
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            _method: 'DELETE'
-                        },
-                        success: function(response) {
-                            alert('Data berhasil dihapus');
-                            row.remove(); // Hapus baris dari tabel setelah berhasil dihapus
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                            alert('Terjadi kesalahan, silakan coba lagi.');
-                        }
-                    });
-                }
-            });
-        });
     </script>
 @endsection

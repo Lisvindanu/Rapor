@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.main2')
 
 @section('css-tambahan')
     <style>
@@ -16,6 +16,10 @@
             margin-right: 10px;
         }
     </style>
+@endsection
+
+@section('navbar')
+    @include('kuesioner.penilaian.navbar')
 @endsection
 
 @section('konten')

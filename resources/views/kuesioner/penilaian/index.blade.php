@@ -69,9 +69,7 @@
                                     <div class="col-9">
                                         <p class="card-text">{{ auth()->user()->name }}</p>
                                     </div>
-
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -87,6 +85,12 @@
                         </div>
                         <div class="card-body" style="display: flex">
                             <div class="col-md-12">
+                                {{-- jika data kuesioner kosong, maka tampilkan pesan --}}
+                                @if ($data_kuisioner->isEmpty())
+                                    <div class="alert alert-info" role="alert">
+                                        Belum ada kuesioner yang tersedia
+                                    </div>
+                                @endif
                                 @foreach ($data_kuisioner as $item)
                                     <div class="penilaian">
                                         <div class="card-body">
@@ -144,7 +148,6 @@
                                         </div>
                                     </div>
                                 @endforeach
-
                             </div>
                         </div>
                     </div>

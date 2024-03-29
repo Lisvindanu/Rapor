@@ -45,5 +45,6 @@ Route::namespace('App\Http\Controllers')->group(function () {
         Route::get('/', "UnitKerjaController@index");
         Route::get('/getUnitKerja', "UnitKerjaController@getUnitKerja");
         Route::get('/getUnitKerjaByParent', "UnitKerjaController@getUnitKerjaByParent");
+        
     });
 });

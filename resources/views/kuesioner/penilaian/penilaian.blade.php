@@ -47,7 +47,7 @@
         }
 
         .btn-soal-terisi {
-            background-color: green;
+            background-color: #0d6efd;
             color: white;
         }
     </style>
@@ -97,6 +97,8 @@
                                 <form id="form-penilaian" action="{{ route('kuesioner.penilaian.store') }}" method="POST">
                                     @csrf
                                     <ol>
+                                        {{-- responden id  hidden --}}
+                                        <input type="hidden" name="responden_id" value="{{ $data->id }}">
                                         @foreach ($data->penilaian as $penilaian)
                                             <div class="pertanyaan" data-pertanyaan="{{ $penilaian->pertanyaan->id }}">
                                                 {{-- tampilkan count iteration --}}
@@ -144,6 +146,14 @@
                         <div class="card-body" style="">
                             <div class="col-md-12" style="text-align: center">
                                 <ul class="list-unstyled">
+                                    {{-- dummy data 10 --}}
+                                    {{-- @for ($i = 1; $i <= 10; $i++)
+                                        <li style="float: left">
+                                            <a href="#" class="btn-soal" data-pertanyaan="{{ $i }}">
+                                                {{ $i }}
+                                            </a>
+                                        </li>
+                                    @endfor --}}
                                     @foreach ($data->penilaian as $index => $penilaian)
                                         <li style="float: left">
                                             <a href="#" class="btn-soal"

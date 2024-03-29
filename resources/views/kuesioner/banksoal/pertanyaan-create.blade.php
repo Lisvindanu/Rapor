@@ -44,7 +44,8 @@
                                 </div>
                                 <div class="col-8">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-                                        <a href="/kuesioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
+                                        <a href="{{ route('kuesioner.banksoal.list-pertanyaan', ['id' => $data->id]) }}"
+                                            class="btn btn-secondary" type="button">Kembali</a>
                                         <button type="submit" class="btn btn-primary"
                                             form="form-pertanyaan">Simpan</button>
                                     </div>

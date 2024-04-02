@@ -135,6 +135,9 @@
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Unit Kerja
                                                             </th>
+                                                            <th style="text-align: center;vertical-align: middle;">
+                                                                Status Selesai
+                                                            </th>
 
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Aksi
@@ -157,6 +160,15 @@
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $item->pegawai->unitKerja->nama_unit }}
+                                                                </td>
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    @if ($item->status_selesai)
+                                                                        <i class="fas fa-check-circle"
+                                                                            style="color: green"></i>
+                                                                    @else
+                                                                        <i class="fas fa-times-circle"
+                                                                            style="color: red"></i>
+                                                                    @endif
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     <button type="button"

@@ -252,7 +252,9 @@ class KuesionerSDMController extends Controller
         $responden = Responden::where('kuesioner_sdm_id', $id)->get();
         // $unitkerja = UnitKerja::all();
 
-        // echo $kuesioner;
+        // return response()->json($responden);
+
+        // // echo $kuesioner;
         return view('kuesioner.kuesioner-sdm.responden', [
             'data' => $kuesioner,
             'responden' => $responden,

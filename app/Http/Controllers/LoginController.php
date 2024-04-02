@@ -27,7 +27,9 @@ class LoginController extends Controller
 
         // Coba autentikasi berdasarkan username
         $username = $request->input('email');
-        $user = User::where('username', $username)->first();
+        $user = User::where('username', $username)
+            ->orWhere('email', $username)
+            ->first();
 
         // return response()->json($user);
 

@@ -25,9 +25,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // FakultasSeeder::class,
             // ProgramStudiSeeder::class,
-            // ModulSeeder::class,
             UnitKerjaSeeder::class,
             UsersTableSeeder::class,
+            // ModulSeeder::class,
             // ModulsTableSeeder::class,
             // MenusTableSeeder::class,
 

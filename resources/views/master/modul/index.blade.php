@@ -95,8 +95,7 @@
                                                         class="btn btn-sm btn-warning">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <form action="{{ route('master.modul.delete', $modul->id) }}"
-                                                        method="POST" style="display: inline-block;">
+                                                    <form method="POST" style="display: inline-block;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-danger"

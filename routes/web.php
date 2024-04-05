@@ -50,7 +50,8 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::post('/modul/store', "MasterController@storeModul")->name('master.modul.store');
         Route::get('/modul/edit/{id}', "MasterController@editModul")->name('master.modul.edit');
         Route::put('/modul/{id}', "MasterController@updateModul")->name('master.modul.update');
-        Route::delete('/modul/{id}', "MasterController@destroyModul")->name('master.modul.delete');
+
+        // Route::delete('/modul/destroy-role-modul/{id}', "MasterController@destroyRoleModul")->name('deleteRoleModul');
 
         // menu
 
@@ -58,6 +59,8 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::get('/role', "MasterController@role")->name('master.role');
         Route::get('/role/create', "MasterController@createRole")->name('master.role.create');
         Route::post('/role/store', "MasterController@storeRole")->name('master.role.store');
+        // detail
+        Route::get('/role/detail/{id}', "MasterController@showRole")->name('master.role.detail');
         Route::get('/role/edit/{id}', "MasterController@editRole")->name('master.role.edit');
         Route::put('/role/{id}', "MasterController@updateRole")->name('master.role.update');
         Route::delete('/role/{id}', "MasterController@destroyRole")->name('master.role.delete');
@@ -158,5 +161,17 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     Route::prefix('pegawai')->group(function () {
         Route::get('/get-nama-pegawai', "PegawaiController@getNamaPegawai")->name('getNamaPegawai');
         Route::get('/get-data-pegawai', "PegawaiController@getDataPegawai")->name('getDataPegawai');
+    });
+
+    Route::prefix('data')->group(function () {
+        Route::get('/get-nama-pegawai', "PegawaiController@getNamaPegawai")->name('getNamaPegawai');
+        Route::get('/get-data-pegawai', "PegawaiController@getDataPegawai")->name('getDataPegawai');
+
+        // getdatamodul
+        Route::get('/get-data-modul', "MasterController@getModulData")->name('getModulData');
+        Route::delete('/destroy-role-modul/{id}', "MasterController@destroyRoleModul")->name('deleteRoleModul');
+        Route::post('/add-role-modul', "MasterController@tambahRoleModul")->name('addRoleModul');
+
+        Route::get('/get-roles/{modul_id}', 'GateController@showRole')->name('getRoles');
     });
 });

@@ -234,26 +234,21 @@
                                     <h4 class="card-title">Daftar Modul</h4>
                                     <p style="margin-bottom:20px">Selamat datang, {{ auth()->user()->name }}</p>
                                     <div class="kotak-modul">
-                                        <a href="#" class="modul" onclick="showRoles('Kuisioner')">
-                                            <img src="{{ asset('storage/images/modul-logo/kuisioner.svg') }}"
-                                                alt="Logo Kuisioner">
-                                            <p>Kuisioner</p>
-                                        </a>
+                                        @foreach ($moduls as $modul)
+                                            <a href="#" class="modul"
+                                                onclick="showRoles('{{ $modul['id'] }}','{{ $modul['tautan'] }}')">
+                                                <img src="{{ asset('path/to/icon/' . $modul->icon) }}"
+                                                    alt="Logo {{ $modul['nama_modul'] }}">
+                                                <p>{{ $modul['nama_modul'] }}</p>
+                                            </a>
+                                        @endforeach
                                     </div>
                                 </div>
                                 <div class="col-5 daftar-role">
                                     <h4 class="card-title">Daftar Role</h4>
                                     <p style="margin-bottom:20px" id="judul-role"></p>
                                     <div class="kotak-role" id="daftar-role" style="display: none;">
-                                        @foreach (auth()->user()->roles as $role)
-                                            <div class="role">
-                                                <span class="role-link" style="text-decoration: none; cursor: pointer;"
-                                                    onclick="setRole('{{ $role['id'] }}', '{{ route('kuesioner') }}')">
-                                                    <p class="role-judul"><strong>{{ $role['name'] }}</strong></p>
-                                                    <span class="role-bidang">{{ $role['deskripsi'] }}</span>
-                                                </span>
-                                            </div>
-                                        @endforeach
+
                                     </div>
                                 </div>
                             </div>
@@ -266,16 +261,49 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        function showRoles(namaModul) {
-            var daftarRole = document.getElementById('daftar-role');
-            var judulRole = document.getElementById('judul-role');
-            if (daftarRole.style.display === 'none') {
-                judulRole.innerText = namaModul;
-                daftarRole.style.display = 'block';
-            } else {
-                daftarRole.style.display = 'none';
-            }
+        function showRoles(modul_id, route) {
+            $.ajax({
+                url: `/data/get-roles/${modul_id}`,
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(data) {
+                    const roleContainer = $('#daftar-role');
+                    roleContainer.empty(); // Mengosongkan kontainer sebelum memasukkan data baru
+                    const judulRole = $('#judul-role');
+                    judulRole.text(route);
+
+                    data.forEach(function(role) {
+                        const roleDiv = $('<div>').addClass('role');
+
+                        const roleLink = $('<span>').addClass('role-link')
+                            .css('text-decoration', 'none')
+                            .css('cursor', 'pointer')
+                            .click(function() {
+                                setRole(role.id, route);
+                            });
+
+                        const roleJudul = $('<p>').addClass('role-judul')
+                            .html(`<strong>${role.name}</strong>`);
+
+                        const roleBidang = $('<span>').addClass('role-bidang')
+                            .text(role.deskripsi);
+
+                        roleLink.append(roleJudul);
+                        roleLink.append(roleBidang);
+                        roleDiv.append(roleLink);
+                        roleContainer.append(roleDiv);
+                    });
+
+                    roleContainer.css('display', 'block'); // Menampilkan kotak role setelah data dimasukkan
+                },
+                error: function(xhr, status, error) {
+                    console.error('Terjadi kesalahan:', error);
+                }
+            });
         }
 
         function setRole(role, route) {

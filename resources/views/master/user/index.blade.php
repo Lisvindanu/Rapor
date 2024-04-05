@@ -53,8 +53,7 @@
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         {{-- backbutton --}}
-                                        <a href="{{ route('master.dashboard') }}" class="btn btn-secondary"
-                                            type="button">Kembali</a>
+                                        <a href="{{ route('master') }}" class="btn btn-secondary" type="button">Kembali</a>
                                         {{-- addbutton --}}
                                         <a href="{{ route('master.role.create') }}" class="btn btn-primary"
                                             style="color:#fff">Tambah

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Modul;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,21 +16,39 @@ class GateController extends Controller
 
     public function index()
     {
-        // Mengambil user yang sedang login
-        $user = Auth::user();
+        $userId = Auth::id();
+        $user = User::find($userId);
 
-        // Mengambil data role dari user
-        $roles = $user->roles;
+        $moduls = $user->accessibleModuls();
 
-        // Mengembalikan response dengan data user dan roles
         // return response()->json([
         //     'user' => $user,
-        //     // 'roles' => $roles,
+        //     'moduls' => $moduls,
         // ]);
 
         return view('dashboard-menu.index', [
             'user' => $user,
+            'moduls' => $moduls,
         ]);
+    }
+
+    // roleaccess
+    public function showRole($modul_id)
+    {
+        $user_id = auth()->id();
+        $user = User::find($user_id);
+
+        $modul = Modul::find($modul_id);
+
+        if (!$modul) {
+            return response()->json(['error' => 'Modul not found'], 404);
+        }
+
+        $accessibleRoles = $user->roles()->whereHas('moduls', function ($query) use ($modul_id) {
+            $query->where('moduls.id', $modul_id);
+        })->get();
+
+        return response()->json($accessibleRoles, 200);
     }
 
     // setRole

@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Modul;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\KuesionerSDM;
+use App\Models\RoleModul;
+use App\Models\SoalKuesionerSDM;
 
 class MasterController extends Controller
 {
@@ -105,18 +108,69 @@ class MasterController extends Controller
         }
     }
 
-    public function destroyModul($id)
+    public function tambahRoleModul(Request $request)
+    {
+        // Validasi request
+        $request->validate([
+            'role_modul' => 'required|array',
+            'role_id' => 'required',
+        ]);
+
+        try {
+            // Ambil ID kuesioner SDM dari request
+            $role_id = $request->role_id;
+
+            // Ambil array dari role_modul yang dipilih
+            $role_modul_ids = $request->role_modul;
+
+            // Loop untuk setiap role_modul yang dipilih
+            foreach ($role_modul_ids as $role_modul_id) {
+                // Simpan data ke tabel pivot atau tabel relasi Many-to-Many
+                RoleModul::create([
+                    'role_id' => $role_id,
+                    'modul_id' => $role_modul_id,
+                ]);
+            }
+
+            return response()->json(['message' => 'Role Modul berhasil ditambahkan'], 200);
+        } catch (\Exception $e) {
+            // Tangani jika terjadi error
+            return response()->json(['message' => $e], 500);
+        }
+    }
+
+    public function destroyRoleModul($id)
     {
         try {
-            // Hapus data modul
-            Modul::find($id)->delete();
+            // Temukan data responden yang akan dihapus
+            $RoleModul = RoleModul::findOrFail($id);
 
-            // Redirect dengan pesan sukses
-            return redirect()->route('master.modul')->with('message', 'Modul berhasil dihapus');
+            // Data tidak ditemukan
+            if (!$RoleModul) {
+                return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            }
+            // Hapus data modul
+            $RoleModul->delete();
+            // Kirim respon berhasil
+            return response()->json(['message' => 'Data berhasil dihapus'], 200);
         } catch (\Exception $e) {
             // Tangkap error dan tampilkan pesan error
-            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
+    }
+
+    // get data modul
+    public function getModulData(Request $request)
+    {
+        $perPage = $request->has('limit') ? $request->get('limit') : 10;
+
+        // $daftarPegawai  = Pegawai::with('unitKerja')->paginate(10);
+        $daftarModul = Modul::when($request->has('search'), function ($query) use ($request) {
+            $search = $request->get('search');
+            $query->where('nama_modul', 'ilike', "%$search%");
+        })->paginate($perPage);
+
+        return response()->json($daftarModul);
     }
 
     // role
@@ -173,6 +227,21 @@ class MasterController extends Controller
     public function updateRole(Request $request, $id)
     {
         // return 'update role';
+    }
+
+    //detail role
+    public function showRole($id)
+    {
+        $role = Role::find($id);
+        $moduls = RoleModul::with('modul')->where('role_id', $id)->get();
+
+        // return response()->json($moduls);
+        // $role = Role::find($id);
+
+        return view('master.role.detail', [
+            'data' => $role,
+            'moduls' => $moduls,
+        ]);
     }
 
     public function destroyRole($id)

@@ -16,8 +16,8 @@ class Modul extends Model
         'id', 'nama_modul', 'tautan', 'icon', 'urutan'
     ];
 
-    public function menus()
+    public function roles()
     {
-        return $this->hasMany(Menu::class);
+        return $this->belongsToMany(Role::class, 'role_modul', 'modul_id', 'role_id');
     }
 }

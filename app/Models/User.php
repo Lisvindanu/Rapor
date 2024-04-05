@@ -70,4 +70,16 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class);
     }
+
+    public function accessibleModuls()
+    {
+        $accessibleModuls = collect();
+
+        foreach ($this->roles as $role) {
+            $moduls = $role->moduls;
+            $accessibleModuls = $accessibleModuls->merge($moduls);
+        }
+
+        return $accessibleModuls->unique('id');
+    }
 }

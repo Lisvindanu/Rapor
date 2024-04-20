@@ -18,7 +18,17 @@
                                         <li><a class="dropdown-item" href="{{ route('master.modul') }}">Modul</a></li>
                                         <li><a class="dropdown-item" href="{{ route('master.role') }}">Role</a></li>
                                         <li><a class="dropdown-item" href="{{ route('master.user') }}">User</a></li>
-
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Referensi
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item" href="{{ route('master.unit-kerja') }}">Unit
+                                                Kerja</a>
+                                        </li>
                                     </ul>
                                 </li>
                             </ul>

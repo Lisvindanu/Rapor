@@ -49,4 +49,28 @@ class UnitKerja extends Model
     {
         return $this->hasMany(UnitKerja::class, 'parent_unit', 'id')->with('childrenRecursive');
     }
+
+    // Accessor untuk menghitung jumlah childrenRecursive secara rekursif
+    public function getChildrenCountAttribute()
+    {
+        return $this->countRecursiveChildren($this);
+    }
+
+    protected function countRecursiveChildren($unit)
+    {
+        $count = 0; // Mulai hitung dari 0
+
+        // Cek apakah childUnit tidak null dan adalah koleksi
+        if ($unit->childUnit && $unit->childUnit->isNotEmpty()) {
+            foreach ($unit->childUnit as $child) {
+                // Tambahkan 1 untuk setiap child, dan tambahkan jumlah anak-anaknya
+                $count += 1 + $this->countRecursiveChildren($child);
+            }
+        }
+
+        return $count;
+    }
+
+    // Agar children_count bisa diakses seperti attribute biasa
+    protected $appends = ['children_count'];
 }

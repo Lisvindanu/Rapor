@@ -51,6 +51,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::get('/modul/edit/{id}', "MasterController@editModul")->name('master.modul.edit');
         Route::put('/modul/{id}', "MasterController@updateModul")->name('master.modul.update');
 
+
         // Route::delete('/modul/destroy-role-modul/{id}', "MasterController@destroyRoleModul")->name('deleteRoleModul');
 
         // menu
@@ -75,6 +76,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::delete('/user/{id}', "MasterController@destroyUser")->name('master.user.delete');
 
         // unitkerja
+        Route::get('/unit-kerja', "MasterController@unitkerja")->name('master.unit-kerja');
     });
 
     Route::prefix('rapor')->group(function () {

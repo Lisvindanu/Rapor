@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\KuesionerSDM;
 use App\Models\RoleModul;
 use App\Models\SoalKuesionerSDM;
+use App\Models\UnitKerja;
 
 class MasterController extends Controller
 {
@@ -314,5 +315,21 @@ class MasterController extends Controller
         ]);
 
         // return view('master.user.detail');
+    }
+
+    // unitkerja
+    public function unitkerja()
+    {
+        // get data unit kerja
+        $unitkerja = UnitKerja::with(['childUnit'])
+            ->where('kode_unit', 'UNPAS')
+            ->paginate(10);
+
+        // return response()->json($unitkerja);
+        $total = $unitkerja->total(); // Mendapatkan total data
+        return view('master.unit-kerja.index', [
+            'data' => $unitkerja,
+            'total' => $total
+        ]);
     }
 }

@@ -16,18 +16,20 @@ class Pegawai extends Model
         'id',
         'nama',
         'nip',
-        'nidn',
         'nik',
         'npwp',
-        'pangkat',
-        'jabatan_fungsional',
-        'jenis_pegawai',
-        'jk',
+        'golpangkat',
+        'jabatanfungsional',
+        'jenispegawai',
+        'jeniskelamin',
         'agama',
-        'tempat_lahir',
-        'tanggal_lahir',
+        'tempatlahir',
+        'tanggallahir',
         'email',
-        'no_hp',
+        'nohp',
+        'alamat',
+        'jabatanstruktural',
+        'pendidikanterakhir',
         'unit_kerja_id',
     ];
 
@@ -38,12 +40,12 @@ class Pegawai extends Model
 
     public function dosen()
     {
-        return $this->hasOne(Dosen::class, 'pegawai_id', 'id');
+        return $this->hasOne(Dosen::class, 'nip', 'nip');
     }
 
     // user
     public function user()
     {
-        return $this->hasOne(User::class, 'username', 'nip');
+        return $this->hasOne(User::class, 'key_relation', 'nip');
     }
 }

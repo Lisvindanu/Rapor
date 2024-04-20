@@ -22,14 +22,11 @@ class Dosen extends Model
      *
      * @var array
      */
-    protected $fillable = ['id', 'nama', 'nidn', 'nip', 'email', 'alamat', 'nohp', 'jeniskelamin', 'agama', 'tempatlahir', 'tanggallahir', 'homebase', 'golpangkat', 'jabatanfungsional', 'jabatanstruktural', 'pendidikanterakhir'];
+    protected $fillable = ['id', 'nidn', 'nip', 'homebase'];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'tanggallahir' => 'date',
-    ];
+    // pegawai
+    public function pegawai()
+    {
+        return $this->belongsTo(Pegawai::class, 'nip', 'nip');
+    }
 }

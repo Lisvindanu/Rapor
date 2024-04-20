@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use App\Models\Periode;
 use App\Models\KelasKuliah;
+use App\Models\Pegawai;
+use App\Models\UnitKerja;
+use SebastianBergmann\CodeCoverage\Report\Xml\Unit;
 
 class SinkronasiController extends Controller
 {
@@ -101,15 +104,47 @@ class SinkronasiController extends Controller
             // Simpan data dosen ke dalam tabel Dosen
             foreach ($data as $dosenData) {
 
-                $dosen = Dosen::where('nip', $dosenData['nip'])->first();
+                $pegawai = Pegawai::where('nip', $dosenData['nip'])->first();
 
                 // Jika data dosen sudah ada, perbarui
-                if ($dosen) {
-                    $dosen->update($dosenData);
+                if ($pegawai) {
+
+                    // ambil id dari unitkerja berdasarkan homebase $dosenData['homebase']
+                    $unitKerja = UnitKerja::firstOrCreate(['nama_unit' => $dosenData['homebase']]);
+                    $dosenData['unit_kerja_id'] = $unitKerja->id;
+
+                    // return response()->json($pegawai);
+                    $pegawai->update($dosenData);
+                    $dosen = Dosen::where('nip', $dosenData['nip'])->first();
+
+                    if ($dosen) {
+                        // Update kolom-kolom yang diinginkan pada objek Dosen
+                        $dosen->update([
+                            'nidn' => $dosenData['nidn'],
+                            'homebase' => $dosenData['homebase']
+                        ]);
+                    } else {
+                        // Jika objek Dosen belum ada, buat objek baru dan simpan ke database
+                        Dosen::create([
+                            'nidn' => $dosenData['nidn'],
+                            'nip' => $dosenData['nip'],
+                            'homebase' => $dosenData['homebase']
+                        ]);
+                    }
                 } else {
                     // Jika tidak, buat data dosen baru
-                    $dosenData['id'] = Str::uuid();
-                    Dosen::create($dosenData);
+                    $pegawai['id'] = Str::uuid();
+                    $unitKerja = UnitKerja::firstOrCreate(['nama_unit' => $dosenData['homebase']]);
+                    $dosenData['unit_kerja_id'] = $unitKerja->id;
+
+                    // return response()->json($unitKerja);
+
+                    Pegawai::create($dosenData);
+                    Dosen::create([
+                        'nidn' => $dosenData['nidn'],
+                        'nip' => $dosenData['nip'],
+                        'homebase' => $dosenData['homebase']
+                    ]);
                 }
             }
             // Tampilkan data yang diperoleh dari request

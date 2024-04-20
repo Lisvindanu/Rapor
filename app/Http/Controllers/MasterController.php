@@ -10,6 +10,7 @@ use App\Models\KuesionerSDM;
 use App\Models\RoleModul;
 use App\Models\SoalKuesionerSDM;
 use App\Models\UnitKerja;
+use App\Models\Pegawai;
 
 class MasterController extends Controller
 {
@@ -331,5 +332,23 @@ class MasterController extends Controller
             'data' => $unitkerja,
             'total' => $total
         ]);
+    }
+
+    // pegawai
+    public function pegawai()
+    {
+        // get data pegawai
+        $pegawai = Pegawai::with('unitKerja')->paginate(10);
+        $total = $pegawai->total(); // Mendapatkan total data
+        return view('master.pegawai.index', [
+            'data' => $pegawai,
+            'total' => $total
+        ]);
+    }
+
+    // sinkronasi
+    public function sinkronasi()
+    {
+        return view('master.sinkronasi.index');
     }
 }

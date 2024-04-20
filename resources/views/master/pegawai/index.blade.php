@@ -13,8 +13,8 @@
             <div class="container">
                 <div class="judul-modul">
                     <span>
-                        <h3>Unit Kerja</h3>
-                        <p>Daftar Unit Kerja</p>
+                        <h3>Pegawai</h3>
+                        <p>Daftar Pegawai</p>
                     </span>
                 </div>
             </div>
@@ -40,7 +40,11 @@
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row mb-2">
                                 <div class="col-4">
-
+                                    <div class="input-group">
+                                        <input type="text" name="query" id="querySearch" class="form-control"
+                                            placeholder="Cari berdasarkan NIP/Nama/Email">
+                                        <button id="btn-cari-search" type="button" class="btn btn-primary">Cari</button>
+                                    </div>
                                 </div>
                                 <div class="col-2"></div>
                                 <div class="col-6">
@@ -61,13 +65,13 @@
                                     <thead class="text-center">
                                         <tr>
                                             <th style="text-align: center;vertical-align: middle;width:10%;">
-                                                Kode
+                                                NIP
+                                            </th>
+                                            <th style="text-align: center;vertical-align: middle;">
+                                                Nama
                                             </th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Unit Kerja
-                                            </th>
-                                            <th style="text-align: center;vertical-align: middle;">
-                                                Parent Unit Kerja
                                             </th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Aksi
@@ -75,49 +79,23 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($data as $unitkerja)
+                                        @foreach ($data as $pegawai)
                                             <tr>
-                                                <td style="vertical-align: middle;">
-                                                    @if ($loop->depth > 0)
-                                                        <i class="fas fa-caret-right"
-                                                            style="margin-left: {{ ($loop->depth - 1) * 20 }}px;"></i>
-                                                    @endif
-                                                    {{ $unitkerja->kode_unit }}
+                                                <td style="text-align: center;vertical-align: middle;">{{ $pegawai->nip }}
+                                                </td>
+                                                <td style="text-align: center;vertical-align: middle;">{{ $pegawai->nama }}
                                                 </td>
                                                 <td style="text-align: center;vertical-align: middle;">
-                                                    {{ $unitkerja->nama_unit }}
+                                                    {{ $pegawai->unitkerja->nama_unit }}
                                                 </td>
                                                 <td style="text-align: center;vertical-align: middle;">
-                                                    {{ $unitkerja->parentUnit->nama_unit ?? '' }}
-                                                </td>
-                                                <td style="text-align: center;vertical-align: middle;">
-                                                    <a href="{{ route('master.user.edit', $unitkerja->id) }}"
-                                                        class="btn btn-sm btn-warning">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    {{-- detail button --}}
-                                                    <a href="{{ route('master.user.detail', $unitkerja->id) }}"
-                                                        class="btn btn-sm btn-info">
-                                                        <i class="fas fa-link"></i>
-                                                    </a>
-
-                                                    <form action="{{ route('master.user.delete', $unitkerja->id) }}"
-                                                        method="POST" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Anda yakin ingin menghapus role ini?')">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
+                                                    {{-- <a href="{{ route('master.pegawai.edit', $pegawai->id) }}"
+                                                        class="btn btn-warning btn-sm">Edit</a>
+                                                    <a href="{{ route('master.pegawai.delete', $pegawai->id) }}"
+                                                        class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a> --}}
                                                 </td>
                                             </tr>
-                                            {{-- Iterasi untuk child_unit --}}
-                                            @foreach ($unitkerja->childUnit as $childUnit)
-                                                @include('master.unit-kerja.childUnitKerja', [
-                                                    'unitkerja' => $childUnit,
-                                                ])
-                                            @endforeach
                                         @endforeach
                                     </tbody>
                                 </table>

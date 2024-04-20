@@ -9,6 +9,11 @@
                                 <li class="nav-item">
                                     <a class="nav-link active" aria-current="page"
                                         href="{{ route('master') }}">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" aria-current="page"
+                                        href="{{ route('master.sinkronasi') }}">Sinkronasi</a>
+                                </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -19,6 +24,10 @@
                                         <li><a class="dropdown-item" href="{{ route('master.role') }}">Role</a></li>
                                         <li><a class="dropdown-item" href="{{ route('master.user') }}">User</a></li>
                                     </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" aria-current="page"
+                                        href="{{ route('master.pegawai') }}">Pegawai</a>
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" role="button"

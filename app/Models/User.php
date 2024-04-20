@@ -26,6 +26,7 @@ class User extends Authenticatable
         'email',
         'password',
         'username', // Add this line
+        'key_relation', // Add this line
     ];
 
     /**
@@ -62,7 +63,7 @@ class User extends Authenticatable
     // pegawai
     public function pegawai()
     {
-        return $this->hasOne(Pegawai::class, 'nip', 'username');
+        return $this->hasOne(Pegawai::class, 'nip', 'key_relation');
     }
 
     // role

@@ -35,7 +35,12 @@ class GenerateUserFromPegawai extends Command
 
     public function handle()
     {
-        $pegawais = Pegawai::whereDoesntHave('user')->get();
+        // where jenispegawai != 'Tendik'
+
+        $pegawais = Pegawai::whereDoesntHave('user')
+            ->where('jenispegawai', '!=', 'Pegawai')
+            // ->where('jenispegawai', 'Pegawai')
+            ->get();
 
         foreach ($pegawais as $pegawai) {
             // Username adalah NIP
@@ -43,9 +48,15 @@ class GenerateUserFromPegawai extends Command
 
             // Cek apakah email sudah digunakan, jika sudah tambahkan suffix unik
             $email = $pegawai->email;
+
+            // check jika email null
+            if ($email == null) {
+                $email = $pegawai->nip . "@unpas.ac.id";
+            }
+
             $emailExists = User::where('email', $email)->exists();
             if ($emailExists) {
-                $email = $this->makeUniqueEmail($email);
+                $email = $pegawai->nip . rand(1, 10) . "@unpas.ac.id";
             }
 
             // Password default
@@ -57,6 +68,7 @@ class GenerateUserFromPegawai extends Command
                 'email' => $email,
                 'username' => $username,
                 'password' => Hash::make($password),
+                'key_relation' => $pegawai->nip,
             ]);
 
             // Hubungkan user dengan pegawai

@@ -1,5 +1,10 @@
 <tr>
-    <td style="text-align: center;vertical-align: middle;">{{ $unitkerja->kode_unit }}</td>
+    <td style="vertical-align: middle;">
+        @if ($loop->depth > 0)
+            <i class="fas fa-caret-right" style="margin-left: {{ ($loop->depth - 1) * 20 }}px;"></i>
+        @endif
+        {{ $unitkerja->kode_unit }}
+    </td>
     <td style="text-align: center;vertical-align: middle;">{{ $unitkerja->nama_unit }}</td>
     <td style="text-align: center;vertical-align: middle;">{{ $unitkerja->parentUnit->nama_unit ?? '-' }}</td>
     <td style="text-align: center;vertical-align: middle;">

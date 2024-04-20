@@ -75,8 +75,14 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::put('/user/{id}', "MasterController@updateUser")->name('master.user.update');
         Route::delete('/user/{id}', "MasterController@destroyUser")->name('master.user.delete');
 
+        // pegawai
+        Route::get('/pegawai', "MasterController@pegawai")->name('master.pegawai');
+
         // unitkerja
         Route::get('/unit-kerja', "MasterController@unitkerja")->name('master.unit-kerja');
+
+        // sinkronasi
+        Route::get('/sinkronasi', "MasterController@sinkronasi")->name('master.sinkronasi');
     });
 
     Route::prefix('rapor')->group(function () {

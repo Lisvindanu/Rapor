@@ -42,12 +42,12 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="mb-3">
-                                        {{-- <div class="input-group">
+                                        <div class="input-group">
                                             <input type="text" name="query" id="querySearch" class="form-control"
                                                 placeholder="Cari berdasarkan Nama Soal">
                                             <button id="btn-cari-search" type="button"
                                                 class="btn btn-primary">Cari</button>
-                                        </div> --}}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-2"></div>
@@ -56,10 +56,10 @@
                                         {{-- <a href="{{ route('indikator-kinerja') }}" class="btn btn-info"
                                             style="color:#fff">Generate Data</a> --}}
                                         {{-- button tambah --}}
-                                        <button class="btn btn-success" type="button" data-bs-toggle="modal"
+                                        {{-- <button class="btn btn-success" type="button" data-bs-toggle="modal"
                                             data-bs-target="#uploadModal">
                                             Unggah Data
-                                        </button>
+                                        </button> --}}
                                         <a href="{{ route('kuesioner.banksoal.create') }}" class="btn btn-primary"
                                             style="color:#fff">Tambah
                                             Soal</a>

@@ -182,4 +182,8 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         Route::get('/get-roles/{modul_id}', 'GateController@showRole')->name('getRoles');
     });
+
+    Route::prefix('export')->group(function () {
+        Route::get('/download-template-upload-pertanyaan', "ExcelController@uploadTemplatePertanyaan")->name('export.uploadTemplatePertanyaan');
+    });
 });

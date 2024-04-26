@@ -7,7 +7,7 @@ use Maatwebsite\Excel\Concerns\FromView;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class RaporExport implements FromView, ShouldAutoSize
+class PertanyaanExport implements FromView, ShouldAutoSize
 {
     protected $data;
 
@@ -18,11 +18,6 @@ class RaporExport implements FromView, ShouldAutoSize
 
     public function view(): View
     {
-        if ($this->data) {
-            return View('exports.template-rapor-kinerja', [
-                'data' => $this->data
-            ]);
-        }
-        return View('exports.template-rapor-kinerja');
+        return View('exports.template-upload-pertanyaan');
     }
 }

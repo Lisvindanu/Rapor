@@ -208,4 +208,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     Route::prefix('import')->group(function () {
         Route::post('/import-kuesioner-sdm', "ImportController@importKuesionerSDM")->name('importKuesionerSDM');
     });
+
+    //test
+    Route::get('/test', "TestController@index");
 });

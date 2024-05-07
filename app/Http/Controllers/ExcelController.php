@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Exports\TemplateExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PertanyaanExport;
+use App\Exports\KuesionerSDMExport;
 
 
 class ExcelController extends Controller
@@ -43,10 +44,11 @@ class ExcelController extends Controller
     //templateuploadpertanyaan
     public function uploadTemplatePertanyaan()
     {
-        // return Excel::download(new RaporExport, 'template_rapor.xlsx');
         return Excel::download(new PertanyaanExport, 'template_pertanyaan.xlsx');
-        // return Excel::download(new TemplateExport, 'template_dokumen.xlsx');
-        // return Excel::download(new UploadPertanyaanExport, 'template_upload_pertanyaan.xlsx');
-        // return view('kuesioner.banksoal.uploadpertanyaan');
+    }
+
+    public function downloadTemplateKuesionerSDM()
+    {
+        return Excel::download(new KuesionerSDMExport, 'template-upload-kuesionersdm.xlsx');
     }
 }

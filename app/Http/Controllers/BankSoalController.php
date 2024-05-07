@@ -11,9 +11,9 @@ use App\Models\Soal;
 
 class BankSoalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $dataSoal = Soal::with(['pertanyaan'])->paginate(10);
+        $dataSoal = Soal::with(['pertanyaan'])->orderBy('created_at', 'desc')->paginate($request->get('perPage', 10));
         $total = $dataSoal->total(); // Mendapatkan total data
 
         // return response()->json($dataRapor);
@@ -94,6 +94,20 @@ class BankSoalController extends Controller
         $soal = Soal::where(function ($q) use ($query) {
             $q->where('nama_soal', 'ilike', "%{$query}%");
         })->select('id', 'nama_soal')->get();
+
+        return response()->json($soal);
+    }
+
+    public function getDataSoal(Request $request)
+    {
+        $soal = Soal::when($request->has('search'), function ($query) use ($request) {
+            $search = $request->get('search');
+            $query->where(function ($query) use ($search) {
+                $query->where('nama_soal', 'ilike', "%$search%");
+            });
+        })
+            ->with('pertanyaan')
+            ->paginate($request->get('perPage', 10));
 
         return response()->json($soal);
     }

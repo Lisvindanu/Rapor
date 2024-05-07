@@ -56,10 +56,10 @@
                                         {{-- <a href="{{ route('indikator-kinerja') }}" class="btn btn-info"
                                             style="color:#fff">Generate Data</a> --}}
                                         {{-- button tambah --}}
-                                        {{-- <button class="btn btn-success" type="button" data-bs-toggle="modal"
+                                        <button class="btn btn-success" type="button" data-bs-toggle="modal"
                                             data-bs-target="#uploadModal">
                                             Unggah Data
-                                        </button> --}}
+                                        </button>
                                         <a href="{{ route('kuesioner.banksoal.create') }}" class="btn btn-primary"
                                             style="color:#fff">Tambah
                                             Soal</a>
@@ -131,7 +131,8 @@
                                     </table>
                                 </div>
                                 <!-- Tambahkan container untuk pagination di bawah tabel -->
-                                <div id="data-info">
+                                @include('komponen.pagination')
+                                {{-- <div id="data-info">
                                     Total data: <span id="total-data">{{ $total }}</span>
                                 </div>
                                 <div id="pagination-container" class="mt-3">
@@ -157,7 +158,7 @@
                                             <a href="{{ $data->url($data->currentPage() + 1) }}" class="page-link">Next</a>
                                         </li>
                                     </ul>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
@@ -173,22 +174,21 @@
                         </div>
                         <div class="modal-body">
                             <!-- Form untuk mengunggah file -->
-                            <form id="uploadForm" action="{{ url('/rapor/import-rapor-kinerja') }}" method="POST"
-                                enctype="multipart/form-data">
+                            <form id="uploadForm" action="{{ route('kuesioner.banksoal.pertanyaan.upload') }}"
+                                method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
                                     <label for="file" class="form-label">Pilih File:</label>
                                     <input type="file" class="form-control" id="file" name="file" required>
                                 </div>
                                 {{-- <div class="mb-3">
-                                    <button type="button" class="btn btn-success" id="exportExcelModalBtn">Export to
-                                        Excel</button>
-                                </div> --}}
+                                 <button type="button" class="btn btn-success" id="exportExcelModalBtn">Export to
+                                     Excel</button>
+                             </div> --}}
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-info" id="btn-template-dokumen"
                                         style="color: white">Template
                                         Dokumen</button>
-
                                     <button type="submit" class="btn btn-primary">Unggah</button>
                                 </div>
                             </form>
@@ -196,6 +196,7 @@
                     </div>
                 </div>
             </div>
+
 
         </div>
     </div>
@@ -207,20 +208,28 @@
         const btnCari2 = document.querySelector("#btn-cari-search");
 
         btnCari2.addEventListener("click", function() {
-            searchData(1); // Memanggil searchData dengan parameter 1 untuk halaman pertama
+            searchData(10); // Memanggil searchData dengan parameter 1 untuk halaman pertama
         });
 
         function searchData(page) {
             const query = document.querySelector("input[name='query']").value;
 
+            // Memeriksa apakah query kosong atau tidak
+            const searchData = {
+                search: query,
+                perPage: page
+            };
+
+            // Jika query tidak kosong, sertakan dalam data yang dikirimkan
+            if (query.trim() !== "") {
+                searchData.search = query;
+            }
+
             // Kirim permintaan AJAX ke server dengan opsi yang dipilih
             $.ajax({
-                url: "{{ url('api/rapor/rapor-kinerja') }}",
+                url: "{{ route('getDataSoal') }}",
                 method: "GET",
-                data: {
-                    search: query,
-                    page: page // Mengirimkan parameter page
-                },
+                data: searchData,
                 success: function(response) {
                     updateTable(response);
                     updatePagination(response); // Memanggil fungsi updatePagination dengan response
@@ -236,9 +245,9 @@
             const tableBody = document.querySelector("#tabel-body");
             tableBody.innerHTML = "";
 
-            const dataRapor = response.data;
+            const dataSoal = response.data;
 
-            if (dataRapor.length === 0) {
+            if (dataSoal.length === 0) {
                 const emptyRow = document.createElement("tr");
                 emptyRow.innerHTML = `
                 <td colspan="6" class="text-center">No data available</td>
@@ -247,71 +256,40 @@
                 return;
             }
 
-            dataRapor.forEach(function(rapor) {
+            dataSoal.forEach(function(soal) {
                 const newRow = document.createElement("tr");
+                newRow.style.textAlign = "center";
+                newRow.style.verticalAlign = "middle";
                 newRow.innerHTML = `
-                <td>${rapor.dosen_nip}</td>
-                <td>${rapor.dosen.nama}</td>
-                <td>${rapor.bkd_total}</td>
-                <td>${rapor.edom_materipembelajaran}</td>
-                <td>${rapor.edom_pengelolaankelas}</td>
-                <td>${rapor.edom_prosespengajaran}</td>
-                <td>${rapor.edom_penilaian}</td>
-                <td>${rapor.edasep_atasan}</td>
-                <td>${rapor.edasep_sejawat}</td>
-                <td>${rapor.edasep_bawahan}</td>
+                <td hidden>${soal.id}</td>
+                <td>${soal.nama_soal}</td>
+                <td>${soal.keterangan}</td>
+                <td>${soal.jumlah_pertanyaan}</td>
+                <td>${soal.created_at}</td>
                 <td>
-                    <button type="button" class="btn btn-sm btn-danger delete">
-                        <i class="fas fa-trash-alt fa-xs"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-primary save">
-                        <i class="fas fa-save fa-xs"></i>
-                    </button>
-                    <a href="#" class="btn btn-sm btn-info detail">
+                    ${soal.publik == 1 ? '<i class="fas fa-check-circle" style="color: green"></i>' : '<i class="fas fa-times-circle" style="color: red"></i>'}
+                </td>
+                
+                <td>
+                    <a href="/kuesioner/banksoal/data-soal/${soal.id}" class="btn btn-sm btn-info detail">
                         <i class="fas fa-link fa-xs"></i>
                     </a>
+                   
+                    <a href="#" class="btn btn-sm btn-warning edit">
+                        <i class="fas fa-edit fa-xs"></i>
+                     </a>
+                    
+                    
                 </td>
             `;
 
                 tableBody.appendChild(newRow);
             });
         }
-        // Script untuk pagination
-        function updatePagination(response) {
-            const paginationContainer = document.querySelector("#pagination-container");
-            paginationContainer.innerHTML = '';
 
-            const totalPages = response.last_page;
-            const currentPage = response.current_page;
-            const totalData = response.total; // Menambah total data dari respons
-
-            let paginationHTML = '';
-
-            if (totalPages > 1) {
-                paginationHTML += `
-            <ul class="pagination justify-content-center">
-                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="fetchData(${currentPage - 1})">Previous</a>
-                </li>`;
-
-                for (let i = 1; i <= totalPages; i++) {
-                    paginationHTML += `
-                <li class="page-item ${currentPage === i ? 'active' : ''}">
-                    <a class="page-link" href="#" onclick="fetchData(${i})">${i}</a>
-                </li>`;
-                }
-
-                paginationHTML += `
-            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                <a class="page-link" href="#" onclick="fetchData(${currentPage + 1})">Next</a>
-            </li>
-        </ul>`;
-            }
-            paginationContainer.innerHTML = paginationHTML;
-
-            // Menampilkan total data
-            const totalDataElement = document.querySelector("#total-data");
-            totalDataElement.textContent = totalData;
-        }
+        document.getElementById("btn-template-dokumen").addEventListener("click", function() {
+            window.location.href = "{{ route('export.uploadTemplatePertanyaan') }}";
+        });
     </script>
+    <script src="{{ asset('js/pagination.js') }}"></script>
 @endsection

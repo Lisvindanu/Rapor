@@ -50,7 +50,8 @@
                             </div>
                             <div class="col-8">
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <a href="/kuesioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
+                                    <a href="{{ route('kuesioner.kuesioner-sdm') }}" class="btn btn-secondary"
+                                        type="button">Kembali</a>
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <button class="btn btn-primary" id="btnTambahSoal">Tambah Soal</button>
                                     </div>

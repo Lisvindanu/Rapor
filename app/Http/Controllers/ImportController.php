@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KuesionerSDM;
 use Illuminate\Http\Request;
 use Exception;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Rapor;
 use Maatwebsite\Excel\Row;
 use App\Models\Pegawai;
+use App\Models\Pertanyaan;
+use App\Models\Soal;
+use Carbon\Carbon;
 
 class ImportController extends Controller
 {
@@ -78,12 +82,13 @@ class ImportController extends Controller
         return redirect()->back()->with('message', $message);
     }
 
-    public function importRaporKinerja(Request $request)
+    public function importPertanyaan(Request $request)
     {
         $message = '';
         //validate file
         $validasi = $request->validate([
-            'file' => 'required|mimes:xlsx,xls'
+            'file' => 'required|mimes:xlsx,xls',
+            // 'soal_id' => 'required'
         ]);
 
         // Cek apakah file yang diupload adalah file excel
@@ -92,50 +97,161 @@ class ImportController extends Controller
                 $file = $request->file('file');
                 $data = Excel::toArray([], $file);
 
+                //buat dulu soal
+                $soal = new Soal();
+                foreach ($data[0] as $row) {
+                    if ($row[0] == 'Nama Kelompok Soal') {
+                        $soal->nama_soal = $row[1];
+                    }
+                    if ($row[0] == 'Deskripsi Soal') {
+                        $soal->keterangan = $row[1];
+                    }
+                    if (empty($row[0]) || $row[0] == '' || $row[0] == null) {
+                        break;
+                    }
+                }
+
+                $soal->save();
+
+                // get soal id
+                $validasi['soal_id'] = $soal->id;
+
+                array_shift($data[0]);
+                array_shift($data[0]);
+                array_shift($data[0]);
+
+                // Hapus baris pertama dan ke dua pada array untuk menghilangkan header
+                array_shift($data[0]);
+
+                // return response()->json([
+                //     'data' => $data
+                // ]);
+
+                $pertanyaans = [];
+                $count = 1;
+
+                foreach ($data[0] as $row) {
+                    $pertanyaan = [];
+
+                    if (empty($row[0]) || $row[0] == '' || $row[0] == null) {
+                        break;
+                    } else {
+
+                        if ($row[1] == "R") {
+                            $pertanyaan = [
+                                'jenis_pertanyaan' => "range_nilai",
+                                'pertanyaan' => $row[2],
+                                'scale_range_min' => $row[3],
+                                'scale_range_max' => $row[4],
+                                'scale_text_min' => $row[5],
+                                'scale_text_max' => $row[6]
+                            ];
+                        } elseif ($row[1] == "E") {
+                            $pertanyaan = [
+                                'jenis_pertanyaan' => "essay",
+                                'pertanyaan' => $row[2]
+                            ];
+                        } else {
+                            return response()->json([
+                                'message' => 'Jenis pertanyaan tidak ditemukan pada soal nomor ' . $count
+                            ], 404);
+                        }
+
+                        $pertanyaan['soal_id'] = $validasi['soal_id'];
+                        $pertanyaan['no_pertanyaan'] = $row[0];
+
+                        $pertanyaans[] = $pertanyaan;
+                    }
+                    $count++;
+                }
+
+
+                foreach ($pertanyaans as $pertanyaan) {
+                    Pertanyaan::create($pertanyaan);
+                }
+
+                $message = 'File berhasil diupload';
+            } catch (\Exception $e) {
+                $message = $e->getMessage();
+            }
+        } else {
+            // Jika file yang diupload bukan file excel
+            $message = 'File yang diupload bukan file excel';
+        }
+        return redirect()->back()->with('message', $message);
+    }
+
+    public function importKuesionerSDM(Request $request)
+    {
+        $message = '';
+        //validate file
+        $validasi = $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+            // 'soal_id' => 'required'
+        ]);
+
+        // Cek apakah file yang diupload adalah file excel
+        if ($validasi) {
+            try {
+                $file = $request->file('file');
+                $data = Excel::toArray([], $file);
+
+                $listKuesionerSDM = [];
+                $count = 1;
+
                 // Hapus baris pertama dan ke dua pada array untuk menghilangkan header
                 array_shift($data[0]);
 
                 foreach ($data[0] as $row) {
-                    //update data Rapor
-                    $pegawai = Pegawai::where('nip', $row[2])
-                        ->first();
+                    $kuesionerSDM = [];
 
-                    // dd($rapor);
-                    // print_r($rapor);
-
-                    if ($pegawai) {
-                        $pegawai->nama = $row[1];
-                        $pegawai->nik = $row[4];
-                        $pegawai->npwp = $row[5];
-                        $pegawai->pangkat = $row[6];
-                        $pegawai->jabatan_fungsional = $row[7];
-                        $pegawai->jenis_pegawai = $row[8];
-                        $pegawai->jk = $row[9];
-                        $pegawai->agama = $row[10];
-                        $pegawai->tempat_lahir = $row[11];
-                        $pegawai->email = $row[13];
-                        $pegawai->no_hp = $row[14];
-                        $pegawai->unit_kerja_id = $row[15];
-                        $pegawai->save();
+                    if (empty($row[0]) || $row[0] == '' || $row[0] == null) {
+                        break;
                     } else {
-                        // insert data Pegawai
-                        $pegawai = new Pegawai();
-                        $pegawai->nama = $row[1];
-                        $pegawai->nip = $row[2];
-                        $pegawai->nik = $row[4];
-                        $pegawai->npwp = $row[5];
-                        $pegawai->pangkat = $row[6];
-                        $pegawai->jabatan_fungsional = $row[7];
-                        $pegawai->jenis_pegawai = $row[8];
-                        $pegawai->jk = $row[9];
-                        $pegawai->agama = $row[10];
-                        $pegawai->tempat_lahir = $row[11];
-                        $pegawai->email = $row[13];
-                        $pegawai->no_hp = $row[14];
-                        $pegawai->unit_kerja_id = $row[15];
-                        $pegawai->save();
+
+                        if ($row[4] == 'A') {
+                            $kuesionerSDM = [
+                                'jenis_kuesioner' => "Atasan",
+                            ];
+                        } elseif ($row[4] == 'S') {
+                            $kuesionerSDM = [
+                                'jenis_kuesioner' => "Sejawat",
+                            ];
+                        } elseif ($row[4] == 'B') {
+                            $kuesionerSDM = [
+                                'jenis_kuesioner' => "Bawahan",
+                            ];
+                        } else {
+                            $message = "Upload Gagal : Jenis kuesioner tidak ditemukan pada daftar nomor " . $count;
+                            return redirect()->back()->with('message', $message);
+                        }
+
+                        $pegawai = Pegawai::where('nip', $row[2])->first();
+                        if ($pegawai) {
+                            $kuesionerSDM['subjek_penilaian'] = $pegawai->nip;
+                        } else {
+                            $message = "Upload Gagal : Pegawai dengan nip " . $row[2] . " tidak ditemukan pada daftar nomor " . $count;
+                            return redirect()->back()->with('message', $message);
+                        }
+
+                        $kuesionerSDM['kode_periode'] = $row[0];
+                        $kuesionerSDM['nama_kuesioner'] = $row[1];
+                        $kuesionerSDM['jadwal_kegiatan_mulai'] =  Carbon::createFromTimestamp(($row[5] - 25569) * 86400)->format('Y-m-d');
+                        $kuesionerSDM['jadwal_kegiatan_selesai'] = Carbon::createFromTimestamp(($row[6] - 25569) * 86400)->format('Y-m-d');
+                        // $kuesionerSDM['jadwal_kegiatan_selesai'] = $row[6];
+
+                        $listKuesionerSDM[] = $kuesionerSDM;
                     }
+                    $count++;
                 }
+
+                // return response()->json([
+                //     'data' => $listKuesionerSDM
+                // ]);
+                foreach ($listKuesionerSDM as $kuesionerSDM) {
+                    KuesionerSDM::create($kuesionerSDM);
+                }
+
                 $message = 'File berhasil diupload';
             } catch (\Exception $e) {
                 $message = $e->getMessage();

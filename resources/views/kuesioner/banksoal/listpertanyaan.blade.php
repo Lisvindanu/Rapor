@@ -51,10 +51,10 @@
                             <div class="col-8">
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <a href="/kuesioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
-                                    <button class="btn btn-success" type="button" data-bs-toggle="modal"
+                                    {{-- <button class="btn btn-success" type="button" data-bs-toggle="modal"
                                         data-bs-target="#uploadModal">
                                         Unggah Data
-                                    </button>
+                                    </button> --}}
                                     <a href="{{ route('kuesioner.banksoal.create-pertanyaan', ['id' => $data->id]) }}"
                                         class="btn btn-primary" style="color:#fff">Tambah
                                     </a>
@@ -185,9 +185,12 @@
                 </div>
                 <div class="modal-body">
                     <!-- Form untuk mengunggah file -->
-                    <form id="uploadForm" action="{{ url('/rapor/import-rapor-kinerja') }}" method="POST"
+                    <form id="uploadForm" action="{{ route('kuesioner.banksoal.pertanyaan.upload') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
+                        {{-- hidden soal_id --}}
+
+                        <input type="hidden" name="soal_id" value="{{ $data->id }}">
                         <div class="mb-3">
                             <label for="file" class="form-label">Pilih File:</label>
                             <input type="file" class="form-control" id="file" name="file" required>
@@ -200,7 +203,6 @@
                             <button type="button" class="btn btn-info" id="btn-template-dokumen"
                                 style="color: white">Template
                                 Dokumen</button>
-
                             <button type="submit" class="btn btn-primary">Unggah</button>
                         </div>
                     </form>
@@ -212,4 +214,9 @@
 @endsection
 
 @section('js-tambahan')
+    <script>
+        document.getElementById("btn-template-dokumen").addEventListener("click", function() {
+            window.location.href = "{{ route('export.uploadTemplatePertanyaan') }}";
+        });
+    </script>
 @endsection

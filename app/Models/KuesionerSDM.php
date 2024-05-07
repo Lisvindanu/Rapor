@@ -18,7 +18,9 @@ class KuesionerSDM extends Model
         'nama_kuesioner',
         'subjek_penilaian',
         'jenis_kuesioner',
-        'jadwal_kegiatan',
+        // 'jadwal_kegiatan',
+        'jadwal_kegiatan_mulai',
+        'jadwal_kegiatan_selesai',
         'nilai_akhir'
     ];
 

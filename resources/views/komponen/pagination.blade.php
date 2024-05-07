@@ -1,12 +1,32 @@
 <!-- Tambahkan container untuk pagination di bawah tabel -->
-<div id="data-info">
-    Total data: <span id="total-data">{{ $total }}</span>
-</div>
-<div id="pagination-container" class="mt-3">
+
+<div id="pagination-container" class="">
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-11">
+                <div id="data-info">
+                    Total data: <span id="total-data">{{ $total }}</span>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="">
+                    {{-- <label for="perPage" class="form-label">Data per Halaman:</label> --}}
+                    <select id="perPage" class="form-select" onchange="location = this.value;">
+                        @foreach ([10, 20, 50, 100] as $size)
+                            <option value="{{ request()->fullUrlWithQuery(['perPage' => $size]) }}"
+                                {{ request('perPage', 10) == $size ? 'selected' : '' }}>
+                                {{ $size }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Tempat untuk menampilkan pagination links -->
     <!-- Bagian tombol pagination pada tabel -->
-    <ul class="pagination justify-content-center">
+    <ul class="pagination justify-content-md-end mt-3">
         <!-- Tombol Previous -->
         <li class="page-item {{ $data->currentPage() == 1 ? 'disabled' : '' }}">
             <a href="{{ $data->url(max(1, $data->currentPage() - 1)) }}" class="page-link">Previous</a>

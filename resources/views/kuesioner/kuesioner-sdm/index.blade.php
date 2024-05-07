@@ -114,7 +114,9 @@
                                                 </th>
                                                 <th style="text-align: center;vertical-align: middle;">Jenis Penilaian</th>
                                                 <th style="text-align: center;vertical-align: middle;">
-                                                    Jadwal Kegiatan</th>
+                                                    Jadwal Kegiatan Mulai</th>
+                                                <th style="text-align: center;vertical-align: middle;">
+                                                    Jadwal Kegiatan Selesai</th>
 
                                                 <th style="text-align: center;vertical-align: middle;">
                                                     Soal diisi
@@ -137,7 +139,8 @@
                                                         <td>{{ $kusionerSDM->nama_kuesioner }}</td>
                                                         <td>{{ $kusionerSDM->pegawai->nama }}</td>
                                                         <td>{{ $kusionerSDM->jenis_kuesioner }}</td>
-                                                        <td>{{ $kusionerSDM->jadwal_kegiatan }}</td>
+                                                        <td>{{ $kusionerSDM->jadwal_kegiatan_mulai }}</td>
+                                                        <td>{{ $kusionerSDM->jadwal_kegiatan_selesai }}</td>
                                                         <td>
                                                             @if ($kusionerSDM->publik == 1)
                                                                 <i class="fas fa-check-circle" style="color: green"></i>
@@ -165,42 +168,14 @@
                                     </table>
                                 </div>
                                 <!-- Tambahkan container untuk pagination di bawah tabel -->
-                                <div id="data-info">
-                                    Total data: <span id="total-data">{{ $total }}</span>
-                                </div>
-                                <div id="pagination-container" class="mt-3">
-
-                                    <!-- Tempat untuk menampilkan pagination links -->
-                                    <!-- Bagian tombol pagination pada tabel -->
-                                    <ul class="pagination justify-content-center">
-                                        <!-- Tombol Previous -->
-                                        <li class="page-item {{ $data->currentPage() == 1 ? 'disabled' : '' }}">
-                                            <a href="{{ $data->url(1) }}" class="page-link">Previous</a>
-                                        </li>
-
-                                        <!-- Nomor Halaman -->
-                                        @for ($i = 1; $i <= $data->lastPage(); $i++)
-                                            <li class="page-item {{ $data->currentPage() == $i ? 'active' : '' }}">
-                                                <a href="{{ $data->url($i) }}" class="page-link">{{ $i }}</a>
-                                            </li>
-                                        @endfor
-
-                                        <!-- Tombol Next -->
-                                        <li
-                                            class="page-item {{ $data->currentPage() == $data->lastPage() ? 'disabled' : '' }}">
-                                            <a href="{{ $data->url($data->currentPage() + 1) }}"
-                                                class="page-link">Next</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                @include('komponen.pagination')
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Modal -->
-            <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -210,7 +185,7 @@
                         </div>
                         <div class="modal-body">
                             <!-- Form untuk mengunggah file -->
-                            <form id="uploadForm" action="{{ url('/rapor/import-rapor-kinerja') }}" method="POST"
+                            <form id="uploadForm" action="{{ route('importKuesionerSDM') }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
@@ -247,11 +222,13 @@
         const btnCari2 = document.querySelector("#btn-cari-search");
 
         btnCari1.addEventListener("click", function() {
-            fetchData(1); // Memanggil fetchData dengan parameter 1 untuk halaman pertama
+            var perPage = document.getElementById("perPage").value;
+            fetchData(perPage); // Memanggil fetchData dengan parameter 1 untuk halaman pertama
         });
 
         btnCari2.addEventListener("click", function() {
-            searchData(1); // Memanggil searchData dengan parameter 1 untuk halaman pertama
+            var perPage = document.getElementById("perPage").value;
+            searchData(perPage); // Memanggil searchData dengan parameter 1 untuk halaman pertama
         });
 
         function fetchData(page) {
@@ -325,12 +302,13 @@
                 <td>${kuesionerSDM.nama_kuesioner}</td>
                 <td>${kuesionerSDM.pegawai.nama}</td>
                 <td>${kuesionerSDM.jenis_kuesioner}</td>
-                <td>${kuesionerSDM.jadwal_kegiatan}</td>
+                <td>${kuesionerSDM.jadwal_kegiatan_mulai}</td>
+                <td>${kuesionerSDM.jadwal_kegiatan_selesai}</td>
                 <td>
                     ${kuesionerSDM.publik == 1 ? '<i class="fas fa-check-circle" style="color: green"></i>' : '<i class="fas fa-times-circle" style="color: red"></i>'}
                 </td>
                 <td>
-                    <a href="#" class="btn btn-sm btn-info detail">
+                    <a href="/kuesioner/kuesioner-sdm/detail/${kuesionerSDM.id}" class="btn btn-sm btn-info detail">
                         <i class="fas fa-link fa-xs"></i>
                     </a>
                    
@@ -346,54 +324,10 @@
                 tableBody.appendChild(newRow);
             });
         }
-        // Script untuk pagination
-        function updatePagination(response) {
-            const paginationContainer = document.querySelector("#pagination-container");
-            paginationContainer.innerHTML = '';
-
-            const totalPages = response.last_page;
-            const currentPage = response.current_page;
-            const totalData = response.total; // Menambah total data dari respons
-
-            let paginationHTML = '';
-
-            if (totalPages > 1) {
-                paginationHTML += `
-            <ul class="pagination justify-content-center">
-                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="fetchData(${currentPage - 1})">Previous</a>
-                </li>`;
-
-                for (let i = 1; i <= totalPages; i++) {
-                    paginationHTML += `
-                <li class="page-item ${currentPage === i ? 'active' : ''}">
-                    <a class="page-link" href="#" onclick="fetchData(${i})">${i}</a>
-                </li>`;
-                }
-
-                paginationHTML += `
-            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                <a class="page-link" href="#" onclick="fetchData(${currentPage + 1})">Next</a>
-            </li>
-        </ul>`;
-            }
-            paginationContainer.innerHTML = paginationHTML;
-
-            // Menampilkan total data
-            const totalDataElement = document.querySelector("#total-data");
-            totalDataElement.textContent = totalData;
-        }
 
         // Fungsi untuk menangani ketika tombol template dokumen ditekan
         document.getElementById("btn-template-dokumen").addEventListener("click", function() {
-            // Mendapatkan nilai dari periode-dropdown dan program-studi-dropdown
-            var selectedPeriode = document.getElementById("periode-dropdown").value;
-            var selectedProgramStudi = document.getElementById("program-studi-dropdown").value;
-
-            // Mengarahkan pengguna ke URL yang tepat dengan parameter periode dan program studi
-            window.location.href = "{{ url('/rapor/download-template-rapor-kinerja') }}?periode=" +
-                selectedPeriode + "&program_studi=" + selectedProgramStudi;
-
+            window.location.href = "{{ route('export.downloadTemplateKuesionerSDM') }}";
         });
 
         // Hapus baris tabel
@@ -422,4 +356,5 @@
             }
         });
     </script>
+    <script src="{{ asset('js/pagination.js') }}"></script>
 @endsection

@@ -7,6 +7,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\RaporController;
 use App\Http\Controllers\KuisionerController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\KuesionerController;
+use App\Http\Controllers\BankSoalController;
+use App\Http\Controllers\ImportController;
+use App\Http\Controllers\PertanyaanController;
+use App\Http\Controllers\KuesionerSDMController;
+use App\Http\Controllers\PenilaianController;
+use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\PegawaiController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +127,10 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         Route::get('/banksoal', "BankSoalController@index")->name('kuesioner.banksoal');
         Route::get('/banksoal/create', "BankSoalController@create")->name('kuesioner.banksoal.create');
+
+        //import data banksoal excel
+        // Route::post('/banksoal/import-soal', "ImportController@importSoal")->name('kuesioner.banksoal.import-soal');
+
         Route::post('/banksoal/store', "BankSoalController@store");
         Route::delete('/banksoal/{id}', "BankSoalController@destroy");
 
@@ -131,6 +144,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::get('/banksoal/pertanyaan/create/{id}', "pertanyaanController@create")->name('kuesioner.banksoal.create-pertanyaan');
         Route::post('/banksoal/pertanyaan/store', "pertanyaanController@store");
         Route::get('/banksoal/pertanyaan/{id}', "pertanyaanController@show")->name('kuesioner.banksoal.list-pertanyaan');
+        Route::post('/banksoal/pertanyaan/upload', "ImportController@importPertanyaan")->name('kuesioner.banksoal.pertanyaan.upload');
 
         //kuesioner-sdm
         Route::get('/kuesioner-sdm', "KuesionerSDMController@index")->name('kuesioner.kuesioner-sdm');
@@ -181,9 +195,17 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::post('/add-role-modul', "MasterController@tambahRoleModul")->name('addRoleModul');
 
         Route::get('/get-roles/{modul_id}', 'GateController@showRole')->name('getRoles');
+
+        // getdatasoal
+        Route::get('/get-data-soal', "BankSoalController@getDataSoal")->name('getDataSoal');
     });
 
     Route::prefix('export')->group(function () {
         Route::get('/download-template-upload-pertanyaan', "ExcelController@uploadTemplatePertanyaan")->name('export.uploadTemplatePertanyaan');
+        Route::get('/download-template-kuesioner-sdm', "ExcelController@downloadTemplateKuesionerSDM")->name('export.downloadTemplateKuesionerSDM');
+    });
+
+    Route::prefix('import')->group(function () {
+        Route::post('/import-kuesioner-sdm', "ImportController@importKuesionerSDM")->name('importKuesionerSDM');
     });
 });

@@ -11,13 +11,32 @@
 <body>
     <table>
         <tr>
-            <th rowspan="1" style="text-align: center;vertical-align: middle;">Nomor</th>
-            <th rowspan="1" style="text-align: center;vertical-align: middle;">Jenis Jawaban</th>
-            <th rowspan="1" style="text-align: center;vertical-align: middle;">Pertanyaan</th>
-            <th rowspan="1" style="text-align: center;vertical-align: middle;">Nilai Min (Khusus Range Nilai)</th>
-            <th rowspan="1" style="text-align: center;vertical-align: middle;">Nilai Max (Khusus Range Nilai)</th>
-            <th rowspan="1" style="text-align: center;vertical-align: middle;">Text Min (Khusus Range Nilai)</th>
-            <th rowspan="1" style="text-align: center;vertical-align: middle;">Text Max (Khusus Range Nilai)</th>
+            <td><strong>Nama Kelompok Soal</strong></td>
+            <td colspan="3">
+                << Isi Nama Soal>>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Deskripsi Soal</strong></td>
+            <td colspan="3">
+                << Isi Deskripsi Soal>>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+        </tr>
+        <tr>
+            <td rowspan="1" style="text-align: center;vertical-align: middle;"><strong>Nomor</strong></td>
+            <td rowspan="1" style="text-align: center;vertical-align: middle;"><strong>Jenis Jawaban</strong></td>
+            <td rowspan="1" style="text-align: center;vertical-align: middle;"><strong>Pertanyaan</strong></td>
+            <td rowspan="1" style="text-align: center;vertical-align: middle;"><strong>Nilai Min (Khusus Range
+                    Nilai)</strong></td>
+            <td rowspan="1" style="text-align: center;vertical-align: middle;"><strong>Nilai Max (Khusus Range
+                    Nilai)</strong></td>
+            <td rowspan="1" style="text-align: center;vertical-align: middle;"><strong>Text Min (Khusus Range
+                    Nilai)</strong></td>
+            <td rowspan="1" style="text-align: center;vertical-align: middle;"><strong>Text Max (Khusus Range
+                    Nilai)</strong></td>
         </tr>
         <tr>
             <td>
@@ -30,17 +49,57 @@
                 << Isi Pertanyaan>>
             </td>
             <td>
-                << Isi Nilai Min (Khusus Range Nilai)>>
+                << Isi Nilai Min (misal : 1)>>
             </td>
             <td>
-                << Isi Nilai Max (Khusus Range Nilai)>>
+                << Isi Nilai Max (misal : 5)>>
             </td>
             <td>
-                << Isi Text Min (Khusus Range Nilai)>>
+                << Isi Text Min (Misal : Sangat Tidak Setuju)>>
             </td>
             <td>
-                << Isi Text Max (Khusus Range Nilai)>>
+                << Isi Text Max (Misal : Sangat Tidak Setuju)>>
             </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="7"><strong>Catatan:</strong></td>
+        </tr>
+        <tr>
+            <td colspan="7">Daftar pertanyaan bisa diisi mulai dari baris ke-2. Proses upload akan berhenti
+                bila ada kolom Nomor yang kosong.</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><strong>Kode Jenis Jawaban</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Kode Jenis</strong></td>
+            <td><strong>Nama Jenis</strong></td>
+        </tr>
+        <tr>
+            <td>R</td>
+            <td>Range Nilai</td>
+        </tr>
+        <tr>
+            <td>E</td>
+            <td>Essay</td>
         </tr>
     </table>
 </body>

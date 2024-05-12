@@ -55,6 +55,9 @@
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <button class="btn btn-primary" id="btnTambahSoal">Tambah Soal</button>
                                     </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button class="btn btn-warning" id="btnSalinSoal">Salin Soal</button>
+                                    </div>
 
                                     {{-- <a href="{{ route('kuesioner.banksoal.create-pertanyaan', ['id' => $data->id]) }}"
                                             class="btn btn-primary" style="color:#fff">Tambah
@@ -131,6 +134,9 @@
                                                                 Nama Soal
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
+                                                                Unsur Penilaian
+                                                            </th>
+                                                            <th style="text-align: center;vertical-align: middle;">
                                                                 Jumlah Soal
                                                             </th>
 
@@ -149,6 +155,9 @@
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $item->soal->nama_soal }}
+                                                                </td>
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    {{ $item->unsurPenilaian->nama }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $item->soal->jumlah_pertanyaan }}
@@ -187,10 +196,50 @@
 
                     <div class="modal-body">
                         <div class="mb-3">
+                            <label for="unsur-penilaian" class="form-label">Unsur Penilaian</label>
+                            <select class="form-select" id="unsur-penilaian" name="unsur_penilaian_id" required>
+                                <option value="">Pilih Unsur Penilaian</option>
+                                @foreach ($unsurPenilaian as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="namaSoal" class="form-label">Nama Soal</label>
                             <input type="text" class="form-control typeahead" id="namaSoal" name="nama_soal"
                                 required autocomplete="off" placeholder="Tuliskan nama soal yang dibuat pada Banksoal">
                             <input type="hidden" id="idSoal" name="id_soal">
+                            <input type="hidden" id="idKuesionerSDM" name="id_kuesionerSDM"
+                                value="{{ $data->id }}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Salin Soal -->
+    <div class="modal fade" id="modalSalinSoal" tabindex="-1" aria-labelledby="modalSalinSoalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalSalinSoalLabel">Salin Soal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formSalinSoal" action="{{ route('kuesioner.soalkuesionersdm.copy') }}" method="POST">
+                    @csrf
+
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="namaKuesioner" class="form-label">Nama Kuesioner</label>
+                            <input type="text" class="form-control typeahead" id="namaKuesioner"
+                                name="nama_kuesioner" required autocomplete="off" placeholder="Tuliskan nama kuesioner">
+                            <input type="hidden" id="idKuesionerCopy" name="id_kuesioner_copy">
                             <input type="hidden" id="idKuesionerSDM" name="id_kuesionerSDM"
                                 value="{{ $data->id }}">
                         </div>
@@ -214,38 +263,96 @@
                 $('#modalTambahSoal').modal('show');
             });
 
-            // Ambil data untuk autocomplete
-            $.ajax({
-                url: "{{ route('kuesioner.banksoal.data') }}",
-                type: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    data = response;
-                    var formattedData = [];
-                    $.each(data, function(index, item) {
-                        var displayText = item.nama_soal;
-                        formattedData.push(displayText);
-                    });
+            $('#btnSalinSoal').click(function() {
+                $('#modalSalinSoal').modal('show');
+            });
 
-                    $('#namaSoal').typeahead({
-                        source: formattedData,
-                        autoSelect: true,
-                        afterSelect: function(item) {
-                            // Set nilai idSoal ke id yang dipilih
-                            var selectedId = '';
-                            $.each(data, function(index, soal) {
-                                if (soal.nama_soal === item) {
-                                    selectedId = soal.id;
-                                    return false; // Keluar dari loop
+            $('#namaSoal').on('input', function() {
+                var query = $(this).val();
+                // Lakukan AJAX request hanya jika query tidak kosong
+                if (query.trim() !== '') {
+                    $.ajax({
+                        url: "{{ route('kuesioner.banksoal.data') }}",
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            query: query
+                        },
+                        success: function(response) {
+                            // Proses data dari response
+                            var data = response;
+                            var formattedData = [];
+                            $.each(data, function(index, item) {
+                                var displayText = item.nama_soal;
+                                formattedData.push(displayText);
+                            });
+
+                            $('#namaSoal').typeahead({
+                                source: formattedData,
+                                autoSelect: true,
+                                afterSelect: function(item) {
+                                    // Set nilai idSoal ke id yang dipilih
+                                    var selectedId = '';
+                                    $.each(data, function(index, soal) {
+                                        if (soal.nama_soal === item) {
+                                            selectedId = soal.id;
+                                            return false; // Keluar dari loop
+                                        }
+                                    });
+                                    $('#idSoal').val(selectedId);
                                 }
                             });
-                            $('#idSoal').val(selectedId);
+                        },
+                        error: function(xhr, status, error) {
+                            var errorMessage = xhr.responseText;
+                            console.log(errorMessage);
                         }
                     });
-                },
-                error: function(xhr, status, error) {
-                    var errorMessage = xhr.responseText;
-                    console.log(errorMessage);
+                }
+            });
+
+            $('#namaKuesioner').on('input', function() {
+                var query = $(this).val();
+                // Lakukan AJAX request hanya jika query tidak kosong
+                if (query.trim() !== '') {
+                    $.ajax({
+                        url: "{{ route('getKuesionerSDMforCopy') }}",
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            query: query
+                        },
+                        success: function(response) {
+                            // Proses data dari response
+                            var data = response;
+                            var formattedData = [];
+                            $.each(data, function(index, item) {
+                                var displayText = item.nama_kuesioner;
+                                formattedData.push(displayText);
+                            });
+
+                            $('#namaKuesioner').typeahead({
+                                source: formattedData,
+                                autoSelect: true,
+                                afterSelect: function(item) {
+                                    // Set nilai idSoal ke id yang dipilih
+                                    var selectedId = '';
+                                    $.each(data, function(index, KuesionerSDM) {
+                                        if (KuesionerSDM.nama_kuesioner ===
+                                            item) {
+                                            selectedId = KuesionerSDM.id;
+                                            return false; // Keluar dari loop
+                                        }
+                                    });
+                                    $('#idKuesionerCopy').val(selectedId);
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            var errorMessage = xhr.responseText;
+                            console.log(errorMessage);
+                        }
+                    });
                 }
             });
 
@@ -262,6 +369,7 @@
                     _token: '{{ csrf_token() }}',
                     id_soal: $('#idSoal').val(),
                     id_kuesionerSDM: $('#idKuesionerSDM').val(),
+                    unsur_penilaian_id: $('#unsur-penilaian').val(),
                     // tambahkan data lain sesuai kebutuhan
                 };
 
@@ -273,6 +381,38 @@
                     success: function(response) {
                         console.log(response);
                         $('#modalTambahSoal').modal('hide');
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.responseText;
+                        console.log(errorMessage);
+                    }
+                });
+            });
+
+            // Kirim form menggunakan AJAX saat form "Tambah Soal" disubmit
+            $('#formSalinSoal').submit(function(e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var method = form.attr('method');
+                var formData = form.serialize();
+
+                // Buat objek data yang akan dikirim
+                var formData = {
+                    _token: '{{ csrf_token() }}',
+                    id_kuesionerSDM_copy: $('#idKuesionerCopy').val(),
+                    id_kuesionerSDM: $('#idKuesionerSDM').val(),
+                };
+
+                $.ajax({
+                    url: url,
+                    method: method,
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        console.log(response);
+                        $('#modalSalinSoal').modal('hide');
                         window.location.reload();
                     },
                     error: function(xhr, status, error) {

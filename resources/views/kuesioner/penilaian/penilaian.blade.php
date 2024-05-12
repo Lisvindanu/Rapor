@@ -99,13 +99,17 @@
                                     <ol>
                                         {{-- responden id  hidden --}}
                                         <input type="hidden" name="responden_id" value="{{ $data->id }}">
+                                        <input type="hidden" name="kuesioner_sdm_id" value="{{ $data->kuesioner_sdm_id }}">
                                         @foreach ($data->penilaian as $penilaian)
                                             <div class="pertanyaan" data-pertanyaan="{{ $penilaian->pertanyaan->id }}">
                                                 {{-- tampilkan count iteration --}}
                                                 <span style="">
                                                     <p><strong>Penilaian ke-{{ $loop->iteration }} </strong></p>
                                                 </span>
-                                                {!! htmlspecialchars_decode($penilaian->pertanyaan->pertanyaan) !!}
+                                                <div class="mb-3">
+                                                    {!! htmlspecialchars_decode($penilaian->pertanyaan->pertanyaan) !!}
+                                                </div>
+
                                                 <div class="mb-3">
                                                     {{-- <label for="jawaban" class="form-label">Jawaban : </label> --}}
 

@@ -18,6 +18,8 @@ class Penilaian extends Model
         'pertanyaan_id',
         'jawaban_numerik',
         'jawaban_essay',
+        'kuesioner_sdm_id',
+        'unsur_penilaian_id'
     ];
 
     public function responden()
@@ -28,5 +30,11 @@ class Penilaian extends Model
     public function pertanyaan()
     {
         return $this->belongsTo(Pertanyaan::class, 'pertanyaan_id', 'id');
+    }
+
+    // unsurpenilaian
+    public function unsurPenilaian()
+    {
+        return $this->belongsTo(UnsurPenilaian::class, 'unsur_penilaian_id', 'id');
     }
 }

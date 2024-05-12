@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('responden_kuesionersdm', function (Blueprint $table) {
+        Schema::create('unsur_penilaian', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('kuesioner_sdm_id');
-            $table->foreign('kuesioner_sdm_id')->references('id')->on('kuesioner_sdm')->onDelete('restrict');
-            $table->string('pegawai_nip');
-            $table->foreign('pegawai_nip')->references('nip')->on('pegawai')->onDelete('restrict');
+            $table->string('nama');
+            $table->float('nilai_capai')->default(0);
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('responden_kuesionersdm');
+        Schema::dropIfExists('unsur_penilaian');
     }
 };

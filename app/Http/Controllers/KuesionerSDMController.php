@@ -11,6 +11,9 @@ use App\Models\SoalKuesionerSDM;
 use Svg\Tag\Rect;
 use App\Models\Pegawai;
 use App\Models\UnitKerja;
+use App\Models\UnsurPenilaian;
+use App\Models\Penilaian;
+use Illuminate\Support\Facades\DB;
 
 class KuesionerSDMController extends Controller
 {
@@ -29,7 +32,9 @@ class KuesionerSDMController extends Controller
         }
 
         $daftar_periode = Periode::orderBy('kode_periode', 'desc')->take(10)->get();
-        $dataKuisonerSDM = KuesionerSDM::with('pegawai')->where('kode_periode', $periode)->paginate($request->get('perPage', 10));
+        $dataKuisonerSDM = KuesionerSDM::with('pegawai')->where('kode_periode', $periode)
+            ->orderby('created_at', 'desc')
+            ->paginate($request->get('perPage', 10));
         $total = $dataKuisonerSDM->total(); // Mendapatkan total data
 
         return view('kuesioner.kuesioner-sdm.index', [
@@ -79,7 +84,8 @@ class KuesionerSDMController extends Controller
                 'nama_kuesioner' => 'required',
                 'subjek_penilaian' => 'required',
                 'jenis_kuesioner' => 'required',
-                'jadwal_kegiatan' => 'required',
+                'jadwal_kegiatan_mulai' => 'required',
+                'jadwal_kegiatan_selesai' => 'required',
             ]);
 
             // // Simpan data kuesioner baru
@@ -88,7 +94,8 @@ class KuesionerSDMController extends Controller
             $kuesioner->nama_kuesioner = $request->nama_kuesioner;
             $kuesioner->subjek_penilaian = $request->nip;
             $kuesioner->jenis_kuesioner = $request->jenis_kuesioner;
-            $kuesioner->jadwal_kegiatan = $request->jadwal_kegiatan;
+            $kuesioner->jadwal_kegiatan_mulai = $request->jadwal_kegiatan_mulai;
+            $kuesioner->jadwal_kegiatan_selesai = $request->jadwal_kegiatan_selesai;
             $kuesioner->save();
 
             // return redirect()->route('kuesioner.kuesioner-sdm')->with('message', 'Kegiatan kuesioner SDM berhasil disimpan.');
@@ -192,11 +199,13 @@ class KuesionerSDMController extends Controller
     {
         $kuesioner = KuesionerSDM::with(['periode', 'soal'])->find($id);
         $soalKuesionerSDM = SoalKuesionerSDM::where('kuesioner_sdm_id', $id)->get();
+        $unsurPenilaian = UnsurPenilaian::all();
 
         // echo $kuesioner;
         return view('kuesioner.kuesioner-sdm.detail', [
             'data' => $kuesioner,
             'soalKuesionerSDM' => $soalKuesionerSDM,
+            'unsurPenilaian' => $unsurPenilaian,
         ]);
     }
 
@@ -204,22 +213,53 @@ class KuesionerSDMController extends Controller
     public function createSoalKuesionerSDM(Request $request)
     {
         try {
+            // return $request->all();
             // Validasi data yang diterima
             $request->validate([
                 'id_soal' => 'required',
                 'id_kuesionerSDM' => 'required',
+                'unsur_penilaian_id' => 'required',
             ]);
 
-            // Buat instance baru dari model SoalKuesionerSDM
+            // // Buat instance baru dari model SoalKuesionerSDM
             $soalKuesionerSDM = new SoalKuesionerSDM();
             $soalKuesionerSDM->soal_id = $request->id_soal;
             $soalKuesionerSDM->kuesioner_sdm_id = $request->id_kuesionerSDM;
+            $soalKuesionerSDM->unsur_penilaian_id = $request->unsur_penilaian_id;
 
-
-            // Simpan data ke dalam database
+            // // Simpan data ke dalam database
             $soalKuesionerSDM->save();
 
-            // Jika berhasil disimpan, kembalikan respons atau redirect ke halaman yang sesuai
+            // // Jika berhasil disimpan, kembalikan respons atau redirect ke halaman yang sesuai
+            return response()->json(['message' => 'Data berhasil disimpan'], 200);
+        } catch (\Exception $e) {
+            // Jika terjadi kesalahan saat menyimpan data, kembalikan response error
+            return response()->json(['message' => 'Gagal menyimpan data: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function copySoalKuesionerSDM(Request $request)
+    {
+        try {
+            $request->validate([
+                'id_kuesionerSDM_copy' => 'required',
+                'id_kuesionerSDM' => 'required',
+            ]);
+
+            $kuesionerSDMCopy = KuesionerSDM::with('soal')->find($request->id_kuesionerSDM_copy);
+
+            if (!$kuesionerSDMCopy) {
+                return response()->json(['message' => 'Data kuesioner SDM tidak ditemukan'], 404);
+            }
+
+            foreach ($kuesionerSDMCopy->soalKuisionerSDM as $soal) {
+                $soalKuesionerSDM = new SoalKuesionerSDM();
+                $soalKuesionerSDM->soal_id = $soal->soal_id;
+                $soalKuesionerSDM->kuesioner_sdm_id = $request->id_kuesionerSDM;
+                $soalKuesionerSDM->unsur_penilaian_id = $soal->unsur_penilaian_id;
+                $soalKuesionerSDM->save();
+            }
+            // // Buat instance baru dari model SoalKuesionerSDM
             return response()->json(['message' => 'Data berhasil disimpan'], 200);
         } catch (\Exception $e) {
             // Jika terjadi kesalahan saat menyimpan data, kembalikan response error
@@ -250,15 +290,15 @@ class KuesionerSDMController extends Controller
     {
         $kuesioner = KuesionerSDM::with(['periode', 'soal'])->find($id);
         $responden = Responden::where('kuesioner_sdm_id', $id)->get();
-        // $unitkerja = UnitKerja::all();
+        $unitkerja = UnitKerja::all()->sortBy('nama_unit');
 
-        // return response()->json($responden);
+        // return response()->json($unitkerja);
 
         // // echo $kuesioner;
         return view('kuesioner.kuesioner-sdm.responden', [
             'data' => $kuesioner,
             'responden' => $responden,
-            // 'unitkerja' => $unitkerja,
+            'unitkerja' => $unitkerja,
         ]);
     }
 
@@ -307,5 +347,58 @@ class KuesionerSDMController extends Controller
 
         // Kirim respon berhasil
         return response()->json(['message' => 'Data berhasil dihapus'], 200);
+    }
+
+    // getDataKuesionerSDM
+    public function getKuesionerSDMforCopy(Request $request)
+    {
+        $query = $request->input('query');
+
+        $kuesionerSDM = KuesionerSDM::where(function ($q) use ($query) {
+            $q->where('nama_kuesioner', 'ilike', "%{$query}%");
+        })->select('id', 'nama_kuesioner')
+            ->get()
+            ->filter(function ($item) {
+                // Filter item berdasarkan kondisi is_soal > 1
+                return $item->is_soal > 1;
+            })->values();
+
+        return response()->json($kuesionerSDM);
+    }
+
+    // hasilKuesionerSDM
+    public function hasilKuesionerSDM($id)
+    {
+        $kuesioner = KuesionerSDM::with(['soalKuisionerSDM'])->find($id);
+        $penilaian = Penilaian::selectRaw('kuesioner_sdm_id, unsur_penilaian_id, AVG(jawaban_numerik) as rata_rata')
+            ->where('kuesioner_sdm_id', $id)
+            ->groupBy('kuesioner_sdm_id', 'unsur_penilaian_id')
+            ->get();
+
+        $datachart = [
+            'labels' => [],
+            'values' => []
+        ];
+
+        // Loop melalui hasil penilaian dan memasukkan data ke dalam array
+        foreach ($penilaian as $item) {
+            $kategori = $item->unsurPenilaian->nama;
+            $datachart['values'][] = $item->rata_rata;
+            $datachart['labels'][] = $kategori;
+        }
+
+        // Jika terdapat kategori yang tidak memiliki data, tambahkan nilai 0 untuk konsistensi
+        for ($i = count($datachart['values']); $i < $penilaian->count(); $i++) {
+            $datachart['values'][] = 0;
+            $datachart['labels'][] = "Kategori " . ($i + 1);
+        }
+
+        return view('kuesioner.kuesioner-sdm.hasil', [
+            'data' => $kuesioner,
+            // 'responden' => $responden,
+            // 'unitkerja' => $unitkerja,
+            'penilaian' => $penilaian,
+            'datachart' => $datachart,
+        ]);
     }
 }

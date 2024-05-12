@@ -74,7 +74,7 @@
             <td colspan="7"><strong>Catatan:</strong></td>
         </tr>
         <tr>
-            <td colspan="7">Daftar pertanyaan bisa diisi mulai dari baris ke-2. Proses upload akan berhenti
+            <td colspan="7">Daftar pertanyaan bisa diisi mulai dari baris ke-5. Proses upload akan berhenti
                 bila ada kolom Nomor yang kosong.</td>
         </tr>
         <tr>

@@ -19,7 +19,7 @@
 @endsection
 
 @section('navbar')
-    @include('kuesioner.penilaian.navbar')
+    @include('kuesioner.navbar')
 @endsection
 
 @section('konten')

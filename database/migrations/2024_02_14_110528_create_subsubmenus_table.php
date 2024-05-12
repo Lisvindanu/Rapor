@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('tautan_subsubmenu')->nullable();
             $table->integer('urutan_subsubmenu')->default(0);
             $table->uuid('submenu_id');
-            $table->foreign('submenu_id')->references('id')->on('submenus')->onDelete('cascade');
+            $table->foreign('submenu_id')->references('id')->on('submenus')->onDelete('restrict');
             $table->timestamps();
         });
     }

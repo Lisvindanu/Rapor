@@ -69,6 +69,8 @@ class PenilaianController extends Controller
                 $penilaian = new Penilaian();
                 $penilaian->responden_id = $responden_id;
                 $penilaian->pertanyaan_id = $pertanyaan['id'];
+                $penilaian->kuesioner_sdm_id = $kuesioner_sdm_id;
+                $penilaian->unsur_penilaian_id = $soal['unsur_penilaian_id'];
                 $penilaian->save();
             }
         }
@@ -84,9 +86,10 @@ class PenilaianController extends Controller
         try {
             // Mendapatkan responden_id dari data
             $respondenId = $request->input('responden_id');
+            // $kuesioner_sdm_id = $request->input('kuesioner_sdm_id');
 
             // Mengambil semua jawaban dari input
-            $jawaban = $request->except('_token', 'responden_id');
+            $jawaban = $request->except('_token', 'responden_id', 'kuesioner_sdm_id');
 
             // Memulai transaksi database
             DB::beginTransaction();

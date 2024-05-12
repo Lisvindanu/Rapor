@@ -20,7 +20,7 @@ return new class extends Migration
             $table->dateTime('jadwal_kegiatan');
             $table->integer('nilai_akhir')->nullable();
             $table->timestamps();
-            $table->foreign('subjek_penilaian')->references('nip')->on('pegawai')->onDelete('CASCADE');
+            $table->foreign('subjek_penilaian')->references('nip')->on('pegawai')->onDelete('restrict');
         });
     }
 

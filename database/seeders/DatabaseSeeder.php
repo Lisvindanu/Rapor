@@ -25,11 +25,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // FakultasSeeder::class,
             // ProgramStudiSeeder::class,
-            UnitKerjaSeeder::class,
-            UsersTableSeeder::class,
+            // UnitKerjaSeeder::class,
+            // UsersTableSeeder::class,
             // ModulSeeder::class,
             // ModulsTableSeeder::class,
             // MenusTableSeeder::class,
+            UnsurPenilaianSeeder::class,
 
         ]);
     }

@@ -5,7 +5,9 @@
         <div class="row justify-content-md-center">
             <div class="col-md-11">
                 <div id="data-info">
-                    Total data: <span id="total-data">{{ $total }}</span>
+                    @if (isset($total))
+                        Total data: <span id="total-data">{{ $total }}</span>
+                    @endif
                 </div>
             </div>
             <div class="col-md-1">

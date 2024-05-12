@@ -142,7 +142,7 @@
                                                         <td>{{ $kusionerSDM->jadwal_kegiatan_mulai }}</td>
                                                         <td>{{ $kusionerSDM->jadwal_kegiatan_selesai }}</td>
                                                         <td>
-                                                            @if ($kusionerSDM->publik == 1)
+                                                            @if ($kusionerSDM->is_soal > 0)
                                                                 <i class="fas fa-check-circle" style="color: green"></i>
                                                             @else
                                                                 <i class="fas fa-times-circle" style="color: red"></i>

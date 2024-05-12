@@ -11,6 +11,7 @@ class KuesionerSDM extends Model
     use HasFactory, HasUuids;
 
     protected $table = 'kuesioner_sdm';
+    protected $appends = ['is_soal'];
 
     protected $fillable = [
         'id',
@@ -42,5 +43,17 @@ class KuesionerSDM extends Model
     public function soal()
     {
         return $this->belongsToMany(Soal::class, 'soal_kuesionerSDM', 'kuesioner_sdm_id', 'soal_id');
+    }
+
+    // Accessor untuk mengambil jumlah pertanyaan
+    public function getIsSoalAttribute()
+    {
+        return $this->soalKuisionerSDM->count();
+    }
+
+    // penilaian
+    public function penilaian()
+    {
+        return $this->hasMany(Penilaian::class, 'kuesioner_sdm_id', 'id');
     }
 }

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->text('jawaban_essay')->nullable();
             $table->timestamps();
 
-            $table->foreign('responden_id')->references('id')->on('responden_kuesionersdm')->onDelete('cascade');
-            $table->foreign('pertanyaan_id')->references('id')->on('pertanyaan')->onDelete('cascade');
+            $table->foreign('responden_id')->references('id')->on('responden_kuesionersdm')->onDelete('restrict');
+            $table->foreign('pertanyaan_id')->references('id')->on('pertanyaan')->onDelete('restrict');
         });
     }
 

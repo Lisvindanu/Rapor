@@ -64,6 +64,10 @@
                 <a class="nav-link {{ Request::is('*/kuesioner-sdm/responden/*') ? 'active' : '' }}""
                     href="{{ route('kuesioner.kuesioner-sdm.responden', ['id' => $data->id]) }}">Responden</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('*/kuesioner-sdm/hasil/*') ? 'active' : '' }}""
+                    href="{{ route('kuesioner.kuesioner-sdm.hasil', ['id' => $data->id]) }}">Hasil Kuesioner</a>
+            </li>
         </ul>
     </div>
 </body>

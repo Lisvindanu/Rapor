@@ -88,6 +88,12 @@ class LoginController extends Controller
         return view('auth.changepassword');
     }
 
+    // changepassword
+    public function changePasswordSecond()
+    {
+        return view('auth.changepasswordsecond');
+    }
+
     // updatePassword
     public function updatePassword(Request $request)
     {

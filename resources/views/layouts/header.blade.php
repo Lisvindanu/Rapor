@@ -13,7 +13,8 @@
                     </div>
 
                     <div class="button-app" style="float: right">
-                        <button class="exit-button">Halaman Profil</button>
+                        <a href="{{ route('changePasswordSecond') }}" style="text-decoration: none"
+                            class="exit-button">Halaman Profil</a>
                         {{-- to gate --}}
                         <a href="{{ url('/gate') }}" style="text-decoration: none" class="exit-button">Menu</a>
                         {{-- to logout --}}

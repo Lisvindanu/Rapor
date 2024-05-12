@@ -42,6 +42,7 @@ Route::post('/login/exit', [LoginController::class, 'logout']);
 
 Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () {
     Route::get('/auth/change-password', "LoginController@changePassword")->name('changePassword');
+    Route::get('/auth/change-password-after', "LoginController@changePasswordSecond")->name('changePasswordSecond');
     Route::post('/auth/update-password', "LoginController@updatePassword")->name('updatePassword');
 
     Route::prefix('gate')->group(function () {

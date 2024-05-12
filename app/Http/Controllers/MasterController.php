@@ -340,6 +340,7 @@ class MasterController extends Controller
         // get data pegawai
         $pegawai = Pegawai::with('unitKerja')->paginate(10);
         $total = $pegawai->total(); // Mendapatkan total data
+        // return response()->json($pegawai);
         return view('master.pegawai.index', [
             'data' => $pegawai,
             'total' => $total

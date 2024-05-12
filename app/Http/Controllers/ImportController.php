@@ -133,7 +133,7 @@ class ImportController extends Controller
                 foreach ($data[0] as $row) {
                     $pertanyaan = [];
 
-                    if (empty($row[0]) || $row[0] == '' || $row[0] == null) {
+                    if (empty($row[0]) || $row[0] == '' || $row[0] == null || $row[0] == 'Catatan:') {
                         break;
                     } else {
 

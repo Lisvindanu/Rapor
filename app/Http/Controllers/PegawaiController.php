@@ -39,12 +39,13 @@ class PegawaiController extends Controller
     public function getDataResponden(Request $request)
     {
         // Menentukan jumlah data per halaman
-        $perPage = $request->has('limit') ? $request->get('limit') : 10;
+        $perPage = $request->has('limit') ? $request->get('limit') : 1000;
 
-        // $daftarPegawai  = Pegawai::with('unitKerja')->paginate(10);
-        $daftarPegawai = Pegawai::when($request->has('search'), function ($query) use ($request) {
+        $daftarPegawai = Pegawai::when($request->has('unit_kerja'), function ($query) use ($request) {
+            $query->where('unit_kerja_id', $request->get('unit_kerja'));
+        })->when($request->has('search'), function ($query) use ($request) {
             $search = $request->get('search');
-            $query->where('nama', 'ilike', "%$search%")->orWhere('nip', 'ilike', "%$search%");
+            $query->where('nama', 'ilike', "%$search%");
         })->with('unitKerja')->paginate($perPage);
 
         return response()->json($daftarPegawai);

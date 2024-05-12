@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('rapor_kinerja_v1', function (Blueprint $table) {
             $table->uuid('id')->primary;
             $table->string('periode_rapor');
-            $table->foreign('periode_rapor')->references('kode_periode')->on('periodes')->onDelete('cascade');
+            $table->foreign('periode_rapor')->references('kode_periode')->on('periodes')->onDelete('restrict');
             $table->string('dosen_nip');
-            $table->foreign('dosen_nip')->references('nip')->on('dosens')->onDelete('cascade');
+            $table->foreign('dosen_nip')->references('nip')->on('dosens')->onDelete('restrict');
             $table->string('bkd_pendidikan')->nullable();
             $table->string('bkd_penelitian')->nullable();
             $table->string('bkd_ppm')->nullable();

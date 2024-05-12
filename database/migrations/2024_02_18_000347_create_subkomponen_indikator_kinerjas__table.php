@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('target');
             $table->integer('urutan')->default(0);
             $table->uuid('komponen_indikator_kinerja_id');
-            $table->foreign('komponen_indikator_kinerja_id')->references('id')->on('komponen_indikator_kinerjas')->onDelete('cascade');
+            $table->foreign('komponen_indikator_kinerja_id')->references('id')->on('komponen_indikator_kinerjas')->onDelete('restrict');
             $table->timestamps();
         });
     }

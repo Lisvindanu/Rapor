@@ -41,7 +41,7 @@ return new class extends Migration
             $table->foreign('parent_unit')
                 ->references('id')
                 ->on('unit_kerja')
-                ->onDelete('cascade');
+                ->onDelete('restrict');
         });
     }
 

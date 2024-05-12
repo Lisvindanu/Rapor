@@ -19,8 +19,8 @@ return new class extends Migration
             $table->uuid('fakultas_id');
             $table->timestamps();
 
-            $table->foreign('jenjang_id')->references('id')->on('jenjangs')->onDelete('cascade');
-            $table->foreign('fakultas_id')->references('id')->on('fakultass')->onDelete('cascade');
+            $table->foreign('jenjang_id')->references('id')->on('jenjangs')->onDelete('restrict');
+            $table->foreign('fakultas_id')->references('id')->on('fakultass')->onDelete('restrict');
         });
     }
 

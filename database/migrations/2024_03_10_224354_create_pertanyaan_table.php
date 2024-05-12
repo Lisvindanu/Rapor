@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('jenis_pertanyaan', ['essay', 'range_nilai']);
             $table->string("pertanyaan");
             $table->uuid('soal_id');
-            $table->foreign('soal_id')->references('id')->on('soal')->onDelete('cascade');
+            $table->foreign('soal_id')->references('id')->on('soal')->onDelete('restrict');
             $table->timestamps();
         });
     }

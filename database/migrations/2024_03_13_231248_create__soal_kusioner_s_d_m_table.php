@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('soal_kuesionerSDM', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('kuesioner_sdm_id');
-            $table->foreign('kuesioner_sdm_id')->references('id')->on('kuesioner_sdm')->onDelete('CASCADE');
+            $table->foreign('kuesioner_sdm_id')->references('id')->on('kuesioner_sdm')->onDelete('restrict');
             $table->uuid('soal_id');
-            $table->foreign('soal_id')->references('id')->on('soal')->onDelete('CASCADE');
+            $table->foreign('soal_id')->references('id')->on('soal')->onDelete('restrict');
             $table->timestamps();
         });
     }

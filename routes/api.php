@@ -46,4 +46,8 @@ Route::namespace('App\Http\Controllers')->group(function () {
         Route::get('/getUnitKerja', "UnitKerjaController@getUnitKerja");
         Route::get('/getUnitKerjaByParent', "UnitKerjaController@getUnitKerjaByParent");
     });
+
+    Route::prefix('kuesioner')->group(function () {
+        Route::post('/soalkuesionersdm/store', "KuesionerSDMController@createSoalKuesionerSDM");
+    });
 });

@@ -166,14 +166,24 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::post('/kuesioner-sdm/responden/tambah-responden', "KuesionerSDMController@tambahResponden")->name('tambahResponden');
         Route::delete('/kuesioner-sdm/responden/{id}', "KuesionerSDMController@deleteResponden")->name('kuesioner.kuesioner-sdm.responden.delete');
 
+        //hasil kuesioner 
+        Route::get('/kuesioner-sdm/hasil/{id}', "KuesionerSDMController@hasilKuesionerSDM")->name('kuesioner.kuesioner-sdm.hasil');
+
         //SoalKuesionerSDM
         Route::post('/soalkuesionersdm/store', "KuesionerSDMController@createSoalKuesionerSDM")->name('kuesioner.soalkuesionersdm.store');
+        Route::post('/soalkuesionersdm/copy', "KuesionerSDMController@copySoalKuesionerSDM")->name('kuesioner.soalkuesionersdm.copy');
         Route::delete('/soalkuesionersdm/{id}', "KuesionerSDMController@deleteSoalKuesionerSDM")->name('kuesioner.soalkuesionersdm.delete');
 
         //penilaian
         Route::get('/penilaian', "PenilaianController@index")->name('kuesioner.penilaian');
         Route::get('/penilaian/mulai/{id}', "PenilaianController@mulaiPenilaian")->name('kuesioner.penilaian.mulai');
         Route::post('/penilaian/store', "PenilaianController@store")->name('kuesioner.penilaian.store');
+
+        //referensi
+        Route::get('/referensi', "KuesionerController@referensi")->name('kuesioner.referensi');
+
+        //responden
+        Route::delete('/hapus-semua-responden', "RespondenController@deleteAllResponden")->name('deleteAllResponden');
     });
 
     Route::prefix('dosen')->group(function () {
@@ -182,7 +192,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
     Route::prefix('pegawai')->group(function () {
         Route::get('/get-nama-pegawai', "PegawaiController@getNamaPegawai")->name('getNamaPegawai');
-        Route::get('/get-data-pegawai', "PegawaiController@getDataPegawai")->name('getDataPegawai');
+        // Route::get('/get-data-pegawai', "PegawaiController@getDataPegawai")->name('getDataPegawai');
     });
 
     Route::prefix('data')->group(function () {
@@ -198,6 +208,13 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         // getdatasoal
         Route::get('/get-data-soal', "BankSoalController@getDataSoal")->name('getDataSoal');
+
+        // getdatakuesionersdm
+        Route::get('/get-data-kuesioner-sdm', "KuesionerSDMController@getDataKuesionerSDM")->name('getDataKuesionerSDM');
+        Route::get('/get-data-kuesioner-sdm-for-copy', "KuesionerSDMController@getKuesionerSDMforCopy")->name('getKuesionerSDMforCopy');
+
+        // getdataresponden
+        Route::get('/get-data-responden', "PegawaiController@getDataResponden")->name('getDataResponden');
     });
 
     Route::prefix('export')->group(function () {

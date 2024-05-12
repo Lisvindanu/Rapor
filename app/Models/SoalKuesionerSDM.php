@@ -16,6 +16,7 @@ class SoalKuesionerSDM extends Model
         'id',
         'kuesioner_sdm_id',
         'soal_id',
+        'unsur_penilaian_id',
     ];
 
     public function kuesionerSDM()
@@ -26,5 +27,10 @@ class SoalKuesionerSDM extends Model
     public function soal()
     {
         return $this->belongsTo(Soal::class, 'soal_id', 'id');
+    }
+
+    public function unsurPenilaian()
+    {
+        return $this->belongsTo(UnsurPenilaian::class, 'unsur_penilaian_id', 'id');
     }
 }

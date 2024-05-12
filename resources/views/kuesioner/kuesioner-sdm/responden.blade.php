@@ -56,6 +56,14 @@
                                         <button class="btn btn-primary" id="btnTambahResponden">Tambah Responden</button>
                                     </div>
 
+                                    <form action="{{ route('deleteAllResponden') }}" method="POST"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus semua responden?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <input type="hidden" value="{{ $data->id }}" name="kuesioner_sdm_id">
+                                        <button type="submit" class="btn btn-danger">Hapus Semua Responden</button>
+                                    </form>
+
                                     {{-- <a href="{{ route('kuesioner.banksoal.create-pertanyaan', ['id' => $data->id]) }}"
                                             class="btn btn-primary" style="color:#fff">Tambah
                                         </a> --}}
@@ -112,7 +120,9 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <span class="input-group-text">
-                                            {{ \Carbon\Carbon::parse($data->jadwal_kegiatan)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
+                                            {{ \Carbon\Carbon::parse($data->jadwal_kegiatan_mulai)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
+                                            -
+                                            {{ \Carbon\Carbon::parse($data->jadwal_kegiatan_selesai)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
                                         </span>
                                     </div>
                                 </div>
@@ -201,36 +211,40 @@
                     <h5 class="modal-title" id="modalTambahRespondenLabel">Tambah Responden</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <form id="formTambahResponden" action="{{ route('tambahResponden') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="row" style="margin-bottom: 10px">
-                            <div class="col-sm-9">
+                            <p>Silahkan pilih terlebih dahulu unit kerja atau masukan nama pegawai </p>
+                            <input type="hidden" value="{{ $data->id }}" name="kuesioner_sdm_id"
+                                id="kuesioner_sdm_id">
+                            <div class="col-sm-3">
+                                <select class="form-select" name="unit_kerja" id="unit_kerja">
+                                    <option value="">Pilih Unit Kerja</option>
+                                    @foreach ($unitkerja as $item)
+                                        <option value="{{ $item->id }}">{{ $item->nama_unit }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
                                 <input type="text" class="form-control typeahead" id="nama_pegawai"
                                     name="nama_pegawai" placeholder="Masukkan NIP atau Nama Pegawai">
                             </div>
-                            <div class="col-sm-auto">
+                            <div class="col-sm-3">
                                 <button id="btn-cari-filter" color:white" class="btn btn-primary" type="button"
                                     form="">Cari</button>
                                 <button id="btn-refresh" style="color:white" class="btn btn-info" type="button"
                                     form="">Refresh</button>
                             </div>
                         </div>
-                        {{-- <div class="col-5">
-                            <select id="periode-dropdown" class="form-select" aria-label="Default select example">
-                                @foreach ($unitkerja as $unitkerja)
-                                    <option value="{{ $unitkerja->id }}">
-                                        {{ $unitkerja->nama_unit }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div> --}}
                         <table class="table table-bordered" id="tabelPegawai">
                             <thead>
                                 <tr>
                                     <th>No.</th>
                                     <th>NIP</th>
                                     <th>Nama Pegawai</th>
+                                    <th>Unit Kerja</th>
                                     {{-- <th>Unit Kerja</th> --}}
                                     <th><input type="checkbox" id="checkAll"></th>
                                 </tr>
@@ -240,9 +254,10 @@
                             </tbody>
                         </table>
                         <!-- Pagination -->
-                        <ul class="pagination justify-content-center" id="pagination">
-                            <!-- Pagination akan ditampilkan di sini -->
-                        </ul>
+                        {{-- <ul class="pagination justify-content-center" id="pagination"> --}}
+                        <!-- Pagination akan ditampilkan di sini -->
+                        {{-- </ul> --}}
+                        {{-- @include('komponen.pagination') --}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -258,7 +273,60 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Deklarasikan fungsi getData di luar event handler
+            const btnCari1 = document.querySelector("#btn-cari-filter");
+            const btnCari2 = document.querySelector("#btn-refresh");
+
+            // Tampilkan modal tambah responden
+            $('#btnTambahResponden').click(function() {
+                $('#tabelPegawai tbody').empty();
+                // getData(); // Panggil fungsi getData saat tombol ditekan
+                $('#modalTambahResponden').modal('show');
+            });
+
+            btnCari1.addEventListener("click", function() {
+                searchData(1); // Memanggil searchData dengan parameter 1 untuk halaman pertama
+            });
+
+            btnCari2.addEventListener("click", function() {
+                // getData(); // Memanggil searchData dengan parameter 1 untuk halaman pertama
+                $('#tabelPegawai tbody').empty();
+                document.querySelector("input[name='nama_pegawai']").value = '';
+                document.getElementById('unit_kerja').value = '';
+            });
+
+            function searchData(page) {
+                const query = document.querySelector("input[name='nama_pegawai']").value;
+                const unitKerja = document.getElementById('unit_kerja').value;
+
+                // Jika query tidak kosong, tambahkan parameter search ke dalam objek 
+                var dataToSend = {
+                    kuesioner_sdm_id: document.getElementById('kuesioner_sdm_id').value,
+                };
+                if (query) {
+                    dataToSend.search = query;
+                }
+
+                // Jika unit kerja tidak kosong, tambahkan parameter unit_kerja ke dalam objek data
+                if (unitKerja) {
+                    dataToSend.unit_kerja = unitKerja;
+                }
+
+                // Kirim permintaan AJAX ke server dengan opsi yang dipilih
+                $.ajax({
+                    url: "{{ route('getDataResponden') }}",
+                    method: "GET",
+                    data: dataToSend,
+                    success: function(response) {
+                        updateTable(response);
+                        // updatePagination(response); // Memanggil fungsi updatePagination dengan response
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert("Terjadi kesalahan, silakan coba lagi.");
+                    }
+                });
+            }
+
             function getData(page = 1) {
                 $.ajax({
                     url: "{{ route('getDataPegawai') }}",
@@ -269,7 +337,7 @@
                     dataType: 'json',
                     success: function(response) {
                         updateTable(response);
-                        updatePagination(response);
+                        // updatePagination(response);
                     },
                     error: function(xhr, status, error) {
                         var errorMessage = xhr.responseText;
@@ -292,6 +360,7 @@
                                 index + 1) + '</td>' +
                             '<td>' + pegawai.nip + '</td>' +
                             '<td>' + pegawai.nama + '</td>' +
+                            '<td>' + pegawai.unit_kerja.nama_unit + '</td>' +
                             // Mengganti unit_kerja menjadi unit_kerja.nama_unit
                             '<td>' +
                             '<div class="form-check">' +
@@ -304,52 +373,7 @@
                         $('#tabelPegawai tbody').append(row);
                     });
                 }
-
             }
-
-            function updatePagination(response) {
-                // Tampilkan pagination
-                var pagination = '';
-                if (response.prev_page_url != null) {
-                    pagination +=
-                        '<li class="page-item"><a class="page-link" href="#" data-page="' + (
-                            response.current_page - 1) + '">Sebelumnya</a></li>';
-                }
-
-                for (var i = 1; i <= response.last_page; i++) {
-                    var active = (response.current_page === i) ? 'active' : '';
-                    pagination += '<li class="page-item ' + active +
-                        '"><a class="page-link" href="#" data-page="' + i + '">' + i +
-                        '</a></li>';
-                }
-
-                if (response.next_page_url != null) {
-                    pagination +=
-                        '<li class="page-item"><a class="page-link" href="#" data-page="' + (
-                            response.current_page + 1) + '">Selanjutnya</a></li>';
-                }
-
-                $('#pagination').html(pagination);
-            }
-
-            // Pilih halaman ketika tombol pagination diklik
-            $(document).on('click', '.page-link', function(e) {
-                e.preventDefault();
-                var page = $(this).data('page');
-                getData(page); // Panggil fungsi getData di sini
-            });
-
-            // Fungsi untuk checklist semua checkbox
-            $('#checkAll').change(function() {
-                $('.checkbox-pegawai').prop('checked', $(this).prop('checked'));
-            });
-
-            // Tampilkan modal saat tombol "Tambah Responden" ditekan
-            $('#btnTambahResponden').click(function() {
-                $('#tabelPegawai tbody').empty();
-                getData(); // Panggil fungsi getData saat tombol ditekan
-                $('#modalTambahResponden').modal('show');
-            });
 
             // Kirim form menggunakan AJAX saat form "Tambah Responden" disubmit
             $('#formTambahResponden').submit(function(e) {
@@ -389,6 +413,10 @@
                 });
             });
 
+            $('#checkAll').change(function() {
+                $('.checkbox-pegawai').prop('checked', $(this).prop('checked'));
+            });
+
             // Hapus baris tabel
             $('#editableTable').on('click', '.delete', function() {
                 if (confirm('Apakah Anda yakin ingin menghapus baris ini?')) {
@@ -416,71 +444,7 @@
             });
 
 
-            // Inisialisasi Typeahead
-            $('#nama_pegawai').typeahead({
-                source: function(query, process) {
-                    return $.ajax({
-                        url: "/pegawai/get-nama-pegawai/",
-                        type: 'GET',
-                        data: {
-                            query: query
-                        },
-                        dataType: 'json',
-                        success: function(data) {
-                            // Format data untuk menampilkan NIP - Nama Dosen
-                            var formattedData = [];
-
-                            $.each(data, function(index, item) {
-                                var displayText = item.nip + ' - ' + item.nama;
-                                formattedData.push(displayText);
-                            });
-
-                            return process(formattedData);
-                        }
-                    });
-                },
-                autoSelect: true,
-                updater: function(item) {
-                    var parts = item.split(' - ');
-                    $('#subjek_penilaian').val(parts[1]); // Set nilai input subjek_penilaian
-                    $('#nip').val(parts[0]); // Set nilai input hidden nip-pegawai
-                    return parts[1]; // Tampilkan nama pegawai di input
-                }
-            });
-
-            const btnCari1 = document.querySelector("#btn-cari-filter");
-            const btnCari2 = document.querySelector("#btn-refresh");
-
-
-            btnCari1.addEventListener("click", function() {
-                searchData(1); // Memanggil searchData dengan parameter 1 untuk halaman pertama
-            });
-
-            btnCari2.addEventListener("click", function() {
-                getData(); // Memanggil searchData dengan parameter 1 untuk halaman pertama
-            });
-
-            function searchData(page) {
-                const query = document.querySelector("input[name='nama_pegawai']").value;
-
-                // Kirim permintaan AJAX ke server dengan opsi yang dipilih
-                $.ajax({
-                    url: "{{ route('getDataPegawai') }}",
-                    method: "GET",
-                    data: {
-                        search: query,
-                        page: page // Mengirimkan parameter page
-                    },
-                    success: function(response) {
-                        updateTable(response);
-                        updatePagination(response); // Memanggil fungsi updatePagination dengan response
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        alert("Terjadi kesalahan, silakan coba lagi.");
-                    }
-                });
-            }
         });
     </script>
+    <script src="{{ asset('js/pagination.js') }}"></script>
 @endsection

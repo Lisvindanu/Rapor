@@ -152,12 +152,23 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-1"></div>
-                                    <label for="jadwal_kegiatan" class="col-sm-3 col-form-label create-label">Jadwal
-                                        Kegiatan</label>
+                                    <label for="jadwal_kegiatan_mulai" class="col-sm-3 col-form-label create-label">Jadwal
+                                        Kegiatan Mulai</label>
                                     <div class="col-sm-6">
-                                        <input type="datetime-local" class="form-control" id="jadwal_kegiatan"
-                                            name="jadwal_kegiatan"
-                                            value="{{ isset($kuesioner) ? date('Y-m-d\TH:i', strtotime($kuesioner->jadwal_kegiatan)) : old('jadwal_kegiatan') }}">
+                                        <input type="date" class="form-control" id="jadwal_kegiatan_mulai"
+                                            name="jadwal_kegiatan_mulai"
+                                            value="{{ isset($kuesioner) ? date('dd-mm-yy', strtotime($kuesioner->jadwal_kegiatan_mulai)) : old('jadwal_kegiatan_mulai') }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-1"></div>
+                                    <label for="jadwal_kegiatan_selesai"
+                                        class="col-sm-3 col-form-label create-label">Jadwal
+                                        Kegiatan Selesai</label>
+                                    <div class="col-sm-6">
+                                        <input type="date" class="form-control" id="jadwal_kegiatan_selesai"
+                                            name="jadwal_kegiatan_selesai"
+                                            value="{{ isset($kuesioner) ? date('dd-mm-yy', strtotime($kuesioner->jadwal_kegiatan_selesai)) : old('jadwal_kegiatan_selesai') }}">
                                     </div>
                                 </div>
                             </form>

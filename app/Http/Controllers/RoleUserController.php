@@ -32,18 +32,23 @@ class RoleUserController extends Controller
     // delete
     public function delete($id)
     {
-        // Temukan data soal kuesioner sdm yang akan dihapus
-        $roleUser = RoleUser::findOrFail($id);
+        try {
+            // Temukan data soal kuesioner sdm yang akan dihapus
+            $roleUser = RoleUser::find($id);
 
-        // Data tidak ditemukan
-        if (!$roleUser) {
-            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            // Data tidak ditemukan
+            if (!$roleUser) {
+                return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            }
+
+            // Hapus data soal kuesioner sdm
+            $roleUser->delete();
+
+            // Kirim respon berhasil
+            return response()->json(['message' => 'Data berhasil dihapus'], 200);
+        } catch (\Exception $e) {
+            //throw $th;
+            return response()->json(['message' => 'Gagal Menghapus data: ' . $e->getMessage()], 500);
         }
-
-        // Hapus data soal kuesioner sdm
-        $roleUser->delete();
-
-        // Kirim respon berhasil
-        return response()->json(['message' => 'Data berhasil dihapus'], 200);
     }
 }

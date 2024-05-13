@@ -305,7 +305,7 @@ class MasterController extends Controller
 
     public function showUser($id)
     {
-        $user = User::with(['pegawai', 'roles'])->find($id);
+        $user = User::with(['pegawai', 'roleUser'])->find($id);
         $listrole = Role::all();
 
         // return $user format json;

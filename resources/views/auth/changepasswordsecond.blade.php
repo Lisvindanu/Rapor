@@ -220,7 +220,7 @@
                 </div>
                 <div style="text-align: center">
                     <button type="submit" class="btn btn-primary">Simpan</button> {{-- //button kembali --}}
-                    <a href="{{ url() }}" class="btn btn-info">Kembali</a>
+                    <a href="{{ url('gate') }}" class="btn btn-info">Kembali</a>
                 </div>
 
                 {{-- Kembali --}}

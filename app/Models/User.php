@@ -72,6 +72,12 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
+    // RoleUser
+    public function roleUser()
+    {
+        return $this->hasMany(RoleUser::class, 'user_id', 'id');
+    }
+
     public function accessibleModuls()
     {
         $accessibleModuls = collect();

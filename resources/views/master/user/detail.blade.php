@@ -115,14 +115,15 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="tabel-body">
-                                                        @foreach ($data->roles as $role)
+                                                        @foreach ($data->roleUser as $role)
                                                             <tr>
-                                                                <td hidden>{{ $role->id }}</td>
+                                                                <td hidden><input type="hidden" name="roleUserid"
+                                                                        value="{{ $role->id }}"></td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $loop->iteration }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $role->name }}
+                                                                    {{ $role->role->name }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     <button type="button"
@@ -157,7 +158,7 @@
 
                     <div class="modal-body">
                         <div class="mb-3">
-                            <input type="hidden" name="user_id" value="{{ $data->id }}">
+                            <input type="hidden" id="user_id" name="user_id" value="{{ $data->id }}">
                             <select class="form-select" id="role_id" name="role_id" required>
                                 <option value="">Pilih Role User</option>
                                 @foreach ($listrole as $role)
@@ -182,12 +183,46 @@
             $('#modalTambahSoal').modal('show');
         });
 
+        // Kirim form menggunakan AJAX saat form "Tambah Soal" disubmit
+        $('#formTambahSoal').submit(function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            var method = form.attr('method');
+            var formData = form.serialize();
+
+            // Buat objek data yang akan dikirim
+            var formData = {
+                _token: '{{ csrf_token() }}',
+                user_id: $('#user_id').val(),
+                role_id: $('#role_id').val(),
+                // tambahkan data lain sesuai kebutuhan
+            };
+
+            $.ajax({
+                url: url,
+                method: method,
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.log(response);
+                    $('#modalTambahSoal').modal('hide');
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    var errorMessage = xhr.responseText;
+                    console.log(errorMessage);
+                }
+            });
+        });
+
+
+
         // Hapus baris tabel
         $('#editableTable').on('click', '.delete', function() {
             if (confirm('Apakah Anda yakin ingin menghapus baris ini?')) {
                 var row = $(this).closest('tr');
-                var id = row.find('td:eq(0)').text(); // Ambil id data yang akan dihapus
-
+                var id = row.find('input[name="roleUserid"]').val();
                 // Kirim permintaan penghapusan ke server menggunakan Ajax
                 $.ajax({
                     type: "DELETE",

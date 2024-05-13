@@ -69,6 +69,12 @@
                                     <div class="col-9">
                                         <p class="card-text">{{ auth()->user()->name }}</p>
                                     </div>
+                                    <div class="col-12 mt-3">
+                                        <a href="{{ route('kuesioner.penilaian') }}" class="btn btn-primary">Daftar
+                                            Kuesioner</a>
+                                        <a href="{{ route('kuesioner.penilaian.riwayat') }}" class="btn btn-warning">Riwayat
+                                            Kuesioner</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

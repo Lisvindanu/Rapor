@@ -182,6 +182,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         //penilaian
         Route::get('/penilaian', "PenilaianController@index")->name('kuesioner.penilaian');
+        Route::get('/penilaian/riwayat', "PenilaianController@riwayat")->name('kuesioner.penilaian.riwayat');
         Route::get('/penilaian/mulai/{id}', "PenilaianController@mulaiPenilaian")->name('kuesioner.penilaian.mulai');
         Route::post('/penilaian/store', "PenilaianController@store")->name('kuesioner.penilaian.store');
 

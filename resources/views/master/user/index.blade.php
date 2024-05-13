@@ -68,7 +68,7 @@
                                     <thead class="text-center">
                                         <tr>
                                             <th style="text-align: center;vertical-align: middle;">
-                                                NIP
+                                                Username
                                             </th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Nama
@@ -81,7 +81,7 @@
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="tabel-body">
                                         @foreach ($data as $user)
                                             <tr>
                                                 <td style="text-align: center;vertical-align: middle;">
@@ -94,10 +94,10 @@
                                                     {{ $user->email }}
                                                 </td>
                                                 <td style="text-align: center;vertical-align: middle;">
-                                                    <a href="{{ route('master.user.edit', $user->id) }}"
+                                                    {{-- <a href="{{ route('master.user.edit', $user->id) }}"
                                                         class="btn btn-sm btn-warning">
                                                         <i class="fas fa-edit"></i>
-                                                    </a>
+                                                    </a> --}}
                                                     {{-- detail button --}}
                                                     <a href="{{ route('master.user.detail', $user->id) }}"
                                                         class="btn btn-sm btn-info">
@@ -129,4 +129,76 @@
 @endsection
 
 @section('js-tambahan')
+    <script>
+        const btnCari2 = document.querySelector("#btn-cari-search");
+        btnCari2.addEventListener("click", function() {
+            var perPage = document.getElementById("perPage").value;
+            searchData(perPage); // Memanggil searchData dengan parameter 1 untuk halaman pertama
+        });
+
+        function searchData(page) {
+            const query = document.querySelector("input[name='query']").value;
+
+            // Kirim permintaan AJAX ke server dengan opsi yang dipilih
+            $.ajax({
+                url: "{{ route('getDataUser') }}",
+                method: "GET",
+                data: {
+                    search: query,
+                    page: page // Mengirimkan parameter page
+                },
+                success: function(response) {
+                    updateTable(response);
+                    updatePagination(response); // Memanggil fungsi updatePagination dengan response
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("Terjadi kesalahan, silakan coba lagi.");
+                }
+            });
+        }
+
+        function updateTable(response) {
+            const tableBody = document.querySelector("#tabel-body");
+            tableBody.innerHTML = "";
+
+            const dataUser = response.data;
+
+            if (dataUser.length === 0) {
+                const emptyRow = document.createElement("tr");
+                emptyRow.innerHTML = `
+                <td colspan="4" class="text-center">Tidak ada data</td>
+            `;
+                tableBody.appendChild(emptyRow);
+                return;
+            }
+
+            dataUser.forEach(function(user) {
+                const newRow = document.createElement("tr");
+                newRow.style.textAlign = "center";
+                newRow.style.verticalAlign = "middle";
+
+                newRow.innerHTML = `
+                <td>${user.username}</td>
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>
+                    <a href="/master/user/detail/${user.id}" class="btn btn-sm btn-info">
+                        <i class="fas fa-link"></i>
+                    </a>
+                    <form action="/master/user/delete/${user.id}" method="POST" style="display: inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin menghapus role ini?')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </td>
+            `;
+                tableBody.appendChild(newRow);
+            });
+        }
+    </script>
+
+    <script src="{{ asset('js/pagination.js') }}"></script>
 @endsection

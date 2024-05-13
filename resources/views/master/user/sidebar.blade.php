@@ -56,7 +56,7 @@
     <div class="sidebar-konten">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('*/kuesioner-sdm/detail/*') ? 'active' : '' }}" href="#">Detail
+                <a class="nav-link {{ Request::is('*/user/detail/*') ? 'active' : '' }}" href="#">Detail
                     User</a>
             </li>
             {{-- <li class="nav-item">

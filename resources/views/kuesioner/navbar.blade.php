@@ -12,7 +12,7 @@
                                 </li>
 
                                 {{-- jika memiliki session selected role sebagai admin --}}
-                                @if (session('selected_role') == 'Admin')
+                                @if (session('selected_role') == 'Admin' || session('selected_role') == 'Pimpinan Fakultas')
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" role="button"
                                             data-bs-toggle="dropdown" aria-expanded="false">

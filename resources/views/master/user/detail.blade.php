@@ -109,15 +109,28 @@
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Nama Role
                                                             </th>
-
-
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Aksi
                                                             </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="tabel-body">
-
+                                                        @foreach ($data->roles as $role)
+                                                            <tr>
+                                                                <td hidden>{{ $role->id }}</td>
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    {{ $loop->iteration }}
+                                                                </td>
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    {{ $role->name }}
+                                                                </td>
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-danger delete">
+                                                                        <i class="fas fa-trash-alt fa-xs"></i>
+                                                                    </button>
+                                                                </td>
+                                                        @endforeach
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -131,110 +144,68 @@
             </div>
         </div>
     </div>
+    <!-- Modal Tambah Soal -->
+    <div class="modal fade" id="modalTambahSoal" tabindex="-1" aria-labelledby="modalTambahSoalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTambahSoalLabel">Tambah Role</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formTambahSoal" action="{{ route('master.roleuser.create') }}" method="POST">
+                    @csrf
+
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <input type="hidden" name="user_id" value="{{ $data->id }}">
+                            <select class="form-select" id="role_id" name="role_id" required>
+                                <option value="">Pilih Role User</option>
+                                @foreach ($listrole as $role)
+                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js-tambahan')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Tampilkan modal saat tombol "Tambah Soal" ditekan
-            $('#btnTambahSoal').click(function() {
-                $('#modalTambahSoal').modal('show');
-            });
+        $('#btnTambahSoal').click(function() {
+            $('#modalTambahSoal').modal('show');
+        });
 
-            // Ambil data untuk autocomplete
-            $.ajax({
-                url: "{{ route('kuesioner.banksoal.data') }}",
-                type: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    data = response;
-                    var formattedData = [];
-                    $.each(data, function(index, item) {
-                        var displayText = item.nama_soal;
-                        formattedData.push(displayText);
-                    });
+        // Hapus baris tabel
+        $('#editableTable').on('click', '.delete', function() {
+            if (confirm('Apakah Anda yakin ingin menghapus baris ini?')) {
+                var row = $(this).closest('tr');
+                var id = row.find('td:eq(0)').text(); // Ambil id data yang akan dihapus
 
-                    $('#namaSoal').typeahead({
-                        source: formattedData,
-                        autoSelect: true,
-                        afterSelect: function(item) {
-                            // Set nilai idSoal ke id yang dipilih
-                            var selectedId = '';
-                            $.each(data, function(index, soal) {
-                                if (soal.nama_soal === item) {
-                                    selectedId = soal.id;
-                                    return false; // Keluar dari loop
-                                }
-                            });
-                            $('#idSoal').val(selectedId);
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    var errorMessage = xhr.responseText;
-                    console.log(errorMessage);
-                }
-            });
-
-            // Kirim form menggunakan AJAX saat form "Tambah Soal" disubmit
-            $('#formTambahSoal').submit(function(e) {
-                e.preventDefault();
-                var form = $(this);
-                var url = form.attr('action');
-                var method = form.attr('method');
-                var formData = form.serialize();
-
-                // Buat objek data yang akan dikirim
-                var formData = {
-                    _token: '{{ csrf_token() }}',
-                    id_soal: $('#idSoal').val(),
-                    id_kuesionerSDM: $('#idKuesionerSDM').val(),
-                    // tambahkan data lain sesuai kebutuhan
-                };
-
+                // Kirim permintaan penghapusan ke server menggunakan Ajax
                 $.ajax({
-                    url: url,
-                    method: method,
-                    contentType: 'application/json',
-                    data: JSON.stringify(formData),
+                    type: "DELETE",
+                    url: "/master/roleuser/" + id,
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: 'DELETE'
+                    },
                     success: function(response) {
-                        console.log(response);
-                        $('#modalTambahSoal').modal('hide');
-                        window.location.reload();
+                        alert('Data berhasil dihapus');
+                        row.remove(); // Hapus baris dari tabel setelah berhasil dihapus
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = xhr.responseText;
-                        console.log(errorMessage);
+                        console.error(xhr.responseText);
+                        alert('Terjadi kesalahan, silakan coba lagi.');
                     }
                 });
-            });
-
-            // Hapus baris tabel
-            $('#editableTable').on('click', '.delete', function() {
-                if (confirm('Apakah Anda yakin ingin menghapus baris ini?')) {
-                    var row = $(this).closest('tr');
-                    var id = row.find('td:eq(0)').text(); // Ambil id data yang akan dihapus
-
-                    // Kirim permintaan penghapusan ke server menggunakan Ajax
-                    $.ajax({
-                        type: "DELETE",
-                        url: "/kuesioner/soalkuesionersdm/" + id,
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            _method: 'DELETE'
-                        },
-                        success: function(response) {
-                            alert('Data berhasil dihapus');
-                            row.remove(); // Hapus baris dari tabel setelah berhasil dihapus
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                            alert('Terjadi kesalahan, silakan coba lagi.');
-                        }
-                    });
-                }
-            });
+            }
         });
     </script>
 @endsection

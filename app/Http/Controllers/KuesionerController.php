@@ -13,7 +13,7 @@ class KuesionerController extends Controller
     public function dashboard(Request $request)
     {
         // jika selected_role admin maka tampilkan halaman dashboard jika pegawai redirect ke penilaian
-        if (session('selected_role') == 'Admin') {
+        if (session('selected_role') == 'Admin' || session('selected_role') == 'Pimpinan Fakultas') {
             //cek apakah request kosong
             if ($request->has('periodeakademik') && $request->has('programstudi')) {
                 $periodeakademik = $request->periodeakademik;

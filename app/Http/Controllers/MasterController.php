@@ -264,7 +264,7 @@ class MasterController extends Controller
     public function user()
     {
         // get data role
-        $users = User::paginate(5);
+        $users = User::paginate(10);
         $total = $users->total(); // Mendapatkan total data
         return view('master.user.index', [
             'data' => $users,
@@ -305,14 +305,16 @@ class MasterController extends Controller
 
     public function showUser($id)
     {
-        $user = User::with('pegawai')->find($id);
+        $user = User::with(['pegawai', 'roles'])->find($id);
+        $listrole = Role::all();
 
         // return $user format json;
         // return response()->json($user);
 
 
         return view('master.user.detail', [
-            'data' => $user
+            'data' => $user,
+            'listrole' => $listrole
         ]);
 
         // return view('master.user.detail');

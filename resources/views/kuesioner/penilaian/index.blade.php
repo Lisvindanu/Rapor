@@ -130,7 +130,9 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <p class="card-text">
-                                                        {{ \Carbon\Carbon::parse($item->kuesionerSDM->jadwal_kegiatan)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
+                                                        {{ \Carbon\Carbon::parse($item->kuesionerSDM->jadwal_kegiatan_mulai)->locale('id_ID')->isoFormat('D MMMM YYYY') }}
+                                                        -
+                                                        {{ \Carbon\Carbon::parse($item->kuesionerSDM->jadwal_kegiatan_selesai)->locale('id_ID')->isoFormat('D MMMM YYYY') }}
                                                     </p>
                                                 </div>
                                             </div>

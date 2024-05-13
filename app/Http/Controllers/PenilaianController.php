@@ -25,6 +25,19 @@ class PenilaianController extends Controller
         ]);
     }
 
+    public function riwayat()
+    {
+        $responden = Responden::with(['kuesionerSDM', 'pegawai', 'penilaian'])
+            ->where('pegawai_nip', auth()->user()->username)
+            ->where('status_selesai', true)
+            ->get();
+
+        // return response()->json($responden);
+        return view('kuesioner.penilaian.riwayat', [
+            'data_kuisioner' => $responden
+        ]);
+    }
+
     // generate penilaian
     public function mulaiPenilaian($id)
     {

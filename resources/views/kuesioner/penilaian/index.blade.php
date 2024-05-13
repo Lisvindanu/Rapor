@@ -69,6 +69,12 @@
                                     <div class="col-9">
                                         <p class="card-text">{{ auth()->user()->name }}</p>
                                     </div>
+                                    <div class="col-12 mt-3">
+                                        <a href="{{ route('kuesioner.penilaian') }}" class="btn btn-primary">Daftar
+                                            Kuesioner</a>
+                                        <a href="{{ route('kuesioner.penilaian.riwayat') }}" class="btn btn-warning">Riwayat
+                                            Kuesioner</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -130,7 +136,9 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <p class="card-text">
-                                                        {{ \Carbon\Carbon::parse($item->kuesionerSDM->jadwal_kegiatan)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
+                                                        {{ \Carbon\Carbon::parse($item->kuesionerSDM->jadwal_kegiatan_mulai)->locale('id_ID')->isoFormat('D MMMM YYYY') }}
+                                                        -
+                                                        {{ \Carbon\Carbon::parse($item->kuesionerSDM->jadwal_kegiatan_selesai)->locale('id_ID')->isoFormat('D MMMM YYYY') }}
                                                     </p>
                                                 </div>
                                             </div>

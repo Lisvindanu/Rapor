@@ -70,6 +70,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::get('/role', "MasterController@role")->name('master.role');
         Route::get('/role/create', "MasterController@createRole")->name('master.role.create');
         Route::post('/role/store', "MasterController@storeRole")->name('master.role.store');
+
         // detail
         Route::get('/role/detail/{id}', "MasterController@showRole")->name('master.role.detail');
         Route::get('/role/edit/{id}', "MasterController@editRole")->name('master.role.edit');
@@ -93,6 +94,10 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         // sinkronasi
         Route::get('/sinkronasi', "MasterController@sinkronasi")->name('master.sinkronasi');
+
+        // roleuser
+        Route::post('/roleuser', "RoleUserController@create")->name('master.roleuser.create');
+        Route::delete('/roleuser/{id}', "RoleUserController@delete")->name('master.roleuser.delete');
     });
 
     Route::prefix('rapor')->group(function () {
@@ -216,6 +221,9 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         // getdataresponden
         Route::get('/get-data-responden', "PegawaiController@getDataResponden")->name('getDataResponden');
+
+        // getdatauser
+        Route::get('/get-data-user', "UserController@getAllDataUser")->name('getDataUser');
     });
 
     Route::prefix('export')->group(function () {

@@ -147,9 +147,9 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::get('/banksoal/data-soal/{id}/edit', "BankSoalController@edit");
         Route::put('/banksoal/{id}', "BankSoalController@update");
 
-        Route::get('/banksoal/pertanyaan/create/{id}', "pertanyaanController@create")->name('kuesioner.banksoal.create-pertanyaan');
-        Route::post('/banksoal/pertanyaan/store', "pertanyaanController@store");
-        Route::get('/banksoal/pertanyaan/{id}', "pertanyaanController@show")->name('kuesioner.banksoal.list-pertanyaan');
+        Route::get('/banksoal/pertanyaan/create/{id}', "PertanyaanController@create")->name('kuesioner.banksoal.create-pertanyaan');
+        Route::post('/banksoal/pertanyaan/store', "PertanyaanController@store");
+        Route::get('/banksoal/pertanyaan/{id}', "PertanyaanController@show")->name('kuesioner.banksoal.list-pertanyaan');
         Route::post('/banksoal/pertanyaan/upload', "ImportController@importPertanyaan")->name('kuesioner.banksoal.pertanyaan.upload');
 
         //kuesioner-sdm
@@ -234,6 +234,14 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
     Route::prefix('import')->group(function () {
         Route::post('/import-kuesioner-sdm', "ImportController@importKuesionerSDM")->name('importKuesionerSDM');
+    });
+
+    Route::prefix('vakasi')->group(function () {
+        Route::get('/', "TestController@index")->name('vakasi');
+    });
+
+    Route::prefix('remedial')->group(function () {
+        Route::get('/', "TestController@index")->name('vakasi');
     });
 
     //test

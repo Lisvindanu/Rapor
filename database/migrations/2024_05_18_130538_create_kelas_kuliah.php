@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('kelas_kuliah');
         Schema::create('kelas_kuliah', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('periodeakademik');

@@ -13,8 +13,8 @@
             <div class="col-12">
                 <div class="judul-modul">
                     <span>
-                        <h3>Role</h3>
-                        <p>Detail Role</p>
+                        <h3>Sinkronasi</h3>
+                        <p>Data Mahasiswa</p>
                     </span>
                 </div>
             </div>
@@ -80,16 +80,25 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="tokenTextarea" class="create-label">
-                                            Homebase </label>
+                                        <label for="periodemasuk" class="create-label">
+                                            Program Studi</label>
                                     </div>
-                                    <div class="col-sm-10">
-                                        {{-- form select option homebase --}}
-                                        <select class="form-select" aria-label="Default select example">
-                                            <option selected>Pilih Homebase</option>
-                                            <option value="1">Homebase 1</option>
-                                            <option value="2">Homebase 2</option>
-                                            <option value="3">Homebase 3</option>
+                                    <div class="col-sm-5">
+                                        <select class="form-select" aria-label="Default select example" name="programstudi"
+                                            required>
+                                            <option value="">Pilih Program Studi</option>
+                                            @foreach ($programstudi as $prodi)
+                                                <option value="{{ $prodi->nama }}">{{ $prodi->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <select class="form-select" aria-label="Default select example" name="periodemasuk"
+                                            required>
+                                            <option value="">Periode Masuk</option>
+                                            @foreach ($periode as $prd)
+                                                <option value="{{ $prd->kode_periode }}">{{ $prd->kode_periode }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -99,7 +108,7 @@
                                             Limit </label>
                                     </div>
                                     <div class="col-sm-10">
-                                        <input type="number" class="form-control" id="inputNumber"
+                                        <input type="number" class="form-control" id="limit" name="limit"
                                             placeholder="Masukkan Jumlah Data" value="10">
                                     </div>
                                 </div>
@@ -107,17 +116,21 @@
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                     </div>
                                     <div class="col-sm-10">
-                                        <button type="submit" class="btn btn-primary">Sinkronisasi</button>
+                                        <button type="submit" class="btn btn-primary" id="btnSinkronasi">
+                                            <span class="spinner-border spinner-border-sm d-none" role="status"
+                                                aria-hidden="true"></span>
+                                            <span class="sr-only">Loading...</span>
+                                            Sinkronasi</button>
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="tokenTextarea" class="create-label">
+                                        <label for="hasilSinkronasi" class="create-label">
                                             Hasil </label>
                                     </div>
                                     <div class="col-sm-10">
-                                        <textarea class="form-control" readonly id="tokenTextarea" name="access_token" cols="30" rows="5"></textarea>
+                                        <textarea class="form-control" readonly id="hasilSinkronasi" name="hasilSinkronasi" cols="30" rows="5"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -127,10 +140,23 @@
             </div>
         </div>
     </div>
+    <!-- Spinner Loading -->
+    <div id="loadingSpinner" style="display: none;">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js-tambahan')
     <script>
+        // Menyimpan referensi ke elemen spinner saat halaman dimuat
+        // Menyimpan referensi ke tombol sinkronasi
+        var btnSinkronasi = document.getElementById('btnSinkronasi');
+        var spinner = document.getElementById('btnSinkronasi').querySelector('.spinner-border');
+
         document.getElementById('btnGetToken').addEventListener('click', function() {
             $.ajax({
                 url: '{{ route('master.sinkronasi.getToken') }}',
@@ -148,6 +174,56 @@
                 },
                 error: function(xhr, status, error) {
                     alert('AJAX Error: ' + error);
+                }
+            });
+        });
+
+        document.getElementById('btnSinkronasi').addEventListener('click', function() {
+
+            btnSinkronasi.disabled = true;
+            spinner.classList.remove('d-none');
+            this.textContent = 'Loading...';
+
+            $.ajax({
+                url: '{{ route('master.sinkronasi.getMahasiswa') }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    access_token: document.getElementById('tokenTextarea').value,
+                    programstudi: encodeURIComponent(document.querySelector('select[name="programstudi"]')
+                        .value),
+                    periodemasuk: encodeURIComponent(document.querySelector('select[name="periodemasuk"]'))
+                        .value,
+                    limit: encodeURIComponent(document.getElementById('limit').value)
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Perbarui isi textarea dengan token yang diterima
+                        document.getElementById('hasilSinkronasi').value = response.message;
+                    } else {
+                        document.getElementById('hasilSinkronasi').value = response.message;
+                    }
+                    // Aktifkan kembali tombol sinkronasi
+                    btnSinkronasi.disabled = false;
+                    // Sematkan kembali teks asli tombol sinkronasi
+                    document.getElementById('btnSinkronasi').textContent = 'Sinkronasi';
+
+                    // Sembunyikan spinner di dalam tombol
+                    spinner.classList.add('d-none');
+                },
+                error: function(xhr, status, error) {
+                    var errorResponse = JSON.parse(xhr.responseText);
+                    var errorMessage = JSON.parse(errorResponse.error.split('\n')[1]).error_message;
+                    document.getElementById('hasilSinkronasi').value = status + " : " + errorMessage;
+                    // alert('AJAX Error: ' + error);
+                    // Aktifkan kembali tombol sinkronasi
+                    btnSinkronasi.disabled = false;
+
+                    // Sematkan kembali teks asli tombol sinkronasi
+                    document.getElementById('btnSinkronasi').textContent = 'Sinkronasi';
+
+                    // Sembunyikan spinner di dalam tombol
+                    spinner.classList.add('d-none');
                 }
             });
         });

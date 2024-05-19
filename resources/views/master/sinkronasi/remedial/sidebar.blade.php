@@ -55,18 +55,13 @@
 <body>
     <div class="sidebar-konten">
         <ul class="nav flex-column">
-
-            <li class="nav-item">
-                <a class="nav-link {{ Request::is('*master/sinkronasi') ? 'active' : '' }}"
-                    href="{{ route('master.sinkronasi') }}">Dosen</a>
-            </li>
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('*master/sinkronasi/mahasiswa*') ? 'active' : '' }}"
-                    href="{{ route('master.sinkronasi.mahasiswa') }}">Mahasiswa</a>
+                    href="{{ route('master.sinkronasi.mahasiswa') }}">Remedial</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('*master/sinkronasi/kelas-kuliah*') ? 'active' : '' }}"
-                    href="{{ route('master.sinkronasi.kelasKuliah') }}">Kelas Kuliah</a>
+                    href="{{ route('master.sinkronasi.kelasKuliah') }}">Vakasi</a>
             </li>
         </ul>
     </div>

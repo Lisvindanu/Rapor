@@ -93,7 +93,17 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::get('/unit-kerja', "MasterController@unitkerja")->name('master.unit-kerja');
 
         // sinkronasi
-        Route::get('/sinkronasi', "MasterController@sinkronasi")->name('master.sinkronasi');
+        Route::get('/sinkronasi', "SinkronasiController@index")->name('master.sinkronasi');
+        Route::post('/sinkronasi/get-token', "SinkronasiController@getToken")->name('master.sinkronasi.getToken');
+        Route::get('/sinkronasi/mahasiswa', "SinkronasiController@mahasiswa")->name('master.sinkronasi.mahasiswa');
+        Route::post('/sinkronasi/get-mahasiswa', "SinkronasiController@getDataMahasiswa")->name('master.sinkronasi.getMahasiswa');
+        Route::get('/sinkronasi/kelas-kuliah', "SinkronasiController@kelasKuliah")->name('master.sinkronasi.kelasKuliah');
+        Route::post('/sinkronasi/get-kelas-kuliah', "SinkronasiController@getDataKelasKuliah")->name('master.sinkronasi.getDataKelasKuliah');
+
+        // sinkronasi remedial
+        Route::get('/sinkronasi/remedial', "SinkronasiController@remedial")->name('master.sinkronasi.remedial');
+        Route::post('/sinkronasi/get-krs', "SinkronasiController@getDataKrs")->name('master.sinkronasi.getDataKrs');
+
 
         // roleuser
         Route::post('/roleuser', "RoleUserController@create")->name('master.roleuser.create');

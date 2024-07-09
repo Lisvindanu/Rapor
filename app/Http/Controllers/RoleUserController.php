@@ -14,11 +14,13 @@ class RoleUserController extends Controller
             $request->validate([
                 'user_id' => 'required',
                 'role_id' => 'required',
+                'unit_kerja_id' => 'required',
             ]);
 
             $roleUser = new RoleUser();
             $roleUser->user_id = $request->user_id;
             $roleUser->role_id = $request->role_id;
+            $roleUser->unit_kerja_id = $request->unit_kerja_id;
             $roleUser->save();
 
             return response()->json(['message' => 'Data berhasil disimpan'], 200);

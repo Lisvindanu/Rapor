@@ -22,10 +22,10 @@ return new class extends Migration
             $table->string('sistemkuliah');
             $table->string('namakelasmahasiswa')->nullable();
             $table->integer('kapasitas');
-            $table->date('tanggalmulai');
-            $table->date('tanggalselesai');
-            $table->integer('jumlahpertemuan');
-            $table->string('mbkm');
+            $table->date('tanggalmulai')->nullable();
+            $table->date('tanggalselesai')->nullable();
+            $table->integer('jumlahpertemuan')->nullable();
+            $table->string('mbkm')->nullable();
             $table->string('hari')->nullable();
             $table->string('jammulai')->nullable();
             $table->string('jamselesai')->nullable();

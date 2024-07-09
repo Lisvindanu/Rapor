@@ -50,10 +50,9 @@
                             </div>
                             <div class="col-8">
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <a href="{{ route('master.role') }}" class="btn btn-secondary"
-                                        type="button">Kembali</a>
+                                    <a href="{{ route('master') }}" class="btn btn-secondary" type="button">Kembali</a>
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <button class="btn btn-primary" id="btnTambahModul">Tambah Modul</button>
+                                        <button class="btn btn-primary" id="btnGetToken">Get Token</button>
                                     </div>
                                 </div>
                             </div>
@@ -68,105 +67,89 @@
                                 <!-- Nama Indikator -->
                                 <div class="form-group row">
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="nama_kuesioner" class=" create-label">
-                                            Name</label>
+                                        <label for="tokenTextarea" class="create-label">
+                                            Token</label>
                                     </div>
                                     <div class="col-sm-10">
-                                        <span class="input-group-text"></span>
+                                        <textarea class="form-control" readonly id="tokenTextarea" name="access_token" cols="30" rows="5">
+@if (session('token_sevima'))
+{{ session('token_sevima') }}
+@endif
+                                        </textarea>
                                     </div>
+                                </div>
+                                <div class="form-group row">
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="nama_kuesioner" class=" create-label">
-                                            Deksripsi</label>
+                                        <label for="tokenTextarea" class="create-label">
+                                            Homebase </label>
                                     </div>
                                     <div class="col-sm-10">
-                                        <textarea class="form-control" disabled id="" cols="30" rows="5"></textarea>
+                                        {{-- form select option homebase --}}
+                                        <select class="form-select" aria-label="Default select example">
+                                            <option selected>Pilih Homebase</option>
+                                            <option value="1">Homebase 1</option>
+                                            <option value="2">Homebase 2</option>
+                                            <option value="3">Homebase 3</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <!-- keterangan -->
-                                <div class="card">
-                                    <div class="card-body" style="display: flex">
-                                        <div class="col-md-12">
-                                            <div class="table-container">
-                                                <table class="table table-hover" id="editableTable">
-                                                    <thead class="text-center">
-                                                        <tr>
-                                                            <th style="text-align: center;vertical-align: middle;">
-                                                                No.
-                                                            </th>
-                                                            <th style="text-align: center;vertical-align: middle;">
-                                                                Nama Modul
-                                                            </th>
-                                                            <th style="text-align: center;vertical-align: middle;">
-                                                                Aksi
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="tabel-body">
+                                <div class="form-group row">
+                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                        <label for="tokenTextarea" class="create-label">
+                                            Limit </label>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <input type="number" class="form-control" id="inputNumber"
+                                            placeholder="Masukkan Jumlah Data" value="10">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <button type="submit" class="btn btn-primary">Sinkronisasi</button>
+                                    </div>
+                                </div>
 
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                        <label for="tokenTextarea" class="create-label">
+                                            Hasil </label>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" readonly id="tokenTextarea" name="access_token" cols="30" rows="5"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Tambah Responden -->
-    <div class="modal fade" id="modalTambahModul" tabindex="-1" aria-labelledby="modalTambahModulLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahModulLabel">Tambah Modul</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="formTambahRoleModul" action="{{ route('addRoleModul') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="row" style="margin-bottom: 10px">
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control typeahead" id="nama_pegawai" name="nama_pegawai"
-                                    placeholder="Masukkan NIP atau Nama Pegawai">
-                            </div>
-                            <div class="col-sm-auto">
-                                <button id="btn-cari-filter" color:white" class="btn btn-primary" type="button"
-                                    form="">Cari</button>
-                                <button id="btn-refresh" style="color:white" class="btn btn-info" type="button"
-                                    form="">Refresh</button>
-                            </div>
-                        </div>
-                        <table class="table table-bordered" id="tabelModul">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Nama Modul</th>
-                                    {{-- <th>Unit Kerja</th> --}}
-                                    <th><input type="checkbox" id="checkAll"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data pegawai akan ditampilkan di sini -->
-                            </tbody>
-                        </table>
-                        <!-- Pagination -->
-                        <ul class="pagination justify-content-center" id="pagination">
-                            <!-- Pagination akan ditampilkan di sini -->
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
 @endsection
 
 @section('js-tambahan')
+    <script>
+        document.getElementById('btnGetToken').addEventListener('click', function() {
+            $.ajax({
+                url: '{{ route('master.sinkronasi.getToken') }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.access_token) {
+                        // Perbarui isi textarea dengan token yang diterima
+                        document.getElementById('tokenTextarea').value = response.access_token;
+                    } else {
+                        alert('Error: ' + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('AJAX Error: ' + error);
+                }
+            });
+        });
+    </script>
 @endsection

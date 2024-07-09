@@ -87,13 +87,13 @@
                                     <div class="col-sm-4">
                                         <span class="input-group-text">{{ $data->email }}</span>
                                     </div>
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                    {{-- <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                         <label for="nama_kuesioner" class=" create-label">
                                             Akun Pegawai</label>
                                     </div>
                                     <div class="col-sm-4">
                                         <span class="input-group-text">{{ $data->pegawai->nama }}</span>
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <!-- keterangan -->
                                 <div class="card">
@@ -110,12 +110,15 @@
                                                                 Nama Role
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
+                                                                Unit Kerja
+                                                            </th>
+                                                            <th style="text-align: center;vertical-align: middle;">
                                                                 Aksi
                                                             </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="tabel-body">
-                                                        @foreach ($data->roleUser as $role)
+                                                        @foreach ($roleuser as $role)
                                                             <tr>
                                                                 <td hidden><input type="hidden" name="roleUserid"
                                                                         value="{{ $role->id }}"></td>
@@ -124,6 +127,13 @@
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $role->role->name }}
+                                                                </td>
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    @if ($role->unitkerja)
+                                                                        {{ $role->unitkerja->nama_unit }}
+                                                                    @else
+                                                                        Tidak ada unit kerja
+                                                                    @endif
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     <button type="button"
@@ -166,6 +176,14 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <select class="form-select" id="unit_kerja_id" name="unit_kerja_id" required>
+                                <option value="">Pilih Unit Kerja User</option>
+                                @foreach ($unitkerja as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama_unit }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -196,6 +214,7 @@
                 _token: '{{ csrf_token() }}',
                 user_id: $('#user_id').val(),
                 role_id: $('#role_id').val(),
+                unit_kerja_id: $('#unit_kerja_id').val(),
                 // tambahkan data lain sesuai kebutuhan
             };
 
@@ -215,8 +234,6 @@
                 }
             });
         });
-
-
 
         // Hapus baris tabel
         $('#editableTable').on('click', '.delete', function() {

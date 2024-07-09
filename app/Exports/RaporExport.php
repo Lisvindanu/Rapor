@@ -19,10 +19,10 @@ class RaporExport implements FromView, ShouldAutoSize
     public function view(): View
     {
         if ($this->data) {
-            return View('exports.template-rapor-kinerja', [
+            return view('exports.template-rapor-kinerja', [
                 'data' => $this->data
             ]);
         }
-        return View('exports.template-rapor-kinerja');
+        return view('exports.template-rapor-kinerja');
     }
 }

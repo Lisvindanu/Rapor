@@ -276,27 +276,52 @@
                     const judulRole = $('#judul-role');
                     judulRole.text(route);
 
-                    data.forEach(function(role) {
+                    // data.forEach(function(role) {
+                    //     const roleDiv = $('<div>').addClass('role');
+
+                    //     const roleLink = $('<span>').addClass('role-link')
+                    //         .css('text-decoration', 'none')
+                    //         .css('cursor', 'pointer')
+                    //         .click(function() {
+                    //             setRole(role.id, route);
+                    //         });
+
+                    //     const roleJudul = $('<p>').addClass('role-judul')
+                    //         .html(`<strong>${role.name}</strong>`);
+
+                    //     const roleBidang = $('<span>').addClass('role-bidang')
+                    //         .text(role.deskripsi);
+
+                    //     roleLink.append(roleJudul);
+                    //     roleLink.append(roleBidang);
+                    //     roleDiv.append(roleLink);
+                    //     roleContainer.append(roleDiv);
+                    // });
+                    data.forEach(function(item) {
+                        const role = item.role; // Akses objek role dari setiap item
+                        const unitkerja = item.unitkerja; // Akses objek unirkerja dari setiap item
+
                         const roleDiv = $('<div>').addClass('role');
 
                         const roleLink = $('<span>').addClass('role-link')
                             .css('text-decoration', 'none')
                             .css('cursor', 'pointer')
                             .click(function() {
-                                setRole(role.id, route);
+                                setRole(role.id, unitkerja.id, route);
                             });
 
                         const roleJudul = $('<p>').addClass('role-judul')
                             .html(`<strong>${role.name}</strong>`);
 
                         const roleBidang = $('<span>').addClass('role-bidang')
-                            .text(role.deskripsi);
+                            .text(unitkerja.nama_unit);
 
                         roleLink.append(roleJudul);
                         roleLink.append(roleBidang);
                         roleDiv.append(roleLink);
                         roleContainer.append(roleDiv);
                     });
+
 
                     roleContainer.css('display', 'block'); // Menampilkan kotak role setelah data dimasukkan
                 },
@@ -306,7 +331,7 @@
             });
         }
 
-        function setRole(role, route) {
+        function setRole(role, unitkerja, route) {
             // Mengatur session role dengan nilai role yang dipilih
             fetch('{{ route('gate.setRole') }}', {
                     method: 'POST',
@@ -316,6 +341,7 @@
                     },
                     body: JSON.stringify({
                         role: role,
+                        unitkerja: unitkerja
                     })
                 })
                 .then(response => {

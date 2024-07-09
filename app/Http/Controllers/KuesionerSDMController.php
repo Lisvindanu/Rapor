@@ -32,9 +32,11 @@ class KuesionerSDMController extends Controller
         }
 
         $daftar_periode = Periode::orderBy('kode_periode', 'desc')->take(10)->get();
+
         $dataKuisonerSDM = KuesionerSDM::with('pegawai')->where('kode_periode', $periode)
             ->orderby('created_at', 'desc')
             ->paginate($request->get('perPage', 10));
+
         $total = $dataKuisonerSDM->total(); // Mendapatkan total data
 
         return view('kuesioner.kuesioner-sdm.index', [

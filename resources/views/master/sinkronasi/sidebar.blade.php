@@ -55,17 +55,30 @@
 <body>
     <div class="sidebar-konten">
         <ul class="nav flex-column">
+
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('*/role/detail/*') ? 'active' : '' }}" href="#">Token</a>
+                <a class="nav-link {{ Request::is('*master/sinkronasi') ? 'active' : '' }}"
+                    href="{{ route('master.sinkronasi') }}">Dosen</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('*/role/detail/*') ? 'active' : '' }}" href="#">Dosen</a>
+                <a class="nav-link {{ Request::is('*master/sinkronasi/mahasiswa*') ? 'active' : '' }}"
+                    href="{{ route('master.sinkronasi.mahasiswa') }}">Mahasiswa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('*/role/detail/*') ? 'active' : '' }}" href="#">Periode</a>
+                <a class="nav-link {{ Request::is('*master/sinkronasi/kelas-kuliah*') ? 'active' : '' }}"
+                    href="{{ route('master.sinkronasi.kelasKuliah') }}">Kelas Kuliah</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('*/role/detail/*') ? 'active' : '' }}" href="#">Kelas Kuliah</a>
+                <a class="nav-link {{ Request::is('*master/sinkronasi/jadwal-kuliah*') ? 'active' : '' }}"
+                    href="{{ route('master.sinkronasi.jadwalKuliah') }}">Jadwal Kuliah</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('*master/sinkronasi/presensi-kuliah*') ? 'active' : '' }}"
+                    href="{{ route('master.sinkronasi.presensiKuliah') }}">Presensi Kuliah</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('*master/sinkronasi/akm*') ? 'active' : '' }}"
+                    href="{{ route('master.sinkronasi.akm') }}">AKM</a>
             </li>
         </ul>
     </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Modul;
+use App\Models\RoleUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,9 +45,16 @@ class GateController extends Controller
             return response()->json(['error' => 'Modul not found'], 404);
         }
 
-        $accessibleRoles = $user->roles()->whereHas('moduls', function ($query) use ($modul_id) {
-            $query->where('moduls.id', $modul_id);
-        })->get();
+        // $accessibleRoles = $user->roles()->whereHas('moduls', function ($query) use ($modul_id) {
+        //     $query->where('moduls.id', $modul_id);
+        // })->get();
+        $accessibleRoles =  $user->roleUser()
+            ->whereHas('role', function ($query) use ($modul_id) {
+                $query->whereHas('moduls', function ($query) use ($modul_id) {
+                    $query->where('moduls.id', $modul_id);
+                });
+            })
+            ->with(['role', 'unitkerja'])->get();
 
         return response()->json($accessibleRoles, 200);
     }
@@ -61,6 +69,7 @@ class GateController extends Controller
         if ($user->roles->contains($request->role)) {
             // Set session selected_role dengan role yang dipilih
             $request->session()->put('selected_role', $user->roles->find($request->role)->name);
+            $request->session()->put('selected_filter', $request->unitkerja);
 
             // Mengembalikan respons OK
             return response()->json(['message' => 'Session role berhasil diatur'], 200);

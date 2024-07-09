@@ -24,4 +24,5 @@ class Role extends Model
     {
         return $this->belongsToMany(Modul::class, 'role_modul', 'role_id', 'modul_id');
     }
+
 }

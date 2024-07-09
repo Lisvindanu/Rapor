@@ -16,6 +16,7 @@ class RoleUser extends Model
         'id',
         'user_id',
         'role_id',
+        'unit_kerja_id',
     ];
 
     public function user()
@@ -26,5 +27,11 @@ class RoleUser extends Model
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    // unitkerja
+    public function unitkerja()
+    {
+        return $this->belongsTo(UnitKerja::class, 'unit_kerja_id', 'id');
     }
 }

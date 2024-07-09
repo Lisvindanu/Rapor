@@ -41,7 +41,8 @@
         @endphp
         @for ($i = $startPage; $i <= $endPage; $i++)
             <li class="page-item {{ $data->currentPage() == $i ? 'active' : '' }}">
-                <a href="{{ $data->url($i) }}" class="page-link">{{ $i }}</a>
+                {{-- <a href="{{ $data->url($i) }}" class="page-link">{{ $i }}</a> --}}
+                <a href="{{ request()->fullUrlWithQuery(['page' => $i]) }}" class="page-link">{{ $i }}</a>
             </li>
         @endfor
 

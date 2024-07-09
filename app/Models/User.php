@@ -71,7 +71,6 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class);
     }
-
     // RoleUser
     public function roleUser()
     {
@@ -88,5 +87,11 @@ class User extends Authenticatable
         }
 
         return $accessibleModuls->unique('id');
+    }
+
+    // mahasiswa
+    public function mahasiswa()
+    {
+        return $this->hasOne(Mahasiswa::class, 'nim', 'key_relation');
     }
 }

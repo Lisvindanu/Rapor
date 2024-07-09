@@ -65,64 +65,64 @@
                         <div class="col-10">
                             <div class="sub-konten">
                                 <!-- Nama Indikator -->
-                                <div class="form-group row">
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="tokenTextarea" class="create-label">
-                                            Token</label>
+                                <form>
+                                    <div class="form-group row">
+                                        <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                            <label for="tokenTextarea" class="create-label">
+                                                Token</label>
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" readonly id="tokenTextarea" name="access_token" cols="30" rows="5">{{ session('token_sevima') ? session('token_sevima') : '' }}
+                                    </textarea>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-10">
-                                        <textarea class="form-control" readonly id="tokenTextarea" name="access_token" cols="30" rows="5">
-@if (session('token_sevima'))
-{{ session('token_sevima') }}
-@endif
-                                        </textarea>
+                                    <div class="form-group row">
+                                        <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                            <label for="periodemasuk" class="create-label">
+                                                Program Studi</label>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <select class="form-select" aria-label="Default select example"
+                                                name="programstudi" required>
+                                                <option value="">Pilih Program Studi</option>
+                                                @foreach ($programstudi as $prodi)
+                                                    <option value="{{ $prodi->nama }}">{{ $prodi->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <select class="form-select" aria-label="Default select example"
+                                                name="periodemasuk" required>
+                                                <option value="">Periode Masuk</option>
+                                                @foreach ($periode as $prd)
+                                                    <option value="{{ $prd->kode_periode }}">{{ $prd->kode_periode }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="periodemasuk" class="create-label">
-                                            Program Studi</label>
+                                    <div class="form-group row">
+                                        <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                            <label for="tokenTextarea" class="create-label">
+                                                Limit </label>
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <input type="number" class="form-control" id="limit" name="limit"
+                                                placeholder="Masukkan Jumlah Data" value="10">
+                                        </div>
                                     </div>
-                                    <div class="col-sm-5">
-                                        <select class="form-select" aria-label="Default select example" name="programstudi"
-                                            required>
-                                            <option value="">Pilih Program Studi</option>
-                                            @foreach ($programstudi as $prodi)
-                                                <option value="{{ $prodi->nama }}">{{ $prodi->nama }}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="form-group row">
+                                        <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <button type="submit" class="btn btn-primary" id="btnSinkronasi">
+                                                <span class="spinner-border spinner-border-sm d-none" role="status"
+                                                    aria-hidden="true"></span>
+                                                <span class="sr-only">Loading...</span>
+                                                Sinkronasi</button>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-5">
-                                        <select class="form-select" aria-label="Default select example" name="periodemasuk"
-                                            required>
-                                            <option value="">Periode Masuk</option>
-                                            @foreach ($periode as $prd)
-                                                <option value="{{ $prd->kode_periode }}">{{ $prd->kode_periode }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="tokenTextarea" class="create-label">
-                                            Limit </label>
-                                    </div>
-                                    <div class="col-sm-10">
-                                        <input type="number" class="form-control" id="limit" name="limit"
-                                            placeholder="Masukkan Jumlah Data" value="10">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                    </div>
-                                    <div class="col-sm-10">
-                                        <button type="submit" class="btn btn-primary" id="btnSinkronasi">
-                                            <span class="spinner-border spinner-border-sm d-none" role="status"
-                                                aria-hidden="true"></span>
-                                            <span class="sr-only">Loading...</span>
-                                            Sinkronasi</button>
-                                    </div>
-                                </div>
+                                </form>
 
                                 <div class="form-group row">
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
@@ -183,6 +183,9 @@
             btnSinkronasi.disabled = true;
             spinner.classList.remove('d-none');
             this.textContent = 'Loading...';
+            var form = this.closest('form'); // Mendapatkan form terdekat dari tombol yang diklik
+            var programstudi = form.elements['programstudi'].options[form.elements['programstudi'].selectedIndex]
+                .innerText;
 
             $.ajax({
                 url: '{{ route('master.sinkronasi.getMahasiswa') }}',
@@ -190,10 +193,8 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                     access_token: document.getElementById('tokenTextarea').value,
-                    programstudi: encodeURIComponent(document.querySelector('select[name="programstudi"]')
-                        .value),
-                    periodemasuk: encodeURIComponent(document.querySelector('select[name="periodemasuk"]'))
-                        .value,
+                    programstudi: programstudi,
+                    periodemasuk: document.querySelector('select[name="periodemasuk"]').value,
                     limit: encodeURIComponent(document.getElementById('limit').value)
                 },
                 success: function(response) {

@@ -68,6 +68,18 @@
                 <a class="nav-link {{ Request::is('*master/sinkronasi/kelas-kuliah*') ? 'active' : '' }}"
                     href="{{ route('master.sinkronasi.kelasKuliah') }}">Kelas Kuliah</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('*master/sinkronasi/jadwal-kuliah*') ? 'active' : '' }}"
+                    href="{{ route('master.sinkronasi.jadwalKuliah') }}">Jadwal Kuliah</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('*master/sinkronasi/presensi-kuliah*') ? 'active' : '' }}"
+                    href="{{ route('master.sinkronasi.presensiKuliah') }}">Presensi Kuliah</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('*master/sinkronasi/akm*') ? 'active' : '' }}"
+                    href="{{ route('master.sinkronasi.akm') }}">AKM</a>
+            </li>
         </ul>
     </div>
 </body>

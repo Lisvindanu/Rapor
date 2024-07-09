@@ -35,4 +35,16 @@ class Mahasiswa extends Model
         'tanggallahir',
         'tempatlahir'
     ];
+
+    // has many AKM
+    public function akm()
+    {
+        return $this->hasMany(AKM::class, 'nim', 'nim');
+    }
+
+    //user
+    public function user()
+    {
+        return $this->hasOne(User::class, 'key_relation', 'nim');
+    }
 }

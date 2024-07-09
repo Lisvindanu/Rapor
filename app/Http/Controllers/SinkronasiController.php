@@ -18,6 +18,11 @@ use App\Models\Mahasiswa;
 use App\Models\ProgramStudi;
 use App\Models\Krs;
 use GuzzleHttp\Exception\RequestException;
+use App\Models\AKM;
+use App\Models\JadwalPerkuliahan;
+use App\Helpers\UnitKerjaHelper;
+use App\Models\PresensiKuliah;
+use Illuminate\Support\Facades\Validator;
 
 class SinkronasiController extends Controller
 {
@@ -36,7 +41,7 @@ class SinkronasiController extends Controller
     function mahasiswa()
     {
         $programstudi = ProgramStudi::all();
-        $periode = Periode::orderBy('kode_periode', 'desc')->take(16)->get();
+        $periode = Periode::orderBy('kode_periode', 'desc')->take(35)->get();
         return view(
             'master.sinkronasi.mahasiswa',
             [
@@ -60,12 +65,56 @@ class SinkronasiController extends Controller
         );
     }
 
+    // jadwalPerkuliahan
+    function jadwalKuliah()
+    {
+        $programstudi = ProgramStudi::all();
+        $periode = Periode::orderBy('kode_periode', 'desc')->take(16)->get();
+        return view(
+            'master.sinkronasi.jadwal-kuliah',
+            [
+                'programstudi' => $programstudi,
+                'periode' => $periode
+            ]
+        );
+    }
+
+    // jadwalPerkuliahan
+    function presensiKuliah()
+    {
+        $unitKerja = UnitKerjaHelper::getUnitKerja();
+        // return response()->json($unitKerja);
+        $programstudi = ProgramStudi::all();
+        $periode = Periode::orderBy('kode_periode', 'desc')->take(16)->get();
+        return view(
+            'master.sinkronasi.presensi-kuliah',
+            [
+                'programstudi' => $programstudi,
+                'periode' => $periode,
+                'unitkerja' => $unitKerja
+            ]
+        );
+    }
+
     function remedial()
     {
         $programstudi = ProgramStudi::all();
         $periode = Periode::orderBy('kode_periode', 'desc')->take(16)->get();
         return view(
             'master.sinkronasi.remedial.index',
+            [
+                'programstudi' => $programstudi,
+                'periode' => $periode
+            ]
+        );
+    }
+
+    function akm()
+    {
+        $programstudi = ProgramStudi::all();
+        $periode = Periode::orderBy('kode_periode', 'desc')->take(25)->get();
+        return view(
+            'master.sinkronasi.akm',
             [
                 'programstudi' => $programstudi,
                 'periode' => $periode
@@ -333,8 +382,8 @@ class SinkronasiController extends Controller
                 $formData['programstudi'] = $request->get('programstudi');
             }
 
-            if ($request->periodeakademik != null) {
-                $formData['periodemasuk'] = $request->get('periodeakademik');
+            if ($request->periodemasuk != null) {
+                $formData['periodemasuk'] = $request->get('periodemasuk');
             }
 
             if ($request->limit != null) {
@@ -469,6 +518,192 @@ class SinkronasiController extends Controller
         }
     }
 
+    function getDataJadwalKuliah(Request $request)
+    {
+        try {
+            // Ambil access token yang sudah disimpan
+            $accessToken = $request->get("access_token");
+
+            $formData = [];
+
+            if ($request->programstudi != null) {
+                $formData['programstudi'] = $request->get('programstudi');
+            }
+
+            if ($request->periode != null) {
+                $formData['periode'] = $request->get('periode');
+            }
+
+            if ($request->limit != null) {
+                $formData['limit'] = $request->get('limit');
+            }
+
+            // Jika access token tidak ada, kembalikan pesan kesalahan
+            if (!$accessToken) {
+                return response()->json(['error' => 'Access token tidak tersedia'], 500);
+            }
+
+            // Buat instance dari Guzzle Client
+            $client = new Client();
+
+            // Menggunakan access token untuk request mendapatkan data kelas kuliah
+            $response = $client->request('GET', 'https://unpas.siakadcloud.com/live/jadwalperkuliahan', [
+                'query' => $formData,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken // Gunakan access token yang sudah ada
+                ]
+            ]);
+
+            // Mendapatkan body respons sebagai string
+            $body = $response->getBody()->getContents();
+
+            // Mendapatkan data dari body respons
+            $data = json_decode($body, true);
+
+            // Simpan data kelas kuliah ke dalam tabel KelasKuliah
+            $count_update = 0;
+            $count_insert = 0;
+            $dataupdate = [];
+            foreach ($data as $jadwalKuliahData) {
+                $jadwalKuliah = JadwalPerkuliahan::where('periode', $jadwalKuliahData['periode'])
+                    ->where('programstudi', $jadwalKuliahData['programstudi'])
+                    ->where('kodemk', $jadwalKuliahData['kodemk'])
+                    ->where('nip', $jadwalKuliahData['nip'])
+                    ->where('kelasid', $jadwalKuliahData['kelasid'])
+                    ->where('jadwalid', $jadwalKuliahData['jadwalid'])
+                    ->first();
+                // Jika data kelas kuliah sudah ada, perbarui
+                if ($jadwalKuliah) {
+                    $jadwalKuliah->update($jadwalKuliahData);
+                    $dataupdate[] = $jadwalKuliahData;
+                    $count_update++;
+                } else {
+                    // Jika tidak, buat data kelas kuliah baru
+                    $jadwalKuliahData['id'] = Str::uuid();
+                    JadwalPerkuliahan::create($jadwalKuliahData);
+                    $count_insert++;
+                }
+            }
+            // Tampilkan data yang diperoleh dari request
+            return response()->json(
+                [
+                    'message' => 'Data jadwal kuliah berhasil disinkronkan,' . $count_update . " data berhasil diperbarui dan " . $count_insert . " data baru",
+                    'data' => json_decode($body, true),
+                    'data_update' => $dataupdate
+                ]
+            );
+        } catch (Exception $e) {
+            // Tangani kesalahan jika permintaan gagal
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    function getDataPresensiKuliah(Request $request)
+    {
+        set_time_limit(1000);
+
+        // Validasi request
+        $validator = Validator::make($request->all(), [
+            'access_token' => 'required',
+            'programstudi' => 'required',
+            'periode' => 'required',
+        ]);
+
+        // Jika validasi gagal, kembalikan respons error
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
+
+        try {
+            // Ambil access token yang sudah disimpan
+            $accessToken = $request->input("access_token");
+
+            // Validasi access token
+            if (!$accessToken) {
+                return response()->json(['error' => 'Access token tidak tersedia'], 500);
+            }
+
+            // Ambil data form jika limit tidak null
+            $formData = [];
+            if ($request->input('limit') != null) {
+                $formData['limit'] = $request->input('limit');
+            }
+
+            // Hapus data PresensiKuliah berdasarkan periode dan program studi
+            PresensiKuliah::where('periodeakademik', $request->input('periode'))
+                ->where('programstudi', 'ilike', '%' . $request->input('programstudi') . '%')
+                ->delete();
+
+            // Ambil KelasKuliah berdasarkan periode dan program studi
+            $kelasKuliah = KelasKuliah::where('periodeakademik', $request->input('periode'))
+                ->where('programstudi', 'ilike', '%' . $request->input('programstudi') . '%')
+                ->get();
+
+            $count_insert = 0;
+
+            // Iterasi untuk mengakses data kelas kuliah
+            foreach ($kelasKuliah as $kls) {
+                $formData['periodeakademik'] = $kls->periodeakademik;
+                $formData['kodemk'] = $kls->kodemk;
+                $formData['kelas'] = $kls->namakelas;
+
+                // Buat instance dari Guzzle Client
+                $client = new Client();
+
+                try {
+                    // Request data presensi menggunakan access token
+                    $response = $client->request('GET', 'https://unpas.siakadcloud.com/live/presensi', [
+                        'query' => $formData,
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $accessToken
+                        ]
+                    ]);
+
+                    // Ambil body response sebagai string
+                    $body = $response->getBody()->getContents();
+
+                    // Decode data dari body response
+                    $data = json_decode($body, true);
+
+                    // Jika data tidak null, lakukan penyimpanan batch
+                    if ($data != null) {
+                        $chunks = array_chunk($data, 1000); // Misal setiap chunk berisi 1000 data
+                        foreach ($chunks as $chunk) {
+                            // generete uuid for id
+                            foreach ($chunk as $key => $value) {
+                                $chunk[$key]['id'] = Str::uuid();
+                            }
+
+                            PresensiKuliah::insert($chunk);
+                            $count_insert += count($chunk);
+                        }
+                    }
+                } catch (RequestException $e) {
+                    // Tangani kesalahan jika request gagal
+                    if ($e->getResponse() && $e->getResponse()->getStatusCode() == 404) {
+                        // Tangani respons 404
+                        $errors[] = [
+                            'error' => 'Data tidak ditemukan (404)'
+                        ];
+                    } else {
+                        // Tangani kesalahan lain
+                        $errors[] = [
+                            'error' => $e->getMessage()
+                        ];
+                    }
+                }
+            }
+
+            // Tampilkan response JSON dengan pesan sukses dan jumlah data yang berhasil disinkronkan
+            return response()->json([
+                'message' => 'Data presensi berhasil disinkronkan. ' . $count_insert . ' data baru disimpan.',
+            ]);
+        } catch (Exception $e) {
+            // Tangani kesalahan jika terjadi exception
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     // getDataKrs
     function getDataKrs(Request $request)
     {
@@ -492,7 +727,7 @@ class SinkronasiController extends Controller
             // kelas kuliah
             $kelasKuliah = KelasKuliah::where('periodeakademik', $request->periodeakademik)
                 ->where('programstudi', $request->programstudi)
-                ->where('nip', 'IF397')
+                // ->where('nip', 'IF397')
                 ->get();
 
             // return response()->json($kelasKuliah);
@@ -575,6 +810,146 @@ class SinkronasiController extends Controller
             );
         } catch (Exception $e) {
             // Tangani kesalahan jika permintaan gagal
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    // getDataAKM
+    function getDataAKM(Request $request)
+    {
+        set_time_limit(1000);
+        try {
+            // Ambil access token yang sudah disimpan
+            $accessToken = $request->get("access_token");
+
+            $formData = [];
+
+            if ($request->limit != null) {
+                $formData['limit'] = $request->get('limit');
+            }
+
+            // Jika access token tidak ada, kembalikan pesan kesalahan
+            if (!$accessToken) {
+                return response()->json(['error' => 'Access token tidak tersedia'], 500);
+            }
+
+            // Mahasiswa
+            $mahasiswa = Mahasiswa::where('programstudi', $request->programstudi)
+                // ->where('periodemasuk', $request->periodemasuk)
+                ->where(function ($query) {
+                    $query->where('periodemasuk', '20201')
+                        ->orWhere('periodemasuk', '20211')
+                        ->orWhere('periodemasuk', '20221')
+                        ->orWhere('periodemasuk', '20231');
+                })
+                ->get();
+
+            // return response()->json($mahasiswa);
+            $count_update = 0;
+            $count_insert = 0;
+            $dataupdate = [];
+
+            // pengulangan untuk mengakses krs
+            foreach ($mahasiswa as $key => $mhs) {
+                $formData['nim'] = $mhs->nim;
+                // Buat instance dari Guzzle Client
+                $client = new Client();
+
+                try {
+                    // Menggunakan access token untuk request mendapatkan data kelas kuliah
+                    $response = $client->request('GET', 'https://unpas.siakadcloud.com/live/akmmahasiswa', [
+                        'query' => $formData,
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $accessToken // Gunakan access token yang sudah ada
+                        ]
+                    ]);
+
+                    // Mendapatkan body respons sebagai string
+                    $body = $response->getBody()->getContents();
+                    // return response()->json(json_decode($body, true));
+
+                    // Mendapatkan data dari body respons
+                    $data = json_decode($body, true);
+
+                    if ($data != null) {
+                        foreach ($data as $akmData) {
+                            $akm = AKM::where('nim', $akmData['nim'])
+                                ->where('idperiode', $akmData['idperiode'])
+                                ->first();
+
+                            // Jika data krs sudah ada, perbarui
+                            if ($akm) {
+                                $akm->update($akmData);
+                                $dataupdate[] = $akmData;
+                                $count_update++;
+                            } else {
+                                // Jika tidak, buat data krs baru
+                                $akmData['id'] = Str::uuid();
+                                AKM::create($akmData);
+                                $count_insert++;
+                            }
+                        }
+                    }
+                } catch (RequestException $e) {
+                    // Menangani kesalahan jika permintaan gagal
+                    if ($e->getResponse() && $e->getResponse()->getStatusCode() == 404) {
+                        // Menangani respons 404
+                        $errors[] = [
+                            'mahasiswa' => $mhs,
+                            'error' => 'Data tidak ditemukan (404)'
+                        ];
+                    } else {
+                        // Menangani kesalahan lain
+                        $errors[] = [
+                            'mahasiswa' => $mhs,
+                            'error' => $e->getMessage()
+                        ];
+                    }
+                }
+            }
+
+            // Tampilkan data yang diperoleh dari request
+            return response()->json(
+                [
+                    'message' => 'Data akm berhasil disinkronkan,' . $count_update . " data berhasil diperbarui dan " . $count_insert . " data baru",
+                    'data' => json_decode($body, true),
+                    'data_update' => $dataupdate
+                ]
+            );
+        } catch (Exception $e) {
+            // Tangani kesalahan jika permintaan gagal
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    // hitung presensi
+    function hitungPresensi(Request $request)
+    {
+        // validate nim dan periode
+        $validator = Validator::make($request->all(), [
+            'nim' => 'required',
+            'periode' => 'required'
+        ]);
+
+        // jika validasi gagal
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
+
+        try {
+            $listKRS = Krs::where('nim', $request->nim)
+                ->where('idperiode', $request->periode)
+                ->get();
+
+            // return response()->json($listKRS);
+
+            // Iterasi setiap KRS dan hitung jumlah presensi
+            foreach ($listKRS as $krs) {
+                $krs->hitungJumlahPresensi();
+            }
+
+            return response()->json(['message' => 'Presensi berhasil dihitung']);
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

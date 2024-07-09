@@ -23,31 +23,31 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::namespace('App\Http\Controllers')->group(function () {
-    Route::prefix('sinkronasi')->group(function () {
-        Route::get('/', "SinkronasiController@index");
-        Route::get('/getToken', "SinkronasiController@getToken");
-        Route::get('/getDataDosen', "SinkronasiController@getDataDosen");
-        Route::get('/getDataPeriode', "SinkronasiController@getDataPeriode");
-        Route::get('/getDataKelasKuliah', "SinkronasiController@getDataKelasKuliah");
-    });
+    // Route::prefix('sinkronasi')->group(function () {
+    //     Route::get('/', "SinkronasiController@index");
+    //     Route::get('/getToken', "SinkronasiController@getToken");
+    //     Route::get('/getDataDosen', "SinkronasiController@getDataDosen");
+    //     Route::get('/getDataPeriode', "SinkronasiController@getDataPeriode");
+    //     Route::get('/getDataKelasKuliah', "SinkronasiController@getDataKelasKuliah");
+    // });
 
-    Route::prefix('rapor')->group(function () {
-        Route::get('/', "RaporController@index");
-        Route::get('/rapor-kinerja', "RaporController@getAllDataRapor");
-        Route::post('/generateDataRapor', "RaporController@generateDataRapor");
-    });
+    // Route::prefix('rapor')->group(function () {
+    //     Route::get('/', "RaporController@index");
+    //     Route::get('/rapor-kinerja', "RaporController@getAllDataRapor");
+    //     Route::post('/generateDataRapor', "RaporController@generateDataRapor");
+    // });
 
-    Route::prefix('laporan')->group(function () {
-        Route::post('/generate-laporan-kinerja', "LaporanController@generateLaporanKinerja")->name('laporan.generate');
-    });
+    // Route::prefix('laporan')->group(function () {
+    //     Route::post('/generate-laporan-kinerja', "LaporanController@generateLaporanKinerja")->name('laporan.generate');
+    // });
 
-    Route::prefix('unit-kerja')->group(function () {
-        Route::get('/', "UnitKerjaController@index");
-        Route::get('/getUnitKerja', "UnitKerjaController@getUnitKerja");
-        Route::get('/getUnitKerjaByParent', "UnitKerjaController@getUnitKerjaByParent");
-    });
+    // Route::prefix('unit-kerja')->group(function () {
+    //     Route::get('/', "UnitKerjaController@index");
+    //     Route::get('/getUnitKerja', "UnitKerjaController@getUnitKerja");
+    //     Route::get('/getUnitKerjaByParent', "UnitKerjaController@getUnitKerjaByParent");
+    // });
 
-    Route::prefix('kuesioner')->group(function () {
-        Route::post('/soalkuesionersdm/store', "KuesionerSDMController@createSoalKuesionerSDM");
-    });
+    // Route::prefix('kuesioner')->group(function () {
+    //     Route::post('/soalkuesionersdm/store', "KuesionerSDMController@createSoalKuesionerSDM");
+    // });
 });

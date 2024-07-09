@@ -37,4 +37,10 @@ class KelasKuliah extends Model
         'namadosen',
         'kelasid',
     ];
+
+    //jadwal perkuliahan
+    public function jadwalPerkuliahan()
+    {
+        return $this->hasMany(JadwalPerkuliahan::class, 'kelasid', 'kelasid');
+    }
 }

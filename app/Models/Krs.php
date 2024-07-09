@@ -29,6 +29,36 @@ class Krs extends Model
         'nangka',
         'nhuruf',
         'krsdiajukan',
-        'krsdisetujui'
+        'krsdisetujui',
+        'presensi'
     ];
+
+    // kelaskuliah
+    public function kelasKuliah()
+    {
+        return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk')
+            ->where('namakelas', $this->namakelas)
+            ->where('periodeakademik', $this->idperiode);
+    }
+
+    // Relasi dengan PresensiKuliah
+    public function presensiKuliahs()
+    {
+        return $this->hasMany(PresensiKuliah::class, 'nim', 'nim')
+            ->where('kodemk', $this->idmk)
+            ->where('kelas', $this->namakelas)
+            ->where('periodeakademik', $this->idperiode);
+    }
+
+    // Method untuk menghitung jumlah presensi
+    public function hitungJumlahPresensi()
+    {
+        $jumlahPresensi = $this->presensiKuliahs()->count();
+        $jumlahHadir = $this->presensiKuliahs()->where('presensi', 'HADIR')->count();
+
+        // hitung persentasenya
+        $persentase = ($jumlahHadir / $jumlahPresensi) * 100;
+        $this->presensi = $persentase;
+        $this->save();
+    }
 }

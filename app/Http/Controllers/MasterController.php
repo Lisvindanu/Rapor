@@ -11,6 +11,7 @@ use App\Models\RoleModul;
 use App\Models\SoalKuesionerSDM;
 use App\Models\UnitKerja;
 use App\Models\Pegawai;
+use App\Models\RoleUser;
 
 class MasterController extends Controller
 {
@@ -306,15 +307,22 @@ class MasterController extends Controller
     public function showUser($id)
     {
         $user = User::with(['pegawai', 'roleUser'])->find($id);
+        // get unit kerja data order by name asc
+        $unitkerja = UnitKerja::orderBy('nama_unit', 'asc')->get();
+
         $listrole = Role::all();
 
+        $roleuser = RoleUser::with('unitkerja')->where('user_id', $id)->get();
+
         // return $user format json;
-        // return response()->json($user);
+        // return response()->json($roleuser);
 
 
         return view('master.user.detail', [
             'data' => $user,
-            'listrole' => $listrole
+            'listrole' => $listrole,
+            'unitkerja' => $unitkerja,
+            'roleuser' => $roleuser
         ]);
 
         // return view('master.user.detail');

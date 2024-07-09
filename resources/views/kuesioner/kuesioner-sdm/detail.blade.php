@@ -19,19 +19,8 @@
                 </div>
             </div>
         </div>
-        {{-- tampilkan message session success/error jika ada --}}
-        @if (session('message'))
-            <div class="isi-konten">
-                <div class="row justify-content-md-center">
-                    <div class="col-12">
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('message') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
+
+        @include('komponen.message-alert')
 
         <div class="row justify-content-md-center">
             <div class="col-12">

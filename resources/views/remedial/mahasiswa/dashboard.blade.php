@@ -387,6 +387,11 @@
                     <div class="modal-body">
                         <input type="hidden" name="remedial_ajuan_id" id="remedial_ajuan_id">
                         <div class="mb-3">
+                            <label for="tgl_pembayaran" class="form-label">Tanggal Pembayaran</label>
+                            <input type="datetime-local" class="form-control" id="tgl_pembayaran" name="tgl_pembayaran"
+                                required>
+                        </div>
+                        <div class="mb-3">
                             <label for="bukti_pembayaran" class="form-label">Pilih File Bukti Pembayaran (JPG, PNG : Max
                                 1MB)</label>
                             <input type="file" class="form-control" id="bukti_pembayaran" name="bukti_pembayaran"

@@ -307,6 +307,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::get('/', "RemedialAjuanController@index")->name('remedial.ajuan');
             Route::post('/', "RemedialAjuanController@storeAjax")->name('remedial.ajuan.storeAjax');
             Route::post('/upload-bukti-pembayaran', "RemedialAjuanController@uploadBukti")->name('remedial.ajuan.uploadBukti');
+            Route::post('/verifikasi-ajuan', "RemedialAjuanController@verifikasiAjuan")->name('remedial.ajuan.verifikasiAjuan');
             Route::delete('/{id}', "RemedialAjuanController@deleteAjax")->name('remedial.ajuan.deleteAjax');
         });
     });

@@ -157,6 +157,7 @@
                                                 </td>
                                                 <td>
                                                     <a href="#" data-id="{{ $ajuan->id }}"
+                                                        data-bukti="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
                                                         class="btn btn-sm btn-warning btnDetailData">
                                                         <i class="fas fa-edit fa-xs"></i>
                                                     </a>
@@ -181,7 +182,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form id="formTambahData" action="{{ route('remedial.ajuan.storeAjax') }}" method="POST">
+                <form id="formTambahData" action="{{ route('remedial.ajuan.verifikasiAjuan') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="row" style="">
@@ -197,7 +198,7 @@
                                     <th>Nilai Angka</th>
                                     <th>Grade</th>
                                     <th>Harga</th>
-                                    <th><input type="checkbox" id="checkAll"></th>
+                                    {{-- <th><input type="checkbox" id="checkAll"></th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -205,16 +206,18 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="6" class="text-right"><strong>Total Bayar:</strong></td>
+                                    <td colspan="4" class="text-right"><strong>Total Bayar:</strong></td>
+                                    <td colspan="2" id="buktiPembayaran"></td>
                                     <td id="totalBayar"></td>
-                                    <td></td>
+                                    {{-- <td></td> --}}
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-warning">Tolak</button>
+                        <button type="submit" class="btn btn-primary">Setujui</button>
                     </div>
                     <div id="loadingSpinner" class="spinner-border text-primary" role="status" style="display: none;">
                         <span class="visually-hidden">Loading...</span>
@@ -230,6 +233,8 @@
         $(document).ready(function() {
             $(document).on('click', '.btnDetailData', function() {
                 var id = $(this).data('id'); // Ambil ID dari atribut data-id
+                var buktiPembayaran = $(this).data('bukti'); // Ambil ID dari atribut data-id
+
                 $.ajax({
                     url: '{{ url('/remedial/ajuan/detail') }}/' + id,
                     type: 'GET',
@@ -255,11 +260,13 @@
                                     'N/A') + '</td>' +
                                 '<td>' + formatRupiah(item.harga_remedial) +
                                 '</td>' +
-                                '<td><input type="checkbox" class="approve-checkbox" data-id="' +
-                                item.id + '" /></td>' +
+                                // '<td><input type="checkbox" class="form-check-input checkbox-data" name="data[]" value="' +
+                                // item.id + '" /></td>' +
 
                                 '</tr>');
                         });
+                        $('#buktiPembayaran').html('<a href="' + buktiPembayaran +
+                            '" target="_blank">Lihat Bukti Pembayaran</a>');
                         $('#totalBayar').text(formatRupiah(totalBayar));
                         $('#modalDetailData').modal('show');
                     },
@@ -270,8 +277,68 @@
             });
 
             $('#checkAll').change(function() {
-                $('input:checkbox.approve-checkbox').not(this).prop('checked', this.checked);
+                $('.checkbox-data').prop('checked', $(this).prop('checked'));
             });
+
+            $('#formTambahData').submit(function(e) {
+                e.preventDefault();
+
+                var form = $(this);
+                var url = form.attr('action');
+                var method = form.attr('method');
+                var formDataArray = form.serializeArray();
+
+                var dataTerpilih = [];
+                var idmkTerpilih = [];
+                var namaKelasTerpilih = [];
+
+                $.each(formDataArray, function(index, element) {
+                    if (element.name === 'data[]') {
+                        dataTerpilih.push(element.value);
+
+                        // Mengambil data dari baris yang dipilih
+                        var row = $('input[value="' + element.value + '"]').closest('tr');
+                        idmkTerpilih.push(row.find('td:eq(1)').text()
+                            .trim()); // Menggunakan kolom Kode MK (td:eq(1))
+                        namaKelasTerpilih.push(row.find('td:eq(4)').text()
+                            .trim()); // Menggunakan kolom Grade (td:eq(4))
+                    }
+                });
+
+                if (dataTerpilih.length === 0) {
+                    alert('Tidak ada data yang terpilih. Silakan pilih data terlebih dahulu.');
+                    return;
+                }
+
+                if (confirm('Apakah Anda yakin ingin mengajukan data remedial ini?')) {
+                    $('#loadingSpinner').show();
+
+                    $.ajax({
+                        url: url,
+                        method: method,
+                        data: {
+                            _token: $('input[name="_token"]')
+                                .val(), // Mendapatkan nilai _token secara dinamis
+                            krs: dataTerpilih,
+                            idmk: idmkTerpilih,
+                            nama_kelas: namaKelasTerpilih,
+                            remedial_periode_id: '{{ $periodeTerpilih->id }}' // Menggunakan ID periode remedial dari PHP
+                        },
+                        success: function(response) {
+                            $('#loadingSpinner').hide();
+                            $('#modalDetailData').modal(
+                                'hide'); // Menutup modal setelah berhasil
+                            window.location.reload(); // Memuat ulang halaman setelah berhasil
+                        },
+                        error: function(xhr, status, error) {
+                            $('#loadingSpinner').hide();
+                            alert('Terjadi kesalahan, silakan coba lagi.');
+                            console.error(error);
+                        }
+                    });
+                }
+            });
+
         });
 
         function formatRupiah(number) {

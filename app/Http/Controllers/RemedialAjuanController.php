@@ -200,6 +200,7 @@ class RemedialAjuanController extends Controller
             // Lakukan validasi sesuai kebutuhan
             $request->validate([
                 'remedial_ajuan_id' => 'required|exists:remedial_ajuan,id',
+                'tgl_pembayaran' => 'required',
                 'bukti_pembayaran' => 'required|image|mimes:png,jpg|max:1024',
             ]);
 
@@ -246,6 +247,46 @@ class RemedialAjuanController extends Controller
             return response()->json($data);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+    }
+
+    // verifikasiajuan
+    public function verifikasiAjuan(Request $request)
+    {
+        // validate data request
+        $request->validate([
+            'remedial_ajuan_id' => 'required',
+        ]);
+
+        // if validate fail return response
+        if ($request->fails()) {
+            return response()->json(['message' => 'Data tidak valid'], 400);
+        }
+
+        try {
+            // get data remedial ajuan id
+            $remedialAjuan = RemedialAjuan::findOrFail($request->remedial_ajuan_id);
+
+            // if data not found return response
+            if (!$remedialAjuan) {
+                return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            }
+
+            // update status pembayaran
+            $remedialAjuan->update([
+                'status_pembayaran' => 'Lunas',
+                'is_lunas' => 1,
+            ]);
+
+            // update status_ajuan remedial ajuan detail where remedial ajuan id
+            RemedialAjuanDetail::where('remedial_ajuan_id', $request->remedial_ajuan_id)
+                ->update(['status_ajuan' => 'approved']);
+
+            $data = request()->all();
+
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Data gagal diverifikasi'], 500);
         }
     }
 }

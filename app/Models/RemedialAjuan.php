@@ -22,8 +22,10 @@ class RemedialAjuan extends Model
         'jumlah_bayar', // jumlah yang telah dibayarkan
         'status_pembayaran', //status pembayaran 'Menunggu Pembayaran', 'Menunggu Konfirmasi', 'Lunas'
         'bukti_pembayaran',
+        'tgl_pembayaran',
         'tgl_pengajuan',
-        'is_lunas'
+        'is_lunas',
+        'verified_by',
     ];
 
     //mahasiswa

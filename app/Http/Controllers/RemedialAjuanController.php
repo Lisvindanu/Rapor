@@ -227,6 +227,7 @@ class RemedialAjuanController extends Controller
             $data->update([
                 'bukti_pembayaran' => $path,
                 'status_pembayaran' => 'Menunggu Konfirmasi',
+                'tgl_pembayaran' => $request->tgl_pembayaran,
             ]);
 
             // Kirim respon berhasil
@@ -253,19 +254,13 @@ class RemedialAjuanController extends Controller
     // verifikasiajuan
     public function verifikasiAjuan(Request $request)
     {
-        // validate data request
-        $request->validate([
+        $validatedData = $request->validate([
             'remedial_ajuan_id' => 'required',
         ]);
 
-        // if validate fail return response
-        if ($request->fails()) {
-            return response()->json(['message' => 'Data tidak valid'], 400);
-        }
-
         try {
             // get data remedial ajuan id
-            $remedialAjuan = RemedialAjuan::findOrFail($request->remedial_ajuan_id);
+            $remedialAjuan = RemedialAjuan::find($request->remedial_ajuan_id);
 
             // if data not found return response
             if (!$remedialAjuan) {
@@ -276,15 +271,16 @@ class RemedialAjuanController extends Controller
             $remedialAjuan->update([
                 'status_pembayaran' => 'Lunas',
                 'is_lunas' => 1,
+                'verified_by' => auth()->user()->username,
             ]);
 
             // update status_ajuan remedial ajuan detail where remedial ajuan id
             RemedialAjuanDetail::where('remedial_ajuan_id', $request->remedial_ajuan_id)
-                ->update(['status_ajuan' => 'approved']);
+                ->update([
+                    'status_ajuan' => 'approved',
+                ]);
 
-            $data = request()->all();
-
-            return response()->json($data);
+            return response()->json(['message' => 'Data berhasil diverifikasi'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Data gagal diverifikasi'], 500);
         }

@@ -184,9 +184,11 @@
 
                 <form id="formTambahData" action="{{ route('remedial.ajuan.verifikasiAjuan') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="remedial_ajuan_id" id="remedial_ajuan_id">
                     <div class="modal-body">
                         <div class="row" style="">
-                            <p><strong>Ceklist untuk menyetujui, dan unceklist untuk menolak</strong></p>
+                            <p><strong>Pastikan untuk mengecek terkait dengan bukti transfer sudah sesuai dengan tagihan
+                                    yang ada.</strong></p>
                         </div>
                         <table class="table table-bordered" id="tabelData">
                             <thead>
@@ -233,6 +235,7 @@
         $(document).ready(function() {
             $(document).on('click', '.btnDetailData', function() {
                 var id = $(this).data('id'); // Ambil ID dari atribut data-id
+                $('#remedial_ajuan_id').val(id);
                 var buktiPembayaran = $(this).data('bukti'); // Ambil ID dari atribut data-id
 
                 $.ajax({
@@ -286,44 +289,14 @@
                 var form = $(this);
                 var url = form.attr('action');
                 var method = form.attr('method');
-                var formDataArray = form.serializeArray();
 
-                var dataTerpilih = [];
-                var idmkTerpilih = [];
-                var namaKelasTerpilih = [];
-
-                $.each(formDataArray, function(index, element) {
-                    if (element.name === 'data[]') {
-                        dataTerpilih.push(element.value);
-
-                        // Mengambil data dari baris yang dipilih
-                        var row = $('input[value="' + element.value + '"]').closest('tr');
-                        idmkTerpilih.push(row.find('td:eq(1)').text()
-                            .trim()); // Menggunakan kolom Kode MK (td:eq(1))
-                        namaKelasTerpilih.push(row.find('td:eq(4)').text()
-                            .trim()); // Menggunakan kolom Grade (td:eq(4))
-                    }
-                });
-
-                if (dataTerpilih.length === 0) {
-                    alert('Tidak ada data yang terpilih. Silakan pilih data terlebih dahulu.');
-                    return;
-                }
-
-                if (confirm('Apakah Anda yakin ingin mengajukan data remedial ini?')) {
+                if (confirm('Apakah Anda yakin ingin menyetujui data ajuan remedial ini?')) {
                     $('#loadingSpinner').show();
 
                     $.ajax({
                         url: url,
                         method: method,
-                        data: {
-                            _token: $('input[name="_token"]')
-                                .val(), // Mendapatkan nilai _token secara dinamis
-                            krs: dataTerpilih,
-                            idmk: idmkTerpilih,
-                            nama_kelas: namaKelasTerpilih,
-                            remedial_periode_id: '{{ $periodeTerpilih->id }}' // Menggunakan ID periode remedial dari PHP
-                        },
+                        data: form.serialize(),
                         success: function(response) {
                             $('#loadingSpinner').hide();
                             $('#modalDetailData').modal(

@@ -27,7 +27,7 @@
 @endsection
 
 @section('navbar')
-    {{-- @include('remedial.navbar') --}}
+    @include('remedial.mahasiswa.navbar')
 @endsection
 
 @section('konten')
@@ -323,7 +323,7 @@
                                             <td>{{ $item->sksmk }}</td>
                                             <td>{{ $item->namakelas }}</td>
                                             <td>{{ $item->kelasKuliah->namadosen }}</td>
-                                            <td>{{ $item->presensi }}</td>
+                                            <td>{{ $item->presensi }} %</td>
                                             <td>{{ $item->nnumerik }}</td>
                                             <td>{{ $item->nhuruf }}</td>
                                             <td><input class="form-check-input checkbox-data" type="checkbox"

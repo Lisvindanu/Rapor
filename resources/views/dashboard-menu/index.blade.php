@@ -213,7 +213,12 @@
                                         <p><strong>UNIVERSITAS PASUNDAN</strong></p>
                                     </div>
                                     <div class="button-app">
-                                        <button class="exit-button">Halaman Profil</button>
+                                        {{-- button redirect to gate() --}}
+                                        <a href="{{ route('changePasswordSecond') }}" style="text-decoration: none"
+                                            class="exit-button">Ganti Password</a>
+                                        {{-- to logout --}}
+
+
                                         <form action="{{ url('/login/exit') }}" method="post">
                                             @csrf
                                             <button type="submit" class="exit-button">Keluar</button>

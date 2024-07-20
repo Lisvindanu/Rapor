@@ -57,7 +57,12 @@ class Krs extends Model
         $jumlahHadir = $this->presensiKuliahs()->where('presensi', 'HADIR')->count();
 
         // hitung persentasenya
-        $persentase = ($jumlahHadir / $jumlahPresensi) * 100;
+        if ($jumlahPresensi == 0) {
+            $persentase = 0;
+        } else {
+            $persentase = ($jumlahHadir / $jumlahPresensi) * 100;
+        }
+
         $this->presensi = $persentase;
         $this->save();
     }

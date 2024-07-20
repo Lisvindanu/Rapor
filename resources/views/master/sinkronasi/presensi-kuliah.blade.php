@@ -83,7 +83,7 @@
                                         </div>
                                         <div class="col-sm-5">
                                             <select class="form-select" name="programstudi" id="programstudi" required>
-                                                <option value="">Pilih Fakultas</option>
+                                                <option value="">Pilih Program Studi</option>
                                                 @foreach ($unitkerja as $unit)
                                                     {{-- <option value="{{ $unit->id }}">{{ $unit->nama_unit }}
                                                     </option> --}}

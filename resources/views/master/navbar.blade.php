@@ -18,8 +18,9 @@
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ route('master.sinkronasi') }}">Data</a>
                                         </li>
-                                        <li><a class="dropdown-item" href="{{ route('master.role') }}">Remedial</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('master.user') }}">Vakasi</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('master.sinkronasi.remedial') }}">Remedial</a></li>
+                                        {{-- <li><a class="dropdown-item" href="{{ route('master.user') }}">Vakasi</a></li> --}}
                                     </ul>
                                 </li>
                                 <li class="nav-item dropdown">

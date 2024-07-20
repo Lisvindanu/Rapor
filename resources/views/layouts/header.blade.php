@@ -14,7 +14,7 @@
 
                     <div class="button-app" style="float: right">
                         <a href="{{ route('changePasswordSecond') }}" style="text-decoration: none"
-                            class="exit-button">Halaman Profil</a>
+                            class="exit-button">Ganti Password</a>
                         {{-- to gate --}}
                         <a href="{{ url('/gate') }}" style="text-decoration: none" class="exit-button">Menu</a>
                         {{-- to logout --}}

@@ -103,9 +103,9 @@
                                                                 class="btn btn-sm btn-info detail">
                                                                 <i class="fas fa-link fa-xs"></i>
                                                             </a>
-                                                            {{-- <button type="button" class="btn btn-sm btn-danger delete">
-                                                                    <i class="fas fa-trash-alt fa-xs"></i>
-                                                                </button> --}}
+                                                            <button type="button" class="btn btn-sm btn-danger delete">
+                                                                <i class="fas fa-trash-alt fa-xs"></i>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 @endforeach

@@ -19,7 +19,16 @@ class RemedialMahasiswaController extends Controller
 
         // return response()->json($user);
         if ($request->has('periodeTerpilih')) {
-            $periodeTerpilih = RemedialPeriode::with(['remedialperiodetarif', 'remedialperiodeprodi'])
+            $periodeTerpilih = RemedialPeriode::with(
+                [
+                    'remedialperiodetarif' => function ($query) use ($user) {
+                        $query->where('periode_angkatan', $user->periodemasuk);
+                    },
+                    'remedialperiodeprodi' => function ($query) use ($user) {
+                        $query->where('unit_kerja_id', session('selected_filter'));
+                    }
+                ]
+            )
                 ->whereHas('remedialperiodetarif', function ($query) use ($user) {
                     $query->where('periode_angkatan', $user->periodemasuk);
                 })
@@ -27,27 +36,26 @@ class RemedialMahasiswaController extends Controller
                     $query->where('unit_kerja_id', session('selected_filter'));
                 })
                 ->where('kode_periode', $request->periodeTerpilih)
-                // ->whereIn('unit_kerja_id', $unitKerjaIds)
-                // ->where
                 ->first();
         } else {
-            $periodeTerpilih = RemedialPeriode::with(['remedialperiodetarif', 'remedialperiodeprodi'])
+            $periodeTerpilih = RemedialPeriode::with([
+                'remedialperiodetarif' => function ($query) use ($user) {
+                    $query->where('periode_angkatan', $user->periodemasuk);
+                },
+                'remedialperiodeprodi' => function ($query) use ($user) {
+                    $query->where('unit_kerja_id', session('selected_filter'));
+                }
+            ])
                 ->whereHas('remedialperiodetarif', function ($query) use ($user) {
                     $query->where('periode_angkatan', $user->periodemasuk);
                 })
                 ->whereHas('remedialperiodeprodi', function ($query) use ($user) {
                     $query->where('unit_kerja_id', session('selected_filter'));
                 })
-                // ->whereIn('unit_kerja_id', $unitKerjaIds)
                 ->orderBy('created_at', 'desc')
                 ->first();
         }
 
-        // return response()->json($periodeTerpilih);
-
-        // $daftar_periode = RemedialPeriode::with('periode')
-        //     ->whereIn('unit_kerja_id', $unitKerjaIds)
-        //     ->orderBy('created_at', 'desc')->take(10)->get();
         $daftar_periode = RemedialPeriode::with(['remedialperiodetarif', 'remedialperiodeprodi'])
             ->whereHas('remedialperiodetarif', function ($query) use ($user) {
                 $query->where('periode_angkatan', $user->periodemasuk);

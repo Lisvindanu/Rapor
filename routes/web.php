@@ -310,6 +310,17 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::post('/verifikasi-ajuan', "RemedialAjuanController@verifikasiAjuan")->name('remedial.ajuan.verifikasiAjuan');
             Route::delete('/{id}', "RemedialAjuanController@deleteAjax")->name('remedial.ajuan.deleteAjax');
         });
+
+        Route::prefix('pelaksanaan')->group(function () {
+            Route::get('/daftar-mk', "RemedialPelaksanaanController@daftarMatakuliah")->name('remedial.pelaksanaan.daftarMK');
+        });
+
+        Route::prefix('laporan')->group(function () {
+            // Route::get('/', "RemedialLaporanController@index")->name('remedial.laporan');
+            // Route::get('/{id}', "RemedialLaporanController@detail")->name('remedial.laporan.detail');
+            // Route::post('/{id}', "RemedialLaporanController@detailStore")->name('remedial.laporan.detail.store');
+            // Route::delete('/{id}', "RemedialLaporanController@detailDelete")->name('remedial.laporan.detail.delete');
+        });
     });
 
     //test

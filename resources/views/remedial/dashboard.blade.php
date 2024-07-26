@@ -167,16 +167,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($daftar_ajuan as $index => $program)
+                                    @if (count($daftar_ajuan) === 0)
                                         <tr>
-                                            <td>{{ $index }}</td>
-                                            <td>{{ $program['jumlah_ajuan_detail'] }}</td>
-                                            <td>Rp. {{ number_format($program['total_bayar']) }}</td>
-                                            <td>
-                                                <a href="#" class="btn btn-sm btn-info">Detail</a>
-                                            </td>
+                                            <td colspan="4" class="text-center">Tidak ada data</td>
                                         </tr>
-                                    @endforeach
+                                    @else
+                                        @foreach ($daftar_ajuan as $index => $program)
+                                            <tr>
+                                                <td>{{ $index }}</td>
+                                                <td>{{ $program['jumlah_ajuan_detail'] }}</td>
+                                                <td>Rp. {{ number_format($program['total_bayar']) }}</td>
+                                                <td>
+                                                    <a href="#" class="btn btn-sm btn-info">Detail</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div>

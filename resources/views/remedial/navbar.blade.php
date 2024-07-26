@@ -28,13 +28,27 @@
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ route('remedial.ajuan') }}">Verifikasi</a>
                                         </li>
-                                        <li><a class="dropdown-item" href="{{ route('remedial.periode') }}">Daftar
+                                        <li><a class="dropdown-item" href="#">Daftar
                                                 Ajuan</a>
                                         </li>
                                     </ul>
                                 </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Remedial
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item" href="#">Daftar
+                                                Matakuliah</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#">Daftar
+                                                Kelas</a>
+                                        </li>
+                                    </ul>
+                                </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" aria-current="page" href="{{ route('remedial') }}">Laporan</a>
+                                    <a class="nav-link" aria-current="page" href="#">Laporan</a>
                                 </li>
                             </ul>
                         </div>

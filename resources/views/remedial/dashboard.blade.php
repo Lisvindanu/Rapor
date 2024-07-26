@@ -65,14 +65,14 @@
                                         <div class="col-5">
                                             <select id="periode-dropdown" class="form-select"
                                                 aria-label="Default select example" name="periodeTerpilih">
-                                                {{-- <option value="{{ $periodeTerpilih->kode_periode }}">
+                                                <option value="{{ $periodeTerpilih->id }}">
                                                     {{ $periodeTerpilih->nama_periode }}</option>
                                                 @foreach ($daftar_periode as $periode)
-                                                    @if ($periode->kode_periode != $periodeTerpilih->kode_periode)
-                                                        <option value="{{ $periode->kode_periode }}">
+                                                    @if ($periode->id != $periodeTerpilih->id)
+                                                        <option value="{{ $periode->id }}">
                                                             {{ $periode->nama_periode }}</option>
                                                     @endif
-                                                @endforeach --}}
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="col-auto">
@@ -90,7 +90,7 @@
             </div>
         </div>
 
-        <div class="" style="margin-top: 15px">
+        {{-- <div class="" style="margin-top: 15px">
             <div class="row justify-content-md-center">
                 <div class="col-3">
                     <div class="card bg-primary text-white mb-3">
@@ -125,41 +125,64 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="" style="margin-top: 5px">
             <div class="row justify-content-md-center">
-                <div class="col-9">
+                <div class="col-8">
                     <div class="card">
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
                                 <div class="col-6">
-                                    <div class="mb-3">
-                                        <div class="input-group">
+                                    <h4>Rekapitulasi Ajuan Remedial</h4>
+                                    {{-- <div class="mb-3"> --}}
+                                    {{-- <label for="querySearch" class="form-label">Rekapitulasi Ajuan Remedial</label> --}}
+                                    {{-- <div class="input-group">
                                             <input type="text" name="query" id="querySearch" class="form-control"
                                                 placeholder="Cari berdasarkan NIP atau Nama Dosen">
                                             <button id="btn-cari-search" type="button"
                                                 class="btn btn-primary">Cari</button>
-                                        </div>
-                                    </div>
+                                        </div> --}}
+                                    {{-- </div> --}}
                                 </div>
                                 <div class="col-6">
-                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
+                                    {{-- <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
 
                                         <button class="btn btn-success" type="button" data-bs-toggle="modal"
                                             data-bs-target="#uploadModal">
                                             Unggah Data
                                         </button>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-
+                            <table class="table table-bordered">
+                                <thead thead-dark>
+                                    <tr>
+                                        <th>Program Studi</th>
+                                        <th>Jumlah Peserta</th>
+                                        <th>Total Bayar</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($daftar_ajuan as $index => $program)
+                                        <tr>
+                                            <td>{{ $index }}</td>
+                                            <td>{{ $program['jumlah_ajuan_detail'] }}</td>
+                                            <td>Rp. {{ number_format($program['total_bayar']) }}</td>
+                                            <td>
+                                                <a href="#" class="btn btn-sm btn-info">Detail</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-                <div class="col-3">
+                <div class="col-4">
                     <div class="card">
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
@@ -170,6 +193,35 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon1"
+                                    style="min-width: 125px;">Pendaftaran</span>
+                                @php
+                                    $tanggal_mulai = strftime('%d %B %Y', strtotime($periodeTerpilih->tanggal_mulai));
+                                    $tanggal_selesai = strftime(
+                                        '%d %B %Y',
+                                        strtotime($periodeTerpilih->tanggal_selesai),
+                                    );
+                                @endphp
+
+                                <input type="text" class="form-control"
+                                    value="{{ $tanggal_mulai }} s/d {{ $tanggal_selesai }}" aria-describedby="basic-addon1"
+                                    readonly>
+                            </div>
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon1" style="min-width: 125px;">Batas
+                                    Nilai</span>
+                                <input type="text" class="form-control"
+                                    value="{{ $periodeTerpilih->remedialperiodeprodi[0]->nilai_batas }}"
+                                    aria-describedby="basic-addon1" readonly>
+                            </div>
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon1" style="min-width: 125px;">Batas
+                                    Presensi</span>
+                                <input type="text" class="form-control"
+                                    value="{{ $periodeTerpilih->remedialperiodeprodi[0]->presensi_batas }} %"
+                                    aria-describedby="basic-addon1" readonly>
+                            </div>
                         </div>
                     </div>
                 </div>

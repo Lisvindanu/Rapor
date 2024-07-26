@@ -105,7 +105,11 @@ class RemedialAjuanController extends Controller
 
             $user = auth()->user()->mahasiswa;
 
-            $periode = RemedialPeriode::with('remedialperiodetarif')
+            $periode = RemedialPeriode::with([
+                'remedialperiodetarif' => function ($query) use ($user) {
+                    $query->where('periode_angkatan', $user->periodemasuk);
+                }
+            ])
                 ->whereHas('remedialperiodetarif', function ($query) use ($user) {
                     $query->where('periode_angkatan', $user->periodemasuk);
                 })

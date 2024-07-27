@@ -4,7 +4,7 @@
 @endsection
 
 @section('navbar')
-    @include('kuesioner.navbar')
+    @include('remedial.navbar')
 @endsection
 
 @section('konten')
@@ -13,8 +13,8 @@
             <div class="col-12">
                 <div class="judul-modul">
                     <span>
-                        <h3>Kuesioner SDM</h3>
-                        <p>Detail Kegiatan Kuesioner</p>
+                        <h3>Remedial</h3>
+                        <p>Aturan Remedial Program Studi</p>
                     </span>
                 </div>
             </div>

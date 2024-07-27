@@ -8,6 +8,8 @@ use App\Helpers\UnitKerjaHelper;
 use App\Models\RemedialPeriode;
 use App\Models\RemedialAjuan;
 use App\Models\ProgramStudi;
+use App\Models\RemedialAjuanDetail;
+use Illuminate\Support\Facades\DB;
 
 class RemedialPelaksanaanController extends Controller
 {
@@ -19,51 +21,64 @@ class RemedialPelaksanaanController extends Controller
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->get();
             $unitKerjaIds = UnitKerjaHelper::getUnitKerjaIds();
 
+            //list unit kerja nama
+            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
+
             if ($request->has('periodeTerpilih')) {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
                     ->where('id', $request->periodeTerpilih)
-                    // ->whereIn('unit_kerja_id', $unitKerjaIds)
                     ->first();
             } else {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
                     ->where('is_aktif', 1)
-                    ->whereIn('unit_kerja_id', $unitKerjaIds)
                     ->orderBy('created_at', 'desc')
                     ->first();
             }
 
-            // $periodeTerpilih_rest = $periodeTerpilih->pluck('id')->toArray();
-
-            // return response()->json($periodeTerpilih_rest);
-
             $daftar_periode = RemedialPeriode::with('periode')
-                ->whereIn('unit_kerja_id', $unitKerjaIds)
+                // ->whereIn('unit_kerja_id', $unitKerjaIds)
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
-            $query = RemedialAjuan::with('remedialajuandetail')
-                // ->whereIn('remedial_periode_id', $periodeTerpilih_rest)
-                ->where('remedial_periode_id', $periodeTerpilih->id)
-                ->where('status_pembayaran', 'Menunggu Konfirmasi');
+            $query = RemedialAjuanDetail::with('kelasKuliah')
+                ->whereHas('kelasKuliah', function ($query) use ($unitKerjaNames) {
+                    $query->whereIn('programstudi', $unitKerjaNames);
+                })
+                ->where('kode_periode', $periodeTerpilih->kode_periode);
 
+
+            //filter terkait dengan program studi 
             if ($request->has('programstudi')) {
 
                 if ($request->get('programstudi') != 'all') {
-                    $programstudis = ProgramStudi::where('id', $request->get('programstudi'))->first();
+                    $programstudis = UnitKerja::where('id', $request->get('programstudi'))->first();
 
                     if (!$programstudis) {
                         return redirect()->back()->with('message', 'Program Studi tidak ditemukan');
                     }
 
-                    $query->where('programstudi', $programstudis->nama);
+                    $query->whereHas('kelasKuliah', function ($query) use ($programstudis) {
+                        $query->where('programstudi', $programstudis->nama_unit);
+                    });
+
                     $programstuditerpilih = $programstudis;
                 }
             }
 
-            $data_ajuan = $query->paginate($request->get('perPage', 10));
+            if ($request->has('search')) {
+                if ($request->get('search') != null && $request->get('search') != '') {
+                    $query->whereHas('kelasKuliah', function ($query) use ($request) {
+                        $query->where('namamk', 'like', '%' . $request->get('search') . '%')
+                            ->orWhere('kodemk', 'like', '%' . $request->get('search') . '%');
+                    });
+                }
+            }
 
-            // return response()->json($data_ajuan);
+            $ajuandetail = $query->select('kode_periode', 'idmk', DB::raw('COUNT(idmk) as total_peserta'))
+                ->groupBy('kode_periode', 'idmk')
+                ->paginate($request->get('perPage', 10));
 
-            $total = $data_ajuan->total();
+
+            $total = $ajuandetail->total();
 
             return view(
                 'remedial.pelaksanaan.daftar-mk',
@@ -71,8 +86,8 @@ class RemedialPelaksanaanController extends Controller
                     'periodeTerpilih' => $periodeTerpilih,
                     'programstuditerpilih' => $programstuditerpilih ?? null,
                     'daftar_periode' => $daftar_periode,
-                    'programstudi' => $unitKerja,
-                    'data' => $data_ajuan,
+                    'unitkerja' => $unitKerja,
+                    'data' => $ajuandetail,
                     'total' => $total,
                 ]
             );

@@ -13,7 +13,7 @@
             /* float: left; */
             /* width: 250px; */
             /* Atur lebar kartu sesuai keinginan */
-            margin-right: 10px;
+            /* margin-right: 10px; */
         }
     </style>
 @endsection
@@ -162,20 +162,28 @@
                                     <tr>
                                         <th>Program Studi</th>
                                         <th>Jumlah Peserta</th>
-                                        <th>Total Bayar</th>
-                                        <th>Aksi</th>
+                                        {{-- <th colspan="3">Status</th> --}}
+                                        <th>Total Tagihan</th>
+                                        <th> Total Bayar</th>
+                                        <th> Aksi</th>
                                     </tr>
+                                    {{-- <tr>
+                                        <th>Menunggu Konfirmasi</th>
+                                        <th>Lunas</th>
+                                        <th>Ditolak</th>
+                                    </tr> --}}
                                 </thead>
                                 <tbody>
                                     @if (count($daftar_ajuan) === 0)
                                         <tr>
-                                            <td colspan="4" class="text-center">Tidak ada data</td>
+                                            <td colspan="5" class="text-center">Tidak ada data</td>
                                         </tr>
                                     @else
                                         @foreach ($daftar_ajuan as $index => $program)
                                             <tr>
                                                 <td>{{ $index }}</td>
                                                 <td>{{ $program['jumlah_ajuan_detail'] }}</td>
+                                                <td>Rp. {{ number_format($program['total_tagihan']) }}</td>
                                                 <td>Rp. {{ number_format($program['total_bayar']) }}</td>
                                                 <td>
                                                     <a href="#" class="btn btn-sm btn-info">Detail</a>
@@ -192,10 +200,7 @@
                     <div class="card">
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
-                                <div class="col-12">
-                                    <h4>Informasi</h4>
-                                </div>
-
+                                <h4>Informasi</h4>
                             </div>
                         </div>
                         <div class="card-body">
@@ -211,8 +216,8 @@
                                 @endphp
 
                                 <input type="text" class="form-control"
-                                    value="{{ $tanggal_mulai }} s/d {{ $tanggal_selesai }}" aria-describedby="basic-addon1"
-                                    readonly>
+                                    value="{{ $tanggal_mulai }} s/d {{ $tanggal_selesai }}"
+                                    aria-describedby="basic-addon1" readonly>
                             </div>
                             <div class="input-group mb-1">
                                 <span class="input-group-text" id="basic-addon1" style="min-width: 125px;">Batas

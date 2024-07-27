@@ -21,59 +21,65 @@ class RemedialAjuanController extends Controller
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->get();
             $unitKerjaIds = UnitKerjaHelper::getUnitKerjaIds();
 
+            //list unit kerja nama
+            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
+
             if ($request->has('periodeTerpilih')) {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
                     ->where('id', $request->periodeTerpilih)
-                    // ->whereIn('unit_kerja_id', $unitKerjaIds)
                     ->first();
             } else {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
                     ->where('is_aktif', 1)
-                    ->whereIn('unit_kerja_id', $unitKerjaIds)
+                    // ->whereIn('unit_kerja_id', $unitKerjaIds)
+                    // ->orWhere('unit_kerja_id', session('selected_filter'))
                     ->orderBy('created_at', 'desc')
                     ->first();
             }
-
-            // $periodeTerpilih_rest = $periodeTerpilih->pluck('id')->toArray();
-
-            // return response()->json($periodeTerpilih_rest);
 
             $daftar_periode = RemedialPeriode::with('periode')
                 ->whereIn('unit_kerja_id', $unitKerjaIds)
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
             $query = RemedialAjuan::with('remedialajuandetail')
-                // ->whereIn('remedial_periode_id', $periodeTerpilih_rest)
+                ->whereIn('programstudi', $unitKerjaNames)
                 ->where('remedial_periode_id', $periodeTerpilih->id)
                 ->where('status_pembayaran', 'Menunggu Konfirmasi');
 
+            //filter terkait dengan program studi 
             if ($request->has('programstudi')) {
 
                 if ($request->get('programstudi') != 'all') {
-                    $programstudis = ProgramStudi::where('id', $request->get('programstudi'))->first();
+                    $programstudis = UnitKerja::where('id', $request->get('programstudi'))->first();
 
                     if (!$programstudis) {
                         return redirect()->back()->with('message', 'Program Studi tidak ditemukan');
                     }
 
-                    $query->where('programstudi', $programstudis->nama);
+                    $query->where('programstudi', $programstudis->nama_unit);
                     $programstuditerpilih = $programstudis;
+                }
+            }
+
+            if ($request->has('search')) {
+                if ($request->get('search') != null && $request->get('search') != '') {
+                    $query->where('nim', 'like', '%' . $request->get('search') . '%')
+                        ->orWhere('va', 'like', '%' . $request->get('search') . '%');
                 }
             }
 
             $data_ajuan = $query->paginate($request->get('perPage', 10));
 
-            // return response()->json($data_ajuan);
-
             $total = $data_ajuan->total();
 
             return view(
-                'remedial.ajuan.index',
+                'remedial.ajuan.verifikasi',
                 [
                     'periodeTerpilih' => $periodeTerpilih,
                     'programstuditerpilih' => $programstuditerpilih ?? null,
                     'daftar_periode' => $daftar_periode,
                     // 'programstudi' => $programstudi,
+                    'unitkerja' => $unitKerja,
                     'data' => $data_ajuan,
                     'total' => $total,
                 ]
@@ -150,7 +156,7 @@ class RemedialAjuanController extends Controller
                     'idmk' => $request->idmk[$i],
                     'namakelas' => $request->nama_kelas[$i],
                     'harga_remedial' => $periode->remedialperiodetarif[0]->tarif,
-                    'status_ajuan' => 'pending',
+                    'status_ajuan' => 'Konfirmasi Pembayaran',
                 ]);
             }
 
@@ -260,6 +266,7 @@ class RemedialAjuanController extends Controller
     {
         $validatedData = $request->validate([
             'remedial_ajuan_id' => 'required',
+            'jumlah_bayar' => 'required',
         ]);
 
         try {
@@ -273,6 +280,7 @@ class RemedialAjuanController extends Controller
 
             // update status pembayaran
             $remedialAjuan->update([
+                'jumlah_bayar' => $request->jumlah_bayar,
                 'status_pembayaran' => 'Lunas',
                 'is_lunas' => 1,
                 'verified_by' => auth()->user()->username,
@@ -281,12 +289,95 @@ class RemedialAjuanController extends Controller
             // update status_ajuan remedial ajuan detail where remedial ajuan id
             RemedialAjuanDetail::where('remedial_ajuan_id', $request->remedial_ajuan_id)
                 ->update([
-                    'status_ajuan' => 'approved',
+                    'status_ajuan' => 'Konfirmasi Kelas',
                 ]);
 
             return response()->json(['message' => 'Data berhasil diverifikasi'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Data gagal diverifikasi'], 500);
+        }
+    }
+
+    // daftar ajuan
+    public function daftarAjuan(Request $request)
+    {
+        try {
+            // untuk dropdown unit kerja
+            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->get();
+            $unitKerjaIds = UnitKerjaHelper::getUnitKerjaIds();
+
+            //list unit kerja nama
+            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
+
+            if ($request->has('periodeTerpilih')) {
+                $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
+                    ->where('id', $request->periodeTerpilih)
+                    ->first();
+            } else {
+                $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
+                    ->where('is_aktif', 1)
+                    // ->whereIn('unit_kerja_id', $unitKerjaIds)
+                    // ->orWhere('unit_kerja_id', session('selected_filter'))
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+            }
+
+            $daftar_periode = RemedialPeriode::with('periode')
+                ->whereIn('unit_kerja_id', $unitKerjaIds)
+                ->orderBy('created_at', 'desc')->take(10)->get();
+
+            $query = RemedialAjuan::with('remedialajuandetail')
+                ->whereIn('programstudi', $unitKerjaNames)
+                ->where('remedial_periode_id', $periodeTerpilih->id);
+
+            //filter terkait dengan program studi 
+            if ($request->has('programstudi')) {
+
+                if ($request->get('programstudi') != 'all') {
+                    $programstudis = UnitKerja::where('id', $request->get('programstudi'))->first();
+
+                    if (!$programstudis) {
+                        return redirect()->back()->with('message', 'Program Studi tidak ditemukan');
+                    }
+
+                    $query->where('programstudi', $programstudis->nama_unit);
+                    $programstuditerpilih = $programstudis;
+                }
+            }
+
+            if ($request->has('search')) {
+                if ($request->get('search') != null && $request->get('search') != '') {
+                    $query->where('nim', 'like', '%' . $request->get('search') . '%')
+                        ->orWhere('va', 'like', '%' . $request->get('search') . '%');
+                }
+            }
+
+            if ($request->has('status_pembayaran')) {
+                if ($request->get('status_pembayaran') != 'all') {
+                    $query->where('status_pembayaran', $request->get('status_pembayaran'));
+                }
+            }
+
+            $data_ajuan = $query->paginate($request->get('perPage', 10));
+
+            // return response()->json($data_ajuan);
+
+            $total = $data_ajuan->total();
+
+            return view(
+                'remedial.ajuan.daftar-ajuan',
+                [
+                    'periodeTerpilih' => $periodeTerpilih,
+                    'programstuditerpilih' => $programstuditerpilih ?? null,
+                    'daftar_periode' => $daftar_periode,
+                    // 'programstudi' => $programstudi,
+                    'unitkerja' => $unitKerja,
+                    'data' => $data_ajuan,
+                    'total' => $total,
+                ]
+            );
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
         }
     }
 }

@@ -4,7 +4,7 @@
 @endsection
 
 @section('navbar')
-    @include('kuesioner.navbar')
+    @include('remedial.navbar')
 @endsection
 
 @section('konten')

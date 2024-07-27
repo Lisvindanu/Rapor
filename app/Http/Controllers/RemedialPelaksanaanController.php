@@ -67,8 +67,8 @@ class RemedialPelaksanaanController extends Controller
             if ($request->has('search')) {
                 if ($request->get('search') != null && $request->get('search') != '') {
                     $query->whereHas('kelasKuliah', function ($query) use ($request) {
-                        $query->where('namamk', 'like', '%' . $request->get('search') . '%')
-                            ->orWhere('kodemk', 'like', '%' . $request->get('search') . '%');
+                        $query->where('namamk', 'ilike', '%' . $request->get('search') . '%')
+                            ->orWhere('kodemk', 'ilike', '%' . $request->get('search') . '%');
                     });
                 }
             }

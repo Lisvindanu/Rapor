@@ -164,8 +164,7 @@
                                         <th>Jumlah Peserta</th>
                                         {{-- <th colspan="3">Status</th> --}}
                                         <th>Total Tagihan</th>
-                                        <th> Total Bayar</th>
-                                        <th> Aksi</th>
+                                        <th>Total Bayar</th>
                                     </tr>
                                     {{-- <tr>
                                         <th>Menunggu Konfirmasi</th>
@@ -185,9 +184,6 @@
                                                 <td>{{ $program['jumlah_ajuan_detail'] }}</td>
                                                 <td>Rp. {{ number_format($program['total_tagihan']) }}</td>
                                                 <td>Rp. {{ number_format($program['total_bayar']) }}</td>
-                                                <td>
-                                                    <a href="#" class="btn btn-sm btn-info">Detail</a>
-                                                </td>
                                             </tr>
                                         @endforeach
                                     @endif

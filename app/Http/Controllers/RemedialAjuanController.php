@@ -347,8 +347,8 @@ class RemedialAjuanController extends Controller
 
             if ($request->has('search')) {
                 if ($request->get('search') != null && $request->get('search') != '') {
-                    $query->where('nim', 'like', '%' . $request->get('search') . '%')
-                        ->orWhere('va', 'like', '%' . $request->get('search') . '%');
+                    $query->where('nim', 'ilike', '%' . $request->get('search') . '%')
+                        ->orWhere('va', 'ilike', '%' . $request->get('search') . '%');
                 }
             }
 

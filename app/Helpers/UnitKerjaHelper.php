@@ -17,15 +17,44 @@ class UnitKerjaHelper
         return $unitKerjaIds;
     }
 
+    public static function getUnitKerjaNames()
+    {
+        $selectedUnitKerjaId = session('selected_filter');
+        $datafilter = UnitKerja::with('childUnit')->where('id', $selectedUnitKerjaId)->get();
+        $unitKerjaNames = $datafilter->pluck('nama_unit')->toArray();
+        foreach ($datafilter as $unitKerja) {
+            $unitKerjaNames = array_merge($unitKerjaNames, $unitKerja->childUnit->pluck('nama_unit')->toArray());
+        }
+        return $unitKerjaNames;
+    }
+
     public static function getUnitKerja()
     {
-        // jika tidak memiliki session role maka redirect ke gate
-        // if (!session('selected_filter') && !session('role')) {
-        // return redirect()->route('gate');
-        // }
-
         $selectedUnitKerjaId = session('selected_filter');
         $datafilter = UnitKerja::with('childUnit')->where('id', $selectedUnitKerjaId)->get();
         return $datafilter;
+    }
+
+    public static function getUnitKerjaParent()
+    {
+        $selectedUnitKerjaId = session('selected_filter');
+        $datafilter = UnitKerja::with('parentUnit')->where('id', $selectedUnitKerjaId)->get();
+        return $datafilter;
+    }
+
+    public static function getUnitKerjaParentId()
+    {
+        $selectedUnitKerjaId = session('selected_filter');
+
+        // Mengambil unit kerja dengan relasi parentUnit
+        $unitKerja = UnitKerja::with('parentUnit')->find($selectedUnitKerjaId);
+
+        // Jika unitKerja ditemukan dan memiliki parentUnit
+        if ($unitKerja && $unitKerja->parentUnit) {
+            return $unitKerja->parentUnit->id;
+        }
+
+        // Jika tidak ditemukan atau tidak memiliki parentUnit
+        return null;
     }
 }

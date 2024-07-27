@@ -43,4 +43,14 @@ class KelasKuliah extends Model
     {
         return $this->hasMany(JadwalPerkuliahan::class, 'kelasid', 'kelasid');
     }
+
+    public function scopeWithNamaKelas($query, $namakelas)
+    {
+        return $query->where('namakelas', $namakelas);
+    }
+
+    public function scopeWithPeriodeAkademik($query, $periodeakademik)
+    {
+        return $query->where('periodeakademik', $periodeakademik);
+    }
 }

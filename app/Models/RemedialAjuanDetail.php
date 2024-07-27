@@ -21,7 +21,7 @@ class RemedialAjuanDetail extends Model
         'idmk',
         'namakelas',
         'harga_remedial',
-        'status_ajuan'
+        'status_ajuan' // Konfirmasi Pembayaran, Konfirmasi Kelas, Diterima, Dibatalkan
     ];
 
     //remedialAjuan
@@ -33,9 +33,11 @@ class RemedialAjuanDetail extends Model
     // kelas kuliah
     public function kelasKuliah()
     {
-        return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk')
-            ->where('namakelas', $this->namakelas)
-            ->where('periodeakademik', $this->kode_periode);
+        return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk');
+        // ->where('namakelas', $this->namakelas)
+        // ->where('periodeakademik', $this->kode_periode);
+        // ->withNamaKelas($this->namakelas)
+        // ->withPeriodeAkademik($this->kode_periode);
     }
 
     // krs

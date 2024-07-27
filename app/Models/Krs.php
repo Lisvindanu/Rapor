@@ -54,7 +54,15 @@ class Krs extends Model
     public function hitungJumlahPresensi()
     {
         $jumlahPresensi = $this->presensiKuliahs()->count();
-        $jumlahHadir = $this->presensiKuliahs()->where('presensi', 'HADIR')->count();
+        // $jumlahHadir = $this->presensiKuliahs()
+        //     ->where('presensi', 'HADIR')
+        //     ->orWhere('presensi', null)
+        //     ->count();
+        $jumlahHadir = $this->presensiKuliahs()
+            ->where(function ($query) {
+                $query->where('presensi', 'HADIR')
+                    ->orWhereNull('presensi');
+            })->count();
 
         // hitung persentasenya
         if ($jumlahPresensi == 0) {

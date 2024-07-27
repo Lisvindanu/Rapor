@@ -20,7 +20,7 @@ class RemedialAjuan extends Model
         'va',
         'total_bayar', //total yang harus dibayarkan
         'jumlah_bayar', // jumlah yang telah dibayarkan
-        'status_pembayaran', //status pembayaran 'Menunggu Pembayaran', 'Menunggu Konfirmasi', 'Lunas'
+        'status_pembayaran', //status pembayaran 'Menunggu Pembayaran', 'Menunggu Konfirmasi', 'Lunas' , 'Ditolak'
         'bukti_pembayaran',
         'tgl_pembayaran',
         'tgl_pengajuan',

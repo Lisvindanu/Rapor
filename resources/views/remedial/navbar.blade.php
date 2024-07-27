@@ -10,25 +10,33 @@
                                     <a class="nav-link active" aria-current="page"
                                         href="{{ route('remedial') }}">Dashboard</a>
                                 </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        Pengaturan
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><a class="dropdown-item" href="{{ route('remedial.periode') }}">Periode</a>
-                                        </li>
-                                    </ul>
-                                </li>
+
+                                @if (session('selected_role') == 'Admin' || session('selected_role') == 'Admin Fakultas')
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            Pengaturan
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('remedial.periode') }}">Periode</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                @endif
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         Ajuan
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><a class="dropdown-item" href="{{ route('remedial.ajuan') }}">Verifikasi</a>
-                                        </li>
-                                        <li><a class="dropdown-item" href="#">Daftar
+                                        @if (session('selected_role') == 'Admin' || session('selected_role') == 'Admin Fakultas')
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('remedial.ajuan') }}">Verifikasi</a>
+                                            </li>
+                                        @endif
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('remedial.ajuan.daftarAjuan') }}">Daftar
                                                 Ajuan</a>
                                         </li>
                                     </ul>
@@ -36,10 +44,11 @@
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        Remedial
+                                        Pelaksanaan
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><a class="dropdown-item" href="#">Daftar
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('remedial.pelaksanaan.daftarMK') }}">Daftar
                                                 Matakuliah</a>
                                         </li>
                                         <li><a class="dropdown-item" href="#">Daftar

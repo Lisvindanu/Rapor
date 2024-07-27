@@ -47,7 +47,7 @@
                                             <label for="periodeTerpilih" class="col-form-label"><strong>Periode
                                                     Remedial</strong></label>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <select id="periode-dropdown" class="form-select"
                                                 aria-label="Default select example" name="periodeTerpilih">
                                                 <option value="{{ $periodeTerpilih->id }}">
@@ -60,33 +60,42 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        {{-- <div class="col-2">
+                                        <div class="col-2">
                                             <label for="programStudi" class="col-form-label"><strong>Program Studi
                                                 </strong></label>
-                                        </div> --}}
-                                        {{-- <div class="col-3">
+                                        </div>
+                                        <div class="col-4">
                                             <select id="programstudi" class="form-select"
                                                 aria-label="Default select example" name="programstudi">
-                                                @if ($programstuditerpilih != null)
-                                                    <option value="{{ $programstuditerpilih->id }}">
-                                                        {{ $programstuditerpilih->nama }}</option>
-                                                @else
-                                                @endif
-                                                <option value="all">
-                                                    Semua Program Studi</option>
-
-                                                @foreach ($programstudi as $prodi)
-                                                    <option value="{{ $prodi->id }}">
-                                                        {{ $prodi->nama }}
-                                                    </option>
+                                                @foreach ($unitkerja as $unit)
+                                                    @if ($unit->children_count == 0)
+                                                        <option value="{{ $unit->id }}">
+                                                            {{ $unit->nama_unit }}</option>
+                                                    @else
+                                                        <option value="all">
+                                                            Semua Program Studi</option>
+                                                        @foreach ($unit->childUnit as $child)
+                                                            <option value="{{ $child->id }}">&nbsp;&nbsp;
+                                                                {{ $child->nama_unit }}</option>
+                                                        @endforeach
+                                                    @endif
                                                 @endforeach
                                             </select>
-                                        </div> --}}
-                                        <div class="col-auto">
-                                            <div class="pull-right">
-                                                <button id="btn-cari-filter" style="width: 100px; color:white"
-                                                    class="btn btn-primary" type="submit">Cari</button>
-                                            </div>
+                                        </div>
+                                        <div class="col-2 mt-3">
+                                            <label for="search" class="col-form-label"><strong>Cari NIM / VA
+                                                </strong></label>
+                                        </div>
+                                        <div class="col-4 mt-3">
+                                            <input type="text" class="form-control" id="search"
+                                                placeholder="Cari berdasarkan NIM / VA" name="search"
+                                                value="{{ old('search') }}">
+                                        </div>
+                                        <div class="col-2 mt-3">
+                                        </div>
+                                        <div class="col-2 mt-3">
+                                            <button id="btn-cari-filter" style="width: 100px; color:white"
+                                                class="btn btn-primary" type="submit">Cari</button>
                                         </div>
                                     </div>
                                 </div>
@@ -124,6 +133,7 @@
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Nomor VA
                                             </th>
+                                            <th>NIM</th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Nama Mahasiswa
                                             </th>
@@ -142,28 +152,35 @@
                                         </tr>
                                     </thead>
                                     <tbody id="tabel-body" class="text-center">
-                                        @foreach ($data as $ajuan)
-                                            <tr style="text-align: center;vertical-align: middle;">
-                                                <td>{{ $ajuan->tgl_pengajuan }}</td>
-                                                <td>{{ $ajuan->va }}</td>
-                                                <td>{{ $ajuan->mahasiswa->nama }}</td>
-                                                <td>{{ $ajuan->programstudi }}</td>
-                                                <td>Rp. {{ number_format($ajuan->total_bayar, 0, ',', '.') }}</td>
-                                                <td>
-                                                    <a href="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
-                                                        target="_blank">
-                                                        Bukti Pembayaran
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a href="#" data-id="{{ $ajuan->id }}"
-                                                        data-bukti="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
-                                                        class="btn btn-sm btn-warning btnDetailData">
-                                                        <i class="fas fa-edit fa-xs"></i>
-                                                    </a>
-                                                </td>
+                                        @if ($data->count() > 0)
+                                            @foreach ($data as $ajuan)
+                                                <tr style="text-align: center;vertical-align: middle;">
+                                                    <td>{{ $ajuan->tgl_pengajuan }}</td>
+                                                    <td>{{ $ajuan->va }}</td>
+                                                    <td>{{ $ajuan->nim }}</td>
+                                                    <td>{{ $ajuan->mahasiswa->nama }}</td>
+                                                    <td>{{ $ajuan->programstudi }}</td>
+                                                    <td>Rp. {{ number_format($ajuan->total_bayar, 0, ',', '.') }}</td>
+                                                    <td>
+                                                        <a href="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
+                                                            target="_blank">
+                                                            Bukti Pembayaran
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="#" data-id="{{ $ajuan->id }}"
+                                                            data-bukti="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
+                                                            class="btn btn-sm btn-warning btnDetailData">
+                                                            <i class="fas fa-edit fa-xs"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="7">Tidak ada data</td>
                                             </tr>
-                                        @endforeach
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
@@ -215,11 +232,29 @@
                                 </tr>
                             </tfoot>
                         </table>
+                        {{-- buatkan form jumlah bayar --}}
+                        <div class="row">
+                            <div class="col-8" style="text-align: right">
+                                <div class="form-group">
+                                    <label for="jumlah_bayar" class="col-form-label">Jumlah
+                                        Bayar:</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <input type="number" class="form-control" id="jumlahBayar" name="jumlah_bayar"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
+                        {{-- <div class="col-5"> --}}
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="button" class="btn btn-warning">Tolak</button>
                         <button type="submit" class="btn btn-primary">Setujui</button>
+                        {{-- </div> --}}
                     </div>
                     <div id="loadingSpinner" class="spinner-border text-primary" role="status" style="display: none;">
                         <span class="visually-hidden">Loading...</span>
@@ -298,6 +333,7 @@
                         method: method,
                         data: form.serialize(),
                         success: function(response) {
+                            alert('Data berhasil diverifikasi.');
                             $('#loadingSpinner').hide();
                             $('#modalDetailData').modal(
                                 'hide'); // Menutup modal setelah berhasil

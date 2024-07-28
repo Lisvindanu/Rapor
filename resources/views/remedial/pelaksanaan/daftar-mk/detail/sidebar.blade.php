@@ -56,15 +56,16 @@
     <div class="sidebar-konten">
         <ul class="nav flex-column">
             <li class="nav-item">
-                {{-- <a class="nav-link {{ Request::is('*/periode/tarif/*') ? 'active' : '' }}"
-                    href="{{ route('remedial.periode.tarif', ['id' => $data->id]) }}">Tarif
-                </a> --}}
-                <a class="nav-link {{ Request::is('*/periode/prodi*') ? 'active' : '' }}"
+                <a class="nav-link {{ Request::is('*/periode/tarif/*') ? 'active' : '' }}" href="#">Peserta Remedial
+                </a>
+                <a class="nav-link {{ Request::is('*/periode/tarif/*') ? 'active' : '' }}" href="#">Kelas Remedial
+                </a>
+                {{-- <a class="nav-link {{ Request::is('*/periode/prodi*') ? 'active' : '' }}"
                     href="{{ route('remedial.periode.prodi', ['id' => $remedialperiode->id]) }}">Program Studi
-                </a>
-                <a class="nav-link {{ Request::is('*/periode/tarif*') ? 'active' : '' }}"
+                </a> --}}
+                {{-- <a class="nav-link {{ Request::is('*/periode/tarif*') ? 'active' : '' }}"
                     href="{{ route('remedial.periode.tarif', ['id' => $remedialperiode->id]) }}">Tarif Remedial
-                </a>
+                </a> --}}
 
             </li>
         </ul>

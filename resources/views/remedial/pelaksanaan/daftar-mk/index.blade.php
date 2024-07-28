@@ -39,7 +39,7 @@
                 <div class="container">
                     <div class="card">
                         <div class="card-body">
-                            <form id="formPeriode" action="{{ route('remedial.pelaksanaan.daftarMK') }}" method="GET">
+                            <form id="formPeriode" action="{{ route('remedial.pelaksanaan.daftar-mk') }}" method="GET">
                                 @csrf
                                 <div class="col-12" style="padding: 10px">
                                     <div class="row align-items-center">
@@ -156,9 +156,21 @@
                                                     <td>{{ $mk->kelasKuliah->namamk }}</td>
                                                     <td>{{ $mk->total_peserta }}</td>
                                                     <td>
-                                                        <a href="#" class="btn btn-sm btn-warning btnDetailData">
-                                                            <i class="fas fa-edit fa-xs"></i>
-                                                        </a>
+                                                        {{-- create form with method post --}}
+                                                        <form
+                                                            action="{{ route('remedial.pelaksanaan.daftar-mk.peserta') }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="idmk"
+                                                                value="{{ $mk->idmk }}">
+                                                            <input type="hidden" name="kode_periode"
+                                                                value="{{ $mk->kode_periode }}">
+                                                            <input type="hidden" name="programstudi"
+                                                                value="{{ $mk->kelasKuliah->programstudi }}">
+                                                            <button type="submit" class="btn btn-primary btn-sm"> <i
+                                                                    class="fas fa-edit fa-xs"></i></button>
+                                                        </form>
+
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -177,7 +189,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel" aria-hidden="true">
+    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">

@@ -48,7 +48,7 @@
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item"
-                                                href="{{ route('remedial.pelaksanaan.daftarMK') }}">Daftar
+                                                href="{{ route('remedial.pelaksanaan.daftar-mk') }}">Daftar
                                                 Matakuliah</a>
                                         </li>
                                         <li><a class="dropdown-item" href="#">Daftar

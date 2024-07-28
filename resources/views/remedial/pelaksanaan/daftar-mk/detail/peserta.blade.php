@@ -13,8 +13,8 @@
             <div class="col-12">
                 <div class="judul-modul">
                     <span>
-                        <h3>Remedial</h3>
-                        <p>Aturan Remedial Program Studi</p>
+                        <h3>Matakuliah Remedial</h3>
+                        <p>Detail Matakuliah</p>
                     </span>
                 </div>
             </div>
@@ -33,10 +33,10 @@
                             </div>
                             <div class="col-8">
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <a href="{{ route('remedial.periode') }}" class="btn btn-secondary"
+                                    <a href="{{ route('remedial.pelaksanaan.daftar-mk') }}" class="btn btn-secondary"
                                         type="button">Kembali</a>
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <button class="btn btn-primary" id="btnTambahSoal">Tambah Aturan</button>
+                                        <button class="btn btn-primary" id="btnTambahSoal">Buat Kelas</button>
                                     </div>
                                 </div>
                             </div>
@@ -44,52 +44,29 @@
                     </div>
                     <div class="card-body" style="display: flex;">
                         <div class="col-2">
-                            @include('remedial.periode.rules.sidebar')
+                            @include('remedial.pelaksanaan.daftar-mk.detail.sidebar')
                         </div>
                         <div class="col-10">
                             <div class="sub-konten">
+                                <div class="alert alert-info" role="alert" style="padding-bottom:0px">
+                                    <p><strong> Cek kembali kesesuaian Dosen Pengampu dengan Jadwal Kelas Perkuliahan di
+                                            SITU2 </strong></p>
+                                </div>
                                 <!-- Nama Indikator -->
                                 <div class="form-group row">
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                         <label for="nama_kuesioner" class=" create-label">
-                                            Periode</label>
+                                            Kode MK</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <span class="input-group-text">{{ $remedialperiode->periode->nama_periode }}</span>
+                                        <span class="input-group-text">{{ $matakuliah->idmk }}</span>
                                     </div>
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                         <label for="nama_kuesioner" class=" create-label">
-                                            Nama Periode</label>
+                                            Nama MK</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <span class="input-group-text">{{ $remedialperiode->nama_periode }}</span>
-                                    </div>
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="nama_kuesioner" class=" create-label">
-                                            Tanggal Mulai</label>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <span class="input-group-text">
-                                            {{ \Carbon\Carbon::parse($remedialperiode->tanggal_mulai)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
-                                        </span>
-                                    </div>
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="nama_kuesioner" class=" create-label">
-                                            Tanggal Selesai</label>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <span class="input-group-text">
-                                            {{ \Carbon\Carbon::parse($remedialperiode->tanggal_selesai)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
-                                        </span>
-                                    </div>
-                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
-                                        <label for="nama_kuesioner" class=" create-label">
-                                            Aktif</label>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <span class="input-group-text">
-                                            {{ $remedialperiode->is_aktif == 1 ? 'Ya' : 'Tidak' }}
-                                        </span>
+                                        <span class="input-group-text">{{ $matakuliah->kelasKuliah->namamk }}</span>
                                     </div>
                                 </div>
                                 <!-- keterangan -->
@@ -104,13 +81,16 @@
                                                                 No.
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
-                                                                Program Studi
+                                                                NIM
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
-                                                                Batas Nilai
+                                                                Nama Mahasiswa
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
-                                                                Batas Presensi
+                                                                Kelas
+                                                            </th>
+                                                            <th style="text-align: center;vertical-align: middle;">
+                                                                Dosen
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Aksi
@@ -125,6 +105,9 @@
                                                                     {{ $loop->iteration }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
+                                                                    {{ $item->remedialajuan->nim }}
+                                                                </td>
+                                                                {{-- <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $item->unitkerja->nama_unit }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
@@ -135,7 +118,7 @@
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     <button class="btn btn-danger delete">Hapus</button>
-                                                                </td>
+                                                                </td> --}}
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
@@ -152,7 +135,7 @@
         </div>
     </div>
     <!-- Modal Tambah Data -->
-    <div class="modal fade" id="modalTambahData" tabindex="-1" aria-labelledby="modalTambahDataLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="modalTambahData" tabindex="-1" aria-labelledby="modalTambahDataLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -181,8 +164,8 @@
                                 <label for="nilai_batas" class="col-form-label required">Batas Nilai
                                     (Kurang dari)</label>
                                 <input type="number" class="form-control" id="nilai_batas" name="nilai_batas" required>
-                                <input type="text" class="form-control" id="idRemedialPeriode"
-                                    name="idRemedialPeriode" value="{{ $remedialperiode->id }}" hidden>
+                                <input type="text" class="form-control" id="idRemedialPeriode" name="idRemedialPeriode"
+                                    value="{{ $remedialperiode->id }}" hidden>
                             </div>
                             <div class="col-sm-6">
                                 <label for="nilai_batas" class="col-form-label required">Batas Presensi
@@ -199,7 +182,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 @endsection
 
 @section('js-tambahan')

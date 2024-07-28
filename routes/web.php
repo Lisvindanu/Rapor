@@ -314,12 +314,10 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         Route::prefix('pelaksanaan')->group(function () {
             Route::get('/', "RemedialPelaksanaanController@daftarMatakuliah")->name('remedial.pelaksanaan');
-            Route::get('/daftar-mk', "RemedialPelaksanaanController@daftarMatakuliah")->name('remedial.pelaksanaan.daftarMK');
 
-            Route::prefix('detail')->group(function () {
-                Route::get('/{id}', "RemedialPelaksanaanController@detail")->name('remedial.pelaksanaan.detail');
-                Route::post('/{id}', "RemedialPelaksanaanController@detailStore")->name('remedial.pelaksanaan.detail.store');
-                Route::delete('/{id}', "RemedialPelaksanaanController@detailDelete")->name('remedial.pelaksanaan.detail.delete');
+            Route::prefix('daftar-mk')->group(function () {
+                Route::get('/', "RemedialPelaksanaanDaftarMKController@daftarMatakuliah")->name('remedial.pelaksanaan.daftar-mk');
+                Route::post('/peserta', "RemedialPelaksanaanDaftarMKController@pesertaMatakuliah")->name('remedial.pelaksanaan.daftar-mk.peserta');
             });
         });
 

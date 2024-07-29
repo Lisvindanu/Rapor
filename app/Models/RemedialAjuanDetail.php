@@ -20,6 +20,7 @@ class RemedialAjuanDetail extends Model
         'krs_id',
         'idmk',
         'namakelas',
+        'nip',
         'harga_remedial',
         'status_ajuan' // Konfirmasi Pembayaran, Konfirmasi Kelas, Diterima, Dibatalkan
     ];

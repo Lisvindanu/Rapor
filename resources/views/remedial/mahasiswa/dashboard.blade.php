@@ -280,7 +280,7 @@
     <!-- Modal Tambah Data -->
     <div class="modal fade" id="modalTambahData" tabindex="-1" aria-labelledby="modalTambahDataLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTambahDataLabel">Tambah Ajuan Remedial</h5>
@@ -302,6 +302,7 @@
                                     <th>Matakuliah</th>
                                     <th>SKS</th>
                                     <th>Kelas</th>
+                                    <th>NIP</th>
                                     <th>Dosen</th>
                                     <th>Presensi</th>
                                     <th>Nilai Angka</th>
@@ -322,6 +323,7 @@
                                             <td>{{ $item->namamk }}</td>
                                             <td>{{ $item->sksmk }}</td>
                                             <td>{{ $item->namakelas }}</td>
+                                            <td>{{ $item->kelasKuliah->nip }}</td>
                                             <td>{{ $item->kelasKuliah->namadosen }}</td>
                                             <td>{{ $item->presensi }} %</td>
                                             <td>{{ $item->nnumerik }}</td>
@@ -437,6 +439,7 @@
                 var dataTerpilih = [];
                 var idmkTerpilih = [];
                 var namaKelasTerpilih = [];
+                var nipTerpilih = [];
 
                 $.each(formDataArray, function(index, element) {
                     if (element.name === 'data[]') {
@@ -444,6 +447,7 @@
                         var row = $('input[value="' + element.value + '"]').closest('tr');
                         idmkTerpilih.push(row.find('td:eq(1)').text());
                         namaKelasTerpilih.push(row.find('td:eq(4)').text());
+                        nipTerpilih.push(row.find('td:eq(5)').text());
                     }
                 });
 
@@ -462,10 +466,12 @@
                             krs: dataTerpilih,
                             idmk: idmkTerpilih,
                             nama_kelas: namaKelasTerpilih,
+                            nip: nipTerpilih,
                             remedial_periode_id: '{{ $periodeTerpilih->id }}' // Menggunakan ID kuesioner SDM
                         },
                         success: function(response) {
                             // console.log(response);
+                            alert('Data berhasil diajukan');
                             $('#loadingSpinner').hide();
                             $('#modalTambahData').modal('hide');
 

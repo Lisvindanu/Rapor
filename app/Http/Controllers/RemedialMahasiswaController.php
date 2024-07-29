@@ -77,8 +77,8 @@ class RemedialMahasiswaController extends Controller
                     && floatval($item->presensi) >= floatval($periodeTerpilih->remedialperiodeprodi->first()->presensi_batas);
             });
 
-        // return response()->json($periodeTerpilih);
-
+        // return response()->json($data_krs);
+        // 
         $data_ajuan = RemedialAjuan::with('remedialajuandetail')->where('nim', auth()->user()->username)
             ->where('remedial_periode_id', $periodeTerpilih->id)
             ->get();

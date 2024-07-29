@@ -106,6 +106,7 @@ class RemedialAjuanController extends Controller
                 'krs' => 'required|array',
                 'idmk' => 'required|array',
                 'nama_kelas' => 'required|array',
+                'nip' => 'required|array',
                 'remedial_periode_id' => 'required|exists:remedial_periode,id',
             ]);
 
@@ -155,6 +156,7 @@ class RemedialAjuanController extends Controller
                     'krs_id' => $request->krs[$i],
                     'idmk' => $request->idmk[$i],
                     'namakelas' => $request->nama_kelas[$i],
+                    'nip'  => $request->nip[$i],
                     'harga_remedial' => $periode->remedialperiodetarif[0]->tarif,
                     'status_ajuan' => 'Konfirmasi Pembayaran',
                 ]);

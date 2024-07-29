@@ -140,13 +140,20 @@
                     <div class="row">
                         {{-- <div class="col-12"> --}}
                         <div class="col-5" style="margin: 15px">
-                            <form id="formTambahData" action="#" method="POST">
+                            <form id="formTambahDataPerMK"
+                                action="{{ route('remedial.pelaksanaan.daftar-kelas.tambahPerMK') }}" method="POST">
                                 @csrf
+
+                                <input type="text" name="remedial_periode_id"
+                                    value="{{ $matakuliah->remedialajuan->remedial_periode_id }}">
+                                <input type="text" name="kodemk" value="{{ $matakuliah->idmk }}">
+                                <input type="text" name="kode_periode" value="{{ $matakuliah->kode_periode }}">
+
                                 <button type="submit" class="btn btn-primary" style="width: 200px">Kelas Per MK</button>
                             </form>
                         </div>
                         <div class="col-5" style="margin: 15px">
-                            <form id="formTambahData" action="#" method="POST">
+                            <form id="formTambahDataPerDosen" action="#" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-primary" style="width: 200px">Kelas Per
                                     Dosen</button>
@@ -174,54 +181,26 @@
             });
 
             // Kirim data ke server saat form modal disubmit
-            $('#formTambahData').submit(function(e) {
-                e.preventDefault();
+            // $('#formTambahDataPerMK').submit(function(e) {
+            //     e.preventDefault();
+            //     var formData = $(this).serialize();
+            //     $.ajax({
+            //         type: "POST",
+            //         url: $(this).attr('action'),
+            //         data: formData,
+            //         success: function(response) {
+            //             $('#modalTambahData').modal('hide');
+            //             $('#formTambahData').trigger('reset');
+            //             $('#tabel-body').append(response);
+            //             window.location.reload();
+            //         },
+            //         error: function(xhr, status, error) {
+            //             console.error(xhr.responseText);
+            //             alert('Terjadi kesalahan, silakan coba lagi.');
+            //         }
+            //     });
+            // });
 
-                var formData = $(this).serialize();
-
-                $.ajax({
-                    type: "POST",
-                    url: $(this).attr('action'),
-                    data: formData,
-                    success: function(response) {
-                        alert('Data berhasil disimpan');
-                        $('#modalTambahData').modal('hide');
-                        $('#formTambahData').trigger('reset');
-                        $('#tabel-body').append(response);
-                        window.location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        alert('Terjadi kesalahan, silakan coba lagi.');
-                    }
-                });
-            });
-
-            // Hapus baris tabel
-            $('#editableTable').on('click', '.delete', function() {
-                if (confirm('Apakah Anda yakin ingin menghapus baris ini?')) {
-                    var row = $(this).closest('tr');
-                    var id = row.find('td:eq(0)').text(); // Ambil id data yang akan dihapus
-
-                    // Kirim permintaan penghapusan ke server menggunakan Ajax
-                    $.ajax({
-                        type: "DELETE",
-                        url: "/remedial/periode/prodi/" + id,
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            _method: 'DELETE'
-                        },
-                        success: function(response) {
-                            alert('Data berhasil dihapus');
-                            row.remove(); // Hapus baris dari tabel setelah berhasil dihapus
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                            alert('Terjadi kesalahan, silakan coba lagi.');
-                        }
-                    });
-                }
-            });
         });
     </script>
 @endsection

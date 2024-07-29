@@ -103,7 +103,7 @@ class RemedialPelaksanaanDaftarMKController extends Controller
     {
         try {
 
-            $matakuliah = RemedialAjuanDetail::with('kelasKuliah')
+            $matakuliah = RemedialAjuanDetail::with('kelasKuliah', 'remedialajuan')
                 ->where('kode_periode', $request->kode_periode)
                 ->where('idmk', $request->idmk)
                 ->where('status_ajuan', 'Konfirmasi Kelas')
@@ -116,7 +116,7 @@ class RemedialPelaksanaanDaftarMKController extends Controller
                 ->where('status_ajuan', 'Konfirmasi Kelas')
                 ->paginate($request->get('perPage', 10));
 
-            // return response()->json($ajuandetail);
+            // return response()->json($matakuliah);
 
             return view(
                 'remedial.pelaksanaan.daftar-mk.detail.peserta',

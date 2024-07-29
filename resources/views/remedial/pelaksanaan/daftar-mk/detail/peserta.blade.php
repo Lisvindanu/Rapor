@@ -50,7 +50,7 @@
                             <div class="sub-konten">
                                 <div class="alert alert-info" role="alert" style="padding-bottom:0px">
                                     <p><strong> Cek kembali kesesuaian Dosen Pengampu dengan Jadwal Kelas Perkuliahan di
-                                            SITU2 </strong></p>
+                                            SITU2, khususnya untuk jadwal yang terdapat beberapa dosen. </strong></p>
                                 </div>
                                 <!-- Nama Indikator -->
                                 <div class="form-group row">
@@ -92,9 +92,6 @@
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Dosen
                                                             </th>
-                                                            <th style="text-align: center;vertical-align: middle;">
-                                                                Aksi
-                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="tabel-body">
@@ -107,18 +104,15 @@
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $item->remedialajuan->nim }}
                                                                 </td>
-                                                                {{-- <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->unitkerja->nama_unit }}
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    {{ $item->remedialajuan->mahasiswa->nama }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->nilai_batas }}
+                                                                    {{ $item->namakelas }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->presensi_batas }}
+                                                                    {{ $item->krs->kelasKuliah->namadosen }}
                                                                 </td>
-                                                                <td style="text-align: center;vertical-align: middle;">
-                                                                    <button class="btn btn-danger delete">Hapus</button>
-                                                                </td> --}}
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
@@ -135,54 +129,40 @@
         </div>
     </div>
     <!-- Modal Tambah Data -->
-    {{-- <div class="modal fade" id="modalTambahData" tabindex="-1" aria-labelledby="modalTambahDataLabel" aria-hidden="true">
+    <div class="modal fade" id="modalTambahData" tabindex="-1" aria-labelledby="modalTambahDataLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahDataLabel">Aturan Remedial Periode</h5>
+                    <h5 class="modal-title" id="modalTambahDataLabel">Kelas Remedial</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="formTambahData" action="{{ route('remedial.periode.prodi.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="periode_angkatan" class="form-label">Program Studi</label>
-                            <select class="form-select" name="unit_kerja_id" id="unit_kerja_id" required>
-                                <option value="">Pilih Program Studi</option>
-                                @foreach ($unitkerja as $unit)
-                                    @if (!empty($unit->childUnit))
-                                        @foreach ($unit->childUnit as $child)
-                                            <option value="{{ $child->id }}">&nbsp;&nbsp;
-                                                {{ $child->nama_unit }}</option>
-                                        @endforeach
-                                    @endif
-                                @endforeach
-                            </select>
+                <div class="modal-body">
+                    <div class="row">
+                        {{-- <div class="col-12"> --}}
+                        <div class="col-5" style="margin: 15px">
+                            <form id="formTambahData" action="#" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-primary" style="width: 200px">Kelas Per MK</button>
+                            </form>
                         </div>
-                        <div class="form-group row">
-                            <div class="col-sm-6">
-                                <label for="nilai_batas" class="col-form-label required">Batas Nilai
-                                    (Kurang dari)</label>
-                                <input type="number" class="form-control" id="nilai_batas" name="nilai_batas" required>
-                                <input type="text" class="form-control" id="idRemedialPeriode" name="idRemedialPeriode"
-                                    value="{{ $remedialperiode->id }}" hidden>
-                            </div>
-                            <div class="col-sm-6">
-                                <label for="nilai_batas" class="col-form-label required">Batas Presensi
-                                    (Lebih dari)</label>
-                                <input type="number" class="form-control" id="presensi_batas" name="presensi_batas"
-                                    required>
-                            </div>
+                        <div class="col-5" style="margin: 15px">
+                            <form id="formTambahData" action="#" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-primary" style="width: 200px">Kelas Per
+                                    Dosen</button>
+                            </form>
                         </div>
+                        {{-- </div> --}}
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
+
+                </div>
+                {{-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+
+                </div> --}}
             </div>
         </div>
-    </div> --}}
+    </div>
 @endsection
 
 @section('js-tambahan')

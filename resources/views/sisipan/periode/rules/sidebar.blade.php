@@ -57,13 +57,13 @@
         <ul class="nav flex-column">
             <li class="nav-item">
                 {{-- <a class="nav-link {{ Request::is('*/periode/tarif/*') ? 'active' : '' }}"
-                    href="{{ route('remedial.periode.tarif', ['id' => $data->id]) }}">Tarif
+                    href="{{ route('sisipan.periode.tarif', ['id' => $data->id]) }}">Tarif
                 </a> --}}
                 <a class="nav-link {{ Request::is('*/periode/prodi*') ? 'active' : '' }}"
-                    href="{{ route('remedial.periode.prodi', ['id' => $remedialperiode->id]) }}">Program Studi
+                    href="{{ route('sisipan.periode.prodi', ['id' => $sisipanperiode->id]) }}">Program Studi
                 </a>
                 <a class="nav-link {{ Request::is('*/periode/tarif*') ? 'active' : '' }}"
-                    href="{{ route('remedial.periode.tarif', ['id' => $remedialperiode->id]) }}">Tarif Remedial
+                    href="{{ route('sisipan.periode.tarif', ['id' => $sisipanperiode->id]) }}">Tarif Sisipan
                 </a>
 
             </li>

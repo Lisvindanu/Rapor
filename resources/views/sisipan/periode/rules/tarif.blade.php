@@ -4,7 +4,7 @@
 @endsection
 
 @section('navbar')
-    @include('remedial.navbar')
+    @include('sisipan.navbar')
 @endsection
 
 @section('konten')
@@ -13,8 +13,8 @@
             <div class="col-12">
                 <div class="judul-modul">
                     <span>
-                        <h3>Remedial</h3>
-                        <p>Aturan Remedial Program Studi</p>
+                        <h3>Kuesioner SDM</h3>
+                        <p>Detail Kegiatan Kuesioner</p>
                     </span>
                 </div>
             </div>
@@ -33,10 +33,10 @@
                             </div>
                             <div class="col-8">
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <a href="{{ route('remedial.periode') }}" class="btn btn-secondary"
+                                    <a href="{{ route('sisipan.periode') }}" class="btn btn-secondary"
                                         type="button">Kembali</a>
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <button class="btn btn-primary" id="btnTambahSoal">Tambah Aturan</button>
+                                        <button class="btn btn-primary" id="btnTambahSoal">Tambah Tarif</button>
                                     </div>
                                 </div>
                             </div>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="card-body" style="display: flex;">
                         <div class="col-2">
-                            @include('remedial.periode.rules.sidebar')
+                            @include('sisipan.periode.rules.sidebar')
                         </div>
                         <div class="col-10">
                             <div class="sub-konten">
@@ -55,14 +55,14 @@
                                             Periode</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <span class="input-group-text">{{ $remedialperiode->periode->nama_periode }}</span>
+                                        <span class="input-group-text">{{ $sisipanperiode->periode->nama_periode }}</span>
                                     </div>
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                         <label for="nama_kuesioner" class=" create-label">
                                             Nama Periode</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <span class="input-group-text">{{ $remedialperiode->nama_periode }}</span>
+                                        <span class="input-group-text">{{ $sisipanperiode->nama_periode }}</span>
                                     </div>
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                         <label for="nama_kuesioner" class=" create-label">
@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <span class="input-group-text">
-                                            {{ \Carbon\Carbon::parse($remedialperiode->tanggal_mulai)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
+                                            {{ \Carbon\Carbon::parse($sisipanperiode->tanggal_mulai)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
                                         </span>
                                     </div>
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
@@ -79,16 +79,17 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <span class="input-group-text">
-                                            {{ \Carbon\Carbon::parse($remedialperiode->tanggal_selesai)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
+                                            {{ \Carbon\Carbon::parse($sisipanperiode->tanggal_selesai)->locale('id_ID')->isoFormat('dddd, D MMMM YYYY') }}
                                         </span>
                                     </div>
+
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                         <label for="nama_kuesioner" class=" create-label">
                                             Aktif</label>
                                     </div>
                                     <div class="col-sm-4">
                                         <span class="input-group-text">
-                                            {{ $remedialperiode->is_aktif == 1 ? 'Ya' : 'Tidak' }}
+                                            {{ $sisipanperiode->is_aktif == 1 ? 'Ya' : 'Tidak' }}
                                         </span>
                                     </div>
                                 </div>
@@ -104,13 +105,10 @@
                                                                 No.
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
-                                                                Program Studi
+                                                                Angkatan
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
-                                                                Batas Nilai
-                                                            </th>
-                                                            <th style="text-align: center;vertical-align: middle;">
-                                                                Batas Presensi
+                                                                Tarif
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Aksi
@@ -125,13 +123,10 @@
                                                                     {{ $loop->iteration }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->unitkerja->nama_unit }}
+                                                                    {{ $item->periode_angkatan }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->nilai_batas }}
-                                                                </td>
-                                                                <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->presensi_batas }}
+                                                                    {{ 'Rp ' . number_format($item->tarif, 0, ',', '.') }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     <button class="btn btn-danger delete">Hapus</button>
@@ -156,40 +151,26 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahDataLabel">Aturan Remedial Periode</h5>
+                    <h5 class="modal-title" id="modalTambahDataLabel">Tambah Tarif</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="formTambahData" action="{{ route('remedial.periode.prodi.store') }}" method="POST">
+                <form id="formTambahData" action="{{ route('sisipan.periode.tarif.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="periode_angkatan" class="form-label">Program Studi</label>
-                            <select class="form-select" name="unit_kerja_id" id="unit_kerja_id" required>
-                                <option value="">Pilih Program Studi</option>
-                                @foreach ($unitkerja as $unit)
-                                    @if (!empty($unit->childUnit))
-                                        @foreach ($unit->childUnit as $child)
-                                            <option value="{{ $child->id }}">&nbsp;&nbsp;
-                                                {{ $child->nama_unit }}</option>
-                                        @endforeach
-                                    @endif
+                            <label for="periode_angkatan" class="form-label">Periode Angkatan Mahasiswa</label>
+                            <select class="form-select" id="periode_angkatan" name="periode_angkatan" required>
+                                <option value="">Pilih Periode Angkatan Mahasiswa</option>
+                                @foreach ($periode as $periode)
+                                    <option value="{{ $periode->kode_periode }}">{{ $periode->nama_periode }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group row">
-                            <div class="col-sm-6">
-                                <label for="nilai_batas" class="col-form-label required">Batas Nilai
-                                    (Kurang dari)</label>
-                                <input type="number" class="form-control" id="nilai_batas" name="nilai_batas" required>
-                                <input type="text" class="form-control" id="idRemedialPeriode"
-                                    name="idRemedialPeriode" value="{{ $remedialperiode->id }}" hidden>
-                            </div>
-                            <div class="col-sm-6">
-                                <label for="nilai_batas" class="col-form-label required">Batas Presensi
-                                    (Lebih dari)</label>
-                                <input type="number" class="form-control" id="presensi_batas" name="presensi_batas"
-                                    required>
-                            </div>
+                        <div class="mb-3">
+                            <label for="tarif" class="form-label">Tarif</label>
+                            <input type="text" class="form-control" id="tarif" name="tarif" required>
+                            <input type="text" class="form-control" id="idSisipanPeriode" name="idSisipanPeriode"
+                                value="{{ $sisipanperiode->id }}" hidden>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -210,26 +191,35 @@
                 $('#modalTambahData').modal('show');
             });
 
-            // Kirim data ke server saat form modal disubmit
             $('#formTambahData').submit(function(e) {
                 e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var method = form.attr('method');
 
-                var formData = $(this).serialize();
+                // Ambil nilai asli tarif
+                var tarif = $('#tarif').val().replace(/[Rp.]/g, '').trim();
+                // Buat objek data yang akan dikirim
+                var formData = {
+                    _token: '{{ csrf_token() }}',
+                    periode_angkatan: $('#periode_angkatan').val(),
+                    tarif: tarif,
+                    idSisipanPeriode: $('#idSisipanPeriode').val()
+                };
 
                 $.ajax({
-                    type: "POST",
-                    url: $(this).attr('action'),
-                    data: formData,
+                    url: url,
+                    method: method,
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
                     success: function(response) {
-                        alert('Data berhasil disimpan');
+                        console.log(response);
                         $('#modalTambahData').modal('hide');
-                        $('#formTambahData').trigger('reset');
-                        $('#tabel-body').append(response);
                         window.location.reload();
                     },
                     error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        alert('Terjadi kesalahan, silakan coba lagi.');
+                        var errorMessage = xhr.responseText;
+                        console.log(errorMessage);
                     }
                 });
             });
@@ -243,7 +233,7 @@
                     // Kirim permintaan penghapusan ke server menggunakan Ajax
                     $.ajax({
                         type: "DELETE",
-                        url: "/remedial/periode/prodi/" + id,
+                        url: "/sisipan/periode/tarif/" + id,
                         data: {
                             _token: '{{ csrf_token() }}',
                             _method: 'DELETE'
@@ -259,6 +249,13 @@
                     });
                 }
             });
+        });
+
+        document.getElementById('tarif').addEventListener('input', function(e) {
+            let value = e.target.value;
+            value = value.replace(/[^,\d]/g, ''); // Hanya angka yang diizinkan
+            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Menambahkan titik sebagai pemisah ribuan
+            e.target.value = value ? 'Rp ' + value : ''; // Menambahkan Rp di depan nilai
         });
     </script>
 @endsection

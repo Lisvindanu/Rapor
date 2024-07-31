@@ -57,4 +57,12 @@ class UnitKerjaHelper
         // Jika tidak ditemukan atau tidak memiliki parentUnit
         return null;
     }
+
+    // jika session selected role = mahasiswa maka redirect ke gate
+    public static function checkRole()
+    {
+        if (session('selected_role') == 'Mahasiswa') {
+            return redirect()->route('gate');
+        }
+    }
 }

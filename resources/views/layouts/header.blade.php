@@ -13,8 +13,13 @@
                     </div>
 
                     <div class="button-app" style="float: right">
-                        <a href="{{ route('changePasswordSecond') }}" style="text-decoration: none"
-                            class="exit-button">Ganti Password</a>
+                        <a href="#" style="text-decoration: none" class="exit-button">Hello,
+                            @if (Auth::check())
+                                {{ Auth::user()->name }}
+                            @endif
+                        </a>
+                        {{-- <a href="{{ route('changePasswordSecond') }}" style="text-decoration: none"
+                            class="exit-button">Ganti Password</a> --}}
                         {{-- to gate --}}
                         <a href="{{ url('/gate') }}" style="text-decoration: none" class="exit-button">Menu</a>
                         {{-- to logout --}}

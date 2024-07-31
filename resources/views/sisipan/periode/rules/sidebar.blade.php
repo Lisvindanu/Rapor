@@ -56,20 +56,14 @@
     <div class="sidebar-konten">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('*/pelaksanaan/daftar-mk/peserta*') ? 'active' : '' }}"
-                    href="{{ route('remedial.pelaksanaan.daftar-mk.peserta', [
-                        'kode_periode' => $matakuliah->kode_periode,
-                        'idmk' => $matakuliah->idmk,
-                    ]) }}">
-                    Peserta Remedial
+                {{-- <a class="nav-link {{ Request::is('*/periode/tarif/*') ? 'active' : '' }}"
+                    href="{{ route('sisipan.periode.tarif', ['id' => $data->id]) }}">Tarif
+                </a> --}}
+                <a class="nav-link {{ Request::is('*/periode/prodi*') ? 'active' : '' }}"
+                    href="{{ route('sisipan.periode.prodi', ['id' => $sisipanperiode->id]) }}">Program Studi
                 </a>
-                <a class="nav-link {{ Request::is('*/pelaksanaan/daftar-mk/kelas*') ? 'active' : '' }}"
-                    href="{{ route('remedial.pelaksanaan.daftar-mk.kelas', [
-                        'kode_periode' => $matakuliah->kode_periode,
-                        'idmk' => $matakuliah->idmk,
-                        'remedial_periode_id' => $matakuliah->remedialajuan->remedial_periode_id,
-                    ]) }}">
-                    Kelas Remedial
+                <a class="nav-link {{ Request::is('*/periode/tarif*') ? 'active' : '' }}"
+                    href="{{ route('sisipan.periode.tarif', ['id' => $sisipanperiode->id]) }}">Tarif Sisipan
                 </a>
 
             </li>

@@ -4,22 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\ProgramStudi;
 use Illuminate\Http\Request;
-use App\Models\RemedialAjuan;
-use App\Models\RemedialAjuanDetail;
-use App\Models\RemedialPeriode;
+use App\Models\SisipanAjuan;
+use App\Models\SisipanAjuanDetail;
+use App\Models\SisipanPeriode;
 use App\Models\UnitKerja;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\UnitKerjaHelper;
 
-class RemedialAjuanController extends Controller
+class SisipanAjuanController extends Controller
 {
     // index
     public function index(Request $request)
     {
-        if (session('selected_role') == 'Mahasiswa') {
-            return redirect()->route('gate');
-        }
-
         try {
             // untuk dropdown unit kerja
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->get();
@@ -29,11 +25,11 @@ class RemedialAjuanController extends Controller
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
 
             if ($request->has('periodeTerpilih')) {
-                $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
+                $periodeTerpilih = SisipanPeriode::with('sisipanperiodetarif')
                     ->where('id', $request->periodeTerpilih)
                     ->first();
             } else {
-                $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
+                $periodeTerpilih = SisipanPeriode::with('sisipanperiodetarif')
                     ->where('is_aktif', 1)
                     // ->whereIn('unit_kerja_id', $unitKerjaIds)
                     // ->orWhere('unit_kerja_id', session('selected_filter'))
@@ -41,13 +37,13 @@ class RemedialAjuanController extends Controller
                     ->first();
             }
 
-            $daftar_periode = RemedialPeriode::with('periode')
+            $daftar_periode = SisipanPeriode::with('periode')
                 ->whereIn('unit_kerja_id', $unitKerjaIds)
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
-            $query = RemedialAjuan::with('remedialajuandetail')
+            $query = SisipanAjuan::with('sisipanajuandetail')
                 ->whereIn('programstudi', $unitKerjaNames)
-                ->where('remedial_periode_id', $periodeTerpilih->id)
+                ->where('sisipan_periode_id', $periodeTerpilih->id)
                 ->where('status_pembayaran', 'Menunggu Konfirmasi');
 
             //filter terkait dengan program studi 
@@ -77,7 +73,7 @@ class RemedialAjuanController extends Controller
             $total = $data_ajuan->total();
 
             return view(
-                'remedial.ajuan.verifikasi',
+                'sisipan.ajuan.verifikasi',
                 [
                     'periodeTerpilih' => $periodeTerpilih,
                     'programstuditerpilih' => $programstuditerpilih ?? null,
@@ -111,26 +107,26 @@ class RemedialAjuanController extends Controller
                 'idmk' => 'required|array',
                 'nama_kelas' => 'required|array',
                 'nip' => 'required|array',
-                'remedial_periode_id' => 'required|exists:remedial_periode,id',
+                'sisipan_periode_id' => 'required|exists:sisipan_periode,id',
             ]);
 
             $user = auth()->user()->mahasiswa;
 
-            $periode = RemedialPeriode::with([
-                'remedialperiodetarif' => function ($query) use ($user) {
+            $periode = SisipanPeriode::with([
+                'sisipanperiodetarif' => function ($query) use ($user) {
                     $query->where('periode_angkatan', $user->periodemasuk);
                 }
             ])
-                ->whereHas('remedialperiodetarif', function ($query) use ($user) {
+                ->whereHas('sisipanperiodetarif', function ($query) use ($user) {
                     $query->where('periode_angkatan', $user->periodemasuk);
                 })
-                ->where('id', $request->remedial_periode_id)
+                ->where('id', $request->sisipan_periode_id)
                 ->first();
 
             if (!$periode) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Periode remedial tidak ditemukan',
+                    'message' => 'Periode sisipan tidak ditemukan',
                 ]);
             }
 
@@ -142,26 +138,26 @@ class RemedialAjuanController extends Controller
             }
 
 
-            // Lakukan proses penyimpanan data ke remedialajuan dan dapatkan id nya
-            $remedialAjuan = RemedialAjuan::create([
-                'remedial_periode_id' => $request->remedial_periode_id,
+            // Lakukan proses penyimpanan data ke sisipanajuan dan dapatkan id nya
+            $sisipanAjuan = SisipanAjuan::create([
+                'sisipan_periode_id' => $request->sisipan_periode_id,
                 'nim' => auth()->user()->username,
                 'programstudi' => auth()->user()->mahasiswa->programstudi,
                 'va' => $va,
-                'total_bayar' => $totalKrs * $periode->remedialperiodetarif[0]->tarif,
+                'total_bayar' => $totalKrs * $periode->sisipanperiodetarif[0]->tarif,
                 'tgl_pengajuan' => now(),
             ]);
 
-            // Lakukan proses penyimpanan data ke remedialajuandetail
+            // Lakukan proses penyimpanan data ke sisipanajuandetail
             for ($i = 0; $i < $totalKrs; $i++) {
-                RemedialAjuanDetail::create([
-                    'remedial_ajuan_id' => $remedialAjuan->id,
+                SisipanAjuanDetail::create([
+                    'sisipan_ajuan_id' => $sisipanAjuan->id,
                     'kode_periode' => $periode->kode_periode,
                     'krs_id' => $request->krs[$i],
                     'idmk' => $request->idmk[$i],
                     'namakelas' => $request->nama_kelas[$i],
                     'nip'  => $request->nip[$i],
-                    'harga_remedial' => $periode->remedialperiodetarif[0]->tarif,
+                    'harga_sisipan' => $periode->sisipanperiodetarif[0]->tarif,
                     'status_ajuan' => 'Konfirmasi Pembayaran',
                 ]);
             }
@@ -169,7 +165,7 @@ class RemedialAjuanController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Data berhasil disimpan',
-                'data' => $remedialAjuan,
+                'data' => $sisipanAjuan,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -184,8 +180,8 @@ class RemedialAjuanController extends Controller
     public function deleteAjax($id)
     {
         try {
-            // Temukan data remedial ajuan yang akan dihapus
-            $data = RemedialAjuan::findOrFail($id);
+            // Temukan data sisipan ajuan yang akan dihapus
+            $data = SisipanAjuan::findOrFail($id);
 
             // Data tidak ditemukan
             if (!$data) {
@@ -197,8 +193,8 @@ class RemedialAjuanController extends Controller
                 Storage::disk('public')->delete($data->bukti_pembayaran);
             }
 
-            // delete juga remedialajuandetail
-            $data->remedialajuandetail()->delete();
+            // delete juga sisipanajuandetail
+            $data->sisipanajuandetail()->delete();
             $data->delete();
 
             // Kirim respon berhasil
@@ -215,13 +211,13 @@ class RemedialAjuanController extends Controller
         try {
             // Lakukan validasi sesuai kebutuhan
             $request->validate([
-                'remedial_ajuan_id' => 'required|exists:remedial_ajuan,id',
+                'sisipan_ajuan_id' => 'required|exists:sisipan_ajuan,id',
                 'tgl_pembayaran' => 'required',
                 'bukti_pembayaran' => 'required|image|mimes:png,jpg|max:1024',
             ]);
 
-            // Temukan data remedial ajuan yang akan diupload bukti pembayaran
-            $data = RemedialAjuan::findOrFail($request->remedial_ajuan_id);
+            // Temukan data sisipan ajuan yang akan diupload bukti pembayaran
+            $data = SisipanAjuan::findOrFail($request->sisipan_ajuan_id);
 
             // Data tidak ditemukan
             if (!$data) {
@@ -239,7 +235,7 @@ class RemedialAjuanController extends Controller
             // $file->move(public_path('bukti_pembayaran'), $fileName);
             $path = $file->storeAs('bukti_pembayaran', $fileName, 'public');
 
-            // Update data remedial ajuan dengan bukti pembayaran
+            // Update data sisipan ajuan dengan bukti pembayaran
             $data->update([
                 'bukti_pembayaran' => $path,
                 'status_pembayaran' => 'Menunggu Konfirmasi',
@@ -258,8 +254,8 @@ class RemedialAjuanController extends Controller
     public function ajuandetail($id)
     {
         try {
-            $data = RemedialAjuanDetail::with(['kelasKuliah', 'remedialajuan', 'krs'])
-                ->where('remedial_ajuan_id', $id)
+            $data = SisipanAjuanDetail::with(['kelasKuliah', 'sisipanajuan', 'krs'])
+                ->where('sisipan_ajuan_id', $id)
                 ->get();
             return response()->json($data);
         } catch (\Exception $e) {
@@ -271,29 +267,29 @@ class RemedialAjuanController extends Controller
     public function verifikasiAjuan(Request $request)
     {
         $validatedData = $request->validate([
-            'remedial_ajuan_id' => 'required',
+            'sisipan_ajuan_id' => 'required',
             'jumlah_bayar' => 'required',
         ]);
 
         try {
-            // get data remedial ajuan id
-            $remedialAjuan = RemedialAjuan::find($request->remedial_ajuan_id);
+            // get data sisipan ajuan id
+            $sisipanAjuan = SisipanAjuan::find($request->sisipan_ajuan_id);
 
             // if data not found return response
-            if (!$remedialAjuan) {
+            if (!$sisipanAjuan) {
                 return response()->json(['message' => 'Data tidak ditemukan'], 404);
             }
 
             // update status pembayaran
-            $remedialAjuan->update([
+            $sisipanAjuan->update([
                 'jumlah_bayar' => $request->jumlah_bayar,
                 'status_pembayaran' => 'Lunas',
                 'is_lunas' => 1,
                 'verified_by' => auth()->user()->username,
             ]);
 
-            // update status_ajuan remedial ajuan detail where remedial ajuan id
-            RemedialAjuanDetail::where('remedial_ajuan_id', $request->remedial_ajuan_id)
+            // update status_ajuan sisipan ajuan detail where sisipan ajuan id
+            SisipanAjuanDetail::where('sisipan_ajuan_id', $request->sisipan_ajuan_id)
                 ->update([
                     'status_ajuan' => 'Konfirmasi Kelas',
                 ]);
@@ -316,11 +312,11 @@ class RemedialAjuanController extends Controller
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
 
             if ($request->has('periodeTerpilih')) {
-                $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
+                $periodeTerpilih = SisipanPeriode::with('sisipanperiodetarif')
                     ->where('id', $request->periodeTerpilih)
                     ->first();
             } else {
-                $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
+                $periodeTerpilih = SisipanPeriode::with('sisipanperiodetarif')
                     ->where('is_aktif', 1)
                     // ->whereIn('unit_kerja_id', $unitKerjaIds)
                     // ->orWhere('unit_kerja_id', session('selected_filter'))
@@ -328,13 +324,13 @@ class RemedialAjuanController extends Controller
                     ->first();
             }
 
-            $daftar_periode = RemedialPeriode::with('periode')
+            $daftar_periode = SisipanPeriode::with('periode')
                 ->whereIn('unit_kerja_id', $unitKerjaIds)
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
-            $query = RemedialAjuan::with('remedialajuandetail')
+            $query = SisipanAjuan::with('sisipanajuandetail')
                 ->whereIn('programstudi', $unitKerjaNames)
-                ->where('remedial_periode_id', $periodeTerpilih->id);
+                ->where('sisipan_periode_id', $periodeTerpilih->id);
 
             //filter terkait dengan program studi 
             if ($request->has('programstudi')) {
@@ -371,7 +367,7 @@ class RemedialAjuanController extends Controller
             $total = $data_ajuan->total();
 
             return view(
-                'remedial.ajuan.daftar-ajuan',
+                'sisipan.ajuan.daftar-ajuan',
                 [
                     'periodeTerpilih' => $periodeTerpilih,
                     'programstuditerpilih' => $programstuditerpilih ?? null,

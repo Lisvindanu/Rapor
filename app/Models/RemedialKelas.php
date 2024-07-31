@@ -21,9 +21,35 @@ class RemedialKelas extends Model
         'kode_edlink',
     ];
 
+    //append jumlah peserta
+    protected $appends = ['jumlahpeserta'];
+
+    public function getJumlahpesertaAttribute()
+    {
+        return $this->peserta->count();
+    }
+
     //remedialperiode
     public function remedialperiode()
     {
         return $this->belongsTo(RemedialPeriode::class, 'remedial_periode_id', 'id');
+    }
+
+    // matakuliah
+    public function matakuliah()
+    {
+        return $this->belongsTo(RemedialAjuanDetail::class, 'kodemk', 'idmk');
+    }
+
+    // nama dosen
+    public function dosen()
+    {
+        return $this->belongsTo(Pegawai::class, 'nip', 'nip');
+    }
+
+    // peserta
+    public function peserta()
+    {
+        return $this->hasMany(RemedialKelasPeserta::class, 'remedial_kelas_id', 'id');
     }
 }

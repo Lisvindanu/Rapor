@@ -56,22 +56,13 @@
     <div class="sidebar-konten">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('*/pelaksanaan/daftar-mk/peserta*') ? 'active' : '' }}"
-                    href="{{ route('remedial.pelaksanaan.daftar-mk.peserta', [
-                        'kode_periode' => $matakuliah->kode_periode,
-                        'idmk' => $matakuliah->idmk,
-                    ]) }}">
-                    Peserta Remedial
-                </a>
-                <a class="nav-link {{ Request::is('*/pelaksanaan/daftar-mk/kelas*') ? 'active' : '' }}"
-                    href="{{ route('remedial.pelaksanaan.daftar-mk.kelas', [
-                        'kode_periode' => $matakuliah->kode_periode,
-                        'idmk' => $matakuliah->idmk,
-                        'remedial_periode_id' => $matakuliah->remedialajuan->remedial_periode_id,
-                    ]) }}">
-                    Kelas Remedial
-                </a>
-
+                <a class="nav-link {{ Request::is('*/banksoal/data-soal/*') ? 'active' : '' }}"
+                    href="{{ route('kuesioner.banksoal.show', ['id' => $data->id]) }}">Detail
+                    Soal</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('*/banksoal/pertanyaan/*') ? 'active' : '' }}""
+                    href="{{ route('kuesioner.banksoal.list-pertanyaan', ['id' => $data->id]) }}">Pertanyaan</a>
             </li>
         </ul>
     </div>

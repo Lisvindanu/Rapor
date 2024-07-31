@@ -243,7 +243,8 @@
                                             <a href="#" class="modul"
                                                 onclick="showRoles('{{ $modul['id'] }}','{{ $modul['tautan'] }}')">
                                                 <img src="{{ asset('path/to/icon/' . $modul->icon) }}"
-                                                    alt="Logo {{ $modul['nama_modul'] }}">
+                                                    alt="Logo {{ $modul['nama_modul'] }}"
+                                                    style="width: 80px;height: 80px">
                                                 <p>{{ $modul['nama_modul'] }}</p>
                                             </a>
                                         @endforeach

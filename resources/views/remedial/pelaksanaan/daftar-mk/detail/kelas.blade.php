@@ -81,37 +81,49 @@
                                                                 No.
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
-                                                                NIM
+                                                                Kode MK
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
-                                                                Nama Mahasiswa
+                                                                Nama Matakuliah
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
-                                                                Kelas
+                                                                NIP
                                                             </th>
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Dosen
+                                                            </th>
+                                                            <th style="text-align: center;vertical-align: middle;">
+                                                                Aksi
                                                             </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="tabel-body">
                                                         @foreach ($data as $item)
                                                             <tr>
+                                                                {{-- hidden id --}}
                                                                 <td hidden>{{ $item->id }}</td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $loop->iteration }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->remedialajuan->nim }}
+                                                                    {{ $item->kodemk }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->remedialajuan->mahasiswa->nama }}
+                                                                    {{ $item->matakuliah->kelasKuliah->namamk }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->namakelas }}
+                                                                    {{ $item->nip }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    {{ $item->krs->kelasKuliah->namadosen }}
+                                                                    {{ $item->dosen->nama }}
+                                                                </td>
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    <a href="#" class="btn btn-sm btn-warning edit">
+                                                                        <i class="fas fa-edit fa-xs"></i>
+                                                                    </a>
+                                                                    <a href="#" class="btn btn-sm btn-info detail">
+                                                                        <i class="fas fa-link fa-xs"></i>
+                                                                    </a>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -175,6 +187,51 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Update Data -->
+    <div class="modal fade" id="modalUpdateData" tabindex="-1" aria-labelledby="modalUpdateDataLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalUpdateDataLabel">Update Kelas Remedial</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <form id="formUpdateData" action="#" method="POST">
+                                @csrf
+                                @method('PUT')
+
+                                <input type="hidden" name="id" id="update_id">
+
+                                <div class="mb-3">
+                                    <label for="update_kodemk" class="form-label">Kode MK</label>
+                                    <input type="text" class="form-control" id="update_kodemk" name="kodemk"
+                                        disabled>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="update_namamk" class="form-label">Nama Matakuliah</label>
+                                    <input type="text" class="form-control" id="update_namamk" name="namamk"
+                                        disabled>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="update_nip" class="form-label">Dosen</label>
+                                    <input type="text" class="form-control" id="update_nip" name="nip">
+                                </div>
+
+
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js-tambahan')
@@ -227,6 +284,25 @@
                     }
                 });
             });
+
+            // Tampilkan modal update dan isi data saat tombol edit ditekan
+            $('.edit').click(function() {
+                var row = $(this).closest('tr');
+                var id = row.find('td:eq(0)').text().trim();
+                var kodemk = row.find('td:eq(2)').text().trim();
+                var namamk = row.find('td:eq(3)').text().trim();
+                var nip = row.find('td:eq(3)').text().trim();
+                var dosen = row.find('td:eq(4)').text();
+
+                $('#update_id').val(id);
+                $('#update_kodemk').val(kodemk);
+                $('#update_namamk').val(namamk);
+                $('#update_nip').val(nip);
+                $('#update_dosen').val(dosen);
+
+                $('#modalUpdateData').modal('show');
+            });
+
 
         });
     </script>

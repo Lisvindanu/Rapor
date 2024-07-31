@@ -9,6 +9,7 @@ use App\Models\RemedialPeriode;
 use App\Models\RemedialAjuan;
 use App\Models\ProgramStudi;
 use App\Models\RemedialAjuanDetail;
+use App\Models\RemedialKelas;
 use Illuminate\Support\Facades\DB;
 
 
@@ -123,6 +124,34 @@ class RemedialPelaksanaanDaftarMKController extends Controller
                 [
                     'matakuliah' => $matakuliah,
                     'data' => $ajuandetail,
+                ]
+            );
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
+    }
+
+    //kelasMatakuliah
+    public function kelasMatakuliah(Request $request)
+    {
+        try {
+            $matakuliah = RemedialAjuanDetail::with('kelasKuliah', 'remedialajuan')
+                ->where('kode_periode', $request->kode_periode)
+                ->where('idmk', $request->idmk)
+                ->where('status_ajuan', 'Konfirmasi Kelas')
+                ->first();
+
+            // return response()->json($request->all());
+            $kelas = RemedialKelas::with(['matakuliah', 'remedialperiode', 'peserta'])
+                ->where('remedial_periode_id', $request->remedial_periode_id)
+                ->where('kodemk', $request->idmk)
+                ->get();
+
+            return view(
+                'remedial.pelaksanaan.daftar-mk.detail.kelas',
+                [
+                    'matakuliah' => $matakuliah,
+                    'data' => $kelas,
                 ]
             );
         } catch (\Exception $e) {

@@ -13,8 +13,8 @@
             <div class="container">
                 <div class="judul-modul">
                     <span>
-                        <h3>Pelaksanaan Remedial</h3>
-                        <p>Daftar Matakuliah Remedial</p>
+                        <h3>Ajuan Remedial</h3>
+                        <p>Daftar Verifikasi Ajuan Remedial</p>
                     </span>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                 <div class="container">
                     <div class="card">
                         <div class="card-body">
-                            <form id="formPeriode" action="{{ route('remedial.pelaksanaan.daftar-mk') }}" method="GET">
+                            <form id="formPeriode" action="{{ route('remedial.ajuan') }}" method="GET">
                                 @csrf
                                 <div class="col-12" style="padding: 10px">
                                     <div class="row align-items-center">
@@ -83,15 +83,14 @@
                                             </select>
                                         </div>
                                         <div class="col-2 mt-3">
-                                            <label for="search" class="col-form-label"><strong>Cari Matakuliah
+                                            <label for="search" class="col-form-label"><strong>Cari NIM / VA
                                                 </strong></label>
                                         </div>
                                         <div class="col-4 mt-3">
                                             <input type="text" class="form-control" id="search"
-                                                placeholder="Cari berdasarkan Kode / Nama MK" name="search"
+                                                placeholder="Cari berdasarkan NIM / VA" name="search"
                                                 value="{{ old('search') }}">
                                         </div>
-
                                         <div class="col-2 mt-3">
                                         </div>
                                         <div class="col-2 mt-3">
@@ -114,7 +113,7 @@
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
                                 <div class="col-6">
-                                    <h5>Daftar Matakuliah Remedial</h5>
+                                    <h5>Daftar Ajuan Remedial</h5>
                                 </div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
@@ -129,17 +128,23 @@
                                     <thead class="text-center">
                                         <tr>
                                             <th style="text-align: center;vertical-align: middle;">
-                                                No
+                                                Tanggal Pengajuan
+                                            </th>
+                                            <th style="text-align: center;vertical-align: middle;">
+                                                Nomor VA
+                                            </th>
+                                            <th>NIM</th>
+                                            <th style="text-align: center;vertical-align: middle;">
+                                                Nama Mahasiswa
                                             </th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Program Studi
                                             </th>
-                                            <th>Kode</th>
                                             <th style="text-align: center;vertical-align: middle;">
-                                                Nama Matakuliah
+                                                Total Bayar
                                             </th>
-                                            <th style="text-align: center;vertical-align: middle;">
-                                                Jumlah Peserta
+                                            <th>
+                                                Bukti Bayar
                                             </th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Aksi
@@ -148,35 +153,32 @@
                                     </thead>
                                     <tbody id="tabel-body" class="text-center">
                                         @if ($data->count() > 0)
-                                            @foreach ($data as $mk)
+                                            @foreach ($data as $ajuan)
                                                 <tr style="text-align: center;vertical-align: middle;">
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $mk->kelasKuliah->programstudi }}</td>
-                                                    <td>{{ $mk->idmk }}</td>
-                                                    <td>{{ $mk->kelasKuliah->namamk }}</td>
-                                                    <td>{{ $mk->total_peserta }}</td>
+                                                    <td>{{ $ajuan->tgl_pengajuan }}</td>
+                                                    <td>{{ $ajuan->va }}</td>
+                                                    <td>{{ $ajuan->nim }}</td>
+                                                    <td>{{ $ajuan->mahasiswa->nama }}</td>
+                                                    <td>{{ $ajuan->programstudi }}</td>
+                                                    <td>Rp. {{ number_format($ajuan->total_bayar, 0, ',', '.') }}</td>
                                                     <td>
-                                                        {{-- create form with method post --}}
-                                                        <form
-                                                            action="{{ route('remedial.pelaksanaan.daftar-mk.peserta') }}"
-                                                            method="get">
-                                                            @csrf
-                                                            <input type="hidden" name="idmk"
-                                                                value="{{ $mk->idmk }}">
-                                                            <input type="hidden" name="kode_periode"
-                                                                value="{{ $mk->kode_periode }}">
-                                                            <input type="hidden" name="programstudi"
-                                                                value="{{ $mk->kelasKuliah->programstudi }}">
-                                                            <button type="submit" class="btn btn-primary btn-sm"> <i
-                                                                    class="fas fa-edit fa-xs"></i></button>
-                                                        </form>
-
+                                                        <a href="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
+                                                            target="_blank">
+                                                            Bukti Pembayaran
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="#" data-id="{{ $ajuan->id }}"
+                                                            data-bukti="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
+                                                            class="btn btn-sm btn-warning btnDetailData">
+                                                            <i class="fas fa-edit fa-xs"></i>
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="8">Tidak ada data.</td>
+                                                <td colspan="7">Tidak ada data</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -189,8 +191,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -203,7 +204,7 @@
                     <input type="hidden" name="remedial_ajuan_id" id="remedial_ajuan_id">
                     <div class="modal-body">
                         <div class="row" style="">
-                            <p><strong>Pastikan untuk mengecek bukti transfer sudah sesuai dengan tagihan
+                            <p><strong>Pastikan untuk mengecek terkait dengan bukti transfer sudah sesuai dengan tagihan
                                     yang ada.</strong></p>
                         </div>
                         <table class="table table-bordered" id="tabelData">
@@ -231,11 +232,29 @@
                                 </tr>
                             </tfoot>
                         </table>
+                        {{-- buatkan form jumlah bayar --}}
+                        <div class="row">
+                            <div class="col-8" style="text-align: right">
+                                <div class="form-group">
+                                    <label for="jumlah_bayar" class="col-form-label">Jumlah
+                                        Bayar:</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <input type="number" class="form-control" id="jumlahBayar" name="jumlah_bayar"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                     <div class="modal-footer">
                         {{-- <div class="col-5"> --}}
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keluar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-warning">Tolak</button>
+                        <button type="submit" class="btn btn-primary">Setujui</button>
+                        {{-- </div> --}}
                     </div>
                     <div id="loadingSpinner" class="spinner-border text-primary" role="status" style="display: none;">
                         <span class="visually-hidden">Loading...</span>

@@ -25,6 +25,8 @@ return new class extends Migration
             $table->date('tgl_pengajuan');
             $table->string('status_pembayaran')->default('Menunggu Pembayaran');
             $table->boolean('is_lunas')->default(false);
+            $table->date('tgl_pembayaran')->nullable();
+            $table->string('verified_by')->nullable();
             $table->timestamps();
         });
     }

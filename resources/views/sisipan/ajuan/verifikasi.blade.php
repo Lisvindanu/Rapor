@@ -4,7 +4,7 @@
 @endsection
 
 @section('navbar')
-    @include('remedial.navbar')
+    @include('sisipan.navbar')
 @endsection
 
 @section('konten')
@@ -13,8 +13,8 @@
             <div class="container">
                 <div class="judul-modul">
                     <span>
-                        <h3>Ajuan Remedial</h3>
-                        <p>Daftar Verifikasi Ajuan Remedial</p>
+                        <h3>Ajuan Sisipan</h3>
+                        <p>Daftar Verifikasi Ajuan Sisipan</p>
                     </span>
                 </div>
             </div>
@@ -39,13 +39,13 @@
                 <div class="container">
                     <div class="card">
                         <div class="card-body">
-                            <form id="formPeriode" action="{{ route('remedial.ajuan') }}" method="GET">
+                            <form id="formPeriode" action="{{ route('sisipan.ajuan.verifikasi') }}" method="GET">
                                 @csrf
                                 <div class="col-12" style="padding: 10px">
                                     <div class="row align-items-center">
                                         <div class="col-2">
                                             <label for="periodeTerpilih" class="col-form-label"><strong>Periode
-                                                    Remedial</strong></label>
+                                                    Sisipan</strong></label>
                                         </div>
                                         <div class="col-4">
                                             <select id="periode-dropdown" class="form-select"
@@ -113,7 +113,7 @@
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
                                 <div class="col-6">
-                                    <h5>Daftar Ajuan Remedial</h5>
+                                    <h5>Daftar Ajuan Sisipan</h5>
                                 </div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
@@ -195,13 +195,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalDetailDataLabel">Detail Ajuan Remedial</h5>
+                    <h5 class="modal-title" id="modalDetailDataLabel">Detail Ajuan Sisipan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form id="formTambahData" action="{{ route('remedial.ajuan.verifikasiAjuan') }}" method="POST">
+                <form id="formTambahData" action="{{ route('sisipan.ajuan.verifikasiAjuan') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="remedial_ajuan_id" id="remedial_ajuan_id">
+                    <input type="hidden" name="sisipan_ajuan_id" id="sisipan_ajuan_id">
                     <div class="modal-body">
                         <div class="row" style="">
                             <p><strong>Pastikan untuk mengecek terkait dengan bukti transfer sudah sesuai dengan tagihan
@@ -270,21 +270,21 @@
         $(document).ready(function() {
             $(document).on('click', '.btnDetailData', function() {
                 var id = $(this).data('id'); // Ambil ID dari atribut data-id
-                $('#remedial_ajuan_id').val(id);
+                $('#sisipan_ajuan_id').val(id);
                 var buktiPembayaran = $(this).data('bukti'); // Ambil ID dari atribut data-id
 
                 $.ajax({
-                    url: '{{ url('/remedial/ajuan/detail') }}/' + id,
+                    url: '{{ url('/sisipan/ajuan/detail') }}/' + id,
                     type: 'GET',
                     success: function(response) {
                         // Isi modal dengan data dari response
                         $('#modalDetailData #modalDetailDataLabel').text(
-                            'Detail Ajuan Remedial');
+                            'Detail Ajuan Sisipan');
                         var tbody = $('#modalDetailData #tabelData tbody');
                         var totalBayar = 0;
                         tbody.empty(); // Kosongkan tbody
                         $.each(response, function(index, item) {
-                            totalBayar += parseFloat(item.harga_remedial);
+                            totalBayar += parseFloat(item.harga_sisipan);
                             tbody.append(
                                 '<tr>' +
                                 '<td>' + (index + 1) + '</td>' +
@@ -296,7 +296,7 @@
 
                                 '<td>' + (item.krs.nhuruf ? item.krs.nhuruf :
                                     'N/A') + '</td>' +
-                                '<td>' + formatRupiah(item.harga_remedial) +
+                                '<td>' + formatRupiah(item.harga_sisipan) +
                                 '</td>' +
                                 // '<td><input type="checkbox" class="form-check-input checkbox-data" name="data[]" value="' +
                                 // item.id + '" /></td>' +
@@ -325,7 +325,7 @@
                 var url = form.attr('action');
                 var method = form.attr('method');
 
-                if (confirm('Apakah Anda yakin ingin menyetujui data ajuan remedial ini?')) {
+                if (confirm('Apakah Anda yakin ingin menyetujui data ajuan sisipan ini?')) {
                     $('#loadingSpinner').show();
 
                     $.ajax({

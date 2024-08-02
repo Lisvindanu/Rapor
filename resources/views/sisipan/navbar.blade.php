@@ -24,6 +24,41 @@
                                         </ul>
                                     </li>
                                 @endif
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Ajuan
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        @if (session('selected_role') == 'Admin' || session('selected_role') == 'Admin Fakultas')
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('sisipan.ajuan.verifikasi') }}">Verifikasi</a>
+                                            </li>
+                                        @endif
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('sisipan.ajuan.daftarAjuan') }}">Daftar
+                                                Ajuan</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                {{-- <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Pelaksanaan
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('sisipan.pelaksanaan.daftar-mk') }}">Daftar
+                                                Matakuliah</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#">Daftar
+                                                Kelas</a>
+                                        </li>
+                                    </ul>
+                                </li> --}}
+                                <li class="nav-item">
+                                    <a class="nav-link" aria-current="page" href="#">Laporan</a>
+                                </li>
                             </ul>
                         </div>
                     </div>

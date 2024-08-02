@@ -10,6 +10,8 @@ use App\Models\SisipanPeriode;
 use App\Models\UnitKerja;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\UnitKerjaHelper;
+use App\Models\Mahasiswa;
+use App\Models\Krs;
 
 class SisipanAjuanController extends Controller
 {
@@ -88,17 +90,59 @@ class SisipanAjuanController extends Controller
             return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
         }
     }
-    // store
+
     public function store(Request $request)
     {
         try {
+            $request->validate([
+                'sisipan_periode_id' => 'required|exists:sisipan_periode,id',
+                'nim' => 'required',
+            ]);
+
+            $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
+
+            $periode = SisipanPeriode::with([
+                'sisipanperiodetarif' => function ($query) use ($mahasiswa) {
+                    $query->where('periode_angkatan', $mahasiswa->periodemasuk);
+                }
+            ])
+                ->whereHas('sisipanperiodetarif', function ($query) use ($mahasiswa) {
+                    $query->where('periode_angkatan', $mahasiswa->periodemasuk);
+                })
+                ->where('id', $request->sisipan_periode_id)
+                ->first();
+
+            if (!$periode) {
+                return back()->with('message', 'Periode Sisipan untuk mahasiswa ' . $mahasiswa->periodemasuk . ' tidak memenuhi syarat');
+            }
+
+            $va = $periode->format_va;
+            if ($periode->add_nrp) {
+                $nim =  $mahasiswa->nim;
+                // Menghapus digit ke-3 dan ke-4 dari NIM
+                $modifiedNim = substr($nim, 0, 2) . substr($nim, 4);
+
+                // Menggabungkan format_va dengan modifiedNim
+                $va = $periode->format_va . $modifiedNim;
+            }
+
+            // Lakukan proses penyimpanan data ke sisipanajuan dan dapatkan id nya
+            $sisipanAjuan = SisipanAjuan::create([
+                'sisipan_periode_id' => $request->sisipan_periode_id,
+                'nim' => $request->nim,
+                'programstudi' => $mahasiswa->programstudi,
+                'va' => $va,
+                'tgl_pengajuan' => now(),
+            ]);
+
+            return redirect()->route('sisipan.ajuan.detail', $sisipanAjuan->id);
         } catch (\Exception $e) {
-            //throw $th;
+            return back()->with('message', 'Terjadi kesalahan' . $e->getMessage());
         }
     }
 
-    // store via ajax
-    public function storeAjax(Request $request)
+    // store ajuan sisipan detail
+    public function ajuanDetailStore(Request $request)
     {
         try {
             // Lakukan validasi sesuai kebutuhan
@@ -107,20 +151,22 @@ class SisipanAjuanController extends Controller
                 'idmk' => 'required|array',
                 'nama_kelas' => 'required|array',
                 'nip' => 'required|array',
-                'sisipan_periode_id' => 'required|exists:sisipan_periode,id',
+                'sisipan_ajuan_id' => 'required|exists:sisipan_ajuan,id',
             ]);
 
-            $user = auth()->user()->mahasiswa;
+            // return response()->json($request->all());
+
+            $sisipanAjuan = SisipanAjuan::find($request->sisipan_ajuan_id);
 
             $periode = SisipanPeriode::with([
-                'sisipanperiodetarif' => function ($query) use ($user) {
-                    $query->where('periode_angkatan', $user->periodemasuk);
+                'sisipanperiodetarif' => function ($query) use ($sisipanAjuan) {
+                    $query->where('periode_angkatan', $sisipanAjuan->mahasiswa->periodemasuk);
                 }
             ])
-                ->whereHas('sisipanperiodetarif', function ($query) use ($user) {
-                    $query->where('periode_angkatan', $user->periodemasuk);
+                ->whereHas('sisipanperiodetarif', function ($query) use ($sisipanAjuan) {
+                    $query->where('periode_angkatan', $sisipanAjuan->mahasiswa->periodemasuk);
                 })
-                ->where('id', $request->sisipan_periode_id)
+                ->where('id', $sisipanAjuan->sisipan_periode_id)
                 ->first();
 
             if (!$periode) {
@@ -132,35 +178,24 @@ class SisipanAjuanController extends Controller
 
             $totalKrs = count($request->krs);
 
-            $va = $periode->format_va;
-            if ($periode->add_nrp) {
-                $va = $periode->format_va . auth()->user()->username;
-            }
-
-
-            // Lakukan proses penyimpanan data ke sisipanajuan dan dapatkan id nya
-            $sisipanAjuan = SisipanAjuan::create([
-                'sisipan_periode_id' => $request->sisipan_periode_id,
-                'nim' => auth()->user()->username,
-                'programstudi' => auth()->user()->mahasiswa->programstudi,
-                'va' => $va,
-                'total_bayar' => $totalKrs * $periode->sisipanperiodetarif[0]->tarif,
-                'tgl_pengajuan' => now(),
-            ]);
-
             // Lakukan proses penyimpanan data ke sisipanajuandetail
             for ($i = 0; $i < $totalKrs; $i++) {
                 SisipanAjuanDetail::create([
-                    'sisipan_ajuan_id' => $sisipanAjuan->id,
-                    'kode_periode' => $periode->kode_periode,
+                    'sisipan_ajuan_id' => $request->sisipan_ajuan_id,
                     'krs_id' => $request->krs[$i],
+                    'kode_periode' => $periode->kode_periode,
                     'idmk' => $request->idmk[$i],
                     'namakelas' => $request->nama_kelas[$i],
-                    'nip'  => $request->nip[$i],
+                    'nip' => $request->nip[$i],
                     'harga_sisipan' => $periode->sisipanperiodetarif[0]->tarif,
-                    'status_ajuan' => 'Konfirmasi Pembayaran',
+                    'status_ajuan' => 'Menunggu Konfirmasi',
                 ]);
             }
+
+            // update sisipan ajuan
+            $sisipanAjuan->update([
+                'total_bayar' => $totalKrs * $periode->sisipanperiodetarif[0]->tarif,
+            ]);
 
             return response()->json([
                 'status' => 'success',
@@ -194,7 +229,7 @@ class SisipanAjuanController extends Controller
             }
 
             // delete juga sisipanajuandetail
-            $data->sisipanajuandetail()->delete();
+            // $data->sisipanajuandetail()->delete();
             $data->delete();
 
             // Kirim respon berhasil
@@ -254,12 +289,58 @@ class SisipanAjuanController extends Controller
     public function ajuandetail($id)
     {
         try {
-            $data = SisipanAjuanDetail::with(['kelasKuliah', 'sisipanajuan', 'krs'])
-                ->where('sisipan_ajuan_id', $id)
-                ->get();
-            return response()->json($data);
+            $data = SisipanAjuan::with([
+                'sisipanajuandetail',
+                'mahasiswa',
+                'sisipanperiode',
+                'sisipanperiode.sisipanperiodetarif',
+                'sisipanperiode.sisipanperiodeprodi',
+                'unitkerja'
+            ])
+                ->where('id', $id)
+                ->first();
+
+            $periodeTerpilih = SisipanPeriode::with(
+                [
+                    'sisipanperiodetarif' => function ($query) use ($data) {
+                        $query->where('periode_angkatan', $data->mahasiswa->periodemasuk);
+                    },
+                    'sisipanperiodeprodi' => function ($query) use ($data) {
+                        $query->where('unit_kerja_id', $data->unitkerja->id);
+                    }
+                ]
+            )
+                ->whereHas('sisipanperiodetarif', function ($query) use ($data) {
+                    $query->where('periode_angkatan', $data->mahasiswa->periodemasuk);
+                })
+                ->whereHas('sisipanperiodeprodi', function ($query) use ($data) {
+                    $query->where('unit_kerja_id', $data->unitkerja->id);
+                })
+                ->where('kode_periode', $data->sisipanperiode->kode_periode)
+                ->first();
+
+            // return response()->json($periodeTerpilih);
+
+            $data_krs = Krs::where('nim', $data->mahasiswa->nim)
+                ->orderBy('idmk', 'asc')
+                ->get()
+                ->filter(function ($item) use ($periodeTerpilih) {
+                    return floatval($item->nnumerik) < $periodeTerpilih->sisipanperiodeprodi->first()->nilai_batas
+                        && floatval($item->presensi) >= floatval($periodeTerpilih->sisipanperiodeprodi->first()->presensi_batas);
+                });
+
+            if (!$data) {
+                return back()->with('message', 'Data tidak ditemukan');
+            }
+
+            // return response()->json($data);
+            return view('sisipan.ajuan.detail.ajuan-detail', [
+                'data' => $data,
+                'data_krs' => $data_krs,
+                'periodeTerpilih' => $periodeTerpilih,
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            return back()->with('message', 'Data tidak ditemukan' . $e->getMessage());
         }
     }
 
@@ -379,7 +460,30 @@ class SisipanAjuanController extends Controller
                 ]
             );
         } catch (\Exception $e) {
-            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+            return response()->json(['message' => 'Data tidak ditemukan' . $e->getMessage()], 404);
+            // return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
+    }
+
+    // detailDelete
+    public function detailDelete($id)
+    {
+        try {
+            // Temukan data remedial ajuan yang akan dihapus
+            $data = SisipanAjuanDetail::findOrFail($id);
+
+            // Data tidak ditemukan
+            if (!$data) {
+                return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            }
+
+            $data->delete();
+
+            // Kirim respon berhasil
+            return response()->json(['message' => 'Data berhasil dihapus'], 200);
+        } catch (\Exception $e) {
+            // Kirim respon gagal
+            return response()->json(['message' => 'Data gagal dihapus'], 500);
         }
     }
 }

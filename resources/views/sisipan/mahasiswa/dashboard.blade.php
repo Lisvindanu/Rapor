@@ -27,7 +27,7 @@
 @endsection
 
 @section('navbar')
-    @include('remedial.mahasiswa.navbar')
+    @include('sisipan.mahasiswa.navbar')
 @endsection
 
 @section('konten')
@@ -37,7 +37,7 @@
                 <div class="judul-modul">
                     <span>
                         <h3>Beranda</h3>
-                        <p>Selamat Datang di Modul Remedial</p>
+                        <p>Selamat Datang di Modul Sisipan</p>
                     </span>
                 </div>
             </div>
@@ -62,13 +62,13 @@
                 <div class="container">
                     <div class="card">
                         <div class="card-body">
-                            <form id="formPeriode" action="{{ route('remedial.mahasiswa') }}" method="GET">
+                            <form id="formPeriode" action="{{ route('sisipan.mahasiswa') }}" method="GET">
                                 @csrf
                                 <div class="col-12" style="padding: 10px">
                                     <div class="row align-items-center">
                                         <div class="col-2">
                                             <label for="inputPassword6" class="col-form-label"><strong>Periode
-                                                    Remedial</strong></label>
+                                                    Sisipan</strong></label>
                                         </div>
                                         <div class="col-5">
                                             <select id="periode-dropdown" class="form-select"
@@ -105,7 +105,7 @@
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
                                 <div class="col-6">
-                                    <h5>Daftar Ajuan Remedial</h5>
+                                    <h5>Daftar Ajuan Sisipan</h5>
                                 </div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
@@ -197,11 +197,11 @@
                                                                     <th>Matakuliah</th>
                                                                     <th>Nama Kelas</th>
                                                                     <th>Dosen</th>
-                                                                    <th>Harga Remedial</th>
+                                                                    <th>Harga Sisipan</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                @foreach ($ajuan->remedialajuandetail as $detail)
+                                                                @foreach ($ajuan->sisipanajuandetail as $detail)
                                                                     <tr>
                                                                         <td>{{ $loop->iteration }}</td>
                                                                         <td>{{ $detail->idmk }}</td>
@@ -209,7 +209,7 @@
                                                                         <td>{{ $detail->namakelas }}</td>
                                                                         <td>{{ $detail->kelasKuliah->namadosen }}</td>
                                                                         <td>Rp.
-                                                                            {{ number_format($detail->harga_remedial, 0, ',', '.') }}
+                                                                            {{ number_format($detail->harga_sisipan, 0, ',', '.') }}
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -230,7 +230,7 @@
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
                                 <div class="col-12">
-                                    <h5>Informasi Remedial</h5>
+                                    <h5>Informasi Sisipan</h5>
                                 </div>
                             </div>
                         </div>
@@ -253,97 +253,27 @@
                             <div class="input-group mb-1">
                                 <span class="input-group-text" id="basic-addon1" style="min-width: 125px;">Biaya</span>
                                 <input type="text" class="form-control"
-                                    value="Rp. {{ number_format($periodeTerpilih->remedialperiodetarif[0]->tarif, 0, ',', '.') }}"
+                                    value="Rp. {{ number_format($periodeTerpilih->sisipanperiodetarif[0]->tarif, 0, ',', '.') }}"
                                     aria-describedby="basic-addon1" readonly>
                             </div>
                             <div class="input-group mb-1">
                                 <span class="input-group-text" id="basic-addon1" style="min-width: 125px;">Batas
                                     Nilai</span>
                                 <input type="text" class="form-control"
-                                    value="{{ $periodeTerpilih->remedialperiodeprodi[0]->nilai_batas }}"
+                                    value="{{ $periodeTerpilih->sisipanperiodeprodi[0]->nilai_batas }}"
                                     aria-describedby="basic-addon1" readonly>
                             </div>
                             <div class="input-group mb-1">
                                 <span class="input-group-text" id="basic-addon1" style="min-width: 125px;">Batas
                                     Presensi</span>
                                 <input type="text" class="form-control"
-                                    value="{{ $periodeTerpilih->remedialperiodeprodi[0]->presensi_batas }} %"
+                                    value="{{ $periodeTerpilih->sisipanperiodeprodi[0]->presensi_batas }} %"
                                     aria-describedby="basic-addon1" readonly>
                             </div>
                         </div>
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </div>
-    <!-- Modal Tambah Data -->
-    <div class="modal fade" id="modalTambahData" tabindex="-1" aria-labelledby="modalTambahDataLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahDataLabel">Tambah Ajuan Remedial</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <form id="formTambahData" action="{{ route('remedial.ajuan.storeAjax') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="row" style="margin-bottom: 10px">
-                            <p>Pastikan sudah melakukan sinkronasi terlebih dahulu, untuk mendapatkan nilai yang terbaru!
-                            </p>
-                        </div>
-                        <table class="table table-bordered" id="tabelData">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Kode MK</th>
-                                    <th>Matakuliah</th>
-                                    <th>SKS</th>
-                                    <th>Kelas</th>
-                                    <th>NIP</th>
-                                    <th>Dosen</th>
-                                    <th>Presensi</th>
-                                    <th>Nilai Angka</th>
-                                    <th>Grade</th>
-                                    <th><input type="checkbox" id="checkAll"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (count($data_krs) == 0)
-                                    <tr>
-                                        <td colspan="8" class="text-center">Tidak ada data</td>
-                                    </tr>
-                                @else
-                                    @foreach ($data_krs as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->idmk }}</td>
-                                            <td>{{ $item->namamk }}</td>
-                                            <td>{{ $item->sksmk }}</td>
-                                            <td>{{ $item->namakelas }}</td>
-                                            <td>{{ $item->kelasKuliah->nip }}</td>
-                                            <td>{{ $item->kelasKuliah->namadosen }}</td>
-                                            <td>{{ $item->presensi }} %</td>
-                                            <td>{{ $item->nnumerik }}</td>
-                                            <td>{{ $item->nhuruf }}</td>
-                                            <td><input class="form-check-input checkbox-data" type="checkbox"
-                                                    name="data[]" value="{{ $item->id }}"></td>
-                                        </tr>
-                                    @endforeach
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                    <div id="loadingSpinner" class="spinner-border text-primary" role="status" style="display: none;">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -383,11 +313,11 @@
                     <h5 class="modal-title" id="uploadModalLabel">Unggah Bukti Pembayaran</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('remedial.ajuan.uploadBukti') }}" id="formUnggahData" method="POST"
+                <form action="{{ route('sisipan.ajuan.uploadBukti') }}" id="formUnggahData" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" name="remedial_ajuan_id" id="remedial_ajuan_id">
+                        <input type="hidden" name="sisipan_ajuan_id" id="sisipan_ajuan_id">
                         <div class="mb-3">
                             <label for="tgl_pembayaran" class="form-label">Tanggal Pembayaran</label>
                             <input type="datetime-local" class="form-control" id="tgl_pembayaran" name="tgl_pembayaran"
@@ -456,7 +386,7 @@
                     return;
                 }
 
-                if (confirm('Apakah Anda yakin ingin mengajukan data remedial ini?')) {
+                if (confirm('Apakah Anda yakin ingin mengajukan data sisipan ini?')) {
                     $('#loadingSpinner').show();
                     $.ajax({
                         url: url,
@@ -467,7 +397,7 @@
                             idmk: idmkTerpilih,
                             nama_kelas: namaKelasTerpilih,
                             nip: nipTerpilih,
-                            remedial_periode_id: '{{ $periodeTerpilih->id }}' // Menggunakan ID kuesioner SDM
+                            sisipan_periode_id: '{{ $periodeTerpilih->id }}' // Menggunakan ID kuesioner SDM
                         },
                         success: function(response) {
                             // console.log(response);
@@ -518,8 +448,8 @@
         });
 
         $('#btnUnggahData').click(function() {
-            const remedialAjuanId = $(this).closest('tr').find('td:first-child').text().trim();
-            $('#remedial_ajuan_id').val(remedialAjuanId);
+            const sisipanAjuanId = $(this).closest('tr').find('td:first-child').text().trim();
+            $('#sisipan_ajuan_id').val(sisipanAjuanId);
             $('#uploadModal').modal('show');
         });
 
@@ -562,7 +492,7 @@
                 // Kirim permintaan penghapusan ke server menggunakan Ajax
                 $.ajax({
                     type: "DELETE",
-                    url: "/remedial/ajuan/" + id,
+                    url: "/sisipan/ajuan/" + id,
                     data: {
                         _token: '{{ csrf_token() }}',
                         _method: 'DELETE'

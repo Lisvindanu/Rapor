@@ -220,7 +220,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     });
 
     Route::prefix('pegawai')->group(function () {
-        Route::get('/get-nama-pegawai', "PegawaiController@getNamaPegawai")->name('getNamaPegawai');
+        Route::get('/get-nama-pegawai', "PegawaiController@getNamaPegawai");
         // Route::get('/get-data-pegawai', "PegawaiController@getDataPegawai")->name('getDataPegawai');
     });
 
@@ -247,6 +247,9 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         // getdatauser
         Route::get('/get-data-user', "UserController@getAllDataUser")->name('getDataUser');
+
+        // getdatamahasiswa
+        Route::get('/get-nama-mahasiswa', "MahasiswaController@getNamaSiswa")->name('getNamaMahasiswa');
     });
 
     Route::prefix('export')->group(function () {
@@ -361,16 +364,26 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         Route::prefix('ajuan')->group(function () {
             Route::prefix('detail')->group(function () {
-                Route::get('/{id}', "RemedialAjuanController@ajuandetail")->name('remedial.ajuan.detail');
-                Route::post('/{id}', "RemedialAjuanController@detailStore")->name('remedial.ajuan.detail.store');
-                Route::delete('/{id}', "RemedialAjuanController@detailDelete")->name('remedial.ajuan.detail.delete');
+                Route::get('/{id}', "SisipanAjuanController@ajuandetail")->name('sisipan.ajuan.detail');
+                Route::post('/', "SisipanAjuanController@ajuanDetailStore")->name('sisipan.ajuan.detail.store');
+                Route::delete('/{id}', "SisipanAjuanController@detailDelete")->name('sisipan.ajuan.detail.delete');
             });
-            Route::get('/', "RemedialAjuanController@index")->name('remedial.ajuan');
-            Route::get('/daftar-ajuan', "RemedialAjuanController@daftarAjuan")->name('remedial.ajuan.daftarAjuan');
-            Route::post('/', "RemedialAjuanController@storeAjax")->name('remedial.ajuan.storeAjax');
-            Route::post('/upload-bukti-pembayaran', "RemedialAjuanController@uploadBukti")->name('remedial.ajuan.uploadBukti');
-            Route::post('/verifikasi-ajuan', "RemedialAjuanController@verifikasiAjuan")->name('remedial.ajuan.verifikasiAjuan');
-            Route::delete('/{id}', "RemedialAjuanController@deleteAjax")->name('remedial.ajuan.deleteAjax');
+            Route::get('/verifikasi', "SisipanAjuanController@index")->name('sisipan.ajuan.verifikasi');
+            Route::get('/daftar-ajuan', "SisipanAjuanController@daftarAjuan")->name('sisipan.ajuan.daftarAjuan');
+            Route::post('/', "SisipanAjuanController@store")->name('sisipan.ajuan.store');
+            Route::post('/upload-bukti-pembayaran', "SisipanAjuanController@uploadBukti")->name('sisipan.ajuan.uploadBukti');
+            Route::post('/verifikasi-ajuan', "SisipanAjuanController@verifikasiAjuan")->name('sisipan.ajuan.verifikasiAjuan');
+            Route::delete('/{id}', "SisipanAjuanController@deleteAjax")->name('sisipan.ajuan.deleteAjax');
+        });
+
+        Route::prefix('mahasiswa')->group(function () {
+            Route::get('/', "SisipanMahasiswaController@index")->name('sisipan.mahasiswa');
+            Route::get('/create', "SisipanMahasiswaController@create")->name('sisipan.mahasiswa.create');
+            Route::get('/{id}', "SisipanMahasiswaController@edit")->name('sisipan.mahasiswa.edit');
+            Route::post('/periode', "SisipanMahasiswaController@index")->name('sisipan.mahasiswa.periode');
+            Route::post('/', "SisipanMahasiswaController@store")->name('sisipan.mahasiswa.store');
+            Route::put('/{id}', "SisipanMahasiswaController@update")->name('sisipan.mahasiswa.update');
+            Route::delete('/{id}', "SisipanMahasiswaController@destroy")->name('sisipan.mahasiswa.delete');
         });
     });
 

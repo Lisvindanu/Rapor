@@ -31,7 +31,7 @@ class RemoveDuplicateKrs extends Command
 
         // Group records by 'idperiode', 'namakelas', 'nim', and 'idmk'
         $groupedRecords = $krsRecords->groupBy(function ($item, $key) {
-            return $item['idperiode'] . '-' . $item['namakelas'] . '-' . $item['nim'] . '-' . $item['idmk'];
+            return $item['idperiode'] . '-' . $item['namakelas'] . '-' . $item['nim'] . '-' . $item['idmk'] . '-' . $item['nhuruf'];
         });
 
         $deletedCount = 0;

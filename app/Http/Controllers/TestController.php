@@ -22,6 +22,8 @@ use Maatwebsite\Excel\Excel as ExcelFormat;
 use Illuminate\Support\Facades\Schema;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Facades\DB;
+use App\Models\KelasKuliah;
 
 class TestController extends Controller
 {
@@ -80,18 +82,42 @@ class TestController extends Controller
     // auditData
     public function auditData()
     {
-        $data = JadwalPerkuliahan::where('programstudi', 'S1 Teknik Informatika')
-            ->orWhere('programstudi', 'S1 Teknik Mesin')
-            ->orWhere('programstudi', 'S1 Teknik Industri')
-            ->orWhere('programstudi', 'S1 Teknologi Pangan')
-            ->orWhere('programstudi', 'S1 Teknik Lingkungan')
-            ->orWhere('programstudi', 'S1 Perencanaan Wilayah dan Kota')
-            ->where('periode', '20232')
-            ->get();
+        // $data = JadwalPerkuliahan::where('programstudi', 'S1 Teknik Informatika')
+        //     ->orWhere('programstudi', 'S1 Teknik Mesin')
+        //     ->orWhere('programstudi', 'S1 Teknik Industri')
+        //     ->orWhere('programstudi', 'S1 Teknologi Pangan')
+        //     ->orWhere('programstudi', 'S1 Teknik Lingkungan')
+        //     ->orWhere('programstudi', 'S1 Perencanaan Wilayah dan Kota')
+        //     ->where('periode', '20232')
+        //     ->get();
+
+        // return response()->json([
+        //     'message' => 'Success',
+        //     'data' => $data,
+        //     'status' => 200
+        // ], 200);
+
+        $kelasKuliah = KelasKuliah::where('periodeakademik', '20181')
+            ->orWhere('periodeakademik', '20182')
+            ->orWhere('periodeakademik', '20183')
+            ->orWhere('periodeakademik', '20191')
+            ->orWhere('periodeakademik', '20192')
+            ->orWhere('periodeakademik', '20193')
+            ->orWhere('periodeakademik', '20201')
+            ->orWhere('periodeakademik', '20202')
+            ->orWhere('periodeakademik', '20203')
+            ->orWhere('periodeakademik', '20211')
+            ->orWhere('periodeakademik', '20212')
+            ->orWhere('periodeakademik', '20213')
+            ->orWhere('periodeakademik', '20221')
+            ->orWhere('periodeakademik', '20222')
+            ->orWhere('periodeakademik', '20223')
+            ->orWhere('periodeakademik', '20231')
+            ->paginate(100);
 
         return response()->json([
             'message' => 'Success',
-            'data' => $data,
+            'data' => $kelasKuliah,
             'status' => 200
         ], 200);
     }

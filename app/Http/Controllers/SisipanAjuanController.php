@@ -323,7 +323,6 @@ class SisipanAjuanController extends Controller
 
             $data_krs = Krs::where('nim', $data->mahasiswa->nim)
                 ->where('idperiode', '!=', $periodeTerpilih->kode_periode)
-                ->orderBy('idmk', 'asc')
                 ->orderBy('idperiode', 'asc')
                 ->get()
                 ->filter(function ($item) use ($periodeTerpilih) {

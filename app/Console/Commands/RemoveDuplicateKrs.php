@@ -26,27 +26,25 @@ class RemoveDuplicateKrs extends Command
      */
     public function handle()
     {
-        // Group by fields that should be unique and filter by idperiode
-        $krs = Krs::select('idperiode', 'namakelas', 'nim', 'idmk')
-            ->selectRaw('COUNT(*) as count, MIN(id) as min_id')
-            ->where('idperiode', '20181')
-            ->groupBy('idperiode', 'namakelas', 'nim', 'idmk')
-            ->having('count', '>', 1)
-            ->get();
+        // Get all records with idperiode 20181
+        $krsRecords = Krs::where('idperiode', '!=', '20232')->get();
+
+        // Group records by 'idperiode', 'namakelas', 'nim', and 'idmk'
+        $groupedRecords = $krsRecords->groupBy(function ($item, $key) {
+            return $item['idperiode'] . '-' . $item['namakelas'] . '-' . $item['nim'] . '-' . $item['idmk'];
+        });
 
         $deletedCount = 0;
 
-        foreach ($krs as $record) {
-            $duplicates = Krs::where('idperiode', $record->idperiode)
-                ->where('namakelas', $record->namakelas)
-                ->where('nim', $record->nim)
-                ->where('idmk', $record->idmk)
-                ->where('id', '!=', $record->min_id)
-                ->get();
+        foreach ($groupedRecords as $groupKey => $records) {
+            if ($records->count() > 1) {
+                // Get the first record (to keep) and the rest (to delete)
+                $firstRecord = $records->shift();
 
-            foreach ($duplicates as $duplicate) {
-                $duplicate->delete();
-                $deletedCount++;
+                foreach ($records as $duplicate) {
+                    $duplicate->delete();
+                    $deletedCount++;
+                }
             }
         }
 

@@ -323,6 +323,7 @@ class SisipanAjuanController extends Controller
 
             $data_krs = Krs::where('nim', $data->mahasiswa->nim)
                 ->orderBy('idmk', 'asc')
+                ->orderBy('idperiode', 'asc')
                 ->get()
                 ->filter(function ($item) use ($periodeTerpilih) {
                     return floatval($item->nnumerik) < $periodeTerpilih->sisipanperiodeprodi->first()->nilai_batas

@@ -50,7 +50,23 @@ class synKRS extends Command
         // ];
 
         // kelaskuliah where in idperiode
-        $kelasKuliah = KelasKuliah::whereIn('periodeakademik', $periodelist)->get();
+        $kelasKuliah = KelasKuliah::where('periodeakademik', '20181')
+            ->orWhere('periodeakademik', '20182')
+            ->orWhere('periodeakademik', '20183')
+            ->orWhere('periodeakademik', '20191')
+            ->orWhere('periodeakademik', '20192')
+            ->orWhere('periodeakademik', '20193')
+            ->orWhere('periodeakademik', '20201')
+            ->orWhere('periodeakademik', '20202')
+            ->orWhere('periodeakademik', '20203')
+            ->orWhere('periodeakademik', '20211')
+            ->orWhere('periodeakademik', '20212')
+            ->orWhere('periodeakademik', '20213')
+            ->orWhere('periodeakademik', '20221')
+            ->orWhere('periodeakademik', '20222')
+            ->orWhere('periodeakademik', '20223')
+            ->orWhere('periodeakademik', '20231')
+            ->get();
 
         foreach ($kelasKuliah as $kelas) {
             $formData['idperiode'] = $kelas->idperiode;

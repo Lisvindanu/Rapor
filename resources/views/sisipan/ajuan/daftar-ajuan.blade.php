@@ -4,7 +4,7 @@
 @endsection
 
 @section('navbar')
-    @include('remedial.navbar')
+    @include('sisipan.navbar')
 @endsection
 
 @section('konten')
@@ -13,8 +13,8 @@
             <div class="container">
                 <div class="judul-modul">
                     <span>
-                        <h3>Ajuan Remedial</h3>
-                        <p>Daftar Verifikasi Ajuan Remedial</p>
+                        <h3>Ajuan Sisipan</h3>
+                        <p>Daftar Ajuan Sisipan</p>
                     </span>
                 </div>
             </div>
@@ -39,13 +39,13 @@
                 <div class="container">
                     <div class="card">
                         <div class="card-body">
-                            <form id="formPeriode" action="{{ route('remedial.ajuan.daftarAjuan') }}" method="GET">
+                            <form id="formPeriode" action="{{ route('sisipan.ajuan.daftarAjuan') }}" method="GET">
                                 @csrf
                                 <div class="col-12" style="padding: 10px">
                                     <div class="row align-items-center">
                                         <div class="col-2">
                                             <label for="periodeTerpilih" class="col-form-label"><strong>Periode
-                                                    Remedial</strong></label>
+                                                    Sisipan</strong></label>
                                         </div>
                                         <div class="col-4">
                                             <select id="periode-dropdown" class="form-select"
@@ -128,11 +128,12 @@
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
                                 <div class="col-6">
-                                    <h5>Daftar Ajuan Remedial</h5>
+                                    <h5>Daftar Ajuan Sisipan</h5>
                                 </div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-
+                                        <button id="btn-tambah-ajuan" style="color:white" class="btn btn-primary"
+                                            type="submit">Tambah Ajuan</button>
                                     </div>
                                 </div>
                             </div>
@@ -191,7 +192,8 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="#" data-id="{{ $ajuan->id }}"
+                                                        <a href="{{ route('sisipan.ajuan.detail', $ajuan->id) }}"
+                                                            data-id="{{ $ajuan->id }}"
                                                             data-bukti="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
                                                             class="btn btn-sm btn-warning btnDetailData">
                                                             <i class="fas fa-edit fa-xs"></i>
@@ -201,7 +203,7 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="7">Tidak ada data</td>
+                                                <td colspan="9">Tidak ada data</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -219,13 +221,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalDetailDataLabel">Detail Ajuan Remedial</h5>
+                    <h5 class="modal-title" id="modalDetailDataLabel">Detail Ajuan Sisipan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form id="formTambahData" action="{{ route('remedial.ajuan.verifikasiAjuan') }}" method="POST">
+                <form id="formTambahData" action="{{ route('sisipan.ajuan.verifikasiAjuan') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="remedial_ajuan_id" id="remedial_ajuan_id">
+                    <input type="hidden" name="sisipan_ajuan_id" id="sisipan_ajuan_id">
                     <div class="modal-body">
                         <div class="row" style="">
                             <p><strong>Pastikan untuk mengecek bukti transfer sudah sesuai dengan tagihan
@@ -269,28 +271,92 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Tambah Ajuan -->
+    <div class="modal fade" id="modalTambahAjuan" tabindex="-1" aria-labelledby="modalTambahAjuanLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTambahAjuanLabel">Tambah Ajuan Sisipan Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formTambahAjuan" action="{{ route('sisipan.ajuan.store') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3 row">
+                            <div class="col-md-12">
+                                <label for="sisipan_periode_id" class="form-label">Periode Sisipan</label>
+                                <select id="periode-dropdown" class="form-select" aria-label="Default select example"
+                                    name="sisipan_periode_id">
+                                    <option value="{{ $periodeTerpilih->id }}">{{ $periodeTerpilih->nama_periode }}
+                                    </option>
+                                    @foreach ($daftar_periode as $periode)
+                                        @if ($periode->id != $periodeTerpilih->id)
+                                            <option value="{{ $periode->id }}">{{ $periode->nama_periode }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                            {{-- <div class="col-md-6">
+                                <label for="program_studi" class="form-label">Program Studi</label>
+                                <select class="form-select" id="program_studi" name="program_studi" required>
+                                    @foreach ($unitkerja as $unit)
+                                        @if ($unit->children_count == 0)
+                                            <option value="{{ $unit->nama_unit }}">{{ $unit->nama_unit }}</option>
+                                        @else
+                                            @foreach ($unit->childUnit as $child)
+                                                <option value="{{ $child->nama_unit }}">
+                                                    &nbsp;&nbsp;{{ $child->nama_unit }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div> --}}
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-md-12">
+                                <label for="total_bayar" class="form-label">Nim / Nama Mahasiswa</label>
+                                <input type="text" class="form-control typeahead" id="subjek_penilaian"
+                                    name="subjek_penilaian" placeholder="Masukkan NIM atau Nama Mahasiswa" required>
+                                <input type="hidden" id="nim" name="nim" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('js-tambahan')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
     <script>
         $(document).ready(function() {
             $(document).on('click', '.btnDetailData', function() {
                 var id = $(this).data('id'); // Ambil ID dari atribut data-id
-                $('#remedial_ajuan_id').val(id);
+                $('#sisipan_ajuan_id').val(id);
                 var buktiPembayaran = $(this).data('bukti'); // Ambil ID dari atribut data-id
 
                 $.ajax({
-                    url: '{{ url('/remedial/ajuan/detail') }}/' + id,
+                    url: '{{ url('/sisipan/ajuan/detail') }}/' + id,
                     type: 'GET',
                     success: function(response) {
                         // Isi modal dengan data dari response
                         $('#modalDetailData #modalDetailDataLabel').text(
-                            'Detail Ajuan Remedial');
+                            'Detail Ajuan Sisipan');
                         var tbody = $('#modalDetailData #tabelData tbody');
                         var totalBayar = 0;
                         tbody.empty(); // Kosongkan tbody
                         $.each(response, function(index, item) {
-                            totalBayar += parseFloat(item.harga_remedial);
+                            totalBayar += parseFloat(item.harga_sisipan);
                             tbody.append(
                                 '<tr>' +
                                 '<td>' + (index + 1) + '</td>' +
@@ -302,7 +368,7 @@
 
                                 '<td>' + (item.krs.nhuruf ? item.krs.nhuruf :
                                     'N/A') + '</td>' +
-                                '<td>' + formatRupiah(item.harga_remedial) +
+                                '<td>' + formatRupiah(item.harga_sisipan) +
                                 '</td>' +
                                 // '<td><input type="checkbox" class="form-check-input checkbox-data" name="data[]" value="' +
                                 // item.id + '" /></td>' +
@@ -331,7 +397,7 @@
                 var url = form.attr('action');
                 var method = form.attr('method');
 
-                if (confirm('Apakah Anda yakin ingin menyetujui data ajuan remedial ini?')) {
+                if (confirm('Apakah Anda yakin ingin menyetujui data ajuan sisipan ini?')) {
                     $('#loadingSpinner').show();
 
                     $.ajax({
@@ -351,6 +417,44 @@
                             console.error(error);
                         }
                     });
+                }
+            });
+
+            $('#btn-tambah-ajuan').on('click', function() {
+                $('#modalTambahAjuan').modal('show');
+            });
+
+            $('#subjek_penilaian').typeahead({
+                source: function(query, process) {
+                    // var programStudi = $('#program_studi').val(); // Ambil nilai program studi
+
+                    return $.ajax({
+                        url: "/data/get-nama-mahasiswa/",
+                        type: 'GET',
+                        data: {
+                            query: query,
+                            // program_studi: programStudi
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            // Format data untuk menampilkan NIM - Nama Mahasiswa
+                            var formattedData = [];
+
+                            $.each(data, function(index, item) {
+                                var displayText = item.nim + ' - ' + item.nama;
+                                formattedData.push(displayText);
+                            });
+
+                            return process(formattedData);
+                        }
+                    });
+                },
+                autoSelect: true,
+                updater: function(item) {
+                    var parts = item.split(' - ');
+                    $('#subjek_penilaian').val(parts[1]); // Set nilai input subjek_penilaian
+                    $('#nim').val(parts[0]); // Set nilai input hidden nip-pegawai
+                    return parts[1]; // Tampilkan nama pegawai di input
                 }
             });
 

@@ -55,7 +55,7 @@ class SinkronasiController extends Controller
     function kelasKuliah()
     {
         $programstudi = ProgramStudi::all();
-        $periode = Periode::orderBy('kode_periode', 'desc')->take(16)->get();
+        $periode = Periode::orderBy('kode_periode', 'desc')->take(35)->get();
         return view(
             'master.sinkronasi.kelas-kuliah',
             [
@@ -69,7 +69,7 @@ class SinkronasiController extends Controller
     function jadwalKuliah()
     {
         $programstudi = ProgramStudi::all();
-        $periode = Periode::orderBy('kode_periode', 'desc')->take(16)->get();
+        $periode = Periode::orderBy('kode_periode', 'desc')->take(35)->get();
         return view(
             'master.sinkronasi.jadwal-kuliah',
             [
@@ -85,7 +85,7 @@ class SinkronasiController extends Controller
         $unitKerja = UnitKerjaHelper::getUnitKerja();
         // return response()->json($unitKerja);
         $programstudi = ProgramStudi::all();
-        $periode = Periode::orderBy('kode_periode', 'desc')->take(16)->get();
+        $periode = Periode::orderBy('kode_periode', 'desc')->take(35)->get();
         return view(
             'master.sinkronasi.presensi-kuliah',
             [
@@ -99,7 +99,7 @@ class SinkronasiController extends Controller
     function remedial()
     {
         $programstudi = ProgramStudi::all();
-        $periode = Periode::orderBy('kode_periode', 'desc')->take(16)->get();
+        $periode = Periode::orderBy('kode_periode', 'desc')->take(35)->get();
         return view(
             'master.sinkronasi.remedial.index',
             [
@@ -112,7 +112,7 @@ class SinkronasiController extends Controller
     function akm()
     {
         $programstudi = ProgramStudi::all();
-        $periode = Periode::orderBy('kode_periode', 'desc')->take(25)->get();
+        $periode = Periode::orderBy('kode_periode', 'desc')->take(35)->get();
         return view(
             'master.sinkronasi.akm',
             [

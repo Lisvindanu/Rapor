@@ -21,8 +21,9 @@ return new class extends Migration
             $table->string('kode_periode');
             $table->string('idmk');
             $table->string('namakelas');
+            $table->string('nip');
             $table->decimal('harga_sisipan', 10, 2)->default(0);
-            $table->enum('status_ajuan', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->string('status_ajuan')->default('Konfirmasi Pembayaran');
             $table->timestamps();
         });
     }

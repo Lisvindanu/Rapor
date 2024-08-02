@@ -50,4 +50,8 @@ Route::namespace('App\Http\Controllers')->group(function () {
     // Route::prefix('kuesioner')->group(function () {
     //     Route::post('/soalkuesionersdm/store', "KuesionerSDMController@createSoalKuesionerSDM");
     // });
+
+    Route::prefix('test')->group(function () {
+        Route::get('/audit-data', "TestController@auditData");
+    });
 });

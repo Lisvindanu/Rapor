@@ -12,6 +12,8 @@
         "barryvdh/laravel-dompdf": "^2.0",
         "endroid/qr-code": "^5.0",
         "guzzlehttp/guzzle": "^7.8",
+        "guzzlehttp/promises": "^2.0",
+        "guzzlehttp/psr7": "^2.7",
         "itsgoingd/clockwork": "^5.1",
         "khanamiryan/qrcode-detector-decoder": "^2.0",
         "laravel/framework": "^10.10",

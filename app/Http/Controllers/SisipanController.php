@@ -117,33 +117,33 @@ class SisipanController extends Controller
                 ->where('unit_kerja_id', $unitKerjaParentId)
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
-            // $daftar_ajuan = SisipanAjuan::with('sisipanajuandetail')
-            //     ->where('sisipan_periode_id', $periodeTerpilih->id)
-            //     ->where('programstudi', $unitKerja->first()->nama_unit)
-            //     ->get()
-            //     ->groupBy('programstudi')
-            //     ->map(function ($items, $key) {
-            //         $totalBayar = $items->sum('total_bayar');
-            //         $totalAjuan = $items->count();
-            //         $jumlahAjuanDetail = $items->reduce(function ($carry, $item) {
-            //             return $carry + $item->sisipanajuandetail->count();
-            //         }, 0);
-            //         $totalMenungguPembayaran = $items->where('status_pembayaran', 'Menunggu Pembayaran')->count();
-            //         $totalMenungguKonfirmasi = $items->where('status_pembayaran', 'Menunggu Konfirmasi')->count();
-            //         $totalLunas = $items->where('status_pembayaran', 'Lunas')->count();
-            //         $totalDitolak = $items->where('status_pembayaran', 'Ditolak')->count();
-            //         return [
-            //             'data' => $items,
-            //             'total_tagihan' => $totalBayar,
-            //             'total_bayar' => $items->sum('jumlah_bayar'),
-            //             'total_ajuan' => $totalAjuan,
-            //             'jumlah_ajuan_detail' => $jumlahAjuanDetail,
-            //             'total_menunggu_pembayaran' => $totalMenungguPembayaran,
-            //             'total_menunggu_konfirmasi' => $totalMenungguKonfirmasi,
-            //             'total_lunas' => $totalLunas,
-            //             'total_ditolak' => $totalDitolak
-            //         ];
-            //     });
+            $daftar_ajuan = SisipanAjuan::with('sisipanajuandetail')
+                ->where('sisipan_periode_id', $periodeTerpilih->id)
+                ->where('programstudi', $unitKerja->first()->nama_unit)
+                ->get()
+                ->groupBy('programstudi')
+                ->map(function ($items, $key) {
+                    $totalBayar = $items->sum('total_bayar');
+                    $totalAjuan = $items->count();
+                    $jumlahAjuanDetail = $items->reduce(function ($carry, $item) {
+                        return $carry + $item->sisipanajuandetail->count();
+                    }, 0);
+                    $totalMenungguPembayaran = $items->where('status_pembayaran', 'Menunggu Pembayaran')->count();
+                    $totalMenungguKonfirmasi = $items->where('status_pembayaran', 'Menunggu Konfirmasi')->count();
+                    $totalLunas = $items->where('status_pembayaran', 'Lunas')->count();
+                    $totalDitolak = $items->where('status_pembayaran', 'Ditolak')->count();
+                    return [
+                        'data' => $items,
+                        'total_tagihan' => $totalBayar,
+                        'total_bayar' => $items->sum('jumlah_bayar'),
+                        'total_ajuan' => $totalAjuan,
+                        'jumlah_ajuan_detail' => $jumlahAjuanDetail,
+                        'total_menunggu_pembayaran' => $totalMenungguPembayaran,
+                        'total_menunggu_konfirmasi' => $totalMenungguKonfirmasi,
+                        'total_lunas' => $totalLunas,
+                        'total_ditolak' => $totalDitolak
+                    ];
+                });
 
             return view(
                 'sisipan.dashboard',
@@ -151,7 +151,7 @@ class SisipanController extends Controller
                     'unitKerja' => $unitKerja,
                     'periodeTerpilih' => $periodeTerpilih,
                     'daftar_periode' => $daftar_periode,
-                    // 'daftar_ajuan' => $daftar_ajuan,
+                    'daftar_ajuan' => $daftar_ajuan,
                 ]
             );
         } catch (\Throwable $th) {

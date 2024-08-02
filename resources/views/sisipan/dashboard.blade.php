@@ -29,7 +29,7 @@
                 <div class="judul-modul">
                     <span>
                         <h3>Beranda</h3>
-                        <p>Selamat Datang di Modul Remedial</p>
+                        <p>Selamat Datang di Modul Sisipan</p>
                     </span>
                 </div>
             </div>
@@ -54,15 +54,15 @@
                 <div class="container">
                     <div class="card">
                         <div class="card-body">
-                            <form id="formPeriode" action="{{ route('remedial.mahasiswa') }}" method="GET">
+                            <form id="formPeriode" action="{{ route('sisipan.mahasiswa') }}" method="GET">
                                 @csrf
                                 <div class="col-12" style="padding: 10px">
                                     <div class="row align-items-center">
                                         <div class="col-2">
                                             <label for="inputPassword6" class="col-form-label"><strong>Periode
-                                                    Remedial</strong></label>
+                                                    Sisipan</strong></label>
                                         </div>
-                                        {{-- <div class="col-5">
+                                        <div class="col-5">
                                             <select id="periode-dropdown" class="form-select"
                                                 aria-label="Default select example" name="periodeTerpilih">
                                                 <option value="{{ $periodeTerpilih->id }}">
@@ -74,7 +74,7 @@
                                                     @endif
                                                 @endforeach
                                             </select>
-                                        </div> --}}
+                                        </div>
                                         <div class="col-auto">
                                             <div class="pull-right">
                                                 <button id="btn-cari-filter" style="width: 100px; color:white"
@@ -96,7 +96,7 @@
                     <div class="card bg-primary text-white mb-3">
                         <div class="card-body">
                             <h3 class="card-title">120</h3>
-                            <p class="card-text">Pendaftar Remedial</p>
+                            <p class="card-text">Pendaftar Sisipan</p>
                         </div>
                     </div>
                 </div>
@@ -134,9 +134,9 @@
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
                                 <div class="col-6">
-                                    <h4>Rekapitulasi Ajuan Remedial</h4>
+                                    <h4>Rekapitulasi Ajuan Sisipan</h4>
                                     {{-- <div class="mb-3"> --}}
-                                    {{-- <label for="querySearch" class="form-label">Rekapitulasi Ajuan Remedial</label> --}}
+                                    {{-- <label for="querySearch" class="form-label">Rekapitulasi Ajuan Sisipan</label> --}}
                                     {{-- <div class="input-group">
                                             <input type="text" name="query" id="querySearch" class="form-control"
                                                 placeholder="Cari berdasarkan NIP atau Nama Dosen">
@@ -172,7 +172,7 @@
                                         <th>Ditolak</th>
                                     </tr> --}}
                                 </thead>
-                                {{-- <tbody>
+                                <tbody>
                                     @if (count($daftar_ajuan) === 0)
                                         <tr>
                                             <td colspan="5" class="text-center">Tidak ada data</td>
@@ -187,7 +187,7 @@
                                             </tr>
                                         @endforeach
                                     @endif
-                                </tbody> --}}
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -199,7 +199,7 @@
                                 <h4>Informasi</h4>
                             </div>
                         </div>
-                        {{-- <div class="card-body">
+                        <div class="card-body">
                             <div class="input-group mb-1">
                                 <span class="input-group-text" id="basic-addon1"
                                     style="min-width: 125px;">Pendaftaran</span>
@@ -212,24 +212,24 @@
                                 @endphp
 
                                 <input type="text" class="form-control"
-                                    value="{{ $tanggal_mulai }} s/d {{ $tanggal_selesai }}" aria-describedby="basic-addon1"
-                                    readonly>
+                                    value="{{ $tanggal_mulai }} s/d {{ $tanggal_selesai }}"
+                                    aria-describedby="basic-addon1" readonly>
                             </div>
                             <div class="input-group mb-1">
                                 <span class="input-group-text" id="basic-addon1" style="min-width: 125px;">Batas
                                     Nilai</span>
                                 <input type="text" class="form-control"
-                                    value="{{ $periodeTerpilih->remedialperiodeprodi[0]->nilai_batas }}"
+                                    value="{{ $periodeTerpilih->sisipanperiodeprodi[0]->nilai_batas }}"
                                     aria-describedby="basic-addon1" readonly>
                             </div>
                             <div class="input-group mb-1">
                                 <span class="input-group-text" id="basic-addon1" style="min-width: 125px;">Batas
                                     Presensi</span>
                                 <input type="text" class="form-control"
-                                    value="{{ $periodeTerpilih->remedialperiodeprodi[0]->presensi_batas }} %"
+                                    value="{{ $periodeTerpilih->sisipanperiodeprodi[0]->presensi_batas }} %"
                                     aria-describedby="basic-addon1" readonly>
                             </div>
-                        </div> --}}
+                        </div>
                     </div>
                 </div>
 

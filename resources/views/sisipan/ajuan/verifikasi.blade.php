@@ -268,13 +268,14 @@
 @section('js-tambahan')
     <script>
         $(document).ready(function() {
+
             $(document).on('click', '.btnDetailData', function() {
                 var id = $(this).data('id'); // Ambil ID dari atribut data-id
                 $('#sisipan_ajuan_id').val(id);
                 var buktiPembayaran = $(this).data('bukti'); // Ambil ID dari atribut data-id
 
                 $.ajax({
-                    url: '{{ url('/sisipan/ajuan/detail') }}/' + id,
+                    url: '{{ url('/sisipan/ajuan/detail/data') }}/' + id,
                     type: 'GET',
                     success: function(response) {
                         // Isi modal dengan data dari response

@@ -236,6 +236,23 @@
                         <div class="container">
                             <div class="row">
                                 <div class="col-7 daftar-modul">
+                                    @if (session('message'))
+                                        <div class="isi-konten">
+                                            <div class="row justify-content-md-center">
+                                                <div class="col-12">
+                                                    <div class="alert alert-success alert-dismissible fade show"
+                                                        role="alert">
+                                                        {{ session('message') }}
+
+                                                        {{-- Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit, assumenda. --}}
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+
                                     <h4 class="card-title">Daftar Modul</h4>
                                     <p style="margin-bottom:20px">Selamat datang, {{ auth()->user()->name }}</p>
                                     <div class="kotak-modul">

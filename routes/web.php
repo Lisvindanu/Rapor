@@ -365,6 +365,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::prefix('ajuan')->group(function () {
             Route::prefix('detail')->group(function () {
                 Route::get('/{id}', "SisipanAjuanController@ajuandetail")->name('sisipan.ajuan.detail');
+                Route::get('/data/{id}', "SisipanAjuanController@ajuandetaildata")->name('sisipan.ajuan.detaildata');
                 Route::post('/', "SisipanAjuanController@ajuanDetailStore")->name('sisipan.ajuan.detail.store');
                 Route::delete('/{id}', "SisipanAjuanController@detailDelete")->name('sisipan.ajuan.detail.delete');
             });

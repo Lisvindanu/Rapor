@@ -30,7 +30,8 @@ class Krs extends Model
         'nhuruf',
         'krsdiajukan',
         'krsdisetujui',
-        'presensi'
+        'presensi',
+        'is_dispen',
     ];
 
     // kelaskuliah

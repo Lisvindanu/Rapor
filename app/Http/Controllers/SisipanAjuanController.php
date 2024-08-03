@@ -326,8 +326,8 @@ class SisipanAjuanController extends Controller
                 ->orderBy('idperiode', 'asc')
                 ->get()
                 ->filter(function ($item) use ($periodeTerpilih) {
-                    return floatval($item->nnumerik) < $periodeTerpilih->sisipanperiodeprodi->first()->nilai_batas
-                        && floatval($item->presensi) >= floatval($periodeTerpilih->sisipanperiodeprodi->first()->presensi_batas);
+                    return (floatval($item->nnumerik) < $periodeTerpilih->sisipanperiodeprodi->first()->nilai_batas
+                        && floatval($item->presensi) >= floatval($periodeTerpilih->sisipanperiodeprodi->first()->presensi_batas)) || $item->is_dispen == true;
                 });
 
             if (!$data) {
@@ -344,6 +344,20 @@ class SisipanAjuanController extends Controller
             return back()->with('message', 'Data tidak ditemukan' . $e->getMessage());
         }
     }
+
+    //ajuandetail data
+    public function ajuandetaildata($id)
+    {
+        try {
+            $data = SisipanAjuanDetail::with(['kelasKuliah', 'sisipanajuan', 'krs'])
+                ->where('sisipan_ajuan_id', $id)
+                ->get();
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+    }
+
 
     // verifikasiajuan
     public function verifikasiAjuan(Request $request)

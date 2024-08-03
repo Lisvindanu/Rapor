@@ -56,6 +56,10 @@ class SisipanMahasiswaController extends Controller
                 ->first();
         }
 
+        if (!$periodeTerpilih) {
+            return back()->with('message', 'Periode sisipan untuk ' . $user->periodemasuk . ' belum tersedia');
+        }
+
         $daftar_periode = SisipanPeriode::with(['sisipanperiodetarif', 'sisipanperiodeprodi'])
             ->whereHas('sisipanperiodetarif', function ($query) use ($user) {
                 $query->where('periode_angkatan', $user->periodemasuk);

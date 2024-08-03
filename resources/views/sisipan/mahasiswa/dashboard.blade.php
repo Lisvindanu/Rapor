@@ -109,11 +109,7 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-                                        @if (
-                                            $data_ajuan->count() == 0 &&
-                                                \Carbon\Carbon::now()->gte($periodeTerpilih->tanggal_mulai) &&
-                                                \Carbon\Carbon::now()->lte($periodeTerpilih->tanggal_selesai) &&
-                                                $periodeTerpilih->is_aktif)
+                                        {{-- @if ($data_ajuan->count() == 0 && \Carbon\Carbon::now()->gte($periodeTerpilih->tanggal_mulai) && \Carbon\Carbon::now()->lte($periodeTerpilih->tanggal_selesai) && $periodeTerpilih->is_aktif)
                                             <button class="btn btn-warning" type="button" id="btnSinkronData">
                                                 Sinkron KRS
                                             </button>
@@ -121,7 +117,7 @@
                                             <button class="btn btn-success" type="button" id="btnTambahData">
                                                 Tambah Ajuan
                                             </button>
-                                        @endif
+                                        @endif --}}
                                     </div>
                                 </div>
                             </div>
@@ -175,11 +171,11 @@
                                                                 <i class="fas fa-upload fa-xs"
                                                                     title="Unggah Bukti Bayar"></i>
                                                             </button>
-                                                            &nbsp;
+                                                            {{-- &nbsp;
                                                             <button type="button" class="btn btn-sm btn-danger delete"
                                                                 title="Batalkan Ajuan">
                                                                 <i class="fas fa-trash-alt fa-xs"></i>
-                                                            </button>
+                                                            </button> --}}
                                                         </div>
                                                     @endif
 
@@ -235,6 +231,14 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            <div class="col-12">
+                                <div class="alert alert-success alert-dismissible fade show" role="alert"
+                                    style="padding: 10px 10px 0px">
+                                    <p><strong>Pendaftaran Silahkan menghubungi Prodi.</strong></p>
+                                    {{-- Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit, assumenda. --}}
+
+                                </div>
+                            </div>
                             <div class="input-group mb-1">
                                 <span class="input-group-text" id="basic-addon1"
                                     style="min-width: 125px;">Pendaftaran</span>

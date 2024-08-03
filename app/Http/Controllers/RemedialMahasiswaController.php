@@ -73,8 +73,8 @@ class RemedialMahasiswaController extends Controller
             ->where('nim', $user->nim)
             ->get()
             ->filter(function ($item) use ($periodeTerpilih) {
-                return floatval($item->nnumerik) < $periodeTerpilih->remedialperiodeprodi->first()->nilai_batas
-                    && floatval($item->presensi) >= floatval($periodeTerpilih->remedialperiodeprodi->first()->presensi_batas);
+                return (floatval($item->nnumerik) < $periodeTerpilih->remedialperiodeprodi->first()->nilai_batas
+                    && floatval($item->presensi) >= floatval($periodeTerpilih->remedialperiodeprodi->first()->presensi_batas)) || $item->is_dispen == true;
             });
 
         // return response()->json($data_krs);

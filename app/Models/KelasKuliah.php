@@ -53,4 +53,10 @@ class KelasKuliah extends Model
     {
         return $query->where('periodeakademik', $periodeakademik);
     }
+
+    // remedialAjuanDetail
+    public function remedialAjuanDetail()
+    {
+        return $this->hasMany(RemedialAjuanDetail::class, 'idmk', 'kodemk');
+    }
 }

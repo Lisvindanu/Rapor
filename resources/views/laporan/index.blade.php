@@ -16,7 +16,7 @@
         <div class="filter-konten">
             <div class="row justify-content-md-center">
                 <div class="col-6">
-                    <form action="{{ route('laporan.generate') }}" method="POST" target="_blank">
+                    <form action="#" method="POST" target="_blank">
                         <div class="card">
                             <div class="card-body">
                                 <div class="form-row">

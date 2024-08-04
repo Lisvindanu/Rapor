@@ -34,16 +34,23 @@ class RemedialAjuanDetail extends Model
     // kelas kuliah
     public function kelasKuliah()
     {
-        return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk');
-        // ->where('namakelas', $this->namakelas)
-        // ->where('periodeakademik', $this->kode_periode);
-        // ->withNamaKelas($this->namakelas)
-        // ->withPeriodeAkademik($this->kode_periode);
+        return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk')
+            ->where('namakelas', $this->namakelas)
+            ->where('periodeakademik', $this->kode_periode);
+        // return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk')
+        //     ->where('namakelas', $this->namakelas)
+        //     ->where('periodeakademik', $this->idperiode);
     }
 
     // krs
     public function krs()
     {
         return $this->belongsTo(Krs::class, 'krs_id', 'id');
+    }
+
+    // dosen
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class, 'nip', 'nip');
     }
 }

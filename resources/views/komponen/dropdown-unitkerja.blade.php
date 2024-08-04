@@ -1,4 +1,4 @@
-<select id="programstudi" class="form-select" aria-label="Default select example" name="programstudi">
+<select id="programstudi" class="form-select" aria-label="Default select example" name="programstudi" required>
     {{-- @foreach ($unitkerja as $unit) --}}
     <option value="">Pilih Program Studi..</option>
     @if ($unitkerja->jenis_unit == 'FAKULTAS')

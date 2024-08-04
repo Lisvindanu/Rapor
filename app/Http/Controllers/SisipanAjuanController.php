@@ -336,7 +336,7 @@ class SisipanAjuanController extends Controller
                 return back()->with('message', 'Data tidak ditemukan');
             }
 
-            return response()->json($data_krs);
+            // return response()->json($data_krs);
             // return response()->json($data);
             return view('sisipan.ajuan.detail.ajuan-detail', [
                 'data' => $data,

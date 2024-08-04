@@ -90,7 +90,7 @@
             </div>
         </div>
 
-        <div class="" style="margin-top: 15px">
+        {{-- <div class="" style="margin-top: 15px">
             <div class="row justify-content-md-center">
                 <div class="col-3">
                     <div class="card bg-primary text-white mb-3">
@@ -125,7 +125,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="" style="margin-top: 5px">
             <div class="row justify-content-md-center">

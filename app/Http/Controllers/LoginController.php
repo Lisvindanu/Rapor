@@ -17,6 +17,10 @@ class LoginController extends Controller
 
     public function verify(Request $request)
     {
+        // if (Auth::check()) {
+        //     return redirect('/gate');
+        // }
+
         // $credentials = $request->only('email', 'password');
 
         // if (Auth::attempt($credentials)) {

@@ -80,9 +80,12 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         // user
         Route::get('/user', "MasterController@user")->name('master.user');
         Route::get('/user/create', "MasterController@createUser")->name('master.user.create');
-        Route::post('/user/store', "MasterController@storeUser")->name('master.user.store');
         Route::get('/user/detail/{id}', "MasterController@showUser")->name('master.user.detail');
         Route::get('/user/edit/{id}', "MasterController@editUser")->name('master.user.edit');
+
+        // master.user.reset-password
+        Route::post('/user/reset-password', "MasterController@resetPassword")->name('master.user.reset-password');
+        Route::post('/user/store', "MasterController@storeUser")->name('master.user.store');
         Route::put('/user/{id}', "MasterController@updateUser")->name('master.user.update');
         Route::delete('/user/{id}', "MasterController@destroyUser")->name('master.user.delete');
 

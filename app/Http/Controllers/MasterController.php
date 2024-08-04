@@ -12,6 +12,7 @@ use App\Models\SoalKuesionerSDM;
 use App\Models\UnitKerja;
 use App\Models\Pegawai;
 use App\Models\RoleUser;
+use Illuminate\Support\Facades\Hash;
 
 class MasterController extends Controller
 {
@@ -361,5 +362,29 @@ class MasterController extends Controller
     public function sinkronasi()
     {
         return view('master.sinkronasi.index');
+    }
+
+    // resetPassword
+    public function resetPassword(Request $request)
+    {
+        try {
+            // validasi data yang dikirim
+            $request->validate([
+                'user_id' => 'required',
+            ]);
+
+            // Ambil data user berdasarkan ID
+            $user = User::find($request->user_id);
+
+            // Reset password user
+            $user->password = Hash::make('Pasundan2024');
+            $user->is_default_password = true;
+            $user->save();
+            // Reset password user using hash
+            return response()->json(['message' => 'Password berhasil direset'], 200);
+        } catch (\Exception $e) {
+            // Tangkap error dan tampilkan pesan error
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 }

@@ -300,6 +300,8 @@ class SisipanAjuanController extends Controller
                 ->where('id', $id)
                 ->first();
 
+            // return response()->json($data);
+
             $periodeTerpilih = SisipanPeriode::with(
                 [
                     'sisipanperiodetarif' => function ($query) use ($data) {
@@ -334,6 +336,7 @@ class SisipanAjuanController extends Controller
                 return back()->with('message', 'Data tidak ditemukan');
             }
 
+            return response()->json($data_krs);
             // return response()->json($data);
             return view('sisipan.ajuan.detail.ajuan-detail', [
                 'data' => $data,

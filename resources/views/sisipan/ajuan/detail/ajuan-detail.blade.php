@@ -241,19 +241,23 @@
                                 @else
                                     @foreach ($data_krs as $item)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->idperiode }}</td>
-                                            <td>{{ $item->idmk }}</td>
-                                            <td>{{ $item->namamk }}</td>
-                                            <td>{{ $item->sksmk }}</td>
-                                            <td>{{ $item->namakelas }}</td>
-                                            <td>{{ $item->kelasKuliah->nip }}</td>
-                                            <td>{{ $item->kelasKuliah->namadosen }}</td>
-                                            <td>{{ $item->presensi }} %</td>
-                                            <td>{{ $item->nnumerik }}</td>
-                                            <td>{{ $item->nhuruf }}</td>
-                                            <td><input class="form-check-input checkbox-data" type="checkbox"
-                                                    name="data[]" value="{{ $item->id }}"></td>
+                                            @if ($item->kelasKuliah == null)
+                                            @else
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $item->idperiode }}</td>
+                                                <td>{{ $item->idmk }}</td>
+                                                <td>{{ $item->namamk }}</td>
+                                                <td>{{ $item->sksmk }}</td>
+                                                <td>{{ $item->namakelas }}</td>
+                                                <td>{{ $item->kelasKuliah->nip }}</td>
+                                                <td>{{ $item->kelasKuliah->namadosen }}</td>
+                                                <td>{{ $item->presensi }} %</td>
+                                                <td>{{ $item->nnumerik }}</td>
+                                                <td>{{ $item->nhuruf }}</td>
+                                                <td><input class="form-check-input checkbox-data" type="checkbox"
+                                                        name="data[]" value="{{ $item->id }}"></td>
+                                            @endif
+
                                         </tr>
                                     @endforeach
                                 @endif

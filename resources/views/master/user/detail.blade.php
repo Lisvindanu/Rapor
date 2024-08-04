@@ -47,6 +47,12 @@
                             <div class="col-8">
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <a href="/kuesioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
+                                    {{-- button reset password --}}
+                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                        data-bs-target="#modalResetPassword">
+                                        Reset Password
+                                    </button>
+
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <button class="btn btn-primary" id="btnTambahSoal">Tambah Role</button>
                                     </div>
@@ -193,6 +199,30 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Reset Password -->
+    <div class="modal fade" id="modalResetPassword" tabindex="-1" aria-labelledby="modalResetPasswordLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalResetPasswordLabel">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formResetPassword" action="{{ route('master.user.reset-password') }}" method="POST">
+                    @csrf
+                    <input type="hidden" id="user_id" name="user_id" value="{{ $data->id }}">
+                    <div class="modal-body">
+                        <p>Apakah Anda yakin ingin mereset password user ini?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Reset Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js-tambahan')
@@ -234,6 +264,48 @@
                 }
             });
         });
+
+        // btnresetpasswor
+        $('#btnResetPassword').click(function() {
+            $('#modalResetPassword').modal('show');
+        });
+
+        // Kirim form menggunakan AJAX saat form "Reset Password" disubmit
+        $('#formResetPassword').submit(function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            var method = form.attr('method');
+            var formData = form.serialize();
+
+            // Buat objek data yang akan dikirim
+            var formData = {
+                _token: '{{ csrf_token() }}',
+                user_id: $('#user_id').val(),
+                // tambahkan data lain sesuai kebutuhan
+            };
+
+            $.ajax({
+                url: url,
+                method: method,
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.log(response);
+                    alert('Password berhasil direset');
+                    $('#modalResetPassword').modal('hide');
+                    // window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    var errorMessage = xhr.responseText;
+                    console.log(errorMessage);
+                }
+            });
+        });
+
+
+
+
 
         // Hapus baris tabel
         $('#editableTable').on('click', '.delete', function() {

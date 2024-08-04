@@ -47,24 +47,6 @@ class RemedialController extends Controller
                 ->whereIn('unit_kerja_id', $unitKerjaIds)
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
-            // $daftar_ajuan = RemedialAjuan::with('remedialajuandetail')
-            //     ->where('remedial_periode_id', $periodeTerpilih->id)
-            //     ->get()
-            //     ->groupBy('programstudi')
-            //     ->map(function ($items, $key) {
-            //         $totalBayar = $items->sum('total_bayar');
-            //         $totalAjuan = $items->count();
-            //         $jumlahAjuanDetail = $items->reduce(function ($carry, $item) {
-            //             return $carry + $item->remedialajuandetail->count();
-            //         }, 0);
-            //         return [
-            //             'data' => $items,
-            //             'total_bayar' => $totalBayar,
-            //             'total_ajuan' => $totalAjuan,
-            //             'jumlah_ajuan_detail' => $jumlahAjuanDetail
-            //         ];
-            //     });
-
             $daftar_ajuan = RemedialAjuan::with('remedialajuandetail')
                 ->where('remedial_periode_id',  $periodeTerpilih->id)
                 ->get()
@@ -92,7 +74,7 @@ class RemedialController extends Controller
                     ];
                 });
 
-            // return response()->json($daftar_ajuan);
+            $rekap = $this->hitungRekapSemua($daftar_ajuan);
 
             return view(
                 'remedial.dashboard',
@@ -101,6 +83,7 @@ class RemedialController extends Controller
                     'periodeTerpilih' => $periodeTerpilih,
                     'daftar_periode' => $daftar_periode,
                     'daftar_ajuan' => $daftar_ajuan,
+                    'rekap' => $rekap
                 ]
             );
         } catch (\Throwable $th) {
@@ -158,6 +141,8 @@ class RemedialController extends Controller
                     ];
                 });
 
+            $rekap = $this->hitungRekapSemua($daftar_ajuan);
+
             return view(
                 'remedial.dashboard',
                 [
@@ -165,10 +150,40 @@ class RemedialController extends Controller
                     'periodeTerpilih' => $periodeTerpilih,
                     'daftar_periode' => $daftar_periode,
                     'daftar_ajuan' => $daftar_ajuan,
+                    'rekap' => $rekap
                 ]
             );
         } catch (\Throwable $th) {
             //throw $th;
         }
+    }
+
+    // hitungRekapSemua
+    public function hitungRekapSemua($daftar_ajuan)
+    {
+        $rekap_semua = [];
+        $rekap_semua['total_tagihan_semua'] = 0;
+        $rekap_semua['total_bayar_semua'] = 0;
+        $rekap_semua['total_ajuan_semua'] = 0;
+        $rekap_semua['jumlah_ajuan_detail_semua'] = 0;
+        $rekap_semua['total_menunggu_pembayaran_semua'] = 0;
+        $rekap_semua['total_menunggu_konfirmasi_semua'] = 0;
+        $rekap_semua['total_lunas_semua'] = 0;
+        $rekap_semua['total_ditolak_semua'] = 0;
+
+        foreach ($daftar_ajuan as $key => $value) {
+            foreach ($value['data'] as $item) {
+                $rekap_semua['total_tagihan_semua'] += $item->total_bayar;
+                $rekap_semua['total_bayar_semua'] += $item->jumlah_bayar;
+                $rekap_semua['total_ajuan_semua'] += 1;
+                $rekap_semua['jumlah_ajuan_detail_semua'] += $item->remedialajuandetail->count();
+                $rekap_semua['total_menunggu_pembayaran_semua'] += $item->status_pembayaran == 'Menunggu Pembayaran' ? 1 : 0;
+                $rekap_semua['total_menunggu_konfirmasi_semua'] += $item->status_pembayaran == 'Menunggu Konfirmasi' ? 1 : 0;
+                $rekap_semua['total_lunas_semua'] += $item->status_pembayaran == 'Lunas' ? 1 : 0;
+                $rekap_semua['total_ditolak_semua'] += $item->status_pembayaran == 'Ditolak' ? 1 : 0;
+            }
+        }
+
+        return $rekap_semua;
     }
 }

@@ -27,17 +27,17 @@
         @foreach ($data as $row)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $row->remedialajuan->remedialperiode->nama_periode }}</td>
-                <td>{{ $row->remedialajuan->programstudi }}</td>
+                <td>{{ $row->sisipanajuan->sisipanperiode->nama_periode }}</td>
+                <td>{{ $row->sisipanajuan->programstudi }}</td>
                 <td>{{ $row->idmk }}</td>
                 <td>{{ $row->krs->namamk }}</td>
                 <td>{{ $row->namakelas }}</td>
                 <td>{{ $row->nip }}</td>
                 <td>{{ $row->krs->kelasKuliah->namadosen }}</td>
-                <td>{{ $row->remedialajuan->nim }}</td>
-                <td>{{ $row->remedialajuan->mahasiswa->nama }}</td>
+                <td>{{ $row->sisipanajuan->nim }}</td>
+                <td>{{ $row->sisipanajuan->mahasiswa->nama }}</td>
                 <td>
-                    @if ($row->remedialajuan->status_pembayaran == 'Menunggu Pembayaran')
+                    @if ($row->sisipanajuan->status_pembayaran == 'Menunggu Pembayaran')
                         Pendaftaran
                     @else
                         {{ $row->status_ajuan }}

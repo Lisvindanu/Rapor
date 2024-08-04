@@ -333,9 +333,6 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::prefix('laporan')->group(function () {
             Route::get('/', "RemedialLaporanController@index")->name('remedial.laporan');
             Route::post('/print-laporan', "RemedialLaporanController@printLaporan")->name('remedial.laporan.print');
-            // Route::get('/{id}', "RemedialLaporanController@detail")->name('remedial.laporan.detail');
-            // Route::post('/{id}', "RemedialLaporanController@detailStore")->name('remedial.laporan.detail.store');
-            // Route::delete('/{id}', "RemedialLaporanController@detailDelete")->name('remedial.laporan.detail.delete');
         });
     });
 
@@ -386,6 +383,11 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::post('/', "SisipanMahasiswaController@store")->name('sisipan.mahasiswa.store');
             Route::put('/{id}', "SisipanMahasiswaController@update")->name('sisipan.mahasiswa.update');
             Route::delete('/{id}', "SisipanMahasiswaController@destroy")->name('sisipan.mahasiswa.delete');
+        });
+
+        Route::prefix('laporan')->group(function () {
+            Route::get('/', "SisipanLaporanController@index")->name('sisipan.laporan');
+            Route::post('/print-laporan', "SisipanLaporanController@printLaporan")->name('sisipan.laporan.print');
         });
     });
 

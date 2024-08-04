@@ -1025,7 +1025,9 @@ class SinkronasiController extends Controller
                     $query->where('periodemasuk', '20201')
                         ->orWhere('periodemasuk', '20211')
                         ->orWhere('periodemasuk', '20221')
-                        ->orWhere('periodemasuk', '20231');
+                        ->orWhere('periodemasuk', '20231')
+                        ->orWhere('periodemasuk', '20181')
+                        ->orWhere('periodemasuk', '20191');
                 })
                 ->get();
 

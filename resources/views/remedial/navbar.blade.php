@@ -57,7 +57,8 @@
                                     </ul>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" aria-current="page" href="#">Laporan</a>
+                                    <a class="nav-link" aria-current="page"
+                                        href="{{ route('remedial.laporan') }}">Laporan</a>
                                 </li>
                             </ul>
                         </div>

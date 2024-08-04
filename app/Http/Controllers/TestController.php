@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AKM;
 use App\Models\JadwalPerkuliahan;
 use App\Models\Mahasiswa;
 use App\Models\RoleUser;
@@ -24,6 +25,9 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\DB;
 use App\Models\KelasKuliah;
+use App\Models\Krs;
+use App\Models\PresensiKuliah;
+use Illuminate\Support\Facades\File;
 
 class TestController extends Controller
 {
@@ -97,28 +101,92 @@ class TestController extends Controller
         //     'status' => 200
         // ], 200);
 
-        $kelasKuliah = KelasKuliah::where('periodeakademik', '20181')
-            ->orWhere('periodeakademik', '20182')
-            ->orWhere('periodeakademik', '20183')
-            ->orWhere('periodeakademik', '20191')
-            ->orWhere('periodeakademik', '20192')
-            ->orWhere('periodeakademik', '20193')
-            ->orWhere('periodeakademik', '20201')
-            ->orWhere('periodeakademik', '20202')
-            ->orWhere('periodeakademik', '20203')
-            ->orWhere('periodeakademik', '20211')
-            ->orWhere('periodeakademik', '20212')
-            ->orWhere('periodeakademik', '20213')
-            ->orWhere('periodeakademik', '20221')
-            ->orWhere('periodeakademik', '20222')
-            ->orWhere('periodeakademik', '20223')
-            ->orWhere('periodeakademik', '20231')
-            ->paginate(100);
+        // $kelasKuliah = KelasKuliah::where('periodeakademik', '20181')
+        //     ->orWhere('periodeakademik', '20182')
+        //     ->orWhere('periodeakademik', '20183')
+        //     ->orWhere('periodeakademik', '20191')
+        //     ->orWhere('periodeakademik', '20192')
+        //     ->orWhere('periodeakademik', '20193')
+        //     ->orWhere('periodeakademik', '20201')
+        //     ->orWhere('periodeakademik', '20202')
+        //     ->orWhere('periodeakademik', '20203')
+        //     ->orWhere('periodeakademik', '20211')
+        //     ->orWhere('periodeakademik', '20212')
+        //     ->orWhere('periodeakademik', '20213')
+        //     ->orWhere('periodeakademik', '20221')
+        //     ->orWhere('periodeakademik', '20222')
+        //     ->orWhere('periodeakademik', '20223')
+        //     ->orWhere('periodeakademik', '20231')
+        //     ->paginate(100);
 
-        return response()->json([
+        // return response()->json([
+        //     'message' => 'Success',
+        //     'data' => $kelasKuliah,
+        //     'status' => 200
+        // ], 200);
+
+        // $presensi = PresensiKuliah::where('periodeakademik', '20232')
+        //     ->get();
+
+        // return response()->json([
+        //     'message' => 'Success',
+        //     'data' => $presensi,
+        //     'status' => 200
+        // ], 200);
+
+        // data presensi
+        // $presensi = PresensiKuliah::where('periodeakademik', '20232')
+        //     ->where('programstudi', 'S1 Perencanaan Wilayah dan Kota')
+        //     ->get();
+
+        // $data = [
+        //     'message' => 'Success',
+        //     'data' => $presensi,
+        //     'status' => 200
+        // ];
+
+        // $akm = AKM::where('idperiode', '20232')
+        //     ->where(function ($query) {
+        //         $query->where('nim', 'ilike', '183%')
+        //             ->orWhere('nim', 'ilike', '193%')
+        //             ->orWhere('nim', 'ilike', '203%')
+        //             ->orWhere('nim', 'ilike', '213%')
+        //             ->orWhere('nim', 'ilike', '223%')
+        //             ->orWhere('nim', 'ilike', '233%');
+        //     })
+        //     ->get();
+
+        $krs = Krs::where('idperiode', '20232')
+            ->where(function ($query) {
+                $query->where('nim', 'ilike', '183%')
+                    ->orWhere('nim', 'ilike', '193%')
+                    ->orWhere('nim', 'ilike', '203%')
+                    ->orWhere('nim', 'ilike', '213%')
+                    ->orWhere('nim', 'ilike', '223%')
+                    ->orWhere('nim', 'ilike', '233%');
+            })
+            ->get();
+
+        $data =  [
             'message' => 'Success',
-            'data' => $kelasKuliah,
+            'data' => $krs,
             'status' => 200
-        ], 200);
+        ];
+
+        // Konversi data ke format JSON
+        $jsonData = json_encode($data, JSON_PRETTY_PRINT);
+
+        // Tentukan path dan nama file
+        $fileName = 'data.json';
+        $filePath = storage_path('app/public/' . $fileName);
+
+        // Simpan data JSON ke file
+        File::put($filePath, $jsonData);
+
+        // Mengunduh file JSON
+        return response()->download($filePath, $fileName, [
+            'Content-Type' => 'application/json',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ])->deleteFileAfterSend(true); // Hapus file setelah didownload
     }
 }

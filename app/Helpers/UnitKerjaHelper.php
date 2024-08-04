@@ -65,4 +65,16 @@ class UnitKerjaHelper
             return redirect()->route('gate');
         }
     }
+
+    // getUnitKerjaNamesV1();
+    public static function getUnitKerjaNamesV1($id)
+    {
+        $selectedUnitKerjaId = $id;
+        $datafilter = UnitKerja::with('childUnit')->where('id', $selectedUnitKerjaId)->get();
+        $unitKerjaNames = $datafilter->pluck('nama_unit')->toArray();
+        foreach ($datafilter as $unitKerja) {
+            $unitKerjaNames = array_merge($unitKerjaNames, $unitKerja->childUnit->pluck('nama_unit')->toArray());
+        }
+        return $unitKerjaNames;
+    }
 }

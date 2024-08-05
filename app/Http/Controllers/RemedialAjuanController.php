@@ -46,9 +46,10 @@ class RemedialAjuanController extends Controller
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
             $query = RemedialAjuan::with('remedialajuandetail')
-                ->whereIn('programstudi', $unitKerjaNames)
                 ->where('remedial_periode_id', $periodeTerpilih->id)
-                ->where('status_pembayaran', 'Menunggu Konfirmasi');
+                ->where('status_pembayaran', 'Menunggu Konfirmasi')
+                ->where('is_lunas', 0)
+                ->whereIn('programstudi', $unitKerjaNames);
 
             //filter terkait dengan program studi 
             if ($request->has('programstudi')) {
@@ -73,6 +74,8 @@ class RemedialAjuanController extends Controller
             }
 
             $data_ajuan = $query->paginate($request->get('perPage', 10));
+
+            // return response()->json($data_ajuan);
 
             $total = $data_ajuan->total();
 

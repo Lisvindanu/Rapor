@@ -19,11 +19,7 @@ class RemedialPelaksanaanDaftarMKController extends Controller
     {
         try {
             // untuk dropdown unit kerja
-            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->get();
-            $unitKerjaIds = UnitKerjaHelper::getUnitKerjaIds();
-
-            //list unit kerja nama
-            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
+            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
 
             if ($request->has('periodeTerpilih')) {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
@@ -37,13 +33,14 @@ class RemedialPelaksanaanDaftarMKController extends Controller
             }
 
             $daftar_periode = RemedialPeriode::with('periode')
-                // ->whereIn('unit_kerja_id', $unitKerjaIds)
+                ->where('unit_kerja_id', $unitKerja->id)
+                ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
             $query = RemedialAjuanDetail::with('kelasKuliah')
-                ->whereHas('kelasKuliah', function ($query) use ($unitKerjaNames) {
-                    $query->whereIn('programstudi', $unitKerjaNames);
-                })
+                // ->whereHas('kelasKuliah', function ($query) use ($unitKerjaNames) {
+                //     $query->whereIn('programstudi', $unitKerjaNames);
+                // })
                 ->where('kode_periode', $periodeTerpilih->kode_periode)
                 ->where('status_ajuan', 'Konfirmasi Kelas');
 

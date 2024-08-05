@@ -77,7 +77,7 @@ class RemedialPelaksanaanController extends Controller
                 ->groupBy('kode_periode', 'idmk')
                 ->paginate($request->get('perPage', 10));
 
-
+            // return response()->json($ajuandetail);
             $total = $ajuandetail->total();
 
             return view(

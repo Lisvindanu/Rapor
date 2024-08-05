@@ -101,29 +101,13 @@ class TestController extends Controller
         //     'status' => 200
         // ], 200);
 
-        // $kelasKuliah = KelasKuliah::where('periodeakademik', '20181')
-        //     ->orWhere('periodeakademik', '20182')
-        //     ->orWhere('periodeakademik', '20183')
-        //     ->orWhere('periodeakademik', '20191')
-        //     ->orWhere('periodeakademik', '20192')
-        //     ->orWhere('periodeakademik', '20193')
-        //     ->orWhere('periodeakademik', '20201')
-        //     ->orWhere('periodeakademik', '20202')
-        //     ->orWhere('periodeakademik', '20203')
-        //     ->orWhere('periodeakademik', '20211')
-        //     ->orWhere('periodeakademik', '20212')
-        //     ->orWhere('periodeakademik', '20213')
-        //     ->orWhere('periodeakademik', '20221')
-        //     ->orWhere('periodeakademik', '20222')
-        //     ->orWhere('periodeakademik', '20223')
-        //     ->orWhere('periodeakademik', '20231')
-        //     ->paginate(100);
+        $kelasKuliah = KelasKuliah::all();
 
-        // return response()->json([
-        //     'message' => 'Success',
-        //     'data' => $kelasKuliah,
-        //     'status' => 200
-        // ], 200);
+        return response()->json([
+            'message' => 'Success',
+            'data' => $kelasKuliah,
+            'status' => 200
+        ], 200);
 
         // $presensi = PresensiKuliah::where('periodeakademik', '20232')
         //     ->get();
@@ -156,22 +140,22 @@ class TestController extends Controller
         //     })
         //     ->get();
 
-        $krs = Krs::where('idperiode', '20232')
-            ->where(function ($query) {
-                $query->where('nim', 'ilike', '183%')
-                    ->orWhere('nim', 'ilike', '193%')
-                    ->orWhere('nim', 'ilike', '203%')
-                    ->orWhere('nim', 'ilike', '213%')
-                    ->orWhere('nim', 'ilike', '223%')
-                    ->orWhere('nim', 'ilike', '233%');
-            })
-            ->get();
+        // $krs = Krs::where('idperiode', '20232')
+        //     ->where(function ($query) {
+        //         $query->where('nim', 'ilike', '183%')
+        //             ->orWhere('nim', 'ilike', '193%')
+        //             ->orWhere('nim', 'ilike', '203%')
+        //             ->orWhere('nim', 'ilike', '213%')
+        //             ->orWhere('nim', 'ilike', '223%')
+        //             ->orWhere('nim', 'ilike', '233%');
+        //     })
+        //     ->get();
 
-        $data =  [
-            'message' => 'Success',
-            'data' => $krs,
-            'status' => 200
-        ];
+        // $data =  [
+        //     'message' => 'Success',
+        //     'data' => $krs,
+        //     'status' => 200
+        // ];
 
         // Konversi data ke format JSON
         $jsonData = json_encode($data, JSON_PRETTY_PRINT);

@@ -193,9 +193,11 @@ class SisipanAjuanController extends Controller
             }
 
             // update sisipan ajuan
-            $sisipanAjuan->update([
-                'total_bayar' => $sisipanAjuan->total_bayar + $periode->sisipanperiodetarif[0]->tarif * $totalKrs,
-            ]);
+            // $sisipanAjuan->update([
+            //     'total_bayar' => $sisipanAjuan->total_bayar + $periode->sisipanperiodetarif[0]->tarif * $totalKrs,
+            // ]);
+
+            $this->updateTotalBayarAjuan($request->sisipan_ajuan_id);
 
             return response()->json([
                 'status' => 'success',
@@ -497,11 +499,35 @@ class SisipanAjuanController extends Controller
 
             $data->delete();
 
+            $this->updateTotalBayarAjuan($data->sisipan_ajuan_id);
+
             // Kirim respon berhasil
             return response()->json(['message' => 'Data berhasil dihapus'], 200);
         } catch (\Exception $e) {
             // Kirim respon gagal
             return response()->json(['message' => 'Data gagal dihapus'], 500);
+        }
+    }
+
+    // updatetotalbayarSisipanAjuan
+    public function updateTotalBayarAjuan($id)
+    {
+        try {
+            $sisipanAjuan = SisipanAjuan::find($id);
+
+            if (!$sisipanAjuan) {
+                return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            }
+
+            $totalBayar = SisipanAjuanDetail::where('sisipan_ajuan_id', $id)->sum('harga_sisipan');
+
+            $sisipanAjuan->update([
+                'total_bayar' => $totalBayar,
+            ]);
+
+            return response()->json(['message' => 'Data berhasil diupdate'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Data gagal diupdate'], 500);
         }
     }
 }

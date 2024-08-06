@@ -71,7 +71,6 @@ class RemedialMahasiswaController extends Controller
 
         $data_krs = Krs::where('idperiode', $periodeTerpilih->kode_periode)
             ->where('nim', $user->nim)
-            ->order_by('idmk')
             ->get()
             ->filter(function ($item) use ($periodeTerpilih) {
                 return (floatval($item->nnumerik) < $periodeTerpilih->remedialperiodeprodi->first()->nilai_batas

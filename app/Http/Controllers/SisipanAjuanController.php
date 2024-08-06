@@ -194,7 +194,7 @@ class SisipanAjuanController extends Controller
 
             // update sisipan ajuan
             $sisipanAjuan->update([
-                'total_bayar' => $totalKrs * $periode->sisipanperiodetarif[0]->tarif,
+                'total_bayar' => $sisipanAjuan->total_bayar + $periode->sisipanperiodetarif[0]->tarif * $totalKrs,
             ]);
 
             return response()->json([

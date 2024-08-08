@@ -82,14 +82,7 @@
                                                 Program Studi</label>
                                         </div>
                                         <div class="col-sm-5">
-                                            <select class="form-select" aria-label="Default select example"
-                                                name="programstudi" required>
-                                                <option value="">Pilih Program Studi</option>
-                                                @foreach ($programstudi as $prodi)
-                                                    <option value="{{ urlencode($prodi->nama) }}">{{ $prodi->nama }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                            @include('komponen.dropdown-nama-unitkerja')
                                         </div>
                                         <div class="col-sm-5">
                                             <select class="form-select" aria-label="Default select example"

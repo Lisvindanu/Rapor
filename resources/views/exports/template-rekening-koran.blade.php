@@ -15,7 +15,14 @@
             </td>
             <td style="text-align: center;vertical-align: middle;"><strong>NO VA</strong></td>
             <td style="text-align: center;vertical-align: middle;"><strong>Jumlah Bayar</strong></td>
-            <td style="text-align: center;vertical-align: middle;"><strong>Waktu Bayar</strong></td>
+            <td style="text-align: center;vertical-align: middle;"><strong>Tanggal Bayar</strong></td>
+        </tr>
+        <tr>
+            <td style="text-align: center;vertical-align: middle;"><i>isikan nomor</i></td>
+            <td style="text-align: center;vertical-align: middle;"><i>isikan periode akademik (20232)</i></td>
+            <td style="text-align: center;vertical-align: middle;"><i>isikan nomor va</i></td>
+            <td style="text-align: center;vertical-align: middle;"><i>isikan jumlah bayar tanpa titik/koma</i></td>
+            <td style="text-align: center;vertical-align: middle;"><i>isikan tanggal bayar (dd/mm/yyyy)</i></td>
         </tr>
     </table>
 </body>

@@ -53,4 +53,10 @@ class RemedialAjuanDetail extends Model
     {
         return $this->belongsTo(Dosen::class, 'nip', 'nip');
     }
+
+    // matakuliah
+    public function matakuliah()
+    {
+        return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk');
+    }
 }

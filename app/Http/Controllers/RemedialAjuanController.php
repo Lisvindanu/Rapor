@@ -10,6 +10,8 @@ use App\Models\RemedialPeriode;
 use App\Models\UnitKerja;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\UnitKerjaHelper;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class RemedialAjuanController extends Controller
 {
@@ -28,6 +30,8 @@ class RemedialAjuanController extends Controller
             //list unit kerja nama
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
 
+            $programstuditerpilih = null;
+
             if ($request->has('periodeTerpilih')) {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
                     ->where('id', $request->periodeTerpilih)
@@ -35,8 +39,6 @@ class RemedialAjuanController extends Controller
             } else {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
                     ->where('is_aktif', 1)
-                    // ->whereIn('unit_kerja_id', $unitKerjaIds)
-                    // ->orWhere('unit_kerja_id', session('selected_filter'))
                     ->orderBy('created_at', 'desc')
                     ->first();
             }
@@ -65,12 +67,11 @@ class RemedialAjuanController extends Controller
                 }
             }
 
-            if ($request->has('search')) {
-                if ($request->get('search') != null && $request->get('search') != '') {
-                    $query->where('status_pembayaran', 'Menunggu Konfirmasi')
-                        ->where('nim', 'like', '%' . $request->get('search') . '%')
+            if ($request->has('search') && $request->get('search') != '') {
+                $query->where(function ($subQuery) use ($request) {
+                    $subQuery->where('nim', 'like', '%' . $request->get('search') . '%')
                         ->orWhere('va', 'like', '%' . $request->get('search') . '%');
-                }
+                });
             }
 
             $data_ajuan = $query->paginate($request->get('perPage', 10));
@@ -352,11 +353,11 @@ class RemedialAjuanController extends Controller
                 }
             }
 
-            if ($request->has('search')) {
-                if ($request->get('search') != null && $request->get('search') != '') {
-                    $query->where('nim', 'ilike', '%' . $request->get('search') . '%')
-                        ->orWhere('va', 'ilike', '%' . $request->get('search') . '%');
-                }
+            if ($request->has('search') && $request->get('search') != '') {
+                $query->where(function ($subQuery) use ($request) {
+                    $subQuery->where('nim', 'like', '%' . $request->get('search') . '%')
+                        ->orWhere('va', 'like', '%' . $request->get('search') . '%');
+                });
             }
 
             if ($request->has('status_pembayaran')) {
@@ -392,13 +393,64 @@ class RemedialAjuanController extends Controller
     public function uploadRekeningKoran(Request $request)
     {
         try {
-            return "Upload Rekening Koran";
+            // request validation excel file
+            $request->validate([
+                'remedial_periode_id' => 'required|exists:remedial_periode,id',
+                'file' => 'required|mimes:xls,xlsx'
+            ]);
 
-            // Kirim respon berhasil
-            return response()->json(['message' => 'Bukti pembayaran berhasil diupload'], 200);
+            // get file
+            $file = $request->file('file');
+            $data = Excel::toArray([], $file);
+
+            $sukses = 0;
+            $gagal = 0;
+
+            // Hapus baris pertama dan ke dua pada array untuk menghilangkan header
+            array_shift($data[0]);
+
+            foreach ($data[0] as $row) {
+                // Jika kolom A kosong maka lewati
+                if (empty($row[0]) || $row[0] == '' || $row[0] == null) {
+                    break;
+                } else {
+                    $remedialAjuan = RemedialAjuan::where('va', $row[2])
+                        ->where('is_lunas', 0)
+                        ->where('remedial_periode_id', $request->remedial_periode_id)
+                        ->first();
+
+                    if ($remedialAjuan) {
+                        if ($remedialAjuan->jumlah_bayar + $row[3] == $remedialAjuan->total_bayar) {
+                            $remedialAjuan->update([
+                                'jumlah_bayar' => $remedialAjuan->jumlah_bayar + $row[3],
+                                'status_pembayaran' => 'Lunas',
+                                'is_lunas' => 1,
+                                'tgl_pembayaran' => Carbon::createFromTimestamp(($row[4] - 25569) * 86400)->format('Y-m-d'),
+                                'verified_by' => auth()->user()->username,
+                            ]);
+
+                            $remedialAjuan->remedialajuandetail()->update([
+                                'status_ajuan' => 'Konfirmasi Kelas',
+                            ]);
+                        } else {
+                            $remedialAjuan->update([
+                                'jumlah_bayar' => $remedialAjuan->jumlah_bayar + $row[3],
+                                'status_pembayaran' => 'Menunggu Konfirmasi',
+                                'is_lunas' => 0,
+                                'tgl_pembayaran' => Carbon::createFromTimestamp(($row[4] - 25569) * 86400)->format('Y-m-d'),
+                                'verified_by' => auth()->user()->username,
+                            ]);
+                        }
+                        $sukses++;
+                    } else {
+                        $gagal++;
+                    }
+                }
+            }
+
+            return back()->with('message', $sukses . ' data berhasil dieksekusi, ' . $gagal . ' data gagal dieksekusi');
         } catch (\Exception $e) {
-            // Kirim respon gagal beserta $e->getMessage()
-            return response()->json(['message' => 'Bukti pembayaran gagal diupload' .  $e->getMessage()], 500);
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
         }
     }
 }

@@ -387,4 +387,18 @@ class RemedialAjuanController extends Controller
             return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
         }
     }
+
+    // uploadRekeningKoran
+    public function uploadRekeningKoran(Request $request)
+    {
+        try {
+            return "Upload Rekening Koran";
+
+            // Kirim respon berhasil
+            return response()->json(['message' => 'Bukti pembayaran berhasil diupload'], 200);
+        } catch (\Exception $e) {
+            // Kirim respon gagal beserta $e->getMessage()
+            return response()->json(['message' => 'Bukti pembayaran gagal diupload' .  $e->getMessage()], 500);
+        }
+    }
 }

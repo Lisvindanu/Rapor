@@ -117,7 +117,8 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-
+                                        <button id="btn-upload-rekor" style="color:white" class="btn btn-primary"
+                                            type="submit">Upload Rekening Koran</button>
                                     </div>
                                 </div>
                             </div>
@@ -191,7 +192,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel" aria-hidden="true">
+    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -260,6 +262,51 @@
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Ajuan -->
+    <div class="modal fade" id="modalUploadRakor" tabindex="-1" aria-labelledby="modalUploadRakorLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalUploadRakorLabel">Upload File Rekening Koran Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadForm" action="{{ route('sisipan.ajuan.store') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3 row">
+                            <div class="col-md-12">
+                                <label for="sisipan_periode_id" class="form-label">Periode Sisipan</label>
+                                <select id="periode-dropdown" class="form-select" aria-label="Default select example"
+                                    name="sisipan_periode_id">
+                                    <option value="{{ $periodeTerpilih->id }}">{{ $periodeTerpilih->nama_periode }}
+                                    </option>
+                                    @foreach ($daftar_periode as $periode)
+                                        @if ($periode->id != $periodeTerpilih->id)
+                                            <option value="{{ $periode->id }}">{{ $periode->nama_periode }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Upload File (Format: xlsx)</label>
+                            <input type="file" class="form-control" id="file" name="file" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-info" id="btn-template-dokumen"
+                                style="color: white">Template
+                                Dokumen</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -348,7 +395,12 @@
                 }
             });
 
+            $('#btn-upload-rekor').on('click', function() {
+                $('#modalUploadRakor').modal('show');
+            });
+
         });
+
 
         function formatRupiah(number) {
             return new Intl.NumberFormat('id-ID', {
@@ -357,5 +409,9 @@
                 minimumFractionDigits: 0
             }).format(number);
         }
+
+        document.getElementById("btn-template-dokumen").addEventListener("click", function() {
+            window.location.href = "{{ route('export.downloadTemplateRekor') }}";
+        });
     </script>
 @endsection

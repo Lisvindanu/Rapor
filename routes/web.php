@@ -260,6 +260,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::get('/download-template-kuesioner-sdm', "ExcelController@downloadTemplateKuesionerSDM")->name('export.downloadTemplateKuesionerSDM');
         Route::get('/download-daftar-mahasiswa-non-aktif', "ExcelController@downloadMhsNonAktif")->name('export.downloadMhsNonAktif');
         Route::get('/download-rekomendasi-kelas-perkuliahan', "ExcelController@downloadRekomendasiKelas")->name('export.downloadRekomendasiKelas');
+        Route::get('/download-template-rekening-koran', "ExcelController@downloadTemplateRekor")->name('export.downloadTemplateRekor');
     });
 
     Route::prefix('import')->group(function () {
@@ -314,6 +315,8 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::get('/daftar-ajuan', "RemedialAjuanController@daftarAjuan")->name('remedial.ajuan.daftarAjuan');
             Route::post('/', "RemedialAjuanController@storeAjax")->name('remedial.ajuan.storeAjax');
             Route::post('/upload-bukti-pembayaran', "RemedialAjuanController@uploadBukti")->name('remedial.ajuan.uploadBukti');
+            Route::post('/upload-rekening-koran', "RemedialAjuanController@uploadRekeningKoran")->name('remedial.ajuan.uploadRekeningKoran');
+
             Route::post('/verifikasi-ajuan', "RemedialAjuanController@verifikasiAjuan")->name('remedial.ajuan.verifikasiAjuan');
             Route::delete('/{id}', "RemedialAjuanController@deleteAjax")->name('remedial.ajuan.deleteAjax');
         });

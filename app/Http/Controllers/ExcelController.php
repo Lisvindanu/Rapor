@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PertanyaanExport;
 use App\Exports\KuesionerSDMExport;
 use App\Exports\DaftarMahasiswaNonAktif;
+use App\Exports\RekeningKoranExport;
 use App\Exports\RekomendasiJumlahKelas;
 use App\Models\KelasKuliah;
 use App\Models\Mahasiswa;
@@ -131,5 +132,10 @@ class ExcelController extends Controller
         // return response()->json($kelasKuliah);
 
         return Excel::download(new RekomendasiJumlahKelas($kelasKuliah), 'daftar-rekomendasi-jumlah-kelas.xlsx');
+    }
+
+    public function downloadTemplateRekor()
+    {
+        return Excel::download(new RekeningKoranExport(), 'template_rekening_koran.xlsx');
     }
 }

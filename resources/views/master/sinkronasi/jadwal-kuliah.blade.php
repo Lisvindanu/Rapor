@@ -82,22 +82,7 @@
                                                 Program Studi</label>
                                         </div>
                                         <div class="col-sm-5">
-                                            <select class="form-select" aria-label="Default select example"
-                                                name="programstudi" id="programstudi" required>
-                                                <option value="">Pilih Program Studi</option>
-                                                <option value="S1 Teknik Industri">S1 Teknik Industri</option>
-                                                <option value="S1 Teknologi Pangan">S1 Teknologi Pangan</option>
-                                                <option value="S1 Teknik Mesin">S1 Teknik Mesin</option>
-                                                <option value="S1 Perencanaan Wilayah dan Kota">S1 Perencanaan Wilayah dan
-                                                    Kota</option>
-                                                <option value="S1 Teknik Informatika">S1 Teknik Informatika</option>
-                                                <option value="S1 Teknik Lingkungan">S1 Teknik Lingkungan</option>
-
-                                                {{-- @foreach ($programstudi as $prodi)
-                                                    <option value="S1 {{ urlencode($prodi->nama) }}">S1 {{ $prodi->nama }}
-                                                    </option>
-                                                @endforeach --}}
-                                            </select>
+                                            @include('komponen.dropdown-jenjang-nama-unitkerja')
                                         </div>
                                         <div class="col-sm-5">
                                             <select class="form-select" aria-label="Default select example" name="periode"

@@ -142,6 +142,9 @@
                                                 Program Studi
                                             </th>
                                             <th style="text-align: center;vertical-align: middle;">
+                                                Total Tagihan
+                                            </th>
+                                            <th style="text-align: center;vertical-align: middle;">
                                                 Total Bayar
                                             </th>
                                             <th>
@@ -162,6 +165,7 @@
                                                     <td>{{ $ajuan->mahasiswa->nama }}</td>
                                                     <td>{{ $ajuan->programstudi }}</td>
                                                     <td>Rp. {{ number_format($ajuan->total_bayar, 0, ',', '.') }}</td>
+                                                    <td>Rp. {{ number_format($ajuan->jumlah_bayar, 0, ',', '.') }}</td>
                                                     <td>
                                                         <a href="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
                                                             target="_blank">
@@ -179,7 +183,7 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="7">Tidak ada data</td>
+                                                <td colspan="9">Tidak ada data</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -276,14 +280,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="uploadForm" action="{{ route('sisipan.ajuan.store') }}" method="POST"
+                    <form id="uploadForm" action="{{ route('remedial.ajuan.uploadRekeningKoran') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3 row">
                             <div class="col-md-12">
-                                <label for="sisipan_periode_id" class="form-label">Periode Sisipan</label>
+                                <label for="remedial_periode_id" class="form-label">Periode Remedial</label>
                                 <select id="periode-dropdown" class="form-select" aria-label="Default select example"
-                                    name="sisipan_periode_id">
+                                    name="remedial_periode_id">
                                     <option value="{{ $periodeTerpilih->id }}">{{ $periodeTerpilih->nama_periode }}
                                     </option>
                                     @foreach ($daftar_periode as $periode)

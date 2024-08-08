@@ -322,7 +322,8 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         });
 
         Route::prefix('pelaksanaan')->group(function () {
-            Route::get('/', "RemedialPelaksanaanController@daftarMatakuliah")->name('remedial.pelaksanaan');
+            // Route::get('/', "RemedialPelaksanaanController@daftarMatakuliah")->name('remedial.pelaksanaan');
+            Route::get('/', "RemedialPelaksanaanDaftarMKController@daftarMatakuliah")->name('remedial.pelaksanaan');
 
             Route::prefix('daftar-mk')->group(function () {
                 Route::get('/', "RemedialPelaksanaanDaftarMKController@daftarMatakuliah")->name('remedial.pelaksanaan.daftar-mk');

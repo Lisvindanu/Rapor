@@ -20,6 +20,7 @@ class RemedialPelaksanaanDaftarMKController extends Controller
         try {
             // untuk dropdown unit kerja
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
+            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
 
             if ($request->has('periodeTerpilih')) {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
@@ -28,6 +29,8 @@ class RemedialPelaksanaanDaftarMKController extends Controller
             } else {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
                     ->where('is_aktif', 1)
+                    ->where('unit_kerja_id', $unitKerja->id)
+                    ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
                     ->orderBy('created_at', 'desc')
                     ->first();
             }
@@ -37,35 +40,42 @@ class RemedialPelaksanaanDaftarMKController extends Controller
                 ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
-            $query = RemedialAjuanDetail::with('kelasKuliah')
-                // ->whereHas('kelasKuliah', function ($query) use ($unitKerjaNames) {
-                //     $query->whereIn('programstudi', $unitKerjaNames);
-                // })
+            // $ajuandetail = RemedialAjuanDetail::with('matakuliah')
+            //     ->where('kode_periode', $periodeTerpilih->kode_periode)
+            //     ->where('status_ajuan', 'Konfirmasi Kelas')
+            //     ->groupBy('kode_periode', 'idmk')
+            //     ->select('kode_periode', 'idmk', DB::raw('COUNT(idmk) as total_peserta'))
+            //     ->paginate($request->get('perPage', 10));
+
+            $query = RemedialAjuanDetail::with('matakuliah')
                 ->where('kode_periode', $periodeTerpilih->kode_periode)
-                ->where('status_ajuan', 'Konfirmasi Kelas');
+                ->where('status_ajuan', 'Konfirmasi Kelas')
+                ->whereHas('matakuliah', function ($query) use ($unitKerjaNames) {
+                    $query->whereIn('programstudi', $unitKerjaNames);
+                });
 
+            if ($request->filled('programstudi')) {
 
-            //filter terkait dengan program studi 
-            if ($request->has('programstudi')) {
+                $programstudis = UnitKerja::where('id', $request->get('programstudi'))->first();
 
-                if ($request->get('programstudi') != 'all') {
-                    $programstudis = UnitKerja::where('id', $request->get('programstudi'))->first();
-
-                    if (!$programstudis) {
-                        return redirect()->back()->with('message', 'Program Studi tidak ditemukan');
-                    }
-
-                    $query->whereHas('kelasKuliah', function ($query) use ($programstudis) {
-                        $query->where('programstudi', $programstudis->nama_unit);
-                    });
-
-                    $programstuditerpilih = $programstudis;
+                if (!$programstudis) {
+                    return redirect()->back()->with('message', 'Program Studi tidak ditemukan');
                 }
+
+                $query->whereHas('matakuliah', function ($query) use ($programstudis, $unitKerjaNames) {
+                    if ($programstudis->jenis_unit == 'Program Studi') {
+                        $query->where('programstudi', $programstudis->nama_unit);
+                    } else {
+                        $query->whereIn('programstudi', $unitKerjaNames);
+                    }
+                });
+
+                $programstuditerpilih = $programstudis;
             }
 
             if ($request->has('search')) {
                 if ($request->get('search') != null && $request->get('search') != '') {
-                    $query->whereHas('kelasKuliah', function ($query) use ($request) {
+                    $query->whereHas('matakuliah', function ($query) use ($request) {
                         $query->where('namamk', 'ilike', '%' . $request->get('search') . '%')
                             ->orWhere('kodemk', 'ilike', '%' . $request->get('search') . '%');
                     });
@@ -76,8 +86,6 @@ class RemedialPelaksanaanDaftarMKController extends Controller
                 ->groupBy('kode_periode', 'idmk')
                 ->paginate($request->get('perPage', 10));
 
-
-            // return response()->json($ajuandetail);
             $total = $ajuandetail->total();
 
             return view(

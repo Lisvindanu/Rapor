@@ -129,12 +129,13 @@ class SinkronasiController extends Controller
     // jadwalPerkuliahan
     function kelasKuliah()
     {
-        $programstudi = ProgramStudi::all();
+        // $programstudi = ProgramStudi::all();
+        $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
         $periode = Periode::orderBy('kode_periode', 'desc')->take(35)->get();
         return view(
             'master.sinkronasi.kelas-kuliah',
             [
-                'programstudi' => $programstudi,
+                'unitkerja' => $unitKerja,
                 'periode' => $periode
             ]
         );
@@ -143,12 +144,13 @@ class SinkronasiController extends Controller
     // jadwalPerkuliahan
     function jadwalKuliah()
     {
-        $programstudi = ProgramStudi::all();
+        // $programstudi = ProgramStudi::all();
+        $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
         $periode = Periode::orderBy('kode_periode', 'desc')->take(35)->get();
         return view(
             'master.sinkronasi.jadwal-kuliah',
             [
-                'programstudi' => $programstudi,
+                'unitkerja' => $unitKerja,
                 'periode' => $periode
             ]
         );

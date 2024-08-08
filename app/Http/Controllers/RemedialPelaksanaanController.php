@@ -18,8 +18,7 @@ class RemedialPelaksanaanController extends Controller
     {
         try {
             // untuk dropdown unit kerja
-            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->get();
-            $unitKerjaIds = UnitKerjaHelper::getUnitKerjaIds();
+            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
 
             //list unit kerja nama
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
@@ -35,9 +34,9 @@ class RemedialPelaksanaanController extends Controller
                     ->first();
             }
 
-            $daftar_periode = RemedialPeriode::with('periode')
-                // ->whereIn('unit_kerja_id', $unitKerjaIds)
-                ->orderBy('created_at', 'desc')->take(10)->get();
+            $daftar_periode = $this->daftarPeriode($unitKerja);
+
+            // return response()->json($daftar_periode);
 
             $query = RemedialAjuanDetail::with('kelasKuliah')
                 ->whereHas('kelasKuliah', function ($query) use ($unitKerjaNames) {
@@ -94,5 +93,15 @@ class RemedialPelaksanaanController extends Controller
         } catch (\Exception $e) {
             return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
         }
+    }
+
+    // daftarPeriode
+    public function daftarPeriode($unitKerja)
+    {
+        $daftar_periode = RemedialPeriode::with('periode')
+            ->where('unit_kerja_id', $unitKerja->id)
+            ->orWhere('unit_kerja_id', $unitKerja->parent_id)
+            ->get();
+        return $daftar_periode;
     }
 }

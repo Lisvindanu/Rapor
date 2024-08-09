@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UnitKerja;
 use App\Helpers\UnitKerjaHelper;
+use App\Models\KelasKuliah;
+use App\Models\Krs;
 use App\Models\RemedialPeriode;
 use App\Models\RemedialAjuan;
 use App\Models\ProgramStudi;
 use App\Models\RemedialAjuanDetail;
 use App\Models\RemedialKelas;
 use Illuminate\Support\Facades\DB;
+use App\Models\Pegawai;
 
 
 class RemedialPelaksanaanDaftarMKController extends Controller
@@ -40,16 +43,14 @@ class RemedialPelaksanaanDaftarMKController extends Controller
                 ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
-            // $ajuandetail = RemedialAjuanDetail::with('matakuliah')
-            //     ->where('kode_periode', $periodeTerpilih->kode_periode)
-            //     ->where('status_ajuan', 'Konfirmasi Kelas')
-            //     ->groupBy('kode_periode', 'idmk')
-            //     ->select('kode_periode', 'idmk', DB::raw('COUNT(idmk) as total_peserta'))
-            //     ->paginate($request->get('perPage', 10));
 
             $query = RemedialAjuanDetail::with('matakuliah')
                 ->where('kode_periode', $periodeTerpilih->kode_periode)
-                ->where('status_ajuan', 'Konfirmasi Kelas')
+                ->where(function ($query) {
+                    $query->where('status_ajuan', 'Konfirmasi Kelas')
+                        ->orWhere('status_ajuan', 'Diterima')
+                        ->orWhere('status_ajuan', 'Dibatalkan');
+                })
                 ->whereHas('matakuliah', function ($query) use ($unitKerjaNames) {
                     $query->whereIn('programstudi', $unitKerjaNames);
                 });
@@ -109,17 +110,25 @@ class RemedialPelaksanaanDaftarMKController extends Controller
     {
         try {
 
-            $matakuliah = RemedialAjuanDetail::with('kelasKuliah', 'remedialajuan')
+            $matakuliah = RemedialAjuanDetail::with('matakuliah', 'remedialajuan')
                 ->where('kode_periode', $request->kode_periode)
                 ->where('idmk', $request->idmk)
-                ->where('status_ajuan', 'Konfirmasi Kelas')
+                ->where(function ($query) {
+                    $query->where('status_ajuan', 'Konfirmasi Kelas')
+                        ->orWhere('status_ajuan', 'Diterima')
+                        ->orWhere('status_ajuan', 'Dibatalkan');
+                })
                 ->first();
 
             // return response()->json($request->all());
-            $ajuandetail = RemedialAjuanDetail::with(['kelasKuliah', 'remedialajuan', 'krs'])
+            $ajuandetail = RemedialAjuanDetail::with(['matakuliah', 'remedialajuan', 'krs'])
                 ->where('kode_periode', $request->kode_periode)
                 ->where('idmk', $request->idmk)
-                ->where('status_ajuan', 'Konfirmasi Kelas')
+                ->where(function ($query) {
+                    $query->where('status_ajuan', 'Konfirmasi Kelas')
+                        ->orWhere('status_ajuan', 'Diterima')
+                        ->orWhere('status_ajuan', 'Dibatalkan');
+                })
                 ->paginate($request->get('perPage', 10));
 
             // return response()->json($matakuliah);
@@ -136,14 +145,85 @@ class RemedialPelaksanaanDaftarMKController extends Controller
         }
     }
 
+    // editKelasAjuan
+    public function editKelasAjuan(Request $request)
+    {
+        try {
+            $request->validate([
+                'editNipDosen' => 'required',
+                'editKelas' => 'required',
+                'editIdMK' => 'required',
+                'editKodePeriode' => 'required',
+            ]);
+
+            $pegawai = Pegawai::where('nip', $request->editNipDosen)->first();
+            //remedialajuandetail update
+            RemedialAjuanDetail::where('idmk', $request->editIdMK)
+                ->where('kode_periode', $request->editKodePeriode)
+                ->where('namakelas', $request->editKelas)
+                ->update([
+                    'nip' => $pegawai->nip,
+                ]);
+
+            //kelasKuliah update
+            KelasKuliah::where('kodemk', $request->editIdMK)
+                ->where('periodeakademik', $request->editKodePeriode)
+                ->where('namakelas', $request->editKelas)
+                ->update([
+                    'nip' => $pegawai->nip,
+                    'namadosen' => $pegawai->nama,
+                ]);
+
+            return back()->with('message', 'Berhasil mengubah dosen pengampu utama');
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
+    }
+
+    //batalkanKelasAjuan
+    public function batalkanKelasAjuan(Request $request)
+    {
+        try {
+            $request->validate([
+                'kodemk' => 'required',
+                'kode_periode' => 'required',
+                'remedial_periode_id' => 'required',
+            ]);
+
+            RemedialAjuanDetail::where('idmk', $request->kodemk)
+                ->where('kode_periode', $request->kode_periode)
+                ->where(function ($query) {
+                    $query->where('status_ajuan', 'Konfirmasi Kelas')
+                        ->orWhere('status_ajuan', 'Diterima');
+                })
+                ->update([
+                    'status_ajuan' => 'Dibatalkan',
+                ]);
+
+            // delete Remedial Kelas and remedial kelas peserta
+            $data = RemedialKelas::where('remedial_periode_id', $request->remedial_periode_id)
+                ->where('kodemk', $request->kodemk)
+                ->get();
+
+            foreach ($data as $d) {
+                $d->peserta()->delete();
+                $d->delete();
+            }
+
+            return back()->with('message', 'Berhasil membatalkan kelas ajuan');
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
+    }
+
     //kelasMatakuliah
     public function kelasMatakuliah(Request $request)
     {
         try {
-            $matakuliah = RemedialAjuanDetail::with('kelasKuliah', 'remedialajuan')
+            $matakuliah = RemedialAjuanDetail::with('matakuliah', 'remedialajuan')
                 ->where('kode_periode', $request->kode_periode)
                 ->where('idmk', $request->idmk)
-                ->where('status_ajuan', 'Konfirmasi Kelas')
+                ->where('status_ajuan', 'Diterima')
                 ->first();
 
             // return response()->json($request->all());

@@ -35,9 +35,6 @@
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <a href="{{ route('remedial.pelaksanaan.daftar-mk') }}" class="btn btn-secondary"
                                         type="button">Kembali</a>
-                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <button class="btn btn-primary" id="btnTambahSoal">Buat Kelas</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -92,6 +89,7 @@
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Dosen
                                                             </th>
+                                                            <th>Jumlah Peserta</th>
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Aksi
                                                             </th>
@@ -118,9 +116,9 @@
                                                                     {{ $item->dosen->nama }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    <a href="#" class="btn btn-sm btn-warning edit">
-                                                                        <i class="fas fa-edit fa-xs"></i>
-                                                                    </a>
+                                                                    {{ $item->jumlahpeserta }}
+                                                                </td>
+                                                                <td style="text-align: center;vertical-align: middle;">
                                                                     <a href="#" class="btn btn-sm btn-info detail">
                                                                         <i class="fas fa-link fa-xs"></i>
                                                                     </a>

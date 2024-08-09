@@ -28,7 +28,7 @@ class RemedialController extends Controller
     public function dashboardFakultas(Request $request)
     {
         try {
-            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->get();
+            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
             $unitKerjaIds = UnitKerjaHelper::getUnitKerjaIds();
 
             if ($request->has('periodeTerpilih')) {
@@ -41,6 +41,10 @@ class RemedialController extends Controller
                     ->whereIn('unit_kerja_id', $unitKerjaIds)
                     ->orderBy('created_at', 'desc')
                     ->first();
+            }
+
+            if (!$periodeTerpilih) {
+                return redirect()->back()->with('message', 'Periode Remedial tidak ditemukan');
             }
 
             $daftar_periode = RemedialPeriode::with('periode')
@@ -86,8 +90,8 @@ class RemedialController extends Controller
                     'rekap' => $rekap
                 ]
             );
-        } catch (\Throwable $th) {
-            //throw $th;
+        } catch (\Exception $e) {
+            return redirect()->back()->with('message', $e->getMessage());
         }
     }
 

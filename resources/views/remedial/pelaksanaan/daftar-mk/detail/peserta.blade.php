@@ -148,6 +148,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            @include('komponen.pagination')
                                         </div>
                                     </div>
                                 </div>

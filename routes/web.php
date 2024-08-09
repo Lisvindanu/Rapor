@@ -329,6 +329,8 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
                 Route::get('/', "RemedialPelaksanaanDaftarMKController@daftarMatakuliah")->name('remedial.pelaksanaan.daftar-mk');
                 Route::get('/peserta', "RemedialPelaksanaanDaftarMKController@pesertaMatakuliah")->name('remedial.pelaksanaan.daftar-mk.peserta');
                 Route::get('/kelas', "RemedialPelaksanaanDaftarMKController@kelasMatakuliah")->name('remedial.pelaksanaan.daftar-mk.kelas');
+                Route::post('/batal-kelas', "RemedialPelaksanaanDaftarMKController@batalkanKelasAjuan")->name('remedial.pelaksanaan.daftar-mk.batalkanKelasAjuan');
+                Route::put('/edit-ajuan', "RemedialPelaksanaanDaftarMKController@editKelasAjuan")->name('remedial.pelaksanaan.daftar-mk.editKelasAjuan');
             });
 
             Route::prefix('daftar-kelas')->group(function () {

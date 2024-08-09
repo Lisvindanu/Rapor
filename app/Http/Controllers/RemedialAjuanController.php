@@ -414,7 +414,8 @@ class RemedialAjuanController extends Controller
                 if (empty($row[0]) || $row[0] == '' || $row[0] == null) {
                     break;
                 } else {
-                    $remedialAjuan = RemedialAjuan::where('va', $row[2])
+
+                    $remedialAjuan = RemedialAjuan::where('va', 'ilike', '%' . $row[2] . '%')
                         ->where('is_lunas', 0)
                         ->where('remedial_periode_id', $request->remedial_periode_id)
                         ->first();
@@ -443,6 +444,7 @@ class RemedialAjuanController extends Controller
                         }
                         $sukses++;
                     } else {
+                        // return back()->with('message', $row[2] . ' tidak ditemukan');
                         $gagal++;
                     }
                 }

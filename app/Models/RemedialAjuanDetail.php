@@ -34,9 +34,9 @@ class RemedialAjuanDetail extends Model
     // kelas kuliah
     public function kelasKuliah()
     {
-        return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk')
-            ->where('namakelas', $this->namakelas)
-            ->where('periodeakademik', $this->kode_periode);
+        return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk');
+        // ->where('namakelas', $this->namakelas)
+        // ->where('periodeakademik', $this->kode_periode);
         // return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk')
         //     ->where('namakelas', $this->namakelas)
         //     ->where('periodeakademik', $this->idperiode);
@@ -59,4 +59,6 @@ class RemedialAjuanDetail extends Model
     {
         return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk');
     }
+
+    // jumlahPengajar
 }

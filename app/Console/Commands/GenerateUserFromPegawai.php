@@ -38,7 +38,7 @@ class GenerateUserFromPegawai extends Command
         // where jenispegawai != 'Tendik'
 
         $pegawais = Pegawai::whereDoesntHave('user')
-            ->where('jenispegawai', '!=', 'Pegawai')
+            ->where('jenispegawai', '==', 'Pegawai')
             // ->where('jenispegawai', 'Pegawai')
             ->get();
 

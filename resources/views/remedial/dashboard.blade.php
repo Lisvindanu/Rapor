@@ -172,6 +172,12 @@
                                         <th>Ditolak</th>
                                     </tr> --}}
                                 </thead>
+                                @php
+                                    $totalpeserta = 0;
+                                    $totaltagihan = 0;
+                                    $totalbayar = 0;
+                                @endphp
+
                                 <tbody>
                                     @if (count($daftar_ajuan) === 0)
                                         <tr>
@@ -185,9 +191,22 @@
                                                 <td>Rp. {{ number_format($program['total_tagihan']) }}</td>
                                                 <td>Rp. {{ number_format($program['total_bayar']) }}</td>
                                             </tr>
+                                            @php
+                                                $totalpeserta += $program['jumlah_ajuan_detail'];
+                                                $totaltagihan += $program['total_tagihan'];
+                                                $totalbayar += $program['total_bayar'];
+                                            @endphp
                                         @endforeach
                                     @endif
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td><strong>Total</strong></td>
+                                        <td><strong>{{ $totalpeserta }}</strong></td>
+                                        <td><strong>Rp. {{ number_format($totaltagihan) }}</strong></td>
+                                        <td><strong>Rp. {{ number_format($totalbayar) }}</strong></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>

@@ -65,22 +65,7 @@
                                                 </strong></label>
                                         </div>
                                         <div class="col-4">
-                                            <select id="programstudi" class="form-select"
-                                                aria-label="Default select example" name="programstudi">
-                                                @foreach ($unitkerja as $unit)
-                                                    @if ($unit->children_count == 0)
-                                                        <option value="{{ $unit->id }}">
-                                                            {{ $unit->nama_unit }}</option>
-                                                    @else
-                                                        <option value="all">
-                                                            Semua Program Studi</option>
-                                                        @foreach ($unit->childUnit as $child)
-                                                            <option value="{{ $child->id }}">&nbsp;&nbsp;
-                                                                {{ $child->nama_unit }}</option>
-                                                        @endforeach
-                                                    @endif
-                                                @endforeach
-                                            </select>
+                                            @include('komponen.dropdown-unitkerja')
                                         </div>
                                         <div class="col-2 mt-3">
                                             <label for="search" class="col-form-label"><strong>Cari NIM / VA
@@ -196,8 +181,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">

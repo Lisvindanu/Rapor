@@ -39,7 +39,7 @@
                 <div class="container">
                     <div class="card">
                         <div class="card-body">
-                            <form id="formPeriode" action="{{ route('remedial.pelaksanaan.daftar-mk') }}" method="GET">
+                            <form id="formPeriode" action="{{ route('remedial.pelaksanaan.daftar-kelas') }}" method="GET">
                                 @csrf
                                 <div class="col-12" style="padding: 10px">
                                     <div class="row align-items-center">

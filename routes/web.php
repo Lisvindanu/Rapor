@@ -397,6 +397,26 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::delete('/{id}', "SisipanMahasiswaController@destroy")->name('sisipan.mahasiswa.delete');
         });
 
+        Route::prefix('pelaksanaan')->group(function () {
+            // Route::get('/', "RemedialPelaksanaanController@daftarMatakuliah")->name('remedial.pelaksanaan');
+            Route::get('/', "SisipanPelaksanaanDaftarMKController@daftarMatakuliah")->name('sisipan.pelaksanaan');
+
+            Route::prefix('daftar-mk')->group(function () {
+                Route::get('/', "SisipanPelaksanaanDaftarMKController@daftarMatakuliah")->name('sisipan.pelaksanaan.daftar-mk');
+                Route::get('/peserta', "SisipanPelaksanaanDaftarMKController@pesertaMatakuliah")->name('sisipan.pelaksanaan.daftar-mk.peserta');
+                Route::get('/kelas', "SisipanPelaksanaanDaftarMKController@kelasMatakuliah")->name('sisipan.pelaksanaan.daftar-mk.kelas');
+                Route::post('/batal-kelas', "SisipanPelaksanaanDaftarMKController@batalkanKelasAjuan")->name('sisipan.pelaksanaan.daftar-mk.batalkanKelasAjuan');
+                Route::put('/edit-ajuan', "SisipanPelaksanaanDaftarMKController@editKelasAjuan")->name('sisipan.pelaksanaan.daftar-mk.editKelasAjuan');
+            });
+
+            Route::prefix('daftar-kelas')->group(function () {
+                Route::get('/', "SisipanPelaksanaanKelasController@daftarKelas")->name('sisipan.pelaksanaan.daftar-kelas');
+                Route::get('/{id}', "SisipanPelaksanaanKelasController@detailKelas")->name('sisipan.pelaksanaan.daftar-kelas.detailKelas');
+                Route::post('/tambahPerMK', "SisipanPelaksanaanKelasController@tambahPerMKAjax")->name('sisipan.pelaksanaan.daftar-kelas.tambahPerMK');
+                Route::post('/tambahPerDosen', "SisipanPelaksanaanKelasController@tambahPerDosenAjax")->name('sisipan.pelaksanaan.daftar-kelas.tambahPerDosen');
+            });
+        });
+
         Route::prefix('laporan')->group(function () {
             Route::get('/', "SisipanLaporanController@index")->name('sisipan.laporan');
             Route::post('/print-laporan', "SisipanLaporanController@printLaporan")->name('sisipan.laporan.print');

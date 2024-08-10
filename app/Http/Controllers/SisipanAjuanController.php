@@ -257,7 +257,7 @@ class SisipanAjuanController extends Controller
             $request->validate([
                 'sisipan_ajuan_id' => 'required|exists:sisipan_ajuan,id',
                 'tgl_pembayaran' => 'required',
-                'bukti_pembayaran' => 'required|image|mimes:png,jpg|max:1024',
+                'bukti_pembayaran' => 'required|mimes:jpeg,jpg,png,pdf|max:2048',
             ]);
 
             // Temukan data sisipan ajuan yang akan diupload bukti pembayaran

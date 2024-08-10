@@ -219,7 +219,7 @@ class RemedialAjuanController extends Controller
             $request->validate([
                 'remedial_ajuan_id' => 'required|exists:remedial_ajuan,id',
                 'tgl_pembayaran' => 'required',
-                'bukti_pembayaran' => 'required|image|mimes:png,jpg|max:1024',
+                'bukti_pembayaran' => 'required|mimes:jpeg,jpg,png,pdf|max:2048',
             ]);
 
             // Temukan data remedial ajuan yang akan diupload bukti pembayaran
@@ -311,35 +311,44 @@ class RemedialAjuanController extends Controller
     {
         try {
             // untuk dropdown unit kerja
-            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->get();
+            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
             $unitKerjaIds = UnitKerjaHelper::getUnitKerjaIds();
+
+            // return response()->json($unitKerja);
 
             //list unit kerja nama
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
 
-            if ($request->has('periodeTerpilih')) {
+            // request periodeterpilih filled
+            if ($request->filled('periodeTerpilih')) {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
                     ->where('id', $request->periodeTerpilih)
                     ->first();
+                // return "lalala1";
             } else {
-                $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
-                    ->where('is_aktif', 1)
-                    // ->whereIn('unit_kerja_id', $unitKerjaIds)
-                    // ->orWhere('unit_kerja_id', session('selected_filter'))
+                // return "lalala";
+                $periodeTerpilih = RemedialPeriode::where('unit_kerja_id', $unitKerja->id)
+                    ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
                     ->orderBy('created_at', 'desc')
                     ->first();
             }
 
-            $daftar_periode = RemedialPeriode::with('periode')
-                ->whereIn('unit_kerja_id', $unitKerjaIds)
-                ->orderBy('created_at', 'desc')->take(10)->get();
+            // return response()->json($periodeTerpilih);
+
+            $daftar_periode = RemedialPeriode::with('periode')->where('unit_kerja_id', $unitKerja->id)
+                ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
+                ->orderBy('created_at', 'desc')
+                ->take(10)
+                ->get();
+
+            // return response()->json($daftar_periode);
 
             $query = RemedialAjuan::with('remedialajuandetail')
                 ->whereIn('programstudi', $unitKerjaNames)
                 ->where('remedial_periode_id', $periodeTerpilih->id);
 
             //filter terkait dengan program studi 
-            if ($request->has('programstudi')) {
+            if ($request->filled('programstudi')) {
 
                 if ($request->get('programstudi') != 'all') {
                     $programstudis = UnitKerja::where('id', $request->get('programstudi'))->first();

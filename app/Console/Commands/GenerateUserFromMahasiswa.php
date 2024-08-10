@@ -36,7 +36,7 @@ class GenerateUserFromMahasiswa extends Command
         $mhs = Mahasiswa::whereDoesntHave('user')
             ->where('statusmahasiswa', 'Aktif')
             // ->where('periodemasuk', '20231')
-            // ->where('programstudi', 'Teknologi Pangan')
+            ->where('programstudi', 'Ilmu Hukum')
             // ->where('nim', '203040106')
             // ->where('jenispegawai', 'Pegawai')
             ->get();
@@ -77,6 +77,8 @@ class GenerateUserFromMahasiswa extends Command
                 'password' => Hash::make($password),
                 'key_relation' => $item->nim,
             ]);
+
+            $this->info("User {$user->name} berhasil dibuat.");
 
             // Hubungkan user dengan pegawai
             // $mhs->user()->save($user);

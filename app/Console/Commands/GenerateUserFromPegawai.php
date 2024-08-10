@@ -60,7 +60,7 @@ class GenerateUserFromPegawai extends Command
             }
 
             // Password default
-            $password = 'password'; // Ganti dengan password default yang diinginkan
+            $password = 'Pasundan2024'; // Ganti dengan password default yang diinginkan
 
             // Buat user baru
             $user = User::create([
@@ -71,6 +71,7 @@ class GenerateUserFromPegawai extends Command
                 'key_relation' => $pegawai->nip,
             ]);
 
+            $this->info('User ' . $user->name . ' berhasil dibuat.');
             // Hubungkan user dengan pegawai
             $pegawai->user()->save($user);
         }

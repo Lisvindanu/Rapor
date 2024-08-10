@@ -24,4 +24,9 @@ class RemedialKelasPeserta extends Model
     {
         return $this->belongsTo(RemedialKelas::class, 'remedial_kelas_id', 'id');
     }
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'nim', 'nim');
+    }
 }

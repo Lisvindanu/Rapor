@@ -61,9 +61,4 @@ class RemedialAjuanDetail extends Model
     }
 
     // jumlahPengajar
-    // remedialkelas
-    public function remedialkelas()
-    {
-        return $this->hasMany(RemedialKelas::class, 'remedial_ajuan_detail_id', 'id');
-    }
 }

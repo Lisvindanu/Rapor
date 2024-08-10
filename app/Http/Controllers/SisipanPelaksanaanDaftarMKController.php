@@ -161,7 +161,18 @@ class SisipanPelaksanaanDaftarMKController extends Controller
             ]);
 
             $pegawai = Pegawai::where('nip', $request->editNipDosen)->first();
-            //sisipanajuandetail update
+            //sisipanajuandetail get
+            $sisipanajuandetail = SisipanAjuanDetail::where('idmk', $request->editIdMK)
+                ->where('kode_periode', $request->editKodePeriode)
+                ->where('namakelas', $request->editKelas)
+                ->get();
+
+            // update nip sisipanajuandetail
+            $sisipanajuandetail->each(function ($detail) use ($pegawai) {
+                $detail->nip = $pegawai->nip;
+                $detail->save();
+            });
+
             SisipanAjuanDetail::where('idmk', $request->editIdMK)
                 ->where('kode_periode', $request->editKodePeriode)
                 ->where('namakelas', $request->editKelas)
@@ -169,14 +180,26 @@ class SisipanPelaksanaanDaftarMKController extends Controller
                     'nip' => $pegawai->nip,
                 ]);
 
-            //kelasKuliah update
+            //get kelasKuliah update
+            $kelas = KelasKuliah::where('kodemk', $request->editIdMK)
+                ->where('periodeakademik', $sisipanajuandetail[0]->krs->idperiode)
+                ->where('namakelas', $request->editKelas)
+                ->get();
+
+
             KelasKuliah::where('kodemk', $request->editIdMK)
-                ->where('periodeakademik', $request->editKodePeriode)
+                ->where('periodeakademik', $sisipanajuandetail[0]->krs->idperiode)
                 ->where('namakelas', $request->editKelas)
                 ->update([
                     'nip' => $pegawai->nip,
                     'namadosen' => $pegawai->nama,
                 ]);
+
+            // return response()->json([
+            //     'request' => $request->all(),
+            //     'sisipanajuandetail' => $sisipanajuandetail,
+            //     'kelas' => $kelas,
+            // ]);
 
             return back()->with('message', 'Berhasil mengubah dosen pengampu utama');
         } catch (\Exception $e) {

@@ -29,7 +29,7 @@ class synKRS extends Command
      */
     public function handle()
     {
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTcyMzI2OTE2NSwiZXhwIjoxNzIzMjcyNzY1fQ.X3lPphFEtNSCAy37qYy8fHYIPBHpmr5P4kIRGjsXpiY";
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTcyMzI3MDA4OCwiZXhwIjoxNzIzMjczNjg4fQ.Z41XhDR0dwkc4kyg9M6HsvP_ocMoAVqeSh2gzoJOtOY";
         $limit = 1000;
 
         $formData = [];
@@ -149,20 +149,20 @@ class synKRS extends Command
                     $uniqueData = array_values($groupedData);
 
                     foreach ($uniqueData as $krsData) {
-                        // $krs = Krs::where('idperiode', $krsData['idperiode'])
-                        //     ->where('namakelas', $krsData['namakelas'])
-                        //     ->where('nim', $krsData['nim'])
-                        //     ->where('idmk', $krsData['idmk'])
-                        //     ->first();
+                        $krs = Krs::where('idperiode', $krsData['idperiode'])
+                            ->where('namakelas', $krsData['namakelas'])
+                            ->where('nim', $krsData['nim'])
+                            ->where('idmk', $krsData['idmk'])
+                            ->first();
 
                         // Jika data krs sudah ada, perbarui
-                        // if ($krs) {
-                        //     $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' sudah ada, perbarui data');
-                        //     // $krs->update($krsData);
-                        // } else {
-                        Krs::create($krsData);
-                        $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' berhasil disimpan');
-                        // }
+                        if ($krs) {
+                            $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' sudah ada, perbarui data');
+                            // $krs->update($krsData);
+                        } else {
+                            Krs::create($krsData);
+                            $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' berhasil disimpan');
+                        }
                     }
                 }
             } catch (\Throwable $th) {

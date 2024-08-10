@@ -10,6 +10,8 @@ use App\Models\SisipanPeriode;
 use App\Models\UnitKerja;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\UnitKerjaHelper;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 use App\Models\Mahasiswa;
 use App\Models\Krs;
 
@@ -18,6 +20,10 @@ class SisipanAjuanController extends Controller
     // index
     public function index(Request $request)
     {
+        if (session('selected_role') == 'Mahasiswa') {
+            return redirect()->route('gate');
+        }
+
         try {
             // untuk dropdown unit kerja
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->get();
@@ -26,6 +32,8 @@ class SisipanAjuanController extends Controller
             //list unit kerja nama
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
 
+            $programstuditerpilih = null;
+
             if ($request->has('periodeTerpilih')) {
                 $periodeTerpilih = SisipanPeriode::with('sisipanperiodetarif')
                     ->where('id', $request->periodeTerpilih)
@@ -33,8 +41,6 @@ class SisipanAjuanController extends Controller
             } else {
                 $periodeTerpilih = SisipanPeriode::with('sisipanperiodetarif')
                     ->where('is_aktif', 1)
-                    // ->whereIn('unit_kerja_id', $unitKerjaIds)
-                    // ->orWhere('unit_kerja_id', session('selected_filter'))
                     ->orderBy('created_at', 'desc')
                     ->first();
             }
@@ -63,11 +69,11 @@ class SisipanAjuanController extends Controller
                 }
             }
 
-            if ($request->has('search')) {
-                if ($request->get('search') != null && $request->get('search') != '') {
-                    $query->where('nim', 'like', '%' . $request->get('search') . '%')
+            if ($request->has('search') && $request->get('search') != '') {
+                $query->where(function ($subQuery) use ($request) {
+                    $subQuery->where('nim', 'like', '%' . $request->get('search') . '%')
                         ->orWhere('va', 'like', '%' . $request->get('search') . '%');
-                }
+                });
             }
 
             $data_ajuan = $query->paginate($request->get('perPage', 10));
@@ -90,7 +96,7 @@ class SisipanAjuanController extends Controller
             return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
         }
     }
-
+    // store
     public function store(Request $request)
     {
         try {
@@ -140,6 +146,7 @@ class SisipanAjuanController extends Controller
             return back()->with('message', 'Terjadi kesalahan' . $e->getMessage());
         }
     }
+
 
     // store ajuan sisipan detail
     public function ajuanDetailStore(Request $request)
@@ -231,7 +238,7 @@ class SisipanAjuanController extends Controller
             }
 
             // delete juga sisipanajuandetail
-            // $data->sisipanajuandetail()->delete();
+            $data->sisipanajuandetail()->delete();
             $data->delete();
 
             // Kirim respon berhasil
@@ -448,11 +455,11 @@ class SisipanAjuanController extends Controller
                 }
             }
 
-            if ($request->has('search')) {
-                if ($request->get('search') != null && $request->get('search') != '') {
-                    $query->where('nim', 'ilike', '%' . $request->get('search') . '%')
-                        ->orWhere('va', 'ilike', '%' . $request->get('search') . '%');
-                }
+            if ($request->has('search') && $request->get('search') != '') {
+                $query->where(function ($subQuery) use ($request) {
+                    $subQuery->where('nim', 'like', '%' . $request->get('search') . '%')
+                        ->orWhere('va', 'like', '%' . $request->get('search') . '%');
+                });
             }
 
             if ($request->has('status_pembayaran')) {
@@ -480,8 +487,74 @@ class SisipanAjuanController extends Controller
                 ]
             );
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Data tidak ditemukan' . $e->getMessage()], 404);
-            // return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
+    }
+
+    // uploadRekeningKoran
+    public function uploadRekeningKoran(Request $request)
+    {
+        try {
+            // request validation excel file
+            $request->validate([
+                'sisipan_periode_id' => 'required|exists:sisipan_periode,id',
+                'file' => 'required|mimes:xls,xlsx'
+            ]);
+
+            // get file
+            $file = $request->file('file');
+            $data = Excel::toArray([], $file);
+
+            $sukses = 0;
+            $gagal = 0;
+
+            // Hapus baris pertama dan ke dua pada array untuk menghilangkan header
+            array_shift($data[0]);
+
+            foreach ($data[0] as $row) {
+                // Jika kolom A kosong maka lewati
+                if (empty($row[0]) || $row[0] == '' || $row[0] == null) {
+                    break;
+                } else {
+
+                    $sisipanAjuan = SisipanAjuan::where('va', 'ilike', '%' . $row[2] . '%')
+                        ->where('is_lunas', 0)
+                        ->where('sisipan_periode_id', $request->sisipan_periode_id)
+                        ->first();
+
+                    if ($sisipanAjuan) {
+                        if ($sisipanAjuan->jumlah_bayar + $row[3] == $sisipanAjuan->total_bayar) {
+                            $sisipanAjuan->update([
+                                'jumlah_bayar' => $sisipanAjuan->jumlah_bayar + $row[3],
+                                'status_pembayaran' => 'Lunas',
+                                'is_lunas' => 1,
+                                'tgl_pembayaran' => Carbon::createFromTimestamp(($row[4] - 25569) * 86400)->format('Y-m-d'),
+                                'verified_by' => auth()->user()->username,
+                            ]);
+
+                            $sisipanAjuan->sisipanajuandetail()->update([
+                                'status_ajuan' => 'Konfirmasi Kelas',
+                            ]);
+                        } else {
+                            $sisipanAjuan->update([
+                                'jumlah_bayar' => $sisipanAjuan->jumlah_bayar + $row[3],
+                                'status_pembayaran' => 'Menunggu Konfirmasi',
+                                'is_lunas' => 0,
+                                'tgl_pembayaran' => Carbon::createFromTimestamp(($row[4] - 25569) * 86400)->format('Y-m-d'),
+                                'verified_by' => auth()->user()->username,
+                            ]);
+                        }
+                        $sukses++;
+                    } else {
+                        // return back()->with('message', $row[2] . ' tidak ditemukan');
+                        $gagal++;
+                    }
+                }
+            }
+
+            return back()->with('message', $sukses . ' data berhasil dieksekusi, ' . $gagal . ' data gagal dieksekusi');
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
         }
     }
 

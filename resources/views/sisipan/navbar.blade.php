@@ -41,6 +41,22 @@
                                         </li>
                                     </ul>
                                 </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Pelaksanaan
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('sisipan.pelaksanaan.daftar-mk') }}">Daftar
+                                                Matakuliah</a>
+                                        </li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('sisipan.pelaksanaan.daftar-kelas') }}">Daftar
+                                                Kelas</a>
+                                        </li>
+                                    </ul>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link" aria-current="page"
                                         href="{{ route('sisipan.laporan') }}">Laporan</a>

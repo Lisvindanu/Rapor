@@ -4,7 +4,7 @@
 @endsection
 
 @section('navbar')
-    @include('remedial.navbar')
+    @include('sisipan.navbar')
 @endsection
 
 @section('konten')
@@ -13,7 +13,7 @@
             <div class="col-12">
                 <div class="judul-modul">
                     <span>
-                        <h3>Matakuliah Remedial</h3>
+                        <h3>Matakuliah Sisipan</h3>
                         <p>Detail Matakuliah</p>
                     </span>
                 </div>
@@ -33,18 +33,15 @@
                             </div>
                             <div class="col-8">
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <a href="{{ route('remedial.pelaksanaan.daftar-mk') }}" class="btn btn-secondary"
+                                    <a href="{{ route('sisipan.pelaksanaan.daftar-mk') }}" class="btn btn-secondary"
                                         type="button">Kembali</a>
-                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <button class="btn btn-primary" id="btnTambahSoal">Buat Kelas</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-body" style="display: flex;">
                         <div class="col-2">
-                            @include('remedial.pelaksanaan.daftar-mk.detail.sidebar')
+                            @include('sisipan.pelaksanaan.daftar-mk.detail.sidebar')
                         </div>
                         <div class="col-10">
                             <div class="sub-konten">
@@ -92,9 +89,7 @@
                                                             <th style="text-align: center;vertical-align: middle;">
                                                                 Dosen
                                                             </th>
-                                                            <th style="text-align: center;vertical-align: middle;">
-                                                                Aksi
-                                                            </th>
+                                                            <th>Jumlah Peserta</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="tabel-body">
@@ -118,12 +113,7 @@
                                                                     {{ $item->dosen->nama }}
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
-                                                                    <a href="#" class="btn btn-sm btn-warning edit">
-                                                                        <i class="fas fa-edit fa-xs"></i>
-                                                                    </a>
-                                                                    <a href="#" class="btn btn-sm btn-info detail">
-                                                                        <i class="fas fa-link fa-xs"></i>
-                                                                    </a>
+                                                                    {{ $item->jumlahpeserta }}
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -145,7 +135,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahDataLabel">Kelas Remedial</h5>
+                    <h5 class="modal-title" id="modalTambahDataLabel">Kelas Sisipan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -153,11 +143,11 @@
                         {{-- <div class="col-12"> --}}
                         <div class="col-5" style="margin: 15px">
                             <form id="formTambahDataPerMK"
-                                action="{{ route('remedial.pelaksanaan.daftar-kelas.tambahPerMK') }}" method="POST">
+                                action="{{ route('sisipan.pelaksanaan.daftar-kelas.tambahPerMK') }}" method="POST">
                                 @csrf
 
-                                <input type="text" name="remedial_periode_id"
-                                    value="{{ $matakuliah->remedialajuan->remedial_periode_id }}">
+                                <input type="text" name="sisipan_periode_id"
+                                    value="{{ $matakuliah->sisipanajuan->sisipan_periode_id }}">
                                 <input type="text" name="kodemk" value="{{ $matakuliah->idmk }}">
                                 <input type="text" name="kode_periode" value="{{ $matakuliah->kode_periode }}">
 
@@ -166,10 +156,10 @@
                         </div>
                         <div class="col-5" style="margin: 15px">
                             <form id="formTambahDataPerDosen"
-                                action="{{ route('remedial.pelaksanaan.daftar-kelas.tambahPerDosen') }}" method="POST">
+                                action="{{ route('sisipan.pelaksanaan.daftar-kelas.tambahPerDosen') }}" method="POST">
                                 @csrf
-                                <input type="text" name="remedial_periode_id"
-                                    value="{{ $matakuliah->remedialajuan->remedial_periode_id }}">
+                                <input type="text" name="sisipan_periode_id"
+                                    value="{{ $matakuliah->sisipanajuan->sisipan_periode_id }}">
                                 <input type="text" name="kodemk" value="{{ $matakuliah->idmk }}">
                                 <input type="text" name="kode_periode" value="{{ $matakuliah->kode_periode }}">
                                 <button type="submit" class="btn btn-primary" style="width: 200px">Kelas Per
@@ -194,7 +184,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalUpdateDataLabel">Update Kelas Remedial</h5>
+                    <h5 class="modal-title" id="modalUpdateDataLabel">Update Kelas Sisipan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

@@ -56,22 +56,9 @@
     <div class="sidebar-konten">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('*/pelaksanaan/daftar-mk/peserta*') ? 'active' : '' }}"
-                    href="{{ route('sisipan.pelaksanaan.daftar-mk.peserta', [
-                        'kode_periode' => $matakuliah->kode_periode,
-                        'idmk' => $matakuliah->idmk,
-                    ]) }}">
-                    Peserta Sisipan
-                </a>
-                <a class="nav-link {{ Request::is('*/pelaksanaan/daftar-mk/kelas*') ? 'active' : '' }}"
-                    href="{{ route('sisipan.pelaksanaan.daftar-mk.kelas', [
-                        'kode_periode' => $matakuliah->kode_periode,
-                        'idmk' => $matakuliah->idmk,
-                        'sisipan_periode_id' => $matakuliah->sisipanajuan->sisipan_periode_id,
-                    ]) }}">
+                <a class="nav-link {{ Request::is('*/pelaksanaan/daftar-kelas*') ? 'active' : '' }}" href="#">
                     Kelas Sisipan
                 </a>
-
             </li>
         </ul>
     </div>

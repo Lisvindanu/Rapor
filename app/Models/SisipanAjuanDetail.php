@@ -45,4 +45,17 @@ class SisipanAjuanDetail extends Model
     {
         return $this->belongsTo(Krs::class, 'krs_id', 'id');
     }
+
+    // dosen
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class, 'nip', 'nip');
+    }
+
+
+    // matakuliah
+    public function matakuliah()
+    {
+        return $this->belongsTo(KelasKuliah::class, 'idmk', 'kodemk');
+    }
 }

@@ -83,9 +83,13 @@ class RemedialPelaksanaanDaftarMKController extends Controller
                 }
             }
 
-            $ajuandetail = $query->select('kode_periode', 'idmk', DB::raw('COUNT(idmk) as total_peserta'))
-                ->groupBy('kode_periode', 'idmk')
+            // return response()->json($query->get());
+
+            $ajuandetail = $query->select('kode_periode', 'idmk', 'status_ajuan', DB::raw('COUNT(idmk) as total_peserta'))
+                ->groupBy('kode_periode', 'idmk', 'status_ajuan')
                 ->paginate($request->get('perPage', 10));
+
+            // return response()->json($ajuandetail);
 
             $total = $ajuandetail->total();
 

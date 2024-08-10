@@ -35,10 +35,16 @@ class RemedialKelas extends Model
         return $this->belongsTo(RemedialPeriode::class, 'remedial_periode_id', 'id');
     }
 
-    // matakuliah
+    // matakuliah ke remedial ajuan detail
     public function matakuliah()
     {
         return $this->belongsTo(RemedialAjuanDetail::class, 'kodemk', 'idmk');
+    }
+
+    // kelaskuliah
+    public function kelaskuliah()
+    {
+        return $this->belongsTo(KelasKuliah::class, 'kodemk', 'kodemk');
     }
 
     // nama dosen

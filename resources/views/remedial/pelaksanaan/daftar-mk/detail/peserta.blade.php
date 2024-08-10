@@ -252,10 +252,10 @@
                             <label for="editNamaDosen" class="form-label">Dosen Pengajar</label>
                             <input type="text" class="form-control typeahead" name="subjek_penilaian"
                                 id="editNamaDosen" placeholder="Masukkan NIP atau Nama Pegawai" value="">
-                            <input type="text" id="editNipDosen" name="editNipDosen" value="" required>
-                            <input type="text" id="editKelas" name="editKelas" value="" required>
-                            <input type="text" name="editIdMK" id='editIdMK' value="">
-                            <input type="text" name="editKodePeriode" id='editKodePeriode' value="">
+                            <input type="hidden" id="editNipDosen" name="editNipDosen" value="" required>
+                            <input type="hidden" id="editKelas" name="editKelas" value="" required>
+                            <input type="hidden" name="editIdMK" id='editIdMK' value="">
+                            <input type="hidden" name="editKodePeriode" id='editKodePeriode' value="">
                             {{-- <input type="text" name="editRemedialAjuanId" id="editRemedialAjuanId"> --}}
                         </div>
                     </div>

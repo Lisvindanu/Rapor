@@ -291,8 +291,12 @@
                     @csrf
                     <div class="modal-body">
                         <div class="row" style="margin-bottom: 10px">
-                            <p>Pastikan sudah melakukan sinkronasi terlebih dahulu, untuk mendapatkan nilai yang terbaru!
-                            </p>
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                Pastikan sudah melakukan sinkronasi terlebih dahulu, untuk mendapatkan nilai yang
+                                terbaru!
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
                         </div>
                         <table class="table table-bordered" id="tabelData">
                             <thead>
@@ -313,7 +317,7 @@
                             <tbody>
                                 @if (count($data_krs) == 0)
                                     <tr>
-                                        <td colspan="8" class="text-center">Tidak ada data</td>
+                                        <td colspan="11" class="text-center">Tidak ada data</td>
                                     </tr>
                                 @else
                                     @foreach ($data_krs as $item)

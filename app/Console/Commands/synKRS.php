@@ -29,7 +29,7 @@ class synKRS extends Command
      */
     public function handle()
     {
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTcyMjYyMzYxMywiZXhwIjoxNzIyNjI3MjEzfQ.sepq6fpIDbxzkngPZlDoXZl8fddUE98cjG1EJr9tkGo";
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTcyMzI2Njk0NSwiZXhwIjoxNzIzMjcwNTQ1fQ.0wF1RpD5jwcZOQbuFSJkUn_BTS12cP-v2S5vbTd-hTk";
         $limit = 1000;
 
         $formData = [];
@@ -37,11 +37,21 @@ class synKRS extends Command
 
         //IDperiodelist
         $periodelist = [
-            '20181', '20182', '20183',
-            '20191', '20192', '20193',
-            '20201', '20202', '20203',
-            '20211', '20212', '20213',
-            '20221', '20222', '20223',
+            '20181',
+            '20182',
+            '20183',
+            '20191',
+            '20192',
+            '20193',
+            '20201',
+            '20202',
+            '20203',
+            '20211',
+            '20212',
+            '20213',
+            '20221',
+            '20222',
+            '20223',
             '20231'
         ];
 
@@ -50,22 +60,23 @@ class synKRS extends Command
         // ];
 
         // kelaskuliah where in idperiode
-        $kelasKuliah = KelasKuliah::where('periodeakademik', '20181')
-            ->orWhere('periodeakademik', '20182')
-            ->orWhere('periodeakademik', '20183')
-            ->orWhere('periodeakademik', '20191')
-            ->orWhere('periodeakademik', '20192')
-            ->orWhere('periodeakademik', '20193')
-            ->orWhere('periodeakademik', '20201')
-            ->orWhere('periodeakademik', '20202')
-            ->orWhere('periodeakademik', '20203')
-            ->orWhere('periodeakademik', '20211')
-            ->orWhere('periodeakademik', '20212')
-            ->orWhere('periodeakademik', '20213')
-            ->orWhere('periodeakademik', '20221')
-            ->orWhere('periodeakademik', '20222')
-            ->orWhere('periodeakademik', '20223')
-            ->orWhere('periodeakademik', '20231')
+        $kelasKuliah = KelasKuliah::where('periodeakademik', '20232')
+            ->where('programstudi', 'Ilmu Hukum')
+            // ->orWhere('periodeakademik', '20182')
+            // ->orWhere('periodeakademik', '20183')
+            // ->orWhere('periodeakademik', '20191')
+            // ->orWhere('periodeakademik', '20192')
+            // ->orWhere('periodeakademik', '20193')
+            // ->orWhere('periodeakademik', '20201')
+            // ->orWhere('periodeakademik', '20202')
+            // ->orWhere('periodeakademik', '20203')
+            // ->orWhere('periodeakademik', '20211')
+            // ->orWhere('periodeakademik', '20212')
+            // ->orWhere('periodeakademik', '20213')
+            // ->orWhere('periodeakademik', '20221')
+            // ->orWhere('periodeakademik', '20222')
+            // ->orWhere('periodeakademik', '20223')
+            // ->orWhere('periodeakademik', '20231')
             ->get();
 
         foreach ($kelasKuliah as $kelas) {

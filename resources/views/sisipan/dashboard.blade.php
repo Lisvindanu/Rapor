@@ -90,20 +90,20 @@
             </div>
         </div>
 
-        {{-- <div class="" style="margin-top: 15px">
+        <div class="" style="margin-top: 15px">
             <div class="row justify-content-md-center">
                 <div class="col-3">
                     <div class="card bg-primary text-white mb-3">
                         <div class="card-body">
-                            <h3 class="card-title">120</h3>
-                            <p class="card-text">Pendaftar Sisipan</p>
+                            <h3 class="card-title">{{ $rekap['total_menunggu_pembayaran_semua'] }}</h3>
+                            <p class="card-text">Ajuan Sisipan</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="card bg-secondary text-white mb-3">
                         <div class="card-body">
-                            <h3 class="card-title">120</h3>
+                            <h3 class="card-title">{{ $rekap['total_menunggu_konfirmasi_semua'] }}</h3>
                             <p class="card-text">Menunggu Konfirmasi Pembayaran</p>
                         </div>
                     </div>
@@ -111,21 +111,21 @@
                 <div class="col-3">
                     <div class="card bg-success text-white mb-3">
                         <div class="card-body">
-                            <h3 class="card-title">120</h3>
-                            <p class="card-text">Peserta Lunas</p>
+                            <h3 class="card-title">{{ $rekap['total_lunas_semua'] }}</h3>
+                            <p class="card-text">Ajuan Lunas</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="card bg-danger text-white mb-3">
                         <div class="card-body">
-                            <h3 class="card-title">120</h3>
-                            <p class="card-text">Peserta Ditolak</p>
+                            <h3 class="card-title">{{ $rekap['total_ditolak_semua'] }}</h3>
+                            <p class="card-text">Ajuan Ditolak</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div> --}}
+        </div>
 
         <div class="" style="margin-top: 5px">
             <div class="row justify-content-md-center">
@@ -134,7 +134,7 @@
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
                                 <div class="col-6">
-                                    <h4>Rekapitulasi Ajuan Sisipan</h4>
+                                    <h4>Rekapitulasi Peserta Sisipan</h4>
                                     {{-- <div class="mb-3"> --}}
                                     {{-- <label for="querySearch" class="form-label">Rekapitulasi Ajuan Sisipan</label> --}}
                                     {{-- <div class="input-group">

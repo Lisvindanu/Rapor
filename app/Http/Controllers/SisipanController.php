@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UnitKerja;
 use App\Helpers\UnitKerjaHelper;
-use App\Models\SisipanPeriode;
 use App\Models\SisipanAjuan;
-
+use App\Models\SisipanPeriode;
 
 
 class SisipanController extends Controller
@@ -29,10 +28,8 @@ class SisipanController extends Controller
     public function dashboardFakultas(Request $request)
     {
         try {
-            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->get();
+            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
             $unitKerjaIds = UnitKerjaHelper::getUnitKerjaIds();
-
-            // return response()->json($unitKerjaIds);
 
             if ($request->has('periodeTerpilih')) {
                 $periodeTerpilih = SisipanPeriode::with('sisipanperiodetarif')
@@ -46,7 +43,9 @@ class SisipanController extends Controller
                     ->first();
             }
 
-            // return response()->json($periodeTerpilih);
+            if (!$periodeTerpilih) {
+                return redirect()->back()->with('message', 'Periode Sisipan tidak ditemukan');
+            }
 
             $daftar_periode = SisipanPeriode::with('periode')
                 ->whereIn('unit_kerja_id', $unitKerjaIds)
@@ -79,7 +78,7 @@ class SisipanController extends Controller
                     ];
                 });
 
-            // return response()->json($daftar_ajuan);
+            $rekap = $this->hitungRekapSemua($daftar_ajuan);
 
             return view(
                 'sisipan.dashboard',
@@ -88,10 +87,11 @@ class SisipanController extends Controller
                     'periodeTerpilih' => $periodeTerpilih,
                     'daftar_periode' => $daftar_periode,
                     'daftar_ajuan' => $daftar_ajuan,
+                    'rekap' => $rekap
                 ]
             );
-        } catch (\Throwable $th) {
-            //throw $th;
+        } catch (\Exception $e) {
+            return redirect()->back()->with('message', $e->getMessage());
         }
     }
 
@@ -145,6 +145,8 @@ class SisipanController extends Controller
                     ];
                 });
 
+            $rekap = $this->hitungRekapSemua($daftar_ajuan);
+
             return view(
                 'sisipan.dashboard',
                 [
@@ -152,10 +154,40 @@ class SisipanController extends Controller
                     'periodeTerpilih' => $periodeTerpilih,
                     'daftar_periode' => $daftar_periode,
                     'daftar_ajuan' => $daftar_ajuan,
+                    'rekap' => $rekap
                 ]
             );
         } catch (\Throwable $th) {
             //throw $th;
         }
+    }
+
+    // hitungRekapSemua
+    public function hitungRekapSemua($daftar_ajuan)
+    {
+        $rekap_semua = [];
+        $rekap_semua['total_tagihan_semua'] = 0;
+        $rekap_semua['total_bayar_semua'] = 0;
+        $rekap_semua['total_ajuan_semua'] = 0;
+        $rekap_semua['jumlah_ajuan_detail_semua'] = 0;
+        $rekap_semua['total_menunggu_pembayaran_semua'] = 0;
+        $rekap_semua['total_menunggu_konfirmasi_semua'] = 0;
+        $rekap_semua['total_lunas_semua'] = 0;
+        $rekap_semua['total_ditolak_semua'] = 0;
+
+        foreach ($daftar_ajuan as $key => $value) {
+            foreach ($value['data'] as $item) {
+                $rekap_semua['total_tagihan_semua'] += $item->total_bayar;
+                $rekap_semua['total_bayar_semua'] += $item->jumlah_bayar;
+                $rekap_semua['total_ajuan_semua'] += 1;
+                $rekap_semua['jumlah_ajuan_detail_semua'] += $item->sisipanajuandetail->count();
+                $rekap_semua['total_menunggu_pembayaran_semua'] += $item->status_pembayaran == 'Menunggu Pembayaran' ? 1 : 0;
+                $rekap_semua['total_menunggu_konfirmasi_semua'] += $item->status_pembayaran == 'Menunggu Konfirmasi' ? 1 : 0;
+                $rekap_semua['total_lunas_semua'] += $item->status_pembayaran == 'Lunas' ? 1 : 0;
+                $rekap_semua['total_ditolak_semua'] += $item->status_pembayaran == 'Ditolak' ? 1 : 0;
+            }
+        }
+
+        return $rekap_semua;
     }
 }

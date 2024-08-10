@@ -117,7 +117,8 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-
+                                        <button id="btn-upload-rekor" style="color:white" class="btn btn-primary"
+                                            type="submit">Upload Rekening Koran</button>
                                     </div>
                                 </div>
                             </div>
@@ -141,6 +142,9 @@
                                                 Program Studi
                                             </th>
                                             <th style="text-align: center;vertical-align: middle;">
+                                                Total Tagihan
+                                            </th>
+                                            <th style="text-align: center;vertical-align: middle;">
                                                 Total Bayar
                                             </th>
                                             <th>
@@ -161,6 +165,7 @@
                                                     <td>{{ $ajuan->mahasiswa->nama }}</td>
                                                     <td>{{ $ajuan->programstudi }}</td>
                                                     <td>Rp. {{ number_format($ajuan->total_bayar, 0, ',', '.') }}</td>
+                                                    <td>Rp. {{ number_format($ajuan->jumlah_bayar, 0, ',', '.') }}</td>
                                                     <td>
                                                         <a href="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
                                                             target="_blank">
@@ -178,7 +183,7 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="7">Tidak ada data</td>
+                                                <td colspan="9">Tidak ada data</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -191,7 +196,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel" aria-hidden="true">
+    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -263,19 +269,63 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Tambah Ajuan -->
+    <div class="modal fade" id="modalUploadRakor" tabindex="-1" aria-labelledby="modalUploadRakorLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalUploadRakorLabel">Upload File Rekening Koran Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadForm" action="{{ route('sisipan.ajuan.uploadRekeningKoran') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3 row">
+                            <div class="col-md-12">
+                                <label for="sisipan_periode_id" class="form-label">Periode Sisipan</label>
+                                <select id="periode-dropdown" class="form-select" aria-label="Default select example"
+                                    name="sisipan_periode_id">
+                                    <option value="{{ $periodeTerpilih->id }}">{{ $periodeTerpilih->nama_periode }}
+                                    </option>
+                                    @foreach ($daftar_periode as $periode)
+                                        @if ($periode->id != $periodeTerpilih->id)
+                                            <option value="{{ $periode->id }}">{{ $periode->nama_periode }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Upload File (Format: xlsx)</label>
+                            <input type="file" class="form-control" id="file" name="file" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-info" id="btn-template-dokumen"
+                                style="color: white">Template
+                                Dokumen</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js-tambahan')
     <script>
         $(document).ready(function() {
-
             $(document).on('click', '.btnDetailData', function() {
                 var id = $(this).data('id'); // Ambil ID dari atribut data-id
                 $('#sisipan_ajuan_id').val(id);
                 var buktiPembayaran = $(this).data('bukti'); // Ambil ID dari atribut data-id
 
                 $.ajax({
-                    url: '{{ url('/sisipan/ajuan/detail/data') }}/' + id,
+                    url: '{{ url('/sisipan/ajuan/detail/data/') }}/' + id,
                     type: 'GET',
                     success: function(response) {
                         // Isi modal dengan data dari response
@@ -349,7 +399,12 @@
                 }
             });
 
+            $('#btn-upload-rekor').on('click', function() {
+                $('#modalUploadRakor').modal('show');
+            });
+
         });
+
 
         function formatRupiah(number) {
             return new Intl.NumberFormat('id-ID', {
@@ -358,5 +413,9 @@
                 minimumFractionDigits: 0
             }).format(number);
         }
+
+        document.getElementById("btn-template-dokumen").addEventListener("click", function() {
+            window.location.href = "{{ route('export.downloadTemplateRekor') }}";
+        });
     </script>
 @endsection

@@ -380,6 +380,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::get('/daftar-ajuan', "SisipanAjuanController@daftarAjuan")->name('sisipan.ajuan.daftarAjuan');
             Route::post('/', "SisipanAjuanController@store")->name('sisipan.ajuan.store');
             Route::post('/upload-bukti-pembayaran', "SisipanAjuanController@uploadBukti")->name('sisipan.ajuan.uploadBukti');
+            Route::post('/upload-rekening-koran', "SisipanAjuanController@uploadRekeningKoran")->name('sisipan.ajuan.uploadRekeningKoran');
             Route::post('/verifikasi-ajuan', "SisipanAjuanController@verifikasiAjuan")->name('sisipan.ajuan.verifikasiAjuan');
             Route::delete('/{id}', "SisipanAjuanController@deleteAjax")->name('sisipan.ajuan.deleteAjax');
         });

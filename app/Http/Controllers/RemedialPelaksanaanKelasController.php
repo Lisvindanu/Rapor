@@ -90,6 +90,32 @@ class RemedialPelaksanaanKelasController extends Controller
         }
     }
 
+    // detailKelas
+    public function detailKelas($id)
+    {
+        try {
+            $kelas = RemedialKelas::with(['remedialperiode', 'kelaskuliah', 'dosen', 'matakuliah', 'peserta'])
+                ->where('id', $id)
+                ->first();
+
+            $peserta = RemedialKelasPeserta::with('mahasiswa')
+                ->where('remedial_kelas_id', $id)
+                ->get();
+
+            $total = $peserta->count();
+
+            return view(
+                'remedial.pelaksanaan.kelas.detail.kelas',
+                [
+                    'kelas' => $kelas,
+                    'data' => $peserta,
+                    'total' => $total,
+                ]
+            );
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
+    }
 
     public function tambahPerMKAjax(Request $request)
     {

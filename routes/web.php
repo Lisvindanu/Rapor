@@ -335,6 +335,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
             Route::prefix('daftar-kelas')->group(function () {
                 Route::get('/', "RemedialPelaksanaanKelasController@daftarKelas")->name('remedial.pelaksanaan.daftar-kelas');
+                Route::get('/{id}', "RemedialPelaksanaanKelasController@detailKelas")->name('remedial.pelaksanaan.daftar-kelas.detailKelas');
                 Route::post('/tambahPerMK', "RemedialPelaksanaanKelasController@tambahPerMKAjax")->name('remedial.pelaksanaan.daftar-kelas.tambahPerMK');
                 Route::post('/tambahPerDosen', "RemedialPelaksanaanKelasController@tambahPerDosenAjax")->name('remedial.pelaksanaan.daftar-kelas.tambahPerDosen');
             });

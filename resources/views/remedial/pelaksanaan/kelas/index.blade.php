@@ -147,9 +147,9 @@
                                                     <td>{{ $kelas->jumlah_peserta }}</td>
                                                     <td>{{ $kelas->kodeedlink ? $kelas->kodeedlink : 'Belum ada' }}</td>
                                                     <td>
-                                                        <a href="#" class="btn btn-primary btn-sm"><i
+                                                        <a href="{{ route('remedial.pelaksanaan.daftar-kelas.detailKelas', $kelas->id) }}"
+                                                            class="btn btn-primary btn-sm"><i
                                                                 class="fas fa-edit fa-xs"></i></a>
-
                                                     </td>
                                                 </tr>
                                             @endforeach

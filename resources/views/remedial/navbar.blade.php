@@ -51,7 +51,8 @@
                                                 href="{{ route('remedial.pelaksanaan.daftar-mk') }}">Daftar
                                                 Matakuliah</a>
                                         </li>
-                                        <li><a class="dropdown-item" href="#">Daftar
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('remedial.pelaksanaan.daftar-kelas') }}">Daftar
                                                 Kelas</a>
                                         </li>
                                     </ul>

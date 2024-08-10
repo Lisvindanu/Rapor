@@ -14,7 +14,7 @@
                 <div class="judul-modul">
                     <span>
                         <h3>Pelaksanaan Remedial</h3>
-                        <p>Daftar Matakuliah Remedial</p>
+                        <p>Daftar Kelas Remedial</p>
                     </span>
                 </div>
             </div>
@@ -123,12 +123,13 @@
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Nama Matakuliah
                                             </th>
+                                            <th>
+                                                Dosen Pengampu
+                                            </th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Jumlah Peserta
                                             </th>
-                                            <th>
-                                                Status Kelas
-                                            </th>
+                                            <th>Kode Edlink</th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Aksi
                                             </th>
@@ -136,43 +137,25 @@
                                     </thead>
                                     <tbody id="tabel-body" class="text-center">
                                         @if ($data->count() > 0)
-                                            @foreach ($data as $mk)
+                                            @foreach ($data as $kelas)
                                                 <tr style="text-align: center;vertical-align: middle;">
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $mk->matakuliah->programstudi }}</td>
-                                                    <td>{{ $mk->idmk }}</td>
-                                                    <td>{{ $mk->matakuliah->namamk }}</td>
-                                                    <td>{{ $mk->total_peserta }}</td>
-                                                    @if ($mk->status_ajuan == 'Diterima')
-                                                        <td><span class="badge bg-success">Diadakan</span>
-                                                        </td>
-                                                    @elseif ($mk->status_ajuan == 'Dibatalkan')
-                                                        <td><span class="badge bg-danger">{{ $mk->status_ajuan }}</span>
-                                                        </td>
-                                                    @else
-                                                        <td><span class="badge bg-warning">{{ $mk->status_ajuan }}</span>
-                                                        </td>
-                                                    @endif
+                                                    <td>{{ $kelas->programstudi }}</td>
+                                                    <td>{{ $kelas->kodemk }}</td>
+                                                    <td>{{ $kelas->kelaskuliah->namamk }}</td>
+                                                    <td>{{ $kelas->dosen->nama }}</td>
+                                                    <td>{{ $kelas->jumlah_peserta }}</td>
+                                                    <td>{{ $kelas->kodeedlink ? $kelas->kodeedlink : 'Belum ada' }}</td>
                                                     <td>
-                                                        <form
-                                                            action="{{ route('remedial.pelaksanaan.daftar-mk.peserta') }}"
-                                                            method="get">
-                                                            @csrf
-                                                            <input type="hidden" name="idmk"
-                                                                value="{{ $mk->idmk }}">
-                                                            <input type="hidden" name="kode_periode"
-                                                                value="{{ $mk->kode_periode }}">
-                                                            <input type="hidden" name="programstudi"
-                                                                value="{{ $mk->matakuliah->programstudi }}">
-                                                            <button type="submit" class="btn btn-primary btn-sm"> <i
-                                                                    class="fas fa-edit fa-xs"></i></button>
-                                                        </form>
+                                                        <a href="#" class="btn btn-primary btn-sm"><i
+                                                                class="fas fa-edit fa-xs"></i></a>
+
                                                     </td>
                                                 </tr>
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="8">Tidak ada data.</td>
+                                                <td colspan="10">Tidak ada data.</td>
                                             </tr>
                                         @endif
                                     </tbody>

@@ -90,9 +90,6 @@
                                                                 Dosen
                                                             </th>
                                                             <th>Jumlah Peserta</th>
-                                                            <th style="text-align: center;vertical-align: middle;">
-                                                                Aksi
-                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="tabel-body">
@@ -117,11 +114,6 @@
                                                                 </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $item->jumlahpeserta }}
-                                                                </td>
-                                                                <td style="text-align: center;vertical-align: middle;">
-                                                                    <a href="#" class="btn btn-sm btn-info detail">
-                                                                        <i class="fas fa-link fa-xs"></i>
-                                                                    </a>
                                                                 </td>
                                                             </tr>
                                                         @endforeach

@@ -200,8 +200,8 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td>{{ $mahasiswa->old_nnumerik }}</td>
-                                <td>{{ $mahasiswa->old_nhuruf }}</td>
+                                <td>{{ $mahasiswa->old_nnumerik ?? '-' }}</td>
+                                <td>{{ $mahasiswa->old_nhuruf ?? '-' }}</td>
                                 <td></td>
                                 <td></td>
                             </tr>

@@ -187,7 +187,7 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="6">
-                                                    <details>
+                                                    <details open="">
                                                         <summary style="text-align: left">Lihat Detail</summary>
                                                         <table class="table table-bordered">
                                                             <thead>

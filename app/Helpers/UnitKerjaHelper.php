@@ -28,6 +28,17 @@ class UnitKerjaHelper
         return $unitKerjaNames;
     }
 
+    public static function getUnitKerjaNamesId($id)
+    {
+        $selectedUnitKerjaId = $id;
+        $datafilter = UnitKerja::with('childUnit')->where('id', $selectedUnitKerjaId)->get();
+        $unitKerjaNames = $datafilter->pluck('nama_unit')->toArray();
+        foreach ($datafilter as $unitKerja) {
+            $unitKerjaNames = array_merge($unitKerjaNames, $unitKerja->childUnit->pluck('nama_unit')->toArray());
+        }
+        return $unitKerjaNames;
+    }
+
     public static function getUnitKerja()
     {
         $selectedUnitKerjaId = session('selected_filter');

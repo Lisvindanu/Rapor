@@ -4,7 +4,7 @@
 @endsection
 
 @section('navbar')
-    @include('remedial.navbar')
+    @include('remedial.mahasiswa.navbar')
 @endsection
 
 @section('konten')
@@ -14,7 +14,7 @@
                 <div class="judul-modul">
                     <span>
                         <h3>Pelaksanaan Remedial</h3>
-                        <p>Daftar Matakuliah Remedial</p>
+                        <p>Daftar Kelas Remedial</p>
                     </span>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                 <div class="container">
                     <div class="card">
                         <div class="card-body">
-                            <form id="formPeriode" action="{{ route('remedial.pelaksanaan.daftar-mk') }}" method="GET">
+                            <form id="formPeriode" action="{{ route('remedial.pelaksanaan.daftar-kelas') }}" method="GET">
                                 @csrf
                                 <div class="col-12" style="padding: 10px">
                                     <div class="row align-items-center">
@@ -61,39 +61,6 @@
                                             </select>
                                         </div>
                                         <div class="col-2">
-                                            <label for="programStudi" class="col-form-label"><strong>Program Studi
-                                                </strong></label>
-                                        </div>
-                                        <div class="col-4">
-                                            @include('komponen.dropdown-unitkerja')
-                                        </div>
-                                        <div class="col-2 mt-3">
-                                            <label for="search" class="col-form-label"><strong>Cari Matakuliah
-                                                </strong></label>
-                                        </div>
-                                        <div class="col-4 mt-3">
-                                            <input type="text" class="form-control" id="search"
-                                                placeholder="Cari berdasarkan Kode / Nama MK" name="search"
-                                                value="{{ old('search') }}">
-                                        </div>
-
-                                        <div class="col-2 mt-3">
-                                            <label for="search" class="col-form-label"><strong>Status Kelas
-                                                </strong></label>
-                                        </div>
-                                        <div class="col-4 mt-3">
-                                            <select id="status_ajuan" class="form-select"
-                                                aria-label="Default select example" name="status_ajuan">
-                                                <option value="all">Semua Status</option>
-                                                <option value="Konfirmasi Kelas">Konfirmasi Kelas</option>
-                                                <option value="Diterima">Diadakan</option>
-                                                <option value="Dibatalkan">Dibatalkan</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-2 mt-3">
-                                        </div>
-                                        <div class="col-2 mt-3">
                                             <button id="btn-cari-filter" style="width: 100px; color:white"
                                                 class="btn btn-primary" type="submit">Cari</button>
                                         </div>
@@ -131,62 +98,35 @@
                                                 No
                                             </th>
                                             <th style="text-align: center;vertical-align: middle;">
-                                                Program Studi
+                                                Kode MK
                                             </th>
-                                            <th>Kode</th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Nama Matakuliah
                                             </th>
-                                            <th style="text-align: center;vertical-align: middle;">
-                                                Jumlah Peserta
-                                            </th>
                                             <th>
-                                                Status Kelas
+                                                Dosen Pengampu
                                             </th>
+                                            <th>Kode Edlink</th>
                                             <th style="text-align: center;vertical-align: middle;">
-                                                Aksi
+                                                Catatan
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody id="tabel-body" class="text-center">
                                         @if ($data->count() > 0)
-                                            @foreach ($data as $mk)
+                                            @foreach ($data as $kelas)
                                                 <tr style="text-align: center;vertical-align: middle;">
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $mk->matakuliah->programstudi }}</td>
-                                                    <td>{{ $mk->idmk }}</td>
-                                                    <td>{{ $mk->matakuliah->namamk }}</td>
-                                                    <td>{{ $mk->total_peserta }}</td>
-                                                    @if ($mk->status_ajuan == 'Diterima')
-                                                        <td><span class="badge bg-success">Diadakan</span>
-                                                        </td>
-                                                    @elseif ($mk->status_ajuan == 'Dibatalkan')
-                                                        <td><span class="badge bg-danger">{{ $mk->status_ajuan }}</span>
-                                                        </td>
-                                                    @else
-                                                        <td><span class="badge bg-warning">{{ $mk->status_ajuan }}</span>
-                                                        </td>
-                                                    @endif
-                                                    <td>
-                                                        <form
-                                                            action="{{ route('remedial.pelaksanaan.daftar-mk.peserta') }}"
-                                                            method="get">
-                                                            @csrf
-                                                            <input type="hidden" name="idmk"
-                                                                value="{{ $mk->idmk }}">
-                                                            <input type="hidden" name="kode_periode"
-                                                                value="{{ $mk->kode_periode }}">
-                                                            <input type="hidden" name="programstudi"
-                                                                value="{{ $mk->matakuliah->programstudi }}">
-                                                            <button type="submit" class="btn btn-primary btn-sm"> <i
-                                                                    class="fas fa-edit fa-xs"></i></button>
-                                                        </form>
-                                                    </td>
+                                                    <td>{{ $kelas->remedialKelas->kodemk }}</td>
+                                                    <td>{{ $kelas->remedialKelas->kelaskuliah->namamk }}</td>
+                                                    <td>{{ $kelas->remedialKelas->dosen->nama }}</td>
+                                                    <td>{{ $kelas->remedialKelas->kode_edlink }}</td>
+                                                    <td>{{ $kelas->remedialKelas->catatan }}</td>
                                                 </tr>
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="8">Tidak ada data.</td>
+                                                <td colspan="10">Tidak ada data.</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -199,8 +139,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">

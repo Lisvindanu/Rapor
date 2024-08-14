@@ -19,6 +19,7 @@ class RemedialKelas extends Model
         'kodemk',
         'nip',
         'kode_edlink',
+        'catatan'
     ];
 
     //append jumlah peserta

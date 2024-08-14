@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\DataKelasExport;
 use App\Models\RemedialAjuan;
 use App\Models\RemedialAjuanDetail;
 use App\Models\RemedialKelas;
@@ -10,13 +11,20 @@ use App\Models\RemedialKelasPeserta;
 use App\Models\RemedialPeriode;
 use App\Models\UnitKerja;
 use App\Helpers\UnitKerjaHelper;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RekeningKoranExport;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RemedialPelaksanaanKelasController extends Controller
 {
     public function daftarKelas(Request $request)
     {
         try {
+            if ($request->has('action') && $request->action === 'download') {
+                return $this->downloadDataKelas($request);
+            }
+
             // untuk dropdown unit kerja
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
@@ -40,7 +48,10 @@ class RemedialPelaksanaanKelasController extends Controller
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
             $query = RemedialKelas::with(['remedialperiode', 'kelaskuliah', 'dosen'])
-                ->where('remedial_periode_id', $periodeTerpilih->id);
+                ->where('remedial_periode_id', $periodeTerpilih->id)
+                ->whereHas('matakuliah', function ($query) use ($unitKerjaNames) {
+                    $query->whereIn('programstudi', $unitKerjaNames);
+                });
 
             if ($request->filled('programstudi')) {
 
@@ -71,7 +82,6 @@ class RemedialPelaksanaanKelasController extends Controller
             $daftarkelas = $query->paginate($request->get('perPage', 10));
 
             // return response()->json($daftarkelas);
-
             $total = $daftarkelas->total();
 
             return view(
@@ -302,6 +312,119 @@ class RemedialPelaksanaanKelasController extends Controller
                 'message' => 'Data gagal disimpan',
                 'data' => $e->getMessage(),
             ]);
+        }
+    }
+
+    // download data kelas excell
+    public function downloadDataKelas(Request $request)
+    {
+        try {
+            $request->validate([
+                'periodeTerpilih' => 'required',
+                'programstudi' => 'required',
+            ]);
+
+            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesId($request->programstudi);
+
+            $query = RemedialKelas::with(['remedialperiode', 'kelaskuliah', 'dosen'])
+                ->where('remedial_periode_id', $request->periodeTerpilih)
+                ->whereIn('programstudi', $unitKerjaNames);
+
+            $daftarkelas = $query->get();
+
+            return Excel::download(new DataKelasExport($daftarkelas), 'data_kelas.xlsx');
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
+    }
+
+    public function uploadDataKelas(Request $request)
+    {
+        try {
+            $request->validate([
+                'remedial_periode_id' => 'required|exists:remedial_periode,id',
+                'file' => 'required|mimes:xls,xlsx'
+            ]);
+
+            $file = $request->file('file');
+            $data = Excel::toArray([], $file);
+
+            $sukses = 0;
+            $gagal = 0;
+
+            array_shift($data[0]);
+
+            foreach ($data[0] as $row) {
+                // Jika kolom A kosong maka lewati
+                if (empty($row[0]) || $row[0] == '' || $row[0] == null) {
+                    break;
+                } else {
+
+                    $remedialKelas = RemedialKelas::where('id', 'ilike', '%' . $row[0] . '%')
+                        ->where('remedial_periode_id', $request->remedial_periode_id)
+                        ->first();
+
+                    if ($remedialKelas) {
+                        $kodeedlink = $row[9] ?? '';
+
+                        $remedialKelas->update([
+                            'kode_edlink' => $kodeedlink,
+                            'catatan' => $row[10],
+                        ]);
+                        $sukses++;
+                    } else {
+                        $gagal++;
+                    }
+                }
+            }
+
+            return back()->with('message', $sukses . ' data berhasil dieksekusi, ' . $gagal . ' data gagal dieksekusi');
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
+    }
+
+    // printPresensi
+    public function printPresensi($id)
+    {
+        try {
+            $kelas = RemedialKelas::with(['remedialperiode', 'kelaskuliah', 'dosen', 'matakuliah', 'peserta'])
+                ->where('id', $id)
+                ->first();
+
+            // return response()->json($kelas);
+
+            $peserta = DB::table('remedial_kelas_peserta')
+                ->select('remedial_kelas_peserta.id', 'mhs.nim as mhs_nim', 'mhs.nama as mhs_nama', 'rp.kode_periode as kode_periode', 'krs.nhuruf as old_nhuruf', 'krs.nnumerik as old_nnumerik')
+                ->leftJoin('mahasiswa as mhs', 'remedial_kelas_peserta.nim', '=', 'mhs.nim')
+                ->leftJoin('remedial_kelas as rk', 'remedial_kelas_peserta.remedial_kelas_id', '=', 'rk.id')
+                ->leftJoin('remedial_periode as rp', 'rk.remedial_periode_id', '=', 'rp.id')
+                ->leftJoin('krs', function ($join) {
+                    $join->on('remedial_kelas_peserta.nim', '=', 'krs.nim')
+                        ->whereColumn('rk.kodemk', 'krs.idmk')
+                        ->whereColumn('rp.kode_periode', 'krs.idperiode');
+                })
+                ->where('remedial_kelas_id', $id)
+                ->groupBy('remedial_kelas_peserta.id', 'mhs.nim', 'mhs.nama', 'rp.kode_periode', 'krs.nhuruf', 'krs.nnumerik')
+                ->orderBy('mhs.nim')
+                ->get();
+
+            $peserta = $peserta->unique('id');
+
+            // return response()->json($peserta);
+
+            $total = $peserta->count();
+
+            $pdf = PDF::loadView('pdf.presensi-kelas', [
+                'kelas' => $kelas,
+                'data' => $peserta,
+                'total' => $total,
+            ]);
+            $pdf->setPaper('A4', 'potrait');
+
+            return $pdf->download($id . '.pdf');
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
         }
     }
 }

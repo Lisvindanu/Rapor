@@ -8,11 +8,11 @@
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li class="nav-item">
                                     <a class="nav-link active" aria-current="page"
-                                        href="{{ route('remedial') }}">Dashboard</a>
+                                        href="{{ route('sisipan') }}">Dashboard</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link active" aria-current="page"
-                                        href="{{ route('remedial') }}">Kelas</a>
+                                        href="{{ route('sisipan.mahasiswa.getKelas') }}">Kelas</a>
                                 </li>
                             </ul>
                         </div>

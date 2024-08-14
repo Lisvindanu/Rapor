@@ -393,6 +393,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::prefix('mahasiswa')->group(function () {
             Route::get('/', "SisipanMahasiswaController@index")->name('sisipan.mahasiswa');
             Route::get('/create', "SisipanMahasiswaController@create")->name('sisipan.mahasiswa.create');
+            Route::get('/kelas', "SisipanMahasiswaController@getKelas")->name('sisipan.mahasiswa.getKelas');
             Route::get('/{id}', "SisipanMahasiswaController@edit")->name('sisipan.mahasiswa.edit');
             Route::post('/periode', "SisipanMahasiswaController@index")->name('sisipan.mahasiswa.periode');
             Route::post('/', "SisipanMahasiswaController@store")->name('sisipan.mahasiswa.store');

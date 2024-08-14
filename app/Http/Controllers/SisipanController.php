@@ -20,6 +20,8 @@ class SisipanController extends Controller
             return $this->dashboardFakultas(new Request());
         } elseif (session('selected_role') == 'Admin Prodi') {
             return $this->dashboardProdi(new Request());
+        } elseif (session('selected_role') == 'DHMD') {
+            return redirect()->route('sisipan.pelaksanaan');
         } else {
             return redirect()->route('login');
         }

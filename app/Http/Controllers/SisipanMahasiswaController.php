@@ -7,6 +7,8 @@ use App\Models\SisipanPeriode;
 use App\Models\Krs;
 use App\Models\SisipanAjuan;
 use App\Helpers\UnitKerjaHelper;
+use App\Models\UnitKerja;
+use App\Models\SisipanKelasPeserta;
 
 class SisipanMahasiswaController extends Controller
 {
@@ -93,5 +95,69 @@ class SisipanMahasiswaController extends Controller
             'data_krs' => $data_krs,
             'data_ajuan' => $data_ajuan,
         ]);
+    }
+
+
+    // fungsi getKelas
+    public function getKelas(Request $request)
+    {
+        try {
+            $user = auth()->user()->mahasiswa;
+            // return response()->json($user);
+            // untuk dropdown unit kerja
+            $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
+            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
+
+            if ($request->has('periodeTerpilih')) {
+                $periodeTerpilih = SisipanPeriode::with('sisipanperiodetarif')
+                    ->where('id', $request->periodeTerpilih)
+                    ->first();
+            } else {
+                $periodeTerpilih = SisipanPeriode::with('sisipanperiodetarif')
+                    ->where('is_aktif', 1)
+                    ->where('unit_kerja_id', $unitKerja->id)
+                    ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+            }
+
+            $daftar_periode = SisipanPeriode::with('periode')
+                ->where('unit_kerja_id', $unitKerja->id)
+                ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
+                ->orderBy('created_at', 'desc')->take(10)->get();
+
+            $query = SisipanKelasPeserta::with(['sisipanKelas', 'sisipanKelas.kelaskuliah', 'sisipanKelas.dosen'])
+                ->where('nim', $user->nim)
+                ->whereHas('sisipanKelas', function ($query) use ($periodeTerpilih) {
+                    $query->where('sisipan_periode_id', $periodeTerpilih->id);
+                });
+
+            if ($request->filled('search')) {
+                $query->whereHas('matakuliah', function ($query) use ($request) {
+                    $query->where('namamk', 'ilike', '%' . $request->get('search') . '%')
+                        ->orWhere('kodemk', 'ilike', '%' . $request->get('search') . '%');
+                });
+            }
+
+            $pesertaKelas = $query->paginate($request->get('perPage', 10));
+
+            // return response()->json($pesertaKelas);
+
+            $total = $pesertaKelas->total();
+
+            return view(
+                'sisipan.mahasiswa.kelas',
+                [
+                    'periodeTerpilih' => $periodeTerpilih,
+                    'programstuditerpilih' => $programstuditerpilih ?? null,
+                    'daftar_periode' => $daftar_periode,
+                    'unitkerja' => $unitKerja,
+                    'data' => $pesertaKelas,
+                    'total' => $total,
+                ]
+            );
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
     }
 }

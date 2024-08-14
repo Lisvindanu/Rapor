@@ -24,37 +24,47 @@
                                         </ul>
                                     </li>
                                 @endif
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        Ajuan
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        @if (session('selected_role') == 'Admin' || session('selected_role') == 'Admin Fakultas')
+
+                                @if (session('selected_role') == 'Admin' ||
+                                        session('selected_role') == 'Admin Fakultas' ||
+                                        session('selected_role') == 'Admin Prodi')
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            Ajuan
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                            @if (session('selected_role') == 'Admin' || session('selected_role') == 'Admin Fakultas')
+                                                <li><a class="dropdown-item"
+                                                        href="{{ route('remedial.ajuan') }}">Verifikasi</a>
+                                                </li>
+                                            @endif
                                             <li><a class="dropdown-item"
-                                                    href="{{ route('remedial.ajuan') }}">Verifikasi</a>
+                                                    href="{{ route('remedial.ajuan.daftarAjuan') }}">Daftar
+                                                    Ajuan</a>
                                             </li>
-                                        @endif
-                                        <li><a class="dropdown-item"
-                                                href="{{ route('remedial.ajuan.daftarAjuan') }}">Daftar
-                                                Ajuan</a>
-                                        </li>
-                                    </ul>
-                                </li>
+                                        </ul>
+                                    </li>
+                                @endif
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         Pelaksanaan
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><a class="dropdown-item"
-                                                href="{{ route('remedial.pelaksanaan.daftar-mk') }}">Daftar
-                                                Matakuliah</a>
-                                        </li>
+                                        @if (session('selected_role') == 'Admin' ||
+                                                session('selected_role') == 'Admin Fakultas' ||
+                                                session('selected_role') == 'Admin Prodi')
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('remedial.pelaksanaan.daftar-mk') }}">Daftar
+                                                    Matakuliah</a>
+                                            </li>
+                                        @endif
                                         <li><a class="dropdown-item"
                                                 href="{{ route('remedial.pelaksanaan.daftar-kelas') }}">Daftar
                                                 Kelas</a>
                                         </li>
+
                                     </ul>
                                 </li>
                                 <li class="nav-item">

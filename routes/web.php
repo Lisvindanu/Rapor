@@ -298,6 +298,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::prefix('mahasiswa')->group(function () {
             Route::get('/', "RemedialMahasiswaController@index")->name('remedial.mahasiswa');
             Route::get('/create', "RemedialMahasiswaController@create")->name('remedial.mahasiswa.create');
+            Route::get('/kelas', "RemedialMahasiswaController@getKelas")->name('remedial.mahasiswa.getKelas');
             Route::get('/{id}', "RemedialMahasiswaController@edit")->name('remedial.mahasiswa.edit');
             Route::post('/periode', "RemedialMahasiswaController@index")->name('remedial.mahasiswa.periode');
             Route::post('/', "RemedialMahasiswaController@store")->name('remedial.mahasiswa.store');
@@ -335,7 +336,9 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
             Route::prefix('daftar-kelas')->group(function () {
                 Route::get('/', "RemedialPelaksanaanKelasController@daftarKelas")->name('remedial.pelaksanaan.daftar-kelas');
+                Route::get('/print-presensi/{id}', "RemedialPelaksanaanKelasController@printPresensi")->name('remedial.pelaksanaan.daftar-kelas.printPresensi');
                 Route::get('/{id}', "RemedialPelaksanaanKelasController@detailKelas")->name('remedial.pelaksanaan.daftar-kelas.detailKelas');
+                Route::post('/upload-data-kelas', "RemedialPelaksanaanKelasController@uploadDataKelas")->name('remedial.pelaksanaan.daftar-kelas.uploadDataKelas');
                 Route::post('/tambahPerMK', "RemedialPelaksanaanKelasController@tambahPerMKAjax")->name('remedial.pelaksanaan.daftar-kelas.tambahPerMK');
                 Route::post('/tambahPerDosen', "RemedialPelaksanaanKelasController@tambahPerDosenAjax")->name('remedial.pelaksanaan.daftar-kelas.tambahPerDosen');
             });

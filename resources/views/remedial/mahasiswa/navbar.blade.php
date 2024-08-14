@@ -12,7 +12,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link active" aria-current="page"
-                                        href="{{ route('remedial') }}">Kelas</a>
+                                        href="{{ route('remedial.mahasiswa.getKelas') }}">Kelas</a>
                                 </li>
                             </ul>
                         </div>

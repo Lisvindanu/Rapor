@@ -183,7 +183,7 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="6">
-                                                    <details>
+                                                    <details open="">
                                                         <summary style="text-align: left">Lihat Detail</summary>
                                                         <table class="table table-bordered">
                                                             <thead>
@@ -193,7 +193,8 @@
                                                                     <th>Matakuliah</th>
                                                                     <th>Nama Kelas</th>
                                                                     <th>Dosen</th>
-                                                                    <th>Harga Sisipan</th>
+                                                                    <th>Harga Remedial</th>
+                                                                    <th>Status Kelas</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -207,6 +208,19 @@
                                                                         <td>Rp.
                                                                             {{ number_format($detail->harga_sisipan, 0, ',', '.') }}
                                                                         </td>
+                                                                        @if ($detail->status_ajuan == 'Diterima')
+                                                                            <td><span
+                                                                                    class="badge bg-success">Diadakan</span>
+                                                                            </td>
+                                                                        @elseif ($detail->status_ajuan == 'Dibatalkan')
+                                                                            <td><span
+                                                                                    class="badge bg-danger">{{ $detail->status_ajuan }}</span>
+                                                                            </td>
+                                                                        @else
+                                                                            <td><span
+                                                                                    class="badge bg-warning">{{ $detail->status_ajuan }}</span>
+                                                                            </td>
+                                                                        @endif
                                                                     </tr>
                                                                 @endforeach
                                                             </tbody>

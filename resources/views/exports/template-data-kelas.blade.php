@@ -28,7 +28,12 @@
             <tr>
                 <td>{{ $item->id }}</td>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->remedialperiode->nama_periode }}</td>
+                @if ($item->remedialperiode)
+                    <td>{{ $item->remedialperiode->nama_periode }}</td>
+                @endif
+                @if ($item->sisipanperiode)
+                    <td>{{ $item->sisipanperiode->nama_periode }}</td>
+                @endif
                 <td>{{ $item->programstudi }}</td>
                 <td>{{ $item->kodemk }}</td>
                 <td>{{ $item->kelaskuliah->namamk }}</td>

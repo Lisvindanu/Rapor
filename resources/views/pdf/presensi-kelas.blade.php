@@ -137,7 +137,15 @@
                 <section class="judul-konten">
                     <h4 style="text-align: center;margin-top:10px;">DAFTAR HADIR<br>
                     </h4>
-                    <p style="text-align: center;margin-top:-20px">{{ $kelas->remedialperiode->nama_periode }}
+                    <p style="text-align: center;margin-top:-20px">
+                        @if ($kelas->sisipanperiode)
+                            {{ $kelas->sisipanperiode->nama_periode }}
+                        @endif
+
+                        @if ($kelas->remedialperiode)
+                            {{ $kelas->remedialperiode->nama_periode }}
+                        @endif
+                    </p>
                 </section>
                 <table>
                     <tr>
@@ -209,7 +217,15 @@
                     <h4 style="text-align: center;margin-top:10px;">LEMBAR BERITA ACARA PERKULIAHAN<br>
                     </h4>
 
-                    <p style="text-align: center;margin-top:-20px">{{ $kelas->remedialperiode->nama_periode }}
+                    <p style="text-align: center;margin-top:-20px">
+                        @if ($kelas->sisipanperiode)
+                            {{ $kelas->sisipanperiode->nama_periode }}
+                        @endif
+
+                        @if ($kelas->remedialperiode)
+                            {{ $kelas->remedialperiode->nama_periode }}
+                        @endif
+                    </p>
                 </section>
                 <table>
                     <tr>
@@ -252,7 +268,15 @@
                 <section class="judul-konten">
                     <h4 style="text-align: center;margin-top:10px;">LEMBAR PENGESAHAN<br>
                     </h4>
-                    <p style="text-align: center;margin-top:-20px">{{ $kelas->remedialperiode->nama_periode }}
+                    <p style="text-align: center;margin-top:-20px">
+                        @if ($kelas->sisipanperiode)
+                            {{ $kelas->sisipanperiode->nama_periode }}
+                        @endif
+
+                        @if ($kelas->remedialperiode)
+                            {{ $kelas->remedialperiode->nama_periode }}
+                        @endif
+                    </p>
                 </section>
                 <p style="float: right;margin-top:0px;margin-right: 60px">............. , .........................
                     2024</p>

@@ -78,6 +78,20 @@
                                         </div>
 
                                         <div class="col-2 mt-3">
+                                            <label for="search" class="col-form-label"><strong>Status Kelas
+                                                </strong></label>
+                                        </div>
+                                        <div class="col-4 mt-3">
+                                            <select id="status_ajuan" class="form-select"
+                                                aria-label="Default select example" name="status_ajuan">
+                                                <option value="all">Semua Status</option>
+                                                <option value="Konfirmasi Kelas">Konfirmasi Kelas</option>
+                                                <option value="Diterima">Diadakan</option>
+                                                <option value="Dibatalkan">Dibatalkan</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-2 mt-3">
                                         </div>
                                         <div class="col-2 mt-3">
                                             <button id="btn-cari-filter" style="width: 100px; color:white"
@@ -184,7 +198,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel" aria-hidden="true">
+    <div class="modal fade" id="modalDetailData" tabindex="-1" aria-labelledby="modalDetailDataLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">

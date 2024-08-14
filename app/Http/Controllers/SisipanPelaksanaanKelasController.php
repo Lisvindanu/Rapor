@@ -407,8 +407,6 @@ class SisipanPelaksanaanKelasController extends Controller
                 ->orderBy('mhs.nim')
                 ->get();
 
-            return response()->json($peserta);
-
             $peserta = $peserta->unique('id');
 
             // return response()->json($peserta);

@@ -79,9 +79,12 @@
 
                                         <div class="col-2 mt-3">
                                         </div>
-                                        <div class="col-2 mt-3">
+                                        <div class="col-4 mt-3">
                                             <button id="btn-cari-filter" style="width: 100px; color:white"
-                                                class="btn btn-primary" type="submit">Cari</button>
+                                                class="btn btn-primary" type="submit" name="action"
+                                                value="search">Cari</button>
+                                            <button id="btn-download" style="color:white" class="btn btn-success"
+                                                type="submit" name="action" value="download">Unduh Data Kelas</button>
                                         </div>
                                     </div>
                                 </div>
@@ -103,7 +106,8 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-
+                                        <button id="btn-upload-kelas" style="color:white" class="btn btn-primary"
+                                            type="submit">Upload Data Kelas</button>
                                     </div>
                                 </div>
                             </div>
@@ -130,6 +134,7 @@
                                                 Jumlah Peserta
                                             </th>
                                             <th>Kode Edlink</th>
+                                            <th>Catatan</th>
                                             <th style="text-align: center;vertical-align: middle;">
                                                 Aksi
                                             </th>
@@ -145,11 +150,15 @@
                                                     <td>{{ $kelas->kelaskuliah->namamk }}</td>
                                                     <td>{{ $kelas->dosen->nama }}</td>
                                                     <td>{{ $kelas->jumlah_peserta }}</td>
-                                                    <td>{{ $kelas->kodeedlink ? $kelas->kodeedlink : 'Belum ada' }}</td>
+                                                    <td>{{ $kelas->kode_edlink ? $kelas->kode_edlink : 'Belum ada' }}</td>
+                                                    <td>{{ $kelas->catatan ? $kelas->catatan : '-' }}</td>
                                                     <td>
                                                         <a href="{{ route('sisipan.pelaksanaan.daftar-kelas.detailKelas', $kelas->id) }}"
                                                             class="btn btn-primary btn-sm"><i
                                                                 class="fas fa-edit fa-xs"></i></a>
+                                                        <a href="{{ route('sisipan.pelaksanaan.daftar-kelas.printPresensi', $kelas->id) }}"
+                                                            class="btn btn-warning btn-sm"><i
+                                                                class="fas fa-print fa-xs"></i></a>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -222,6 +231,47 @@
             </div>
         </div>
     </div>
+    <!-- Modal Tambah Ajuan -->
+    <div class="modal fade" id="modalUploadKelas" tabindex="-1" aria-labelledby="modalUploadKelasLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalUploadKelasLabel">Upload File Data Kelas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadForm" action="{{ route('sisipan.pelaksanaan.daftar-kelas.uploadDataKelas') }}"
+                        method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3 row">
+                            <div class="col-md-12">
+                                <label for="sisipan_periode_id" class="form-label">Periode Sisipan</label>
+                                <select id="periode-dropdown" class="form-select" aria-label="Default select example"
+                                    name="sisipan_periode_id">
+                                    <option value="{{ $periodeTerpilih->id }}">{{ $periodeTerpilih->nama_periode }}
+                                    </option>
+                                    @foreach ($daftar_periode as $periode)
+                                        @if ($periode->id != $periodeTerpilih->id)
+                                            <option value="{{ $periode->id }}">{{ $periode->nama_periode }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Upload File (Format: xlsx)</label>
+                            <input type="file" class="form-control" id="file" name="file" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js-tambahan')
@@ -271,6 +321,10 @@
                         console.error('Error:', response);
                     }
                 });
+            });
+
+            $('#btn-upload-kelas').on('click', function() {
+                $('#modalUploadKelas').modal('show');
             });
 
             $('#checkAll').change(function() {

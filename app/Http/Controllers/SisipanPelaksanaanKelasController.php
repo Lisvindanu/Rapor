@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\DataKelasExport;
 use App\Models\SisipanAjuan;
 use App\Models\SisipanAjuanDetail;
 use App\Models\SisipanKelas;
@@ -11,12 +12,18 @@ use App\Models\SisipanPeriode;
 use App\Models\UnitKerja;
 use App\Helpers\UnitKerjaHelper;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SisipanPelaksanaanKelasController extends Controller
 {
     public function daftarKelas(Request $request)
     {
         try {
+            if ($request->has('action') && $request->action === 'download') {
+                return $this->downloadDataKelas($request);
+            }
+
             // untuk dropdown unit kerja
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
@@ -40,7 +47,10 @@ class SisipanPelaksanaanKelasController extends Controller
                 ->orderBy('created_at', 'desc')->take(10)->get();
 
             $query = SisipanKelas::with(['sisipanperiode', 'kelaskuliah', 'dosen'])
-                ->where('sisipan_periode_id', $periodeTerpilih->id);
+                ->where('sisipan_periode_id', $periodeTerpilih->id)
+                ->whereHas('matakuliah', function ($query) use ($unitKerjaNames) {
+                    $query->whereIn('programstudi', $unitKerjaNames);
+                });
 
             if ($request->filled('programstudi')) {
 
@@ -62,15 +72,13 @@ class SisipanPelaksanaanKelasController extends Controller
             }
 
             if ($request->filled('search')) {
-                $query->whereHas('matakuliah', function ($query) use ($request) {
+                $query->whereHas('kelaskuliah', function ($query) use ($request) {
                     $query->where('namamk', 'ilike', '%' . $request->get('search') . '%')
                         ->orWhere('kodemk', 'ilike', '%' . $request->get('search') . '%');
                 });
             }
 
             $daftarkelas = $query->paginate($request->get('perPage', 10));
-
-            // return response()->json($daftarkelas);
 
             $total = $daftarkelas->total();
 
@@ -302,6 +310,121 @@ class SisipanPelaksanaanKelasController extends Controller
                 'message' => 'Data gagal disimpan',
                 'data' => $e->getMessage(),
             ]);
+        }
+    }
+
+    // download data kelas excell
+    public function downloadDataKelas(Request $request)
+    {
+        try {
+            $request->validate([
+                'periodeTerpilih' => 'required',
+                'programstudi' => 'required',
+            ]);
+
+            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesId($request->programstudi);
+
+            $query = SisipanKelas::with(['sisipanperiode', 'kelaskuliah', 'dosen'])
+                ->where('sisipan_periode_id', $request->periodeTerpilih)
+                ->whereIn('programstudi', $unitKerjaNames);
+
+            $daftarkelas = $query->get();
+
+            return Excel::download(new DataKelasExport($daftarkelas), 'data_kelas.xlsx');
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
+    }
+
+    public function uploadDataKelas(Request $request)
+    {
+        try {
+            $request->validate([
+                'sisipan_periode_id' => 'required|exists:sisipan_periode,id',
+                'file' => 'required|mimes:xls,xlsx'
+            ]);
+
+            $file = $request->file('file');
+            $data = Excel::toArray([], $file);
+
+            $sukses = 0;
+            $gagal = 0;
+
+            array_shift($data[0]);
+
+            foreach ($data[0] as $row) {
+                // Jika kolom A kosong maka lewati
+                if (empty($row[0]) || $row[0] == '' || $row[0] == null) {
+                    break;
+                } else {
+
+                    $sisipanKelas = SisipanKelas::where('id', 'ilike', '%' . $row[0] . '%')
+                        ->where('sisipan_periode_id', $request->sisipan_periode_id)
+                        ->first();
+
+                    if ($sisipanKelas) {
+                        $kodeedlink = $row[9] ?? '';
+
+                        $sisipanKelas->update([
+                            'kode_edlink' => $kodeedlink,
+                            'catatan' => $row[10],
+                        ]);
+                        $sukses++;
+                    } else {
+                        $gagal++;
+                    }
+                }
+            }
+
+            return back()->with('message', $sukses . ' data berhasil dieksekusi, ' . $gagal . ' data gagal dieksekusi');
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
+        }
+    }
+
+    // printPresensi
+    public function printPresensi($id)
+    {
+        try {
+            $kelas = SisipanKelas::with(['sisipanperiode', 'kelaskuliah', 'dosen', 'matakuliah', 'peserta'])
+                ->where('id', $id)
+                ->first();
+
+            // return response()->json($kelas);
+
+            $peserta = DB::table('sisipan_kelas_peserta')
+                ->select('sisipan_kelas_peserta.id', 'mhs.nim as mhs_nim', 'mhs.nama as mhs_nama', 'rp.kode_periode as kode_periode', 'krs.nhuruf as old_nhuruf', 'krs.nnumerik as old_nnumerik')
+                ->leftJoin('mahasiswa as mhs', 'sisipan_kelas_peserta.nim', '=', 'mhs.nim')
+                ->leftJoin('sisipan_kelas as rk', 'sisipan_kelas_peserta.sisipan_kelas_id', '=', 'rk.id')
+                ->leftJoin('sisipan_periode as rp', 'rk.sisipan_periode_id', '=', 'rp.id')
+                ->leftJoin('krs', function ($join) {
+                    $join->on('sisipan_kelas_peserta.nim', '=', 'krs.nim')
+                        ->whereColumn('rk.kodemk', 'krs.idmk')
+                        ->whereColumn('rp.kode_periode', 'krs.idperiode');
+                })
+                ->where('sisipan_kelas_id', $id)
+                ->groupBy('sisipan_kelas_peserta.id', 'mhs.nim', 'mhs.nama', 'rp.kode_periode', 'krs.nhuruf', 'krs.nnumerik')
+                ->orderBy('mhs.nim')
+                ->get();
+
+            return response()->json($peserta);
+
+            $peserta = $peserta->unique('id');
+
+            // return response()->json($peserta);
+
+            $total = $peserta->count();
+
+            $pdf = PDF::loadView('pdf.presensi-kelas', [
+                'kelas' => $kelas,
+                'data' => $peserta,
+                'total' => $total,
+            ]);
+            $pdf->setPaper('A4', 'potrait');
+
+            return $pdf->download($id . '.pdf');
+        } catch (\Exception $e) {
+            return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
         }
     }
 }

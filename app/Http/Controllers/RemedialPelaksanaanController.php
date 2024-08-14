@@ -19,8 +19,6 @@ class RemedialPelaksanaanController extends Controller
         try {
             // untuk dropdown unit kerja
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
-
-            //list unit kerja nama
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
 
             if ($request->has('periodeTerpilih')) {
@@ -30,6 +28,8 @@ class RemedialPelaksanaanController extends Controller
             } else {
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
                     ->where('is_aktif', 1)
+                    ->where('unit_kerja_id', $unitKerja->id)
+                    ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
                     ->orderBy('created_at', 'desc')
                     ->first();
             }

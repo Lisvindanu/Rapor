@@ -25,8 +25,6 @@ class RemedialPelaksanaanKelasController extends Controller
                 return $this->downloadDataKelas($request);
             }
 
-            // return response()->json($request->all());
-
             // untuk dropdown unit kerja
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
@@ -85,7 +83,6 @@ class RemedialPelaksanaanKelasController extends Controller
 
             $daftarkelas = $query->paginate($request->get('perPage', 10));
 
-            // return response()->json($daftarkelas);
             $total = $daftarkelas->total();
 
             return view(

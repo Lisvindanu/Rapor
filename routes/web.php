@@ -415,7 +415,9 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
             Route::prefix('daftar-kelas')->group(function () {
                 Route::get('/', "SisipanPelaksanaanKelasController@daftarKelas")->name('sisipan.pelaksanaan.daftar-kelas');
+                Route::get('/print-presensi/{id}', "SisipanPelaksanaanKelasController@printPresensi")->name('sisipan.pelaksanaan.daftar-kelas.printPresensi');
                 Route::get('/{id}', "SisipanPelaksanaanKelasController@detailKelas")->name('sisipan.pelaksanaan.daftar-kelas.detailKelas');
+                Route::post('/upload-data-kelas', "SisipanPelaksanaanKelasController@uploadDataKelas")->name('sisipan.pelaksanaan.daftar-kelas.uploadDataKelas');
                 Route::post('/tambahPerMK', "SisipanPelaksanaanKelasController@tambahPerMKAjax")->name('sisipan.pelaksanaan.daftar-kelas.tambahPerMK');
                 Route::post('/tambahPerDosen', "SisipanPelaksanaanKelasController@tambahPerDosenAjax")->name('sisipan.pelaksanaan.daftar-kelas.tambahPerDosen');
             });

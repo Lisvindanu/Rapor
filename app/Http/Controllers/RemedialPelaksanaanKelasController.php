@@ -25,6 +25,8 @@ class RemedialPelaksanaanKelasController extends Controller
                 return $this->downloadDataKelas($request);
             }
 
+            // return response()->json($request->all());
+
             // untuk dropdown unit kerja
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNames();
@@ -72,8 +74,10 @@ class RemedialPelaksanaanKelasController extends Controller
                 $programstuditerpilih = $programstudis;
             }
 
+            // return response()->json($programstuditerpilih);
+
             if ($request->filled('search')) {
-                $query->whereHas('matakuliah', function ($query) use ($request) {
+                $query->whereHas('kelaskuliah', function ($query) use ($request) {
                     $query->where('namamk', 'ilike', '%' . $request->get('search') . '%')
                         ->orWhere('kodemk', 'ilike', '%' . $request->get('search') . '%');
                 });

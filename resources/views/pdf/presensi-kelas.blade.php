@@ -205,6 +205,49 @@
                     yang dilaksanakan</p>
                 <div style="page-break-before: always;"></div>
                 <br>
+                <section class="judul-konten">
+                    <h4 style="text-align: center;margin-top:10px;">LEMBAR BERITA ACARA PERKULIAHAN<br>
+                    </h4>
+
+                    <p style="text-align: center;margin-top:-20px">{{ $kelas->remedialperiode->nama_periode }}
+                </section>
+                <table>
+                    <tr>
+                        <td>Kode MK / Matakuliah</td>
+                        <td>:</td>
+                        <td>{{ $kelas->kodemk }} / {{ $kelas->kelaskuliah->namamk }}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Dosen Pengampu
+                        </td>
+                        <td>:</td>
+                        <td>{{ $kelas->dosen->nip }} / {{ $kelas->dosen->nama }}</td>
+                    </tr>
+                </table>
+                <br>
+                <table class="table-pbp">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">Pertemuan Ke-</th>
+                            <th style="width: 20%">Tanggal </th>
+                            <th style="width: 60%">Berita Acara Perkuliahan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- for 7 kali --}}
+                        @for ($i = 1; $i <= 7; $i++)
+                            <tr>
+                                <td style="height:80px"></td>
+                                <td style="height:80px"></td>
+                                <td style="height:80px"></td>
+                            </tr>
+                        @endfor
+                    </tbody>
+                </table>
+
+                <div style="page-break-before: always;"></div>
+                <br>
 
                 <section class="judul-konten">
                     <h4 style="text-align: center;margin-top:10px;">LEMBAR PENGESAHAN<br>

@@ -116,24 +116,19 @@ class RemedialAjuanController extends Controller
                 $periodeTerpilih = RemedialPeriode::with('remedialperiodetarif')
                     ->where('id', $request->periodeTerpilih)
                     ->first();
-                // return "lalala1";
             } else {
-                // return "lalala";
                 $periodeTerpilih = RemedialPeriode::where('unit_kerja_id', $unitKerja->id)
                     ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
                     ->orderBy('created_at', 'desc')
                     ->first();
             }
 
-            // return response()->json($periodeTerpilih);
 
             $daftar_periode = RemedialPeriode::with('periode')->where('unit_kerja_id', $unitKerja->id)
                 ->orWhere('unit_kerja_id', $unitKerja->parent_unit)
                 ->orderBy('created_at', 'desc')
                 ->take(10)
                 ->get();
-
-            // return response()->json($daftar_periode);
 
             $query = RemedialAjuan::with('remedialajuandetail')
                 ->whereIn('programstudi', $unitKerjaNames)
@@ -149,7 +144,12 @@ class RemedialAjuanController extends Controller
                         return redirect()->back()->with('message', 'Program Studi tidak ditemukan');
                     }
 
-                    $query->where('programstudi', $programstudis->nama_unit);
+                    if ($programstudis->jenis_unit == 'Program Studi') {
+                        $query->where('programstudi', $programstudis->nama_unit);
+                    } else {
+                        $query->whereIn('programstudi', $unitKerjaNames);
+                    }
+
                     $programstuditerpilih = $programstudis;
                 }
             }

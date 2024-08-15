@@ -38,7 +38,7 @@
                 <td>{{ $item->kodemk }}</td>
                 <td>{{ $item->kelaskuliah->namamk }}</td>
                 <td>{{ $item->nip }}</td>
-                <td>{{ $item->dosen->nama }}</td>
+                <td>{{ $item->dosen->nama ?? '-' }}</td>
                 <td>{{ $item->jumlahpeserta }}</td>
                 <td>{{ $item->kode_edlink }}</td>
                 <td>{{ $item->catatan }}</td>

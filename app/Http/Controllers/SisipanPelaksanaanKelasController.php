@@ -358,7 +358,8 @@ class SisipanPelaksanaanKelasController extends Controller
                     break;
                 } else {
 
-                    $sisipanKelas = SisipanKelas::where('id', 'ilike', '%' . $row[0] . '%')
+                    $sisipanKelas = SisipanKelas::where('kodemk', 'ilike', '%' . $row[4] . '%')
+                        ->where('nip', 'ilike', '%' . $row[6] . '%')
                         ->where('sisipan_periode_id', $request->sisipan_periode_id)
                         ->first();
 

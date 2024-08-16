@@ -361,7 +361,8 @@ class RemedialPelaksanaanKelasController extends Controller
                     break;
                 } else {
 
-                    $remedialKelas = RemedialKelas::where('id', 'ilike', '%' . $row[0] . '%')
+                    $remedialKelas = RemedialKelas::where('kodemk', 'ilike', '%' . $row[4] . '%')
+                        ->where('nip', 'ilike', '%' . $row[6] . '%')
                         ->where('remedial_periode_id', $request->remedial_periode_id)
                         ->first();
 

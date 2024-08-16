@@ -354,7 +354,7 @@ class SisipanPelaksanaanKelasController extends Controller
 
             foreach ($data[0] as $row) {
                 // Jika kolom A kosong maka lewati
-                if (empty($row[0]) || $row[0] == '' || $row[0] == null) {
+                if (empty($row[1]) || $row[1] == '' || $row[1] == null) {
                     break;
                 } else {
 

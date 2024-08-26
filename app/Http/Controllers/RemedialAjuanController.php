@@ -169,8 +169,6 @@ class RemedialAjuanController extends Controller
 
             $data_ajuan = $query->paginate($request->get('perPage', 10));
 
-            // return response()->json($data_ajuan);
-
             $total = $data_ajuan->total();
 
             return view(

@@ -32,24 +32,27 @@ class synAKM extends Command
     public function handle()
     {
         $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTcyMjY3NDc3NSwiZXhwIjoxNzIyNjc4Mzc1fQ.rFMWOPLnXqMIojgnmV-EU0igseRDzXzTmWpQ1TECYic";
-        $limit = 100000;
+        $limit = 10000;
 
         $formData = [];
         $formData['limit'] = $limit;
 
         //IDperiodelist
         $periodelist = [
-            '20181',
-            '20191',
-            '20201',
-            '20211',
-            '20221',
-            '20231'
+            '20161',
+            '20151',
+            '20141',
+            '20131',
+            '20121',
+            '20111',
+            '20101',
+            '20091',
+            '20081',
         ];
 
         // kelaskuliah where in idperiode
-        // $mahasiswa = Mahasiswa::whereIn('periodemasuk', $periodelist)
-        //     ->get();
+        $mahasiswa = Mahasiswa::whereIn('periodemasuk', $periodelist)
+            ->get();
 
         // foreach ($mahasiswa as $mhs) {
         $formData['idperiode'] = '20232';

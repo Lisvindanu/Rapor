@@ -25,6 +25,7 @@ class DataKelasExport implements FromView, ShouldAutoSize, WithColumnFormatting,
         return [
             'C' => NumberFormat::FORMAT_TEXT, // Mengatur kolom C menjadi teks
             'D' => NumberFormat::FORMAT_NUMBER, // Mengatur kolom D menjadi number
+            'G' => NumberFormat::FORMAT_TEXT, // Mengatur kolom G menjadi number
         ];
     }
 

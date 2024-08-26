@@ -60,6 +60,7 @@ class ExcelController extends Controller
 
     public function downloadMhsNonAktif(Request $request)
     {
+        // return "Hello";
         // Mendapatkan parameter periode dan program_studi dari request
         // $periode = $request->input('periode');
         // $programStudi = $request->input('program_studi');
@@ -81,10 +82,16 @@ class ExcelController extends Controller
                     ->orWhere('programstudi', 'Perencanaan Wilayah dan Kota');
             })
             ->where(function ($query) {
-                $query->where('periodemasuk', '20201')
-                    ->orWhere('periodemasuk', '20211')
-                    ->orWhere('periodemasuk', '20221')
-                    ->orWhere('periodemasuk', '20231');
+                $query->where('periodemasuk', '20171')
+                    ->orWhere('periodemasuk', '20161')
+                    ->orWhere('periodemasuk', '20151')
+                    ->orWhere('periodemasuk', '20141')
+                    ->orWhere('periodemasuk', '20131')
+                    ->orWhere('periodemasuk', '20121')
+                    ->orWhere('periodemasuk', '20111')
+                    ->orWhere('periodemasuk', '20101')
+                    ->orWhere('periodemasuk', '20091')
+                    ->orWhere('periodemasuk', '20081');
             })
             // ->where('periodemasuk', '20202')
             ->get();

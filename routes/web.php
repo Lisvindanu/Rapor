@@ -341,6 +341,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
                 Route::post('/upload-data-kelas', "RemedialPelaksanaanKelasController@uploadDataKelas")->name('remedial.pelaksanaan.daftar-kelas.uploadDataKelas');
                 Route::post('/tambahPerMK', "RemedialPelaksanaanKelasController@tambahPerMKAjax")->name('remedial.pelaksanaan.daftar-kelas.tambahPerMK');
                 Route::post('/tambahPerDosen', "RemedialPelaksanaanKelasController@tambahPerDosenAjax")->name('remedial.pelaksanaan.daftar-kelas.tambahPerDosen');
+                Route::post('/update-data-kelas', "RemedialPelaksanaanKelasController@updateRemedialKelas")->name('remedial.pelaksanaan.daftar-kelas.updateDataKelas');
             });
         });
 

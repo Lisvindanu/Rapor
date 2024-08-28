@@ -35,6 +35,9 @@
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <a href="{{ route('remedial.pelaksanaan.daftar-kelas') }}" class="btn btn-secondary"
                                         type="button">Kembali</a>
+                                    <button id="submitBtn" class="btn btn-primary">Simpan</button>
+                                    {{-- <button type="button" class="btn btn-warning" id="btnBatalKelas">
+                                        Upload Nilai</button> --}}
                                 </div>
                             </div>
                         </div>
@@ -45,9 +48,10 @@
                         </div>
                         <div class="col-10">
                             <div class="sub-konten">
-                                <!-- Nama Indikator -->
-                                <form action="">
+                                <form id="dataForm">
                                     @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="id" value="{{ $kelas->id }}">
                                     <div class="form-group row">
                                         <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                             <label for="nama_kuesioner" class=" create-label">
@@ -81,6 +85,15 @@
                                             <input type="text" class="form-control" name="dosen"
                                                 value="{{ $kelas->dosen->nama }}" readonly>
                                         </div>
+                                        {{-- textarea --}}
+                                        <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                            <label for="nama_kuesioner" class=" create-label">
+                                                Catatan</label>
+                                        </div>
+                                        <div class="col-sm-10" style="margin-bottom: 10px;">
+                                            <textarea name="catatan" class="form-control" id="" cols="30" rows="5">{{ $kelas->catatan }}</textarea>
+                                        </div>
+
                                         <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                             <label for="nama_kuesioner" class=" create-label">
                                                 Kode Edlink</label>
@@ -88,12 +101,6 @@
                                         <div class="col-sm-4">
                                             <input type="text" class="form-control" name="kode_edlink"
                                                 value="{{ $kelas->kode_edlink }}">
-                                        </div>
-                                        <div class="col-sm-2"></div>
-                                        <div class="col-sm-4">
-                                            <button type="submit" class="btn btn-primary">Simpan</button>
-                                            <button type="button" class="btn btn-warning" id="btnBatalKelas">
-                                                Upload Nilai</button>
                                         </div>
                                 </form>
                                 <!-- keterangan -->
@@ -285,6 +292,35 @@
                     $('#editNipDosen').val(parts[0]); // Set nilai input hidden nip-pegawai
                     return parts[1]; // Tampilkan nama pegawai di input
                 }
+            });
+
+            $('#submitBtn').click(function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Serialize form data
+                var formData = $('#dataForm').serialize();
+
+                $.ajax({
+                    // url: "/remedial/pelaksanaan/daftar-kelas/update-data-kelas",
+                    url: '{{ route('remedial.pelaksanaan.daftar-kelas.updateDataKelas') }}',
+                    type: 'POST',
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                        // 'X-HTTP-Method-Override': 'PUT'
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            alert('Data berhasil disimpan');
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan, data gagal disimpan.');
+                    }
+                });
             });
 
         });

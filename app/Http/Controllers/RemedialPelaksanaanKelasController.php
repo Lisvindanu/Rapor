@@ -431,4 +431,52 @@ class RemedialPelaksanaanKelasController extends Controller
             return back()->with('message', "Terjadi kesalahan" . $e->getMessage());
         }
     }
+
+    // update remedialkelas
+    public function updateRemedialKelas(Request $request)
+    {
+        // return response()->json([
+        //     'status' => 'success',
+        //     'message' => 'Data berhasil disimpan',
+        //     'data' => 'Hello',
+        // ]);
+        try {
+            $request->validate([
+                'id' => 'required',
+            ]);
+
+            $remedialKelas = RemedialKelas::where('id', $request->id)->first();
+
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'Data berhasil disimpan',
+            //     'data' => $remedialKelas,
+            // ]);
+
+            if ($remedialKelas) {
+                $remedialKelas->update([
+                    'kode_edlink' => $request->kode_edlink,
+                    'catatan' => $request->catatan,
+                ]);
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Data berhasil disimpan',
+                    'data' => $remedialKelas,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data tidak ditemukan',
+                    'data' => null,
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data gagal disimpan',
+                'data' => $e->getMessage(),
+            ]);
+        }
+    }
 }

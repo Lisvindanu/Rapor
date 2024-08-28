@@ -158,6 +158,7 @@
                                         @if ($data->count() > 0)
                                             @foreach ($data as $ajuan)
                                                 <tr style="text-align: center;vertical-align: middle;">
+                                                    <td hidden>{{ $ajuan->id }}</td>
                                                     <td>{{ $ajuan->tgl_pengajuan }}</td>
                                                     <td>{{ $ajuan->va }}</td>
                                                     <td>{{ $ajuan->nim }}</td>
@@ -181,6 +182,13 @@
                                                             class="btn btn-sm btn-warning btnDetailData">
                                                             <i class="fas fa-edit fa-xs"></i>
                                                         </a>
+                                                        @if ($ajuan->status_pembayaran == 'Menunggu Pembayaran')
+                                                            <button type="button" class="btn btn-sm btn-danger delete"
+                                                                title="Batalkan Ajuan">
+                                                                <i class="fas fa-trash-alt fa-xs"></i>
+                                                            </button>
+                                                        @endif
+
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -348,5 +356,32 @@
                 minimumFractionDigits: 0
             }).format(number);
         }
+
+        // Hapus baris tabel
+        $('#editableTable').on('click', '.delete', function() {
+            if (confirm('Apakah Anda yakin ingin menghapus ajuan ini?')) {
+                var row = $(this).closest('tr');
+                var id = row.find('td:eq(0)').text(); // Ambil id data yang akan dihapus
+
+                // Kirim permintaan penghapusan ke server menggunakan Ajax
+                $.ajax({
+                    type: "DELETE",
+                    url: "/remedial/ajuan/" + id,
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: 'DELETE'
+                    },
+                    success: function(response) {
+                        alert('Data berhasil dihapus');
+                        // row.remove(); // Hapus baris dari tabel setelah berhasil dihapus
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert('Terjadi kesalahan, silakan coba lagi.');
+                    }
+                });
+            }
+        });
     </script>
 @endsection

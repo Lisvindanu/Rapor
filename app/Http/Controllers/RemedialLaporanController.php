@@ -43,6 +43,24 @@ class RemedialLaporanController extends Controller
             ->orderBy('namakelas', 'asc')
             ->get();
 
+        return response()->json($remedialAjuanDetail);
+
+        return Excel::download(new RemedialAjuanExport($remedialAjuanDetail), 'remedial-ajuan.xlsx');
+    }
+
+    function printLaporanAjuan(Request $request)
+    {
+        $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($request->programstudi);
+
+        $remedialAjuanDetail = RemedialAjuanDetail::with(['krs', 'remedialajuan', 'remedialajuan.remedialperiode', 'remedialajuan.mahasiswa'])
+            ->whereHas('remedialajuan', function ($query) use ($request, $unitKerjaNames) {
+                $query->where('remedial_periode_id', $request->remedial_periode_id)
+                    ->whereIn('programstudi', $unitKerjaNames);
+            })
+            ->orderBy('idmk', 'asc')
+            ->orderBy('namakelas', 'asc')
+            ->get();
+
         return Excel::download(new RemedialAjuanExport($remedialAjuanDetail), 'remedial-ajuan.xlsx');
     }
 }

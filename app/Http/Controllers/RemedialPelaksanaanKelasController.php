@@ -396,8 +396,6 @@ class RemedialPelaksanaanKelasController extends Controller
                 ->where('id', $id)
                 ->first();
 
-            // return response()->json($kelas);
-
             $peserta = DB::table('remedial_kelas_peserta')
                 ->select('remedial_kelas_peserta.id', 'mhs.nim as mhs_nim', 'mhs.nama as mhs_nama', 'rp.kode_periode as kode_periode', 'krs.nhuruf as old_nhuruf', 'krs.nnumerik as old_nnumerik')
                 ->leftJoin('mahasiswa as mhs', 'remedial_kelas_peserta.nim', '=', 'mhs.nim')
@@ -446,12 +444,6 @@ class RemedialPelaksanaanKelasController extends Controller
             ]);
 
             $remedialKelas = RemedialKelas::where('id', $request->id)->first();
-
-            // return response()->json([
-            //     'status' => 'success',
-            //     'message' => 'Data berhasil disimpan',
-            //     'data' => $remedialKelas,
-            // ]);
 
             if ($remedialKelas) {
                 $remedialKelas->update([

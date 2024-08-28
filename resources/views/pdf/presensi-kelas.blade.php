@@ -123,12 +123,22 @@
 
 <body>
     <header>
-        <img src="{{ public_path('storage/images/Kop-FT.PNG') }}" style="width: 100%;" alt="Logo" class="logo">
+        @if ($kelas->programstudi == 'Ilmu Hukum')
+            <img src="{{ public_path('storage/images/Kop-FH.jpg') }}" style="width: 100%;" alt="Logo" class="logo">
+        @else
+            <img src="{{ public_path('storage/images/Kop-FT.PNG') }}" style="width: 100%;" alt="Logo" class="logo">
+        @endif
     </header>
 
     <footer>
+        @if ($kelas->programstudi == 'Ilmu Hukum')
+            <img src="{{ public_path('storage/images/footer-fh.PNG') }}" class="mb-10" style="width: 100%;"
+                alt="Logo" class="logo">
+        @else
+            <img src="{{ public_path('storage/images/footer-ft.PNG') }}" style="width: 80%;" alt="Logo"
+                class="logo">
+        @endif
         {{-- <p>Ini adalah footer</p> --}}
-        <img src="{{ public_path('storage/images/footer-ft.PNG') }}" style="width: 80%;" alt="Logo" class="logo">
     </footer>
 
     <main>

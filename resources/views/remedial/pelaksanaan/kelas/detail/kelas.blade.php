@@ -50,7 +50,7 @@
                             <div class="sub-konten">
                                 <form id="dataForm">
                                     @csrf
-                                    @method('PUT')
+                                    @method('POST')
                                     <input type="hidden" name="id" value="{{ $kelas->id }}">
                                     <div class="form-group row">
                                         <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">

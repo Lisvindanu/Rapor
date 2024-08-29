@@ -348,7 +348,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::prefix('laporan')->group(function () {
             Route::get('/', "RemedialLaporanController@index")->name('remedial.laporan');
             Route::post('/print-laporan', "RemedialLaporanController@printLaporan")->name('remedial.laporan.print');
-            Route::post('/print-laporan-ajuan', "RemedialLaporanController@printLaporan")->name('remedial.laporan.print');
+            // Route::post('/print-laporan-ajuan', "RemedialLaporanController@printLaporan")->name('remedial.laporan.print');
         });
     });
 

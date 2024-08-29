@@ -43,8 +43,6 @@ class RemedialLaporanController extends Controller
             ->orderBy('namakelas', 'asc')
             ->get();
 
-        return response()->json($remedialAjuanDetail);
-
         return Excel::download(new RemedialAjuanExport($remedialAjuanDetail), 'remedial-ajuan.xlsx');
     }
 

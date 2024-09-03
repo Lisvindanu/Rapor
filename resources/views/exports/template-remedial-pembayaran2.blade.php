@@ -17,6 +17,7 @@
             <th style="text-align: center;vertical-align: middle;">Program Studi</th>
             <th style="text-align: center;vertical-align: middle;">NIM</th>
             <th style="text-align: center;vertical-align: middle;">Total Pembayaran</th>
+            <th style="text-align: center;vertical-align: middle;">Status Ajuan</th>
             <th style="text-align: center;vertical-align: middle;">Tanggal Registrasi</th>
             <th style="text-align: center;vertical-align: middle;">Tanggal Transfer</th>
             <th style="text-align: center;vertical-align: middle;">Diverifikasi Oleh</th>
@@ -31,9 +32,10 @@
                 <td>{{ $row->remedialajuan->programstudi }}</td>
                 <td>{{ $row->remedialajuan->nim }}</td>
                 <td>{{ $row->remedialajuan->jumlah_bayar }}</td>
+                <td>{{ $row->remedialajuan->status_pembayaran }}</td>
                 <td>{{ $row->remedialajuan->tgl_pengajuan }}</td>
-                <td>{{ $row->remedialajuan->tgl_pembayaran }}</td>
-                <td>{{ $row->remedialajuan->verified_by }}</td>
+                <td>{{ $row->remedialajuan->tgl_pembayaran ? $row->remedialajuan->tgl_pembayaran : '-' }}</td>
+                <td>{{ $row->remedialajuan->verified_by ? $row->remedialajuan->verified_by : '-' }}</td>
                 <td>{{ $row->idmk }}</td>
                 <td>{{ $row->krs->namamk }}</td>
                 <td>{{ $row->harga_remedial }}</td>

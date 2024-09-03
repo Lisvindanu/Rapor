@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\RemedialAjuanExport;
+use App\Exports\RemedialPembayaranExport;
 use App\Models\RemedialPeriode;
 use App\Models\UnitKerja;
 use App\Helpers\UnitKerjaHelper;
@@ -10,6 +11,7 @@ use App\Models\RemedialAjuan;
 use App\Models\RemedialAjuanDetail;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Exception;
 
 class RemedialLaporanController extends Controller
 {
@@ -30,35 +32,80 @@ class RemedialLaporanController extends Controller
     }
 
     // print-laporan
+    // function printLaporan(Request $request)
+    // {
+    //     $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($request->programstudi);
+
+    //     $remedialAjuanDetail = RemedialAjuanDetail::with(['krs', 'remedialajuan', 'remedialajuan.remedialperiode', 'remedialajuan.mahasiswa', 'remedialajuan.userverifikasi'])
+    //         ->whereHas('remedialajuan', function ($query) use ($request, $unitKerjaNames) {
+    //             $query->where('remedial_periode_id', $request->remedial_periode_id)
+    //                 ->whereIn('programstudi', $unitKerjaNames);
+    //         });
+
+
+    //     // return response()->json($remedialAjuanDetail);
+
+    //     if ($request->nama_laporan == 'ajuan') {
+    //         $remedialAjuanDetail = $remedialAjuanDetail->orderBy('idmk', 'asc')
+    //             ->orderBy('namakelas', 'asc')
+    //             ->get();
+    //         return Excel::download(new RemedialAjuanExport($remedialAjuanDetail), 'remedial-ajuan.xlsx');
+    //     }
+
+    //     if ($request->nama_laporan == 'pembayaran') {
+    //         $remedialAjuanDetail->where('remedialajuan.status_pembayaran', 'Lunas')
+    //             ->get();
+    //         return Excel::download(new RemedialPembayaranExport($remedialAjuanDetail), 'remedial-pembayaran.xlsx');
+    //     }
+
+    //     // return Excel::download(new RemedialAjuanExport($remedialAjuanDetail), 'remedial-ajuan.xlsx');
+    // }
+
     function printLaporan(Request $request)
     {
-        $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($request->programstudi);
+        try {
+            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($request->programstudi);
 
-        $remedialAjuanDetail = RemedialAjuanDetail::with(['krs', 'remedialajuan', 'remedialajuan.remedialperiode', 'remedialajuan.mahasiswa'])
-            ->whereHas('remedialajuan', function ($query) use ($request, $unitKerjaNames) {
-                $query->where('remedial_periode_id', $request->remedial_periode_id)
-                    ->whereIn('programstudi', $unitKerjaNames);
-            })
-            ->orderBy('idmk', 'asc')
-            ->orderBy('namakelas', 'asc')
-            ->get();
+            $remedialAjuanDetail = RemedialAjuanDetail::with(['krs', 'remedialajuan', 'remedialajuan.remedialperiode', 'remedialajuan.mahasiswa', 'remedialajuan.userverifikasi'])
+                ->whereHas('remedialajuan', function ($query) use ($request, $unitKerjaNames) {
+                    $query->where('remedial_periode_id', $request->remedial_periode_id)
+                        ->whereIn('programstudi', $unitKerjaNames);
+                });
 
-        return Excel::download(new RemedialAjuanExport($remedialAjuanDetail), 'remedial-ajuan.xlsx');
+            // Menangani laporan ajuan
+            if ($request->nama_laporan == 'ajuan') {
+                $remedialAjuanDetail = $remedialAjuanDetail->orderBy('idmk', 'asc')
+                    ->orderBy('namakelas', 'asc')
+                    ->get(); // Memastikan pemanggilan get() sebelum diekspor
+                return Excel::download(new RemedialAjuanExport($remedialAjuanDetail), 'remedial-ajuan.xlsx');
+            }
+
+            // Menangani laporan pembayaran
+            if ($request->nama_laporan == 'pembayaran') {
+                return $this->printLaporanPembayaran($request);
+                // $remedialAjuanDetail = $remedialAjuanDetail->where('remedialajuan.status_pembayaran', 'Lunas')
+                // return Excel::download(new RemedialPembayaranExport($remedialAjuanDetail), 'remedial-pembayaran.xlsx');
+
+            }
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
-    function printLaporanAjuan(Request $request)
+
+    function printLaporanPembayaran(Request $request)
     {
         $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($request->programstudi);
 
-        $remedialAjuanDetail = RemedialAjuanDetail::with(['krs', 'remedialajuan', 'remedialajuan.remedialperiode', 'remedialajuan.mahasiswa'])
-            ->whereHas('remedialajuan', function ($query) use ($request, $unitKerjaNames) {
-                $query->where('remedial_periode_id', $request->remedial_periode_id)
-                    ->whereIn('programstudi', $unitKerjaNames);
-            })
-            ->orderBy('idmk', 'asc')
-            ->orderBy('namakelas', 'asc')
+        $remedialPembayaran = RemedialAjuan::with(['remedialperiode', 'remedialajuandetail'])
+            ->where('remedial_periode_id', $request->remedial_periode_id)
+            ->whereIn('programstudi', $unitKerjaNames)
+            ->orderBy('nim', 'asc')
             ->get();
 
-        return Excel::download(new RemedialAjuanExport($remedialAjuanDetail), 'remedial-ajuan.xlsx');
+        // return response()->json($remedialPembayaran);
+
+
+        return Excel::download(new RemedialPembayaranExport($remedialPembayaran), 'remedial-pembayaran.xlsx');
     }
 }

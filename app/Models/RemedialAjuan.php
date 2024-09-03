@@ -45,4 +45,10 @@ class RemedialAjuan extends Model
     {
         return $this->hasMany(RemedialAjuanDetail::class);
     }
+
+    // user
+    public function userverifikasi()
+    {
+        return $this->belongsTo(User::class, 'verified_by', 'username');
+    }
 }

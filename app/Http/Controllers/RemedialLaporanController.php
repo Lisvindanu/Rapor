@@ -63,7 +63,6 @@ class RemedialLaporanController extends Controller
 
     function printLaporan(Request $request)
     {
-        set_time_limit(0);
         try {
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($request->programstudi);
 
@@ -98,15 +97,65 @@ class RemedialLaporanController extends Controller
     {
         $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($request->programstudi);
 
-        $remedialPembayaran = RemedialAjuan::with(['remedialperiode', 'remedialajuandetail'])
-            ->where('remedial_periode_id', $request->remedial_periode_id)
-            ->whereIn('programstudi', $unitKerjaNames)
-            ->orderBy('nim', 'asc')
+        // $remedialAjuanDetail = RemedialAjuanDetail::with(['krs', 'remedialajuan', 'remedialajuan.remedialperiode', 'remedialajuan.mahasiswa', 'remedialajuan.userverifikasi'])
+        //     ->whereHas('remedialajuan', function ($query) use ($request, $unitKerjaNames) {
+        //         $query->where('remedial_periode_id', $request->remedial_periode_id)
+        //             ->whereIn('programstudi', $unitKerjaNames);
+        //     })->orderBy('remedialajuan.nim', 'asc')
+        //     ->get();
+
+        // $remedialAjuanDetail = RemedialAjuanDetail::with([
+        //     'krs',
+        //     'remedialajuan' => function ($query) {
+        //         $query->select('id', 'remedial_periode_id', 'nim', 'programstudi', 'va', 'total_bayar', 'jumlah_bayar', 'status_pembayaran', 'bukti_pembayaran', 'tgl_pembayaran', 'tgl_pengajuan', 'is_lunas', 'verified_by');
+        //     },
+        //     'remedialajuan.remedialperiode' => function ($query) {
+        //         $query->select('id', 'nama_periode');
+        //     },
+        //     'remedialajuan.mahasiswa' => function ($query) {
+        //         $query->select('id', 'nama');
+        //     },
+        //     'remedialajuan.userverifikasi' => function ($query) {
+        //         $query->select('id', 'name');
+        //     }
+        // ])->whereHas('remedialajuan', function ($query) use ($request, $unitKerjaNames) {
+        //     $query->where('remedial_periode_id', $request->remedial_periode_id)
+        //         ->whereIn('programstudi', $unitKerjaNames);
+        // })
+        //     ->orderBy('remedialajuan.nim', 'asc')
+        //     ->get();
+
+        $remedialAjuanDetail = RemedialAjuanDetail::with([
+            'krs',
+            'remedialajuan' => function ($query) {
+                $query->select('id', 'remedial_periode_id', 'nim', 'programstudi', 'va', 'total_bayar', 'jumlah_bayar', 'status_pembayaran', 'bukti_pembayaran', 'tgl_pembayaran', 'tgl_pengajuan', 'is_lunas', 'verified_by');
+            },
+            'remedialajuan.remedialperiode' => function ($query) {
+                $query->select('id', 'nama_periode');
+            },
+            'remedialajuan.mahasiswa' => function ($query) {
+                $query->select('id', 'nama');
+            },
+            'remedialajuan.userverifikasi' => function ($query) {
+                $query->select('id', 'name');
+            }
+        ])->whereHas('remedialajuan', function ($query) use ($request, $unitKerjaNames) {
+            $query->where('remedial_periode_id', $request->remedial_periode_id)
+                ->whereIn('programstudi', $unitKerjaNames);
+        })
+            ->join('remedial_ajuan', 'remedial_ajuan_detail.remedial_ajuan_id', '=', 'remedial_ajuan.id')
+            ->orderBy('remedial_ajuan.nim', 'asc')
+            ->select('remedial_ajuan_detail.*') // Pastikan hanya kolom yang diperlukan diambil
             ->get();
 
-        // return response()->json($remedialPembayaran);
 
+        // $remedialPembayaran = RemedialAjuan::with(['remedialperiode', 'remedialajuandetail'])
+        //     ->where('remedial_periode_id', $request->remedial_periode_id)
+        //     ->whereIn('programstudi', $unitKerjaNames)
+        //     ->orderBy('nim', 'asc')
+        //     ->get();
 
-        return Excel::download(new RemedialPembayaranExport($remedialPembayaran), 'remedial-pembayaran.xlsx');
+        // return response()->json($remedialAjuanDetail);
+        return Excel::download(new RemedialPembayaranExport($remedialAjuanDetail), 'remedial-pembayaran.xlsx');
     }
 }

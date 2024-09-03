@@ -19,10 +19,10 @@ class RemedialPembayaranExport implements FromView, ShouldAutoSize
     public function view(): View
     {
         if ($this->data) {
-            return view('exports.template-remedial-pembayaran', [
+            return view('exports.template-remedial-pembayaran2', [
                 'data' => $this->data
             ]);
         }
-        return view('exports.template-remedial-pembayaran');
+        return view('exports.template-remedial-pembayaran2');
     }
 }

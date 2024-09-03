@@ -63,6 +63,7 @@ class RemedialLaporanController extends Controller
 
     function printLaporan(Request $request)
     {
+        set_time_limit(0);
         try {
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($request->programstudi);
 

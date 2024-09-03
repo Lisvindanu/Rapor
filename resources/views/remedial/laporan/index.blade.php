@@ -71,7 +71,8 @@
                                             <select name="nama_laporan" id="" class="form-select"
                                                 aria-label="Default select example" required>
                                                 <option value="">Pilih Laporan ...</option>
-                                                <option value="1">Daftar Ajuan Remedial</option>
+                                                <option value="ajuan">Daftar Ajuan Remedial</option>
+                                                <option value="pembayaran">Daftar Pembayaran Remedial</option>
                                                 {{-- <option value="2">Daftar Kelas Remedial</option> --}}
                                             </select>
                                         </div>

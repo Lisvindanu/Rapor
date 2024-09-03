@@ -400,8 +400,6 @@ class RemedialAjuanController extends Controller
         }
     }
 
-
-
     // uploadRekeningKoran
     public function uploadRekeningKoran(Request $request)
     {

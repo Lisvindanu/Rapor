@@ -51,4 +51,10 @@ class SisipanAjuan extends Model
     {
         return $this->belongsTo(UnitKerja::class, 'programstudi', 'nama_unit');
     }
+
+    // user
+    public function userverifikasi()
+    {
+        return $this->belongsTo(User::class, 'verified_by', 'username');
+    }
 }

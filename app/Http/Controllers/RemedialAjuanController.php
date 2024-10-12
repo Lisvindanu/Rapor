@@ -22,6 +22,8 @@ class RemedialAjuanController extends Controller
             return redirect()->route('gate');
         }
 
+        //create if
+
         try {
             // untuk dropdown unit kerja
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
@@ -55,7 +57,7 @@ class RemedialAjuanController extends Controller
                 ->where('remedial_periode_id', $periodeTerpilih->id)
                 ->where('status_pembayaran', 'Menunggu Konfirmasi');
 
-            //filter terkait dengan program studi 
+            //filter terkait dengan program studi
             if ($request->filled('programstudi')) {
 
                 if ($request->get('programstudi') != 'all') {
@@ -134,7 +136,7 @@ class RemedialAjuanController extends Controller
                 ->whereIn('programstudi', $unitKerjaNames)
                 ->where('remedial_periode_id', $periodeTerpilih->id);
 
-            //filter terkait dengan program studi 
+            //filter terkait dengan program studi
             if ($request->filled('programstudi')) {
 
                 if ($request->get('programstudi') != 'all') {

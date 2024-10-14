@@ -233,12 +233,20 @@
                                                                 style="display:block; word-wrap:break-word;">
                                                                 <select id="is_active" name="is_active"
                                                                     class="form-control required">
-                                                                    <option value="1"
-                                                                        {{ $jadwal->is_active ? 'selected' : '' }}>Belum
+                                                                    {{-- <option value="Aktif">Aktif</option>
+                                                                    <option value="Proses">Proses Penilaian</option>
+                                                                    <option value="Selesai">Selesai</option> --}}
+
+                                                                    <option value="Aktif"
+                                                                        {{ $jadwal->is_active == 'Aktif' ? 'selected' : '' }}>
+                                                                        Aktif</option>
+                                                                    <option value="Proses"
+                                                                        {{ $jadwal->is_active == 'Proses' ? 'selected' : '' }}>
+                                                                        Proses Penilaian</option>
+                                                                    <option value="Selesai"
+                                                                        {{ $jadwal->is_active == 'Selesai' ? 'selected' : '' }}>
                                                                         Selesai</option>
-                                                                    <option value="0"
-                                                                        {{ !$jadwal->is_active ? 'selected' : '' }}>Selesai
-                                                                    </option>
+
                                                                 </select>
                                                                 <p class="help-block">
                                                                     <span id="error-field-is_active"></span>

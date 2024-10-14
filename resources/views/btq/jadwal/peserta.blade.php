@@ -35,9 +35,16 @@
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <a href="{{ route('btq') }}" class="btn btn-secondary" type="button">Kembali</a>
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        @if ($penilaianMahasiswaExists)
+                                            <button type="button" class="btn btn-danger" id="btnSimpan">Reset
+                                                Penilaian</button>
+                                        @else
+                                            <button type="button" class="btn btn-primary" id="btnSimpan">Generate
+                                                Penilaian</button>
+                                        @endif
                                         <!-- Button simpan -->
-                                        <button type="button" class="btn btn-primary" id="btnSimpan">Generate
-                                            Penilaiain</button>
+                                        {{-- <button type="button" class="btn btn-primary" id="btnSimpan">Generate
+                                            Penilaiain</button> --}}
                                     </div>
                                 </div>
                             </div>
@@ -56,14 +63,31 @@
                                                 <table class="table table-hover" id="editableTable">
                                                     <thead class="text-center">
                                                         <tr>
-                                                            <th style="text-align: center;vertical-align: middle;">No.</th>
-                                                            <th style="text-align: center;vertical-align: middle;">NIM</th>
-                                                            <th style="text-align: center;vertical-align: middle;">Nama</th>
-                                                            <th style="text-align: center;vertical-align: middle;">Program
+                                                            <th rowspan="2"
+                                                                style="text-align: center;vertical-align: middle;">No.</th>
+                                                            <th rowspan="2"
+                                                                style="text-align: center;vertical-align: middle;">NIM</th>
+                                                            <th rowspan="2"
+                                                                style="text-align: center;vertical-align: middle;">Nama</th>
+                                                            <th rowspan="2"
+                                                                style="text-align: center;vertical-align: middle;">Program
                                                                 Studi
                                                             </th>
-                                                            <th style="text-align: center;vertical-align: middle;">
+                                                            <th colspan="3"
+                                                                style="text-align: center;vertical-align: middle;">
+                                                                Poin
+                                                            </th>
+                                                            <th rowspan="2"
+                                                                style="text-align: center;vertical-align: middle;">
                                                                 Penilaian
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th style="text-align: center;vertical-align: middle;">Bacaan
+                                                            </th>
+                                                            <th style="text-align: center;vertical-align: middle;">Tulisan
+                                                            </th>
+                                                            <th style="text-align: center;vertical-align: middle;">Hafalan
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -80,6 +104,27 @@
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $peserta->mahasiswa->programstudi }}</td>
                                                                 <td style="text-align: center;vertical-align: middle;">
+                                                                    @if ($peserta->nilai_bacaan)
+                                                                        {{ $peserta->nilai_bacaan }}
+                                                                    @else
+                                                                        0
+                                                                    @endif
+                                                                </td>
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    @if ($peserta->nilai_tulisan)
+                                                                        {{ $peserta->nilai_tulisan }}
+                                                                    @else
+                                                                        0
+                                                                    @endif
+                                                                </td>
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    @if ($peserta->nilai_hafalan)
+                                                                        {{ $peserta->nilai_hafalan }}
+                                                                    @else
+                                                                        0
+                                                                    @endif
+                                                                </td>
+                                                                <td style="text-align: center;vertical-align: middle;">
                                                                     <button type="button"
                                                                         class="btn btn-sm btn-warning btn-bacaan"
                                                                         data-mahasiswa-id="{{ $peserta->mahasiswa->id }}">Bacaan</button>
@@ -92,7 +137,7 @@
                                                             </tr>
                                                         @empty
                                                             <tr>
-                                                                <td colspan="5"
+                                                                <td colspan="8"
                                                                     style="text-align: center;vertical-align: middle;">Tidak
                                                                     ada peserta terdaftar</td>
                                                             </tr>
@@ -213,12 +258,15 @@
                                 jadwal_id: "{{ $jadwal->id }}"
                             },
                             success: function(response) {
-                                // Tindakan ketika sukses
                                 Swal.fire(
                                     'Berhasil!',
-                                    'Penilaian berhasil di-generate.',
+                                    'Penilaian berhasil digenerate.',
                                     'success'
-                                );
+                                ).then(() => {
+                                    // Tutup modal dan reload halaman setelah SweetAlert ditutup
+                                    $('#modalPenilaian').modal('hide');
+                                    location.reload(); // Reload halaman
+                                });
                             },
                             error: function(xhr, status, error) {
                                 // Tindakan ketika gagal
@@ -305,7 +353,6 @@
                 }
             });
 
-
             // Kirim data penilaian yang dipilih ke backend
             $.ajax({
                 url: "{{ route('btq.penilaian.save') }}", // Sesuaikan route untuk menyimpan data
@@ -320,10 +367,11 @@
                         'Berhasil!',
                         'Penilaian berhasil disimpan.',
                         'success'
-                    );
-
-                    // Tutup modal
-                    $('#modalPenilaian').modal('hide');
+                    ).then(() => {
+                        // Tutup modal dan reload halaman setelah SweetAlert ditutup
+                        $('#modalPenilaian').modal('hide');
+                        location.reload(); // Reload halaman
+                    });
                 },
                 error: function(xhr, status, error) {
                     Swal.fire(

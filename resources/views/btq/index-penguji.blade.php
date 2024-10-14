@@ -133,7 +133,17 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <p class="card-text">
-                                                        {{ $item->jumlahMahasiswaTerdaftar() }}/{{ $item->kuota }}
+                                                        @if ($item->peserta == 'P')
+                                                            <span class="badge bg-primary">Perempuan -
+                                                                {{ $item->jumlahMahasiswaTerdaftar() }}
+                                                                /
+                                                                {{ $item->kuota }}</span>
+                                                        @else
+                                                            <span class="badge bg-primary">Laki-laki -
+                                                                {{ $item->jumlahMahasiswaTerdaftar() }}
+                                                                /
+                                                                {{ $item->kuota }}</span>
+                                                        @endif
                                                     </p>
 
                                                 </div>
@@ -157,11 +167,7 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <p class="card-text">
-                                                        @if ($item->is_active)
-                                                            <span class="badge bg-success">Aktif</span>
-                                                        @else
-                                                            <span class="badge bg-danger">Selesai</span>
-                                                        @endif
+                                                        <span class="badge bg-success">{{ $item->is_active }}</span>
                                                     </p>
                                                 </div>
                                                 <div class="col-sm-2 col-form-label">
@@ -171,7 +177,7 @@
                                                 <div class="col-sm-4">
                                                     {{-- button edit dan detail --}}
                                                     <a href="{{ route('btq.jadwal.edit', $item->id) }}"
-                                                        class="btn btn-warning btn-sm">Edit</a>
+                                                        class="btn btn-warning btn-sm">Detail</a>
                                                     {{-- button hapus --}}
                                                 </div>
                                             </div>

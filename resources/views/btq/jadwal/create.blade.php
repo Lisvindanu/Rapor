@@ -219,8 +219,12 @@
                                                             <label for="is_active" class="col-md-5">Selesai?</label>
                                                             <div class="col-md-7 input-is_active"
                                                                 style="display:block; word-wrap:break-word;">
-                                                                <input type="checkbox" id="is_active" name="is_active"
-                                                                    value="1">
+                                                                <select id="is_active" name="is_active"
+                                                                    class="form-control required">
+                                                                    <option value="Aktif">Aktif</option>
+                                                                    <option value="Proses">Proses Penilaian</option>
+                                                                    <option value="Selesai">Selesai</option>
+                                                                </select>
                                                                 <p class="help-block">
                                                                     <span id="error-field-is_active"></span>
                                                                 </p>

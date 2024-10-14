@@ -69,12 +69,6 @@
                                     <div class="col-9">
                                         <p class="card-text">{{ auth()->user()->name }}</p>
                                     </div>
-                                    <div class="col-12 mt-3">
-                                        <a href="{{ route('kuesioner.penilaian') }}" class="btn btn-primary">Daftar
-                                            Jadwal</a>
-                                        <a href="{{ route('kuesioner.penilaian.riwayat') }}" class="btn btn-warning">Riwayat
-                                            Kuesioner</a>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -190,7 +184,37 @@
 
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Lengkapi Profil Anda</h5>
+                    <!-- Hapus tombol close -->
+                    {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
+                </div>
+                <div class="modal-body">
+                    Jenis kelamin Anda belum terisi. Silakan lengkapi profil Anda terlebih dahulu.
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('profile.edit') }}" class="btn btn-primary">Ubah Profil</a>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js-tambahan')
+    <script>
+        $(document).ready(function() {
+            @if ($showModal)
+                // Tampilkan modal ketika halaman dimuat jika showModal true
+                $('#profileModal').modal({
+                    backdrop: 'static', // Cegah penutupan dengan klik di luar modal
+                    keyboard: false // Cegah penutupan dengan tombol ESC
+                });
+                $('#profileModal').modal('show');
+            @endif
+        });
+    </script>
 @endsection

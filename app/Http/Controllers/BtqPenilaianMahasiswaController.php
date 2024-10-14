@@ -30,6 +30,11 @@ class BtqPenilaianMahasiswaController extends Controller
                 return response()->json(['message' => 'Tidak ada mahasiswa yang terdaftar pada jadwal ini'], 404);
             }
 
+            // Hapus data BtqPenilaianMahasiswa yang sudah ada untuk jadwal ini
+            BtqPenilaianMahasiswa::whereHas('btqJadwalMahasiswa', function ($query) use ($jadwal) {
+                $query->where('jadwal_id', $jadwal->id);
+            })->delete();
+
             // Ambil data mahasiswa yang terdaftar pada jadwal tersebut
             $jadwalMahasiswa = BtqJadwalMahasiswa::where('jadwal_id', $jadwal->id)->get();
 
@@ -85,13 +90,6 @@ class BtqPenilaianMahasiswaController extends Controller
             $penilaianData = $request->input('penilaian', []);
             $penguji_id = $request->input('penguji_id'); // Ambil penguji_id
 
-            // return response()->json(
-            //     [
-            //         'message' => 'Penilaian berhasil disimpan',
-            //         'penilaian' => $penilaianData,
-            //     ],
-            //     200
-            // );
             // Loop melalui semua data penilaian yang dikirimkan
             foreach ($penilaianData as $penilaian) {
                 // Pastikan setiap penilaian memiliki 'id' dan 'nilai'

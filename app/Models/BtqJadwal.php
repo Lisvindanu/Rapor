@@ -33,7 +33,6 @@ class BtqJadwal extends Model
         'tanggal' => 'date',
         'jam_mulai' => 'datetime:H:i',
         'jam_selesai' => 'datetime:H:i',
-        'is_active' => 'boolean',
     ];
 
     protected $appends = ['jumlah_peserta'];

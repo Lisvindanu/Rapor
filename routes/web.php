@@ -49,6 +49,11 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     Route::get('/auth/change-password-after', "LoginController@changePasswordSecond")->name('changePasswordSecond');
     Route::post('/auth/update-password', "LoginController@updatePassword")->name('updatePassword');
 
+    Route::prefix('profile')->group(function () {
+        Route::get('/edit', "ProfileController@edit")->name('profile.edit');
+        Route::put('/update', "ProfileController@update")->name('profile.update');
+    });
+
     Route::prefix('gate')->group(function () {
         Route::get('/', "GateController@index")->name('gate');
         Route::post('/set-role', "GateController@setRole")->name('gate.setRole');

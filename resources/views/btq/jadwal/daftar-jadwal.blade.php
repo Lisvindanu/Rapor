@@ -34,7 +34,7 @@
             </div>
         @endif
 
-        <div class="filter-konten">
+        {{-- <div class="filter-konten">
             <div class="row justify-content-md-center">
                 <div class="container">
                     <div class="card">
@@ -67,7 +67,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="" style="margin-top: 10px">
             <div class="row justify-content-md-center">
@@ -145,7 +145,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            {{-- @include('komponen.pagination') --}}
+                            @include('komponen.pagination')
                         </div>
                     </div>
                 </div>

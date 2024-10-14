@@ -35,7 +35,6 @@ class BtqController extends Controller
     {
         $jadwal = BtqJadwal::with(['periode', 'penguji'])
             ->where('penguji_id', auth()->user()->username)
-            ->orderBy('is_active', 'desc')
             ->orderBy('tanggal', 'asc')
             ->get();
 
@@ -47,12 +46,23 @@ class BtqController extends Controller
     // index-peserta
     public function indexMahasiswa()
     {
+        $user = auth()->user();
+
+        // Cek apakah jeniskelamin di mahasiswa null
+        $showModal = false; // Default, modal tidak ditampilkan
+
+        if ($user->mahasiswa && is_null($user->mahasiswa->jeniskelamin)) {
+            $showModal = true; // Tampilkan modal jika jeniskelamin null
+        }
+
+
         $jadwal = BtqJadwalMahasiswa::with(['jadwal', 'mahasiswa'])
             ->where('mahasiswa_id', auth()->user()->username)
             ->get();
 
         return view('btq.index-mahasiswa', [
-            'jadwal' => $jadwal
+            'jadwal' => $jadwal,
+            'showModal' => $showModal
         ]);
     }
 }

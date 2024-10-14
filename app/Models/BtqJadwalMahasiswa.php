@@ -34,4 +34,34 @@ class BtqJadwalMahasiswa extends Model
     {
         return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id', 'nim');
     }
+
+    // Relasi ke tabel 'btq_penilaian_mahasiswa'
+    public function penilaian()
+    {
+        return $this->hasMany(BtqPenilaianMahasiswa::class, 'btq_jadwal_mahasiswa_id', 'id');
+    }
+
+    // Accessor untuk nilai bacaan
+    public function getNilaiBacaanAttribute()
+    {
+        return $this->penilaian()
+            ->where('jenis_penilaian', 'Bacaan')
+            ->sum('nilai');
+    }
+
+    // Accessor untuk nilai tulisan
+    public function getNilaiTulisanAttribute()
+    {
+        return $this->penilaian()
+            ->where('jenis_penilaian', 'Tulisan')
+            ->sum('nilai');
+    }
+
+    // Accessor untuk nilai hafalan
+    public function getNilaiHafalanAttribute()
+    {
+        return $this->penilaian()
+            ->where('jenis_penilaian', 'Hafalan')
+            ->sum('nilai');
+    }
 }

@@ -39,11 +39,20 @@ Route::post('/login/verify', [LoginController::class, 'verify']);
 Route::post('/login/exit', [LoginController::class, 'logout']);
 // Route::get('/login', "LoginController@showLoginForm")->name('login');
 
+// faq
+Route::get('/faq', function () {
+    return "faq";
+})->name('faq');
 
 Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () {
     Route::get('/auth/change-password', "LoginController@changePassword")->name('changePassword');
     Route::get('/auth/change-password-after', "LoginController@changePasswordSecond")->name('changePasswordSecond');
     Route::post('/auth/update-password', "LoginController@updatePassword")->name('updatePassword');
+
+    Route::prefix('profile')->group(function () {
+        Route::get('/edit', "ProfileController@edit")->name('profile.edit');
+        Route::put('/update', "ProfileController@update")->name('profile.update');
+    });
 
     Route::prefix('gate')->group(function () {
         Route::get('/', "GateController@index")->name('gate');
@@ -428,6 +437,38 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::prefix('laporan')->group(function () {
             Route::get('/', "SisipanLaporanController@index")->name('sisipan.laporan');
             Route::post('/print-laporan', "SisipanLaporanController@printLaporan")->name('sisipan.laporan.print');
+        });
+    });
+
+    // btq
+    Route::prefix('btq')->group(function () {
+        Route::get('/', "BtqController@index")->name('btq');
+
+        Route::prefix('jadwal')->group(function () {
+            Route::prefix('mahasiswa')->group(function () {
+                Route::post('/store', "BtqJadwalMahasiswaController@store")->name('btq.jadwal.store-mahasiswa');
+            });
+
+            Route::get('/daftar', "BtqJadwalController@daftarJadwal")->name('btq.jadwal.daftar-jadwal');
+            Route::get('/create', "BtqJadwalController@create")->name('btq.jadwal.create');
+            Route::post('/', "BtqJadwalController@store")->name('btq.jadwal.store');
+            Route::get('/edit/{id}', "BtqJadwalController@edit")->name('btq.jadwal.edit');
+            Route::get('/peserta/{id}', "BtqJadwalController@daftarPeserta")->name('btq.jadwal.daftar-peserta');
+            Route::put('/{id}', "BtqJadwalController@update")->name('btq.jadwal.update');
+            Route::delete('/{id}', "BtqJadwalController@destroy")->name('btq.jadwal.delete');
+        });
+
+        Route::prefix('penilaian')->group(function () {
+            Route::get('/', "BtqPenilaianController@index")->name('btq.penilaian');
+            Route::get('/get', "BtqPenilaianMahasiswaController@getPenilaian")->name('btq.penilaian.get');
+            Route::get('/daftar', "BtqPenilaianController@daftarPenilaian")->name('btq.penilaian.daftar-penilaian');
+            Route::get('/create', "BtqPenilaianController@create")->name('btq.penilaian.create');
+            Route::post('/', "BtqPenilaianController@store")->name('btq.penilaian.store');
+            Route::post('/generate', "BtqPenilaianMahasiswaController@generatePenilaian")->name('btq.penilaian.generate');
+            Route::post('/save', "BtqPenilaianMahasiswaController@savePenilaian")->name('btq.penilaian.save');
+            Route::get('/edit/{id}', "BtqPenilaianController@edit")->name('btq.penilaian.edit');
+            Route::put('/{id}', "BtqPenilaianController@update")->name('btq.penilaian.update');
+            Route::delete('/{id}', "BtqPenilaianController@destroy")->name('btq.penilaian.delete');
         });
     });
 

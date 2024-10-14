@@ -13,7 +13,7 @@
                     </div>
 
                     <div class="button-app" style="float: right">
-                        <a href="#" style="text-decoration: none" class="exit-button">Hello,
+                        <a href="{{ route('profile.edit') }}" style="text-decoration: none" class="exit-button">Hello,
                             @if (Auth::check())
                                 {{ Auth::user()->name }}
                             @endif

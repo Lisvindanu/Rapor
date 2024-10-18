@@ -30,7 +30,8 @@ class AddRoleToStudent extends Command
     {
         $this->info('Start');
         $listMahasiswa = Mahasiswa::whereHas('user')
-            ->where('programstudi', 'Ilmu Hukum')
+            // ->where('programstudi', 'Ilmu Hukum')
+            ->where('periodemasuk', '20241')
             ->where('statusmahasiswa', 'Aktif')
             ->get();
 

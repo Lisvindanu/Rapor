@@ -12,7 +12,7 @@
                                 </li>
 
                                 {{-- jika memiliki session selected role sebagai admin --}}
-                                @if (session('selected_role') == 'Admin')
+                                {{-- @if (session('selected_role') == 'Admin')
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" role="button"
                                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -25,12 +25,9 @@
                                             <li><a class="dropdown-item"
                                                     href="{{ route('kuesioner.kuesioner-sdm') }}">Kuesioner SDM</a>
                                             </li>
-                                            {{-- <li><a class="dropdown-item" href="{{ route('master.user') }}">Kuesioner Unit
-                                                Kerja</a></li> --}}
-
                                         </ul>
                                     </li>
-                                @endif
+                                @endif --}}
                             </ul>
                         </div>
                     </div>

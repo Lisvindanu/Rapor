@@ -84,12 +84,12 @@
 
                                                         <!-- Penguji ID -->
                                                         <div id="block-penguji_id" class="row bord-bottom">
-                                                            <label for="penguji_id" class="col-md-5">Penguji ID</label>
+                                                            <label for="penguji_id" class="col-md-5">Pementor ID</label>
                                                             <div class="col-md-7 input-penguji_id"
                                                                 style="display:block; word-wrap:break-word;">
                                                                 <input class="form-control required" type="text"
                                                                     name="penguji_id" id="penguji_id"
-                                                                    value="{{ Auth::user()->username }}">
+                                                                    value="{{ Auth::user()->username }}" readonly>
                                                                 <p class="help-block">
                                                                     <span id="error-field-penguji_id"></span>
                                                                 </p>

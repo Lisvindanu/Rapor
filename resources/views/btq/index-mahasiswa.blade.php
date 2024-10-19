@@ -73,6 +73,35 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="card mt-2" style="line-height: 0.7cm">
+                        <div class="card-header" style="background-color: #fff; margin-top:10px">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="card-title">Tata Terbit Placement Test BTQ</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="display: flex">
+                            <div class="col-md-12">
+                                <div class="row align-items-center">
+                                    <div class="col-12">
+                                        <ol>
+                                            <li>Pada saat pelaksanaan Placement Test, wajib membawa Kitab Al-quran,
+                                                tidak
+                                                dalam bentuk digital
+                                            </li>
+                                            <li>Menggunakan pakaian yang baik dan sopan, untuk perempuan wajib
+                                                menggunakan Kerudung</li>
+                                            <li>Membawa Buku dan Alat Tulis</li>
+                                            <li>Hadir tepat waktu sesuai dengan jadwal yang telah dipilih</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
                 <div class="col-8">
                     <div class="card">
@@ -94,6 +123,7 @@
                         </div>
                         <div class="card-body" style="display: flex">
                             <div class="col-md-12">
+
                                 {{-- jika data kuesioner kosong, maka tampilkan pesan --}}
                                 @if ($jadwal->isEmpty())
                                     <div class="alert alert-info" role="alert">
@@ -106,6 +136,8 @@
                                             <h5 class="card-title" style="margin-bottom: 15px;">
                                                 Jadwal Placement Test BTQ
                                             </h5>
+                                            <hr>
+
                                             <div class="row align-items-center">
                                                 <div class="col-sm-2 col-form-label">
                                                     <label for="nama_kuesioner" class="create-label">
@@ -152,17 +184,14 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <p class="card-text">
-                                                        @if ($item->jadwal->is_active)
-                                                            <span class="badge bg-success">Aktif</span>
-                                                        @else
-                                                            <span class="badge bg-danger">Selesai</span>
-                                                        @endif
+                                                        <span class="badge bg-success">{{ $item->jadwal->is_active }}</span>
                                                     </p>
 
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="card-footer bg-transparent">
+
                                             {{-- jika data penilaian masih kosong, maka tampilkan tombol mulai --}}
                                             {{-- jika data penilaian sudah ada, maka tampilkan tombol lanjutkan --}}
                                             {{-- @if ($item->penilaian->isEmpty())

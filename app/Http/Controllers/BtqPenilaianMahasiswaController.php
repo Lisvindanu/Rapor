@@ -50,6 +50,7 @@ class BtqPenilaianMahasiswaController extends Controller
                         'btq_jadwal_mahasiswa_id' => $item->id,
                         'jenis_penilaian' => $pen->jenis_penilaian,
                         'nilai' => 0,
+                        'nilai_self' => 0,
                     ];
                 });
             })->toArray();

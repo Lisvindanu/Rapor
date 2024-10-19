@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BtqJadwalMahasiswa;
 use App\Models\BtqJadwal;
+use App\Models\BtqPenilaian;
+use Illuminate\Support\Str;
+use App\Models\BtqPenilaianMahasiswa;
 
 class BtqJadwalMahasiswaController extends Controller
 {
@@ -56,10 +59,28 @@ class BtqJadwalMahasiswaController extends Controller
                 ]);
             }
 
-            BtqJadwalMahasiswa::create([
+            $jadwalMahasiswa = BtqJadwalMahasiswa::create([
                 'jadwal_id'     => $validated['jadwal_id'],
                 'mahasiswa_id'  => auth()->user()->username,
             ]);
+
+            $penilaian = BtqPenilaian::where('is_active', 1)->get();
+
+            // Siapkan data untuk dimasukkan ke database
+            $data = $jadwalMahasiswa->flatMap(function ($item) use ($penilaian) {
+                return $penilaian->map(function ($pen) use ($item) {
+                    return [
+                        'id' => Str::uuid(),
+                        'btq_penilaian_id' => $pen->id,
+                        'btq_jadwal_mahasiswa_id' => $item->id,
+                        'jenis_penilaian' => $pen->jenis_penilaian,
+                        'nilai' => 0,
+                        'nilai_self' => 0,
+                    ];
+                });
+            })->toArray();
+
+            BtqPenilaianMahasiswa::insert($data);
 
             return response()->json([
                 'success' => true,

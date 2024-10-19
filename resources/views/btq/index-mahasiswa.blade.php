@@ -139,11 +139,11 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <p class="card-text">
-                                                        {{ \Carbon\Carbon::parse($item->jam_mulai)->isoFormat('hh:mm A') }}
+                                                        {{ \Carbon\Carbon::parse($item->jadwal->jam_mulai)->isoFormat('hh:mm A') }}
                                                         -
-                                                        {{ \Carbon\Carbon::parse($item->jam_selesai)->isoFormat('hh:mm A') }}
+                                                        {{ \Carbon\Carbon::parse($item->jadwal->jam_selesai)->isoFormat('hh:mm A') }}
                                                         ,
-                                                        {{ \Carbon\Carbon::parse($item->tanggal)->locale('id_ID')->isoFormat('D MMMM YYYY') }}
+                                                        {{ \Carbon\Carbon::parse($item->jadwal->tanggal)->locale('id_ID')->isoFormat('D MMMM YYYY') }}
                                                     </p>
                                                 </div>
                                                 <div class="col-sm-2 col-form-label">

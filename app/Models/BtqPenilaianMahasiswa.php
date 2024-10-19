@@ -18,6 +18,7 @@ class BtqPenilaianMahasiswa extends Model
         'btq_jadwal_mahasiswa_id',
         'jenis_penilaian',
         'nilai',
+        'nilai_self',
         'penguji_id',
     ];
 

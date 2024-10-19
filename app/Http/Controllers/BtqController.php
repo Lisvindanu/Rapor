@@ -20,7 +20,7 @@ class BtqController extends Controller
         //     'jadwal' => $jadwal
         // ]);
 
-        if (session('selected_role') == 'Admin' || session('selected_role') == 'Penguji') {
+        if (session('selected_role') == 'Admin' || session('selected_role') == 'Pementor') {
             return $this->indexPenguji();
         } else if (session('selected_role') == 'Mahasiswa') {
             // return "Mahasiswa";

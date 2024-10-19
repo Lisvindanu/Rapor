@@ -17,6 +17,7 @@ class BtqPenilaian extends Model
         'no_urut',
         'jenis_penilaian',
         'text_penilaian',
+        'text_penilaian_self',
         'is_active',
     ];
 

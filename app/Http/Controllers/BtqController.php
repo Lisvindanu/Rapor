@@ -60,7 +60,7 @@ class BtqController extends Controller
             ->where('mahasiswa_id', auth()->user()->username)
             ->get();
 
-        return response()->json($jadwal);
+        // return response()->json($jadwal);
 
         return view('btq.index-mahasiswa', [
             'jadwal' => $jadwal,

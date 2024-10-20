@@ -69,12 +69,12 @@
                                     <div class="col-9">
                                         <p class="card-text">{{ auth()->user()->name }}</p>
                                     </div>
-                                    {{-- <div class="col-12 mt-3">
-                                        <a href="{{ route('kuesioner.penilaian') }}" class="btn btn-primary">Daftar
+                                    <div class="col-12 mt-3">
+                                        <a href="{{ route('btq') }}" class="btn btn-primary">Daftar
                                             Jadwal</a>
-                                        <a href="{{ route('kuesioner.penilaian.riwayat') }}" class="btn btn-warning">Riwayat
-                                            Kuesioner</a>
-                                    </div> --}}
+                                        <a href="{{ route('btq.riwayat') }}" class="btn btn-warning">Riwayat
+                                            Jadwal</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

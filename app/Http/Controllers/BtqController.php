@@ -35,6 +35,22 @@ class BtqController extends Controller
     {
         $jadwal = BtqJadwal::with(['periode', 'penguji'])
             ->where('penguji_id', auth()->user()->username)
+            ->where('is_active', "!=", "Selesai")
+            // ->orderBy('tanggal', 'asc')
+            ->orderBy('is_active', 'asc')
+            ->get();
+
+        return view('btq.index-penguji', [
+            'jadwal' => $jadwal
+        ]);
+    }
+
+    // riwayatJadwal
+    public function riwayatJadwal()
+    {
+        $jadwal = BtqJadwal::with(['periode', 'penguji'])
+            ->where('penguji_id', auth()->user()->username)
+            ->where('is_active', "Selesai")
             ->orderBy('tanggal', 'asc')
             ->get();
 

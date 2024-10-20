@@ -443,6 +443,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     // btq
     Route::prefix('btq')->group(function () {
         Route::get('/', "BtqController@index")->name('btq');
+        Route::get('/riwayat', "BtqController@riwayatJadwal")->name('btq.riwayat');
 
         Route::prefix('jadwal')->group(function () {
             Route::prefix('mahasiswa')->group(function () {

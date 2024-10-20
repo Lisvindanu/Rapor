@@ -466,6 +466,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::post('/', "BtqPenilaianController@store")->name('btq.penilaian.store');
             Route::post('/generate', "BtqPenilaianMahasiswaController@generatePenilaian")->name('btq.penilaian.generate');
             Route::post('/save', "BtqPenilaianMahasiswaController@savePenilaian")->name('btq.penilaian.save');
+            Route::post('/self-assesment', "BtqPenilaianMahasiswaController@selfPenilaian")->name('btq.penilaian.self-assesment');
             Route::get('/edit/{id}', "BtqPenilaianController@edit")->name('btq.penilaian.edit');
             Route::put('/{id}', "BtqPenilaianController@update")->name('btq.penilaian.update');
             Route::delete('/{id}', "BtqPenilaianController@destroy")->name('btq.penilaian.delete');

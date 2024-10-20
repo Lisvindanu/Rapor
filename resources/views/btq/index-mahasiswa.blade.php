@@ -73,6 +73,35 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="card mt-2" style="line-height: 0.7cm">
+                        <div class="card-header" style="background-color: #fff; margin-top:10px">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="card-title">Tata Terbit Placement Test BTQ</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="display: flex">
+                            <div class="col-md-12">
+                                <div class="row align-items-center">
+                                    <div class="col-12">
+                                        <ol>
+                                            <li>Pada saat pelaksanaan Placement Test, wajib membawa Kitab Al-quran,
+                                                tidak
+                                                dalam bentuk digital
+                                            </li>
+                                            <li>Menggunakan pakaian yang baik dan sopan, untuk perempuan wajib
+                                                menggunakan Kerudung</li>
+                                            <li>Membawa Buku dan Alat Tulis</li>
+                                            <li>Hadir tepat waktu sesuai dengan jadwal yang telah dipilih</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
                 <div class="col-8">
                     <div class="card">
@@ -94,6 +123,7 @@
                         </div>
                         <div class="card-body" style="display: flex">
                             <div class="col-md-12">
+
                                 {{-- jika data kuesioner kosong, maka tampilkan pesan --}}
                                 @if ($jadwal->isEmpty())
                                     <div class="alert alert-info" role="alert">
@@ -106,6 +136,8 @@
                                             <h5 class="card-title" style="margin-bottom: 15px;">
                                                 Jadwal Placement Test BTQ
                                             </h5>
+                                            <hr>
+
                                             <div class="row align-items-center">
                                                 <div class="col-sm-2 col-form-label">
                                                     <label for="nama_kuesioner" class="create-label">
@@ -152,26 +184,29 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <p class="card-text">
-                                                        @if ($item->jadwal->is_active)
-                                                            <span class="badge bg-success">Aktif</span>
-                                                        @else
-                                                            <span class="badge bg-danger">Selesai</span>
-                                                        @endif
+                                                        <span class="badge bg-success">{{ $item->jadwal->is_active }}</span>
                                                     </p>
 
+                                                </div>
+                                                <div class="col-sm-2 col-form-label">
+                                                    <label for="nama_kuesioner" class="create-label">
+                                                        Penilaian Mandiri</label>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    @if ($item->jadwal->is_active == 'Aktif')
+                                                        <button type="button" class="btn btn-sm btn-warning btn-bacaan"
+                                                            data-jadwal-mahasiswa-id="{{ $item->id }}">Bacaan</button>
+                                                        <button type="button" class="btn btn-sm btn-success"
+                                                            data-jadwal-mahasiswa-id="{{ $item->id }}">Tulisan</button>
+                                                        <button type="button" class="btn btn-sm btn-info"
+                                                            data-jadwal-mahasiswa-id="{{ $item->id }}">Hafalan</button>
+                                                    @else
+                                                        <span class="badge bg-danger">Non Aktif</span>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="card-footer bg-transparent">
-                                            {{-- jika data penilaian masih kosong, maka tampilkan tombol mulai --}}
-                                            {{-- jika data penilaian sudah ada, maka tampilkan tombol lanjutkan --}}
-                                            {{-- @if ($item->penilaian->isEmpty())
-                                                <a href="{{ route('kuesioner.penilaian.mulai', $item->id) }}"
-                                                    class="btn btn-primary">Mulai</a>
-                                            @else
-                                                <a href="{{ route('kuesioner.penilaian.mulai', $item->id) }}"
-                                                    class="btn btn-success">Lanjutkan</a>
-                                            @endif --}}
                                         </div>
                                     </div>
                                 @endforeach
@@ -180,8 +215,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
     <!-- Modal -->
@@ -202,6 +235,45 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalPenilaian" tabindex="-1" aria-labelledby="modalPenilaianLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPenilaianLabel">Penilaian Hafalan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin-bottom: 10px">
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            Pastikan data yang diinputkan sudah sesuai. checklist bila "Ya" dan kosongkan bila "Tidak".
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    </div>
+                    <table class="table table-bordered" id="tabelData">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center;vertical-align: middle;">No.</th>
+                                <th>Penilaian</th>
+                                <th style="text-align: center;vertical-align: middle;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data akan dimasukkan secara dinamis melalui JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="btnSimpanPenilaian">Simpan</button>
+                </div>
+                <div id="loadingSpinner" class="spinner-border text-primary" role="status" style="display: none;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js-tambahan')
@@ -215,6 +287,106 @@
                 });
                 $('#profileModal').modal('show');
             @endif
+        });
+
+        // Klik tombol Bacaan, Tulisan, atau Hafalan
+        $('.btn-warning, .btn-info, .btn-success').on('click', function() {
+            // Ambil jenis penilaian dari tombol yang diklik
+            var jenisPenilaian = $(this).text();
+
+            // Ubah judul modal sesuai jenis penilaian
+            $('#modalPenilaianLabel').text('Penilaian Mandiri ' + jenisPenilaian);
+
+            // Tampilkan loading spinner
+            $('#loadingSpinner').show();
+
+            // Ambil jadwalMahasiswaId dari atribut data-jadwal-mahasiswa-id
+            var jadwalMahasiswaId = $(this).data('jadwal-mahasiswa-id');
+
+            // AJAX request untuk mendapatkan data penilaian
+            $.ajax({
+                url: "{{ route('btq.penilaian.get') }}",
+                type: 'GET',
+                data: {
+                    jadwal_mahasiswa_id: jadwalMahasiswaId,
+                    jenis_penilaian: jenisPenilaian
+                },
+                success: function(response) {
+                    // Muat konten penilaian ke dalam tabel
+                    var tbody = $('#tabelData tbody');
+                    tbody.empty();
+
+                    $.each(response.penilaian, function(index, penilaian) {
+                        tbody.append(`
+                        <tr>
+                            <td style="text-align: center;vertical-align: middle;">${penilaian.btq_penilaian.no_urut}</td>
+                            <td>${penilaian.btq_penilaian.text_penilaian_self}</td>
+                            <td style="text-align: center;vertical-align: middle;">
+                                <input type="checkbox" name="penilaian[]" value="${penilaian.id}" ${penilaian.nilai_self == 1 ? 'checked' : ''}>
+                            </td>
+                        </tr>
+                    `);
+                    });
+
+                    // Sembunyikan loading spinner
+                    $('#loadingSpinner').hide();
+
+                    // Tampilkan modal penilaian
+                    $('#modalPenilaian').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire(
+                        'Gagal!',
+                        'Tidak dapat memuat data penilaian ' + jenisPenilaian + '.',
+                        'error'
+                    );
+                    $('#loadingSpinner').hide(); // Sembunyikan loading spinner jika error
+                }
+            });
+        });
+
+        // Simpan penilaian saat tombol simpan diklik
+        $('#btnSimpanPenilaian').on('click', function() {
+            var dataPenilaian = [];
+            $('#tabelData input[type="checkbox"]').each(function() {
+                var penilaianId = $(this).val();
+                var nilai_self = $(this).is(':checked') ? 1 : 0;
+
+                if (penilaianId) {
+                    dataPenilaian.push({
+                        id: penilaianId,
+                        nilai_self: nilai_self
+                    });
+                }
+            });
+
+            // Kirim data penilaian yang dipilih ke backend
+            $.ajax({
+                url: "{{ route('btq.penilaian.self-assesment') }}",
+                type: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    penilaian: dataPenilaian,
+                    penguji_id: "{{ Auth::user()->id }}"
+                },
+                success: function(response) {
+                    Swal.fire(
+                        'Berhasil!',
+                        'Penilaian berhasil disimpan.',
+                        'success'
+                    ).then(() => {
+                        $('#modalPenilaian').modal('hide');
+                        location.reload();
+                    });
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire(
+                        'Gagal!',
+                        'Tidak dapat menyimpan penilaian.',
+                        'error'
+                    );
+                }
+            });
         });
     </script>
 @endsection

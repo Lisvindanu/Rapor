@@ -64,21 +64,23 @@ class BtqJadwalMahasiswaController extends Controller
                 'mahasiswa_id'  => auth()->user()->username,
             ]);
 
+            $jadwal_id = $jadwalMahasiswa->id;
+
             $penilaian = BtqPenilaian::where('is_active', 1)->get();
 
             // Siapkan data untuk dimasukkan ke database
-            $data = $jadwalMahasiswa->flatMap(function ($item) use ($penilaian) {
-                return $penilaian->map(function ($pen) use ($item) {
-                    return [
-                        'id' => Str::uuid(),
-                        'btq_penilaian_id' => $pen->id,
-                        'btq_jadwal_mahasiswa_id' => $item->id,
-                        'jenis_penilaian' => $pen->jenis_penilaian,
-                        'nilai' => 0,
-                        'nilai_self' => 0,
-                    ];
-                });
-            })->toArray();
+            $data = [];
+
+            foreach ($penilaian as $pen) {
+                $data[] = [
+                    'id' => Str::uuid(),
+                    'btq_penilaian_id' => $pen->id,
+                    'btq_jadwal_mahasiswa_id' => $jadwal_id,
+                    'jenis_penilaian' => $pen->jenis_penilaian,
+                    'nilai' => 0,
+                    'nilai_self' => 0,
+                ];
+            };
 
             BtqPenilaianMahasiswa::insert($data);
 

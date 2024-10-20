@@ -35,13 +35,13 @@
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <a href="{{ route('btq') }}" class="btn btn-secondary" type="button">Kembali</a>
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        @if ($penilaianMahasiswaExists)
+                                        {{-- @if ($penilaianMahasiswaExists)
                                             <button type="button" class="btn btn-danger" id="btnSimpan">Reset
                                                 Penilaian</button>
                                         @else
                                             <button type="button" class="btn btn-primary" id="btnSimpan">Generate
                                                 Penilaian</button>
-                                        @endif
+                                        @endif --}}
                                         <!-- Button simpan -->
                                         {{-- <button type="button" class="btn btn-primary" id="btnSimpan">Generate
                                             Penilaiain</button> --}}
@@ -157,43 +157,6 @@
             </div>
         </div>
     </div>
-    {{-- <div class="modal fade" id="modalPenilaian" tabindex="-1" aria-labelledby="modalPenilaianLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalPenilaianLabel">Penilaian Hafalan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row" style="margin-bottom: 10px">
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            Pastikan data yang diinputkan sudah sesuai. checklist bila "Ya" dan kosongkan bila "Tidak".
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    </div>
-                    <table class="table table-bordered" id="tabelData">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Penilaian</th>
-                                <th><input type="checkbox" id="checkAll"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-                <div id="loadingSpinner" class="spinner-border text-primary" role="status" style="display: none;">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        </div>
-    </div> --}}
     <div class="modal fade" id="modalPenilaian" tabindex="-1" aria-labelledby="modalPenilaianLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -204,15 +167,19 @@
                 <div class="modal-body">
                     <div class="row" style="margin-bottom: 10px">
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            Pastikan data yang diinputkan sudah sesuai. checklist bila "Ya" dan kosongkan bila "Tidak".
+                            Pastikan data yang diinputkan sudah sesuai. Checklist bila "Ya" dan kosongkan bila "Tidak".
+                            <br>
+                            <strong>S.A adalah Self Assessment.</strong>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     </div>
+
                     <table class="table table-bordered" id="tabelData">
                         <thead>
                             <tr>
                                 <th style="text-align: center;vertical-align: middle;">No.</th>
                                 <th>Penilaian</th>
+                                <th style="text-align: center;vertical-align: middle;">S.A</th>
                                 <th style="text-align: center;vertical-align: middle;">Aksi</th>
                             </tr>
                         </thead>
@@ -313,6 +280,9 @@
                             <tr>
                             <td style="text-align: center;vertical-align: middle;">${penilaian.btq_penilaian.no_urut}</td>
                             <td>${penilaian.btq_penilaian.text_penilaian}</td>
+                            <td style="text-align: center;vertical-align: middle;"> <span>
+        ${penilaian.nilai_self == 1 ? '✓' : '✗'}
+    </span></td>
                             <td style="text-align: center;vertical-align: middle;"><input type="checkbox" name="penilaian[]" value="${penilaian.id}" ${penilaian.nilai == 1 ? 'checked' : ''}></td>
                         </tr>
                     `);

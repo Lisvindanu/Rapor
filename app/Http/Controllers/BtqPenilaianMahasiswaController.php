@@ -72,17 +72,35 @@ class BtqPenilaianMahasiswaController extends Controller
     // getdatapenilaian
     public function getPenilaian(Request $request)
     {
-        $penilaian = BtqPenilaianMahasiswa::with(['btqPenilaian' => function ($query) {
-            $query->orderBy('no_urut', 'asc'); // Urutkan berdasarkan no_urut secara ascending
-        }])
-            ->where('btq_jadwal_mahasiswa_id', $request->jadwal_mahasiswa_id)
-            ->whereHas('btqPenilaian', function ($query) use ($request) {
-                $query->where('jenis_penilaian', $request->jenis_penilaian);
-            })
-            ->get();
+        try {
+            // Ambil data penilaian dengan relasi dan pengurutan
+            $penilaian = BtqPenilaianMahasiswa::with(['btqPenilaian' => function ($query) {
+                $query->orderBy('no_urut', 'asc'); // Urutkan berdasarkan no_urut dari relasi btqPenilaian
+            }])
+                ->where('btq_jadwal_mahasiswa_id', $request->jadwal_mahasiswa_id)
+                ->whereHas('btqPenilaian', function ($query) use ($request) {
+                    $query->where('jenis_penilaian', $request->jenis_penilaian);
+                })
+                ->get();
 
-        // Kembalikan respons dalam bentuk JSON
-        return response()->json(['penilaian' => $penilaian], 200);
+            // Setelah data diambil, urutkan kembali berdasarkan kolom no_urut dari relasi btqPenilaian
+            $penilaian = $penilaian->sortBy(function ($item) {
+                return $item->btqPenilaian->no_urut; // Urutkan berdasarkan no_urut dari relasi btqPenilaian
+            });
+
+            // Reindex urutan koleksi
+            $penilaian = $penilaian->values(); // Mengembalikan koleksi yang sudah diurutkan dan reindex urutannya
+
+            // Kembalikan respons dalam bentuk JSON
+            return response()->json(['penilaian' => $penilaian], 200);
+        } catch (\Exception $e) {
+            // Jika terjadi error, tangkap exception dan kembalikan respons error
+            return response()->json([
+                'error' => true,
+                'message' => 'Terjadi kesalahan saat mengambil data penilaian.',
+                'details' => $e->getMessage() // Hanya untuk debugging, bisa dihapus di production
+            ], 500);
+        }
     }
 
     public function savePenilaian(Request $request)
@@ -99,6 +117,39 @@ class BtqPenilaianMahasiswaController extends Controller
                     BtqPenilaianMahasiswa::where('id', $penilaian['id'])
                         ->update([
                             'nilai' => $penilaian['nilai'], // Nilai (1 atau 0)
+                            'penguji_id' => $penguji_id
+                        ]);
+                } else {
+                    // Jika ada data yang tidak valid, kembalikan pesan error
+                    return response()->json(['message' => 'Data penilaian tidak lengkap'], 400);
+                }
+            }
+
+            // Kembalikan respons sukses
+            return response()->json(['message' => 'Penilaian berhasil disimpan'], 200);
+        } catch (\Exception $e) {
+            // Jika terjadi error, kirimkan respons error
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menyimpan penilaian',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function selfPenilaian(Request $request)
+    {
+        try {
+            $penilaianData = $request->input('penilaian', []);
+            $penguji_id = $request->input('penguji_id'); // Ambil penguji_id
+
+            // Loop melalui semua data penilaian yang dikirimkan
+            foreach ($penilaianData as $penilaian) {
+                // Pastikan setiap penilaian memiliki 'id' dan 'nilai'
+                if (isset($penilaian['id']) && isset($penilaian['nilai_self'])) {
+                    // Update nilai penilaian di database
+                    BtqPenilaianMahasiswa::where('id', $penilaian['id'])
+                        ->update([
+                            'nilai_self' => $penilaian['nilai_self'], // Nilai (1 atau 0)
                             'penguji_id' => $penguji_id
                         ]);
                 } else {

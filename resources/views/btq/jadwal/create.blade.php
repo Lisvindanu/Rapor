@@ -196,7 +196,7 @@
 
                                                         <!-- Ruang -->
                                                         <div id="block-ruang" class="row bord-bottom">
-                                                            <label for="ruang" class="col-md-5">Ruang</label>
+                                                            <label for="ruang" class="col-md-5">Ruangan</label>
                                                             <div class="col-md-7 input-ruang"
                                                                 style="display:block; word-wrap:break-word;">
 

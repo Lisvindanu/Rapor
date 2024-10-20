@@ -201,7 +201,8 @@
                                                         <button type="button" class="btn btn-sm btn-info"
                                                             data-jadwal-mahasiswa-id="{{ $item->id }}">Hafalan</button>
                                                     @else
-                                                        <span class="badge bg-danger">Non Aktif</span>
+                                                        <span class="badge bg-danger">Sudah mulai proses penilaian
+                                                            pementor</span>
                                                     @endif
                                                 </div>
                                             </div>

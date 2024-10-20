@@ -103,7 +103,8 @@
                                                                 style="display:block; word-wrap:break-word;">
                                                                 <input type="number" id="kuota" name="kuota"
                                                                     class="form-control required number text-right"
-                                                                    maxlength="4">
+                                                                    maxlength="4" placeholder="Minimum 10/Sesi"
+                                                                    min="10">
                                                                 <p class="help-block">
                                                                     <span id="error-field-kuota"></span>
                                                                 </p>
@@ -111,7 +112,7 @@
                                                         </div>
 
                                                         <!-- Hari -->
-                                                        <div id="block-hari" class="row bord-bottom">
+                                                        {{-- <div id="block-hari" class="row bord-bottom">
                                                             <label for="hari" class="col-md-5">Hari</label>
                                                             <div class="col-md-7 input-hari"
                                                                 style="display:block; word-wrap:break-word;">
@@ -129,7 +130,7 @@
                                                                     <span id="error-field-hari"></span>
                                                                 </p>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
                                                         <!-- Tanggal -->
                                                         <div id="block-tanggal" class="row bord-bottom">
@@ -144,6 +145,23 @@
                                                                 </div>
                                                                 <p class="help-block">
                                                                     <span id="error-field-tanggal"></span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Is Active -->
+                                                        <div id="block-is_active" class="row bord-bottom">
+                                                            <label for="is_active" class="col-md-5">Selesai?</label>
+                                                            <div class="col-md-7 input-is_active"
+                                                                style="display:block; word-wrap:break-word;">
+                                                                <select id="is_active" name="is_active"
+                                                                    class="form-control required">
+                                                                    <option value="Aktif">Aktif</option>
+                                                                    <option value="Proses">Proses Penilaian</option>
+                                                                    <option value="Selesai">Selesai</option>
+                                                                </select>
+                                                                <p class="help-block">
+                                                                    <span id="error-field-is_active"></span>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -214,22 +232,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Is Active -->
-                                                        <div id="block-is_active" class="row bord-bottom">
-                                                            <label for="is_active" class="col-md-5">Selesai?</label>
-                                                            <div class="col-md-7 input-is_active"
-                                                                style="display:block; word-wrap:break-word;">
-                                                                <select id="is_active" name="is_active"
-                                                                    class="form-control required">
-                                                                    <option value="Aktif">Aktif</option>
-                                                                    <option value="Proses">Proses Penilaian</option>
-                                                                    <option value="Selesai">Selesai</option>
-                                                                </select>
-                                                                <p class="help-block">
-                                                                    <span id="error-field-is_active"></span>
-                                                                </p>
-                                                            </div>
-                                                        </div>
+
                                                     </div>
                                                 </div> <!-- End Row -->
                                             </form>

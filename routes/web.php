@@ -447,7 +447,9 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         Route::prefix('jadwal')->group(function () {
             Route::prefix('mahasiswa')->group(function () {
+                Route::get('/presensi', "BtqJadwalMahasiswaController@getPresensi")->name('btq.jadwal.prensensi-mahasiswa');
                 Route::post('/store', "BtqJadwalMahasiswaController@store")->name('btq.jadwal.store-mahasiswa');
+                Route::post('/save', "BtqJadwalMahasiswaController@save")->name('btq.jadwal.save-mahasiswa');
             });
 
             Route::get('/daftar', "BtqJadwalController@daftarJadwal")->name('btq.jadwal.daftar-jadwal');

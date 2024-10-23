@@ -132,7 +132,7 @@ class BtqJadwalController extends Controller
                 'kode_periode' => 'required|string|max:255',
                 'penguji_id'   => 'required|string|max:255',
                 'kuota'        => 'required|numeric|min:1',
-                'hari'         => 'required|string|max:255',
+                // 'hari'         => 'required|string|max:255',
                 'tanggal'      => 'required|date',
                 'jam_mulai'    => 'required|date_format:H:i',
                 'jam_selesai'  => 'required|date_format:H:i|after:jam_mulai',
@@ -140,6 +140,13 @@ class BtqJadwalController extends Controller
                 'peserta'      => 'required|string|in:L,P', // Assuming L for 
                 'is_active'    => 'required|string',
             ]);
+
+            // Ambil hari dari tanggal
+            $hari = Carbon::parse($validated['tanggal'])->isoFormat('dddd'); // Mengambil nama hari dalam bahasa lokal
+
+            // Tambahkan hari ke dalam data yang akan disimpan
+            $validated['hari'] = $hari;
+
             $jadwal = BtqJadwal::find($id);
             $jadwal->update($validated);
 

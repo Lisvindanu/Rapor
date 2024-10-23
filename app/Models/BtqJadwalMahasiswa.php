@@ -17,6 +17,7 @@ class BtqJadwalMahasiswa extends Model
     protected $fillable = [
         'jadwal_id',
         'mahasiswa_id',
+        'presensi',
         'nilai_bacaan',
         'nilai_tulisan',
         'nilai_hafalan',

@@ -108,7 +108,7 @@
                                                         </div>
 
                                                         <!-- Hari -->
-                                                        <div id="block-hari" class="row bord-bottom">
+                                                        {{-- <div id="block-hari" class="row bord-bottom">
                                                             <label for="hari" class="col-md-5">Hari</label>
                                                             <div class="col-md-7 input-hari"
                                                                 style="display:block; word-wrap:break-word;">
@@ -138,7 +138,7 @@
                                                                     <span id="error-field-hari"></span>
                                                                 </p>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
                                                         <!-- Tanggal -->
                                                         <div id="block-tanggal" class="row bord-bottom">

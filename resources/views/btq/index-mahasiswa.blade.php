@@ -94,7 +94,7 @@
                                             <li>Menggunakan pakaian yang baik dan sopan, untuk perempuan wajib
                                                 menggunakan Kerudung</li>
                                             <li>Membawa Buku dan Alat Tulis</li>
-                                            <li>Hadir tepat waktu sesuai dengan jadwal yang telah dipilih</li>
+                                            <li>Hadir 10 menit sebelum Jadwal yang telah dipilih</li>
                                         </ol>
                                     </div>
                                 </div>

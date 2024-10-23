@@ -10,18 +10,10 @@ class BtqController extends Controller
 {
     public function index()
     {
-        // $jadwal = BtqJadwal::with(['periode', 'penguji'])
-        //     ->where('penguji_id', auth()->user()->username)
-        //     ->get();
-
-        // // return response()->json($jadwal);
-
-        // return view('btq.index-penguji', [
-        //     'jadwal' => $jadwal
-        // ]);
-
-        if (session('selected_role') == 'Admin' || session('selected_role') == 'Pementor') {
+        if (session('selected_role') == 'Pementor') {
             return $this->indexPenguji();
+        } else if (session('selected_role') == 'Admin') {
+            return $this->indexAdmin();
         } else if (session('selected_role') == 'Mahasiswa') {
             // return "Mahasiswa";
             return $this->indexMahasiswa();
@@ -79,6 +71,25 @@ class BtqController extends Controller
         return view('btq.index-mahasiswa', [
             'jadwal' => $jadwal,
             'showModal' => $showModal
+        ]);
+    }
+
+    // indexAdmin
+    public function indexAdmin()
+    {
+        // jumlah mahasiswa total
+        // jumlah mahasiswa yang ikut BTQ
+        // jumlah pementor
+        // 
+
+
+        $jadwal = BtqJadwal::with(['periode', 'penguji'])
+            ->where('is_active', "!=", "Selesai")
+            ->orderBy('tanggal', 'asc')
+            ->get();
+
+        return view('btq.index-admin', [
+            'jadwal' => $jadwal
         ]);
     }
 }

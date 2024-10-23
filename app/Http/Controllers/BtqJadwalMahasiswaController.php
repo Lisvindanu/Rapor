@@ -95,4 +95,69 @@ class BtqJadwalMahasiswaController extends Controller
             ]);
         }
     }
+
+    // getpresensi
+    public function getPresensi(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'jadwal_id'     => 'required|string|max:255',
+            ]);
+
+            $daftarPeserta = BtqJadwalMahasiswa::with(['jadwal', 'mahasiswa'])
+                ->where('jadwal_id', $validated['jadwal_id'])
+                ->get();
+
+            if ($daftarPeserta->isEmpty()) {
+                return response()->json([
+                    'message' => 'Tidak ada peserta terdaftar untuk jadwal ini.'
+                ], 404);
+            }
+
+            // Urutkan daftar peserta berdasarkan NIM mahasiswa setelah data diambil
+            $daftarPeserta = $daftarPeserta->sortBy(function ($peserta) {
+                return $peserta->mahasiswa->nim;
+            })->values(); // Reindex setelah pengurutan
+
+            // Return data peserta dan presensi dalam bentuk JSON
+            return response()->json([
+                'daftar_peserta' => $daftarPeserta
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    // save
+    public function save(Request $request)
+    {
+        $request->validate([
+            'presensi' => 'required|array', // Pastikan presensi adalah array
+            'presensi.*.id' => 'required|uuid', // ID mahasiswa dalam array harus ada dan valid
+            'presensi.*.hadir' => 'required',
+            'penguji_id' => 'required' // Pastikan penguji_id dikirim
+        ]);
+
+        try {
+            // Loop melalui setiap data presensi yang dikirim dari request
+            foreach ($request->presensi as $data) {
+                // Cari data presensi berdasarkan ID mahasiswa dalam BtqJadwalMahasiswa
+                $btqJadwalMahasiswa = BtqJadwalMahasiswa::findOrFail($data['id']);
+
+                // Update status presensi di model BtqJadwalMahasiswa
+                $btqJadwalMahasiswa->presensi = $data['hadir']; // 1 = hadir, 0 = tidak hadir
+                $btqJadwalMahasiswa->save(); // Simpan perubahan
+            }
+
+            return response()->json([
+                'message' => 'Presensi berhasil disimpan.'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ]);
+        }
+    }
 }

@@ -43,8 +43,8 @@
                                                 Penilaian</button>
                                         @endif --}}
                                         <!-- Button simpan -->
-                                        {{-- <button type="button" class="btn btn-primary" id="btnSimpan">Generate
-                                            Penilaiain</button> --}}
+                                        <button type="button" class="btn btn-primary" id="btnPresensi">Presensi
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -72,6 +72,9 @@
                                                             <th rowspan="2"
                                                                 style="text-align: center;vertical-align: middle;">Program
                                                                 Studi
+                                                            </th>
+                                                            <th rowspan="2"
+                                                                style="text-align: center;vertical-align: middle;">Presensi
                                                             </th>
                                                             <th colspan="3"
                                                                 style="text-align: center;vertical-align: middle;">
@@ -103,6 +106,15 @@
                                                                     {{ $peserta->mahasiswa->nama }}</td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     {{ $peserta->mahasiswa->programstudi }}</td>
+                                                                <td style="text-align: center;vertical-align: middle;">
+                                                                    @if ($peserta->presensi == 0)
+                                                                        -
+                                                                    @elseif($peserta->presensi == 1)
+                                                                        ✓
+                                                                    @else
+                                                                        ✗
+                                                                    @endif
+                                                                </td>
                                                                 <td style="text-align: center;vertical-align: middle;">
                                                                     @if ($peserta->nilai_bacaan)
                                                                         {{ $peserta->nilai_bacaan }}
@@ -191,6 +203,48 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary" id="btnSimpanPenilaian">Simpan</button>
+                </div>
+                <div id="loadingSpinner" class="spinner-border text-primary" role="status" style="display: none;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPresensi" tabindex="-1" aria-labelledby="modalPresensiLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPresensiLabel">Presensi Peserta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin-bottom: 10px">
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            Pastikan data yang diinputkan sudah sesuai. Checklist bila "Hadir" dan kosongkan bila "Tidak".
+                            <br>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered" id="tabelData">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center;vertical-align: middle;">No.</th>
+                                <th style="text-align: center;vertical-align: middle;">NRP</th>
+                                <th style="text-align: center;vertical-align: middle;">Nama</th>
+                                <th style="text-align: center;vertical-align: middle;">Hadir</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data akan dimasukkan secara dinamis melalui JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="btnSimpanPresensi">Simpan</button>
                 </div>
                 <div id="loadingSpinner" class="spinner-border text-primary" role="status" style="display: none;">
                     <span class="visually-hidden">Loading...</span>
@@ -349,6 +403,110 @@
                         'Tidak dapat menyimpan penilaian.',
                         'error'
                     );
+                }
+            });
+        });
+
+        $('#btnPresensi').on('click', function() {
+            $('#modalPresensi').modal('show');
+
+            // Tampilkan loading spinner sebelum data dimuat
+            $('#loadingSpinner').show();
+
+            // AJAX request untuk mendapatkan data presensi
+            $.ajax({
+                url: "{{ route('btq.jadwal.prensensi-mahasiswa') }}", // Sesuaikan route di backend
+                type: 'GET',
+                data: {
+                    jadwal_id: "{{ $jadwal->id }}" // Kirim ID jadwal jika diperlukan
+                },
+                success: function(response) {
+                    // Muat konten presensi ke dalam tabel
+                    var tbody = $('#tabelData tbody');
+                    tbody.empty(); // Kosongkan tabel
+
+                    if (response.daftar_peserta && response.daftar_peserta.length > 0) {
+                        // Isi tabel dengan data yang diterima
+                        $.each(response.daftar_peserta, function(index, peserta) {
+                            tbody.append(`
+                                <tr>
+                                    <td style="text-align: center;vertical-align: middle;">${index + 1}</td>
+                                    <td style="text-align: center;vertical-align: middle;">${peserta.mahasiswa.nim}</td>
+                                    <td style="text-align: center;vertical-align: middle;">${peserta.mahasiswa.nama}</td>
+                                    <td style="text-align: center;vertical-align: middle;">
+                                        <input type="checkbox" class="form-check-input" 
+                                        ${peserta.presensi == 1 ? 'checked' : ''} data-id="${peserta.id}">
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    } else {
+                        // Tampilkan pesan jika tidak ada peserta
+                        tbody.append(`
+                            <tr>
+                                <td colspan="4" style="text-align: center;">Tidak ada peserta terdaftar</td>
+                            </tr>
+                        `);
+                    }
+
+                    // Sembunyikan loading spinner
+                    $('#loadingSpinner').hide();
+                },
+                error: function(xhr, status, error) {
+                    // Tangani error, misalnya 404 atau 500
+                    if (xhr.status === 404) {
+                        Swal.fire('Gagal!', 'Tidak ada peserta terdaftar untuk jadwal ini.', 'warning');
+                    } else {
+                        Swal.fire('Gagal!', 'Terjadi kesalahan saat memuat data presensi.', 'error');
+                    }
+
+                    // Sembunyikan loading spinner
+                    $('#loadingSpinner').hide();
+                }
+            });
+        });
+
+        // Ketika tombol "Simpan" di modal presensi diklik
+        $('#btnSimpanPresensi').on('click', function() {
+            var dataPresensi = [];
+
+            // Ambil data presensi dari checkbox
+            $('#modalPresensi input[type="checkbox"]').each(function() {
+                var idPeserta = $(this).data('id');
+                var hadir = $(this).is(':checked') ? 1 : 2;
+
+                // Masukkan data ke array
+                dataPresensi.push({
+                    id: idPeserta,
+                    hadir: hadir
+                });
+            });
+
+            // Kirim data ke server melalui AJAX
+            $.ajax({
+                url: "{{ route('btq.jadwal.save-mahasiswa') }}", // Sesuaikan route untuk menyimpan data
+                type: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}", // Token CSRF untuk keamanan
+                    presensi: dataPresensi,
+                    penguji_id: "{{ Auth::user()->id }}"
+                },
+                success: function(response) {
+                    Swal.fire('Berhasil!', 'Presensi berhasil disimpan.', 'success')
+                        .then(() => {
+                            $('#modalPresensi').modal('hide');
+                            location.reload(); // Refresh halaman
+                        });
+                },
+                error: function(xhr, status, error) {
+                    // Tampilkan error jika terjadi masalah selama penyimpanan
+                    if (xhr.status === 500) {
+                        Swal.fire('Gagal!', 'Terjadi kesalahan saat menyimpan presensi.', 'error');
+                    } else {
+                        Swal.fire('Gagal!',
+                            'Data presensi tidak dapat disimpan. Periksa kembali inputan Anda.',
+                            'warning');
+                    }
                 }
             });
         });

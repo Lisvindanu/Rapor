@@ -186,7 +186,7 @@
                         </div>
                     </div>
 
-                    <table class="table table-bordered" id="tabelData">
+                    <table class="table table-bordered" id="tabelDataPenilaian">
                         <thead>
                             <tr>
                                 <th style="text-align: center;vertical-align: middle;">No.</th>
@@ -326,7 +326,7 @@
                 },
                 success: function(response) {
                     // Muat konten penilaian ke dalam tabel
-                    var tbody = $('#tabelData tbody');
+                    var tbody = $('#tabelDataPenilaian tbody');
                     tbody.empty(); // Kosongkan tabel
 
                     $.each(response.penilaian, function(index, penilaian) {
@@ -364,7 +364,7 @@
 
         $('#btnSimpanPenilaian').on('click', function() {
             var dataPenilaian = [];
-            $('#tabelData input[type="checkbox"]').each(function() {
+            $('#tabelDataPenilaian input[type="checkbox"]').each(function() {
                 var penilaianId = $(this).val();
                 var nilai = $(this).is(':checked') ? 1 : 0; // Nilai 1 jika dicentang, 0 jika tidak
 

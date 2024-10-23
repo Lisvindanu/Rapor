@@ -160,7 +160,9 @@ class BtqJadwalController extends Controller
     public function daftarPeserta($id)
     {
         try {
-            $jadwal = BtqJadwal::with('mahasiswaTerdaftar.mahasiswa')->find($id);
+            $jadwal = BtqJadwal::with(['mahasiswaTerdaftar.mahasiswa' => function ($query) {
+                $query->orderBy('nim', 'asc'); // Urutkan berdasarkan NIM secara ascending
+            }])->find($id);
 
             // Cek apakah sudah ada penilaian mahasiswa untuk jadwal ini
             $penilaianMahasiswaExists = BtqPenilaianMahasiswa::whereHas('btqJadwalMahasiswa', function ($query) use ($id) {

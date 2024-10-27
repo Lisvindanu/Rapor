@@ -207,6 +207,18 @@
                                             </div>
                                         </div>
                                         <div class="card-footer bg-transparent">
+                                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                                <h5>Mohon diperhatikan aturan berikut</h5>
+                                                <ul>
+                                                    <li>Anda hanya bisa memilih 1 Jadwal, maka pastikan tidak bentrok dengan
+                                                        jadwal kelas dsb.</li>
+                                                    <li>Untuk yang sudah mengambil jadwal namun tidak hadir, maka harus
+                                                        mengulang ditahun depan.</li>
+                                                    <li>Isi penilaiain mandiri setelah melakukan pemilihan jadwal</li>
+                                                </ul>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach

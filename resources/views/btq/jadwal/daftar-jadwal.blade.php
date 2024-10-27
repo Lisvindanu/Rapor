@@ -75,12 +75,21 @@
                     <div class="card">
                         <div class="card-header" style="background-color: #fff; margin-top:10px">
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-12">
                                     <h5>Daftar Jadwal Placement Test</h5>
                                 </div>
-                                <div class="col-6">
-                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
-
+                                <div class="col-12">
+                                    <div class="">
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            <h5>Mohon diperhatikan aturan berikut</h5>
+                                            <ul>
+                                                <li>Anda hanya bisa memilih 1 Jadwal, maka pastikan tidak bentrok dengan
+                                                    jadwal kelas dsb.</li>
+                                                <li>Untuk yang sudah mengambil jadwal namun tidak hadir, maka harus
+                                                    mengulang ditahun depan.</li>
+                                                <li>Isi penilaiain mandiri setelah melakukan pemilihan jadwal</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

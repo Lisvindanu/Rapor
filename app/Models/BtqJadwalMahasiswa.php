@@ -22,6 +22,7 @@ class BtqJadwalMahasiswa extends Model
         'nilai_tulisan',
         'nilai_hafalan',
         'lampiran',
+        'is_change',
     ];
 
     // Relasi ke tabel 'btq_jadwal'

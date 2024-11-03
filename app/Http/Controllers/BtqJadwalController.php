@@ -66,6 +66,7 @@ class BtqJadwalController extends Controller
             $daftar_jadwal = BtqJadwal::with(['periode', 'penguji'])
                 ->where('is_active', "Aktif")  // Hanya menampilkan jadwal yang aktif
                 ->where('peserta', Auth::user()->mahasiswa->jeniskelamin) // Menampilkan jadwal yang sesuai jenis kelamin mahasiswa
+                ->whereDate('tanggal', '>=', now())
                 ->orderBy('tanggal', 'asc')
                 ->paginate($request->get('perPage', 10));
 

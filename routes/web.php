@@ -474,6 +474,11 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::put('/{id}', "BtqPenilaianController@update")->name('btq.penilaian.update');
             Route::delete('/{id}', "BtqPenilaianController@destroy")->name('btq.penilaian.delete');
         });
+
+        Route::prefix('laporan')->group(function () {
+            Route::get('/', "BtqLaporanController@index")->name('btq.laporan');
+            Route::post('/print-laporan', "BtqLaporanController@printLaporan")->name('btq.laporan.print');
+        });
     });
 
     //test

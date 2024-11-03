@@ -12,8 +12,12 @@
                                 </li>
 
                                 {{-- jika memiliki session selected role sebagai admin --}}
-                                {{-- @if (session('selected_role') == 'Admin')
-                                    <li class="nav-item dropdown">
+                                @if (session('selected_role') == 'Admin')
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="page"
+                                            href="{{ route('btq.laporan') }}">Laporan</a>
+                                    </li>
+                                    {{-- <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" role="button"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             Jadwal
@@ -26,8 +30,8 @@
                                                     href="{{ route('kuesioner.kuesioner-sdm') }}">Kuesioner SDM</a>
                                             </li>
                                         </ul>
-                                    </li>
-                                @endif --}}
+                                    </li> --}}
+                                @endif
                             </ul>
                         </div>
                     </div>

@@ -31,7 +31,7 @@ class synAKM extends Command
      */
     public function handle()
     {
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTcyMjY3NDc3NSwiZXhwIjoxNzIyNjc4Mzc1fQ.rFMWOPLnXqMIojgnmV-EU0igseRDzXzTmWpQ1TECYic";
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTczOTMyNDQ5NCwiZXhwIjoxNzM5MzI4MDk0fQ.WQtFNV3fOL8BqH64jGhH_3v59_qS6njabDnPmvlTASk";
         $limit = 10000;
 
         $formData = [];
@@ -39,15 +39,13 @@ class synAKM extends Command
 
         //IDperiodelist
         $periodelist = [
-            '20161',
-            '20151',
-            '20141',
-            '20131',
-            '20121',
-            '20111',
-            '20101',
-            '20091',
-            '20081',
+            '20241',
+            '20231',
+            '20221',
+            '20211',
+            '20201',
+            '20191',
+            '20181',
         ];
 
         // kelaskuliah where in idperiode
@@ -55,7 +53,7 @@ class synAKM extends Command
             ->get();
 
         // foreach ($mahasiswa as $mhs) {
-        $formData['idperiode'] = '20232';
+        $formData['idperiode'] = '20241';
         // $formData['nim'] = $mhs->nim;
         $countinsert = 0;
 

@@ -306,7 +306,7 @@
                     <div class="modal-body">
                         <div class="row" style="margin-bottom: 10px">
                             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                Pastikan sudah melakukan sinkronasi terlebih dahulu, untuk mendapatkan nilai yang
+                                Pastikan sudah melakukan sinkronasi terlebih dahulu, untuk pengecekan syarat dan nilai yang
                                 terbaru!
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"
                                     aria-label="Close"></button>

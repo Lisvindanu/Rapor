@@ -29,7 +29,7 @@ class synKRS extends Command
      */
     public function handle()
     {
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTcyMzI3MDA4OCwiZXhwIjoxNzIzMjczNjg4fQ.Z41XhDR0dwkc4kyg9M6HsvP_ocMoAVqeSh2gzoJOtOY";
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTczOTMyNDkyNCwiZXhwIjoxNzM5MzI4NTI0fQ.ES93_sOKnPWJcXAo9PR0pE-nzBCZgjwt4PsywbBi6aQ";
         $limit = 1000;
 
         $formData = [];
@@ -60,7 +60,7 @@ class synKRS extends Command
         // ];
 
         // kelaskuliah where in idperiode
-        $kelasKuliah = KelasKuliah::where('periodeakademik', '20232')
+        $kelasKuliah = KelasKuliah::where('periodeakademik', '20241')
             ->where('programstudi', 'Ilmu Hukum')
             // ->orWhere('periodeakademik', '20182')
             // ->orWhere('periodeakademik', '20183')

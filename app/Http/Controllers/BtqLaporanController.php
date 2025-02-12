@@ -52,9 +52,6 @@ class BtqLaporanController extends Controller
             // Menangani laporan pembayaran
             if ($request->nama_laporan == 'pembayaran') {
                 return $this->printLaporanPembayaran($request);
-                // $remedialAjuanDetail = $remedialAjuanDetail->where('remedialajuan.status_pembayaran', 'Lunas')
-                // return Excel::download(new RemedialPembayaranExport($remedialAjuanDetail), 'remedial-pembayaran.xlsx');
-
             }
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

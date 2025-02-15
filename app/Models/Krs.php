@@ -71,7 +71,7 @@ class Krs extends Model
         if ($jumlahPresensi == 0) {
             $persentase = 0;
         } else {
-            $persentase = ($jumlahHadir / $jumlahPresensi) * 100;
+            $persentase = ceil(($jumlahHadir / $jumlahPresensi) * 100);
         }
 
         $this->presensi = $persentase;

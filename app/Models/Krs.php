@@ -62,7 +62,9 @@ class Krs extends Model
         $jumlahHadir = $this->presensiKuliahs()
             ->where(function ($query) {
                 $query->where('presensi', 'HADIR')
-                    ->orWhereNull('presensi');
+                    // ->orWhereNull('presensi');
+                    ->orWhere('presensi', 'SAKIT')
+                    ->orWhere('presensi', 'IJIN');
             })->count();
 
         // hitung persentasenya

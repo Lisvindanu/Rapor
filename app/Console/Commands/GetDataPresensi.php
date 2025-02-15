@@ -39,12 +39,12 @@ class GetDataPresensi extends Command
 
         $kelasKuliah = KelasKuliah::where('periodeakademik', $periode)
             ->where('programstudi', 'ilike', '%' . $programstudi . '%')
-            ->where('kodemk', 'HSW213182')
+            // ->where('kodemk', 'HSW213182')
             ->get();
 
         $count_insert = 0;
 
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTczOTYxMTUzMiwiZXhwIjoxNzM5NjE1MTMyfQ.Tt9sLpO6Mtw-MMbl4ynbNTYP4JJmMOKXJf1Uj1hEOyQ"; // Ganti dengan token yang valid
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTczOTYxMzU2NiwiZXhwIjoxNzM5NjE3MTY2fQ.LIY1Xd-g69Hv68bPsJ88tUk9QQNSU1Wj6tBviCqXlrk"; // Ganti dengan token yang valid
         $limit = 1000;
 
         $formData = [];

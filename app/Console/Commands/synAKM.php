@@ -31,7 +31,7 @@ class synAKM extends Command
      */
     public function handle()
     {
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTczOTMyNDQ5NCwiZXhwIjoxNzM5MzI4MDk0fQ.WQtFNV3fOL8BqH64jGhH_3v59_qS6njabDnPmvlTASk";
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTczOTQxMjI2MywiZXhwIjoxNzM5NDE1ODYzfQ.aEhNXms2QyogBOV7udG49fmsn3uOip4FrkEkOvFp1x4";
         $limit = 10000;
 
         $formData = [];
@@ -40,12 +40,12 @@ class synAKM extends Command
         //IDperiodelist
         $periodelist = [
             '20241',
-            '20231',
-            '20221',
-            '20211',
-            '20201',
-            '20191',
-            '20181',
+            // '20231',
+            // '20221',
+            // '20211',
+            // '20201',
+            // '20191',
+            // '20181',
         ];
 
         // kelaskuliah where in idperiode

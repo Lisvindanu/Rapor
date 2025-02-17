@@ -177,11 +177,17 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        
+                                                        <a href="#" data-id="{{ $ajuan->id }}"
+                                                            data-bukti="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
+                                                            class="btn btn-sm btn-warning btnDetailData">
+                                                            <i class="fas fa-edit fa-xs"></i>
+                                                        </a>
+                                                        <!-- @if ($ajuan->status_pembayaran == 'Menunggu Pembayaran') -->
                                                             <button type="button" class="btn btn-sm btn-danger delete"
                                                                 title="Batalkan Ajuan">
                                                                 <i class="fas fa-trash-alt fa-xs"></i>
                                                             </button>
+                                                        <!-- @endif -->
 
                                                     </td>
                                                 </tr>

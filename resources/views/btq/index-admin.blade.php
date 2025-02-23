@@ -47,32 +47,32 @@
                 <div class="col-3">
                     <div class="card bg-primary text-white mb-3">
                         <div class="card-body">
-                            <h3 class="card-title">123</h3>
-                            <p class="card-text">Peserta Placement</p>
+                            <h3 class="card-title">{{$countPementor}}</h3>
+                            <p class="card-text">Pementor</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="card bg-secondary text-white mb-3">
                         <div class="card-body">
-                            <h3 class="card-title">123</h3>
-                            <p class="card-text">Menunggu Konfirmasi Pembayaran</p>
+                            <h3 class="card-title">{{$countPeserta}}</h3>
+                            <p class="card-text">Peserta</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="card bg-success text-white mb-3">
                         <div class="card-body">
-                            <h3 class="card-title">123</h3>
-                            <p class="card-text">Ajuan Lunas</p>
+                            <h3 class="card-title">{{$countJadwalAktif}}</h3>
+                            <p class="card-text">Jadwal Aktif</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="card bg-danger text-white mb-3">
                         <div class="card-body">
-                            <h3 class="card-title">123</h3>
-                            <p class="card-text">Ajuan Ditolak</p>
+                            <h3 class="card-title">{{$countJadwalSelesai}}</h3>
+                            <p class="card-text">Jadwal Selesai</p>
                         </div>
                     </div>
                 </div>
@@ -80,6 +80,80 @@
         </div>
 
         <div class="isi-konten">
+        <div class="row">
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-header" style="background-color: #fff; margin-top:10px">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="card-title">Rekap Penilaian BTQ</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="display: flex">
+                            <div class="col-md-12">
+                                <div class="row align-items-center">
+                                    <div class="col-3">
+                                        <label for="nip_peserta" class="col-form-label">NIP/NIM :</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <p class="card-text">{{ auth()->user()->username }}</p>
+                                        {{-- <input type="text" id="nip_peserta" class="form-control" value=""> --}}
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="nama_peserta" class="col-form-label">Nama :</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <p class="card-text">{{ auth()->user()->name }}</p>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <a href="{{ route('btq') }}" class="btn btn-primary">Daftar
+                                            Jadwal</a>
+                                        <a href="{{ route('btq.riwayat') }}" class="btn btn-warning">Riwayat
+                                            Jadwal</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header" style="background-color: #fff; margin-top:10px">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="card-title">Data Penguji</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="display: flex">
+                            <div class="col-md-12">
+                                <div class="row align-items-center">
+                                    <div class="col-3">
+                                        <label for="nip_peserta" class="col-form-label">NIP/NIM :</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <p class="card-text">{{ auth()->user()->username }}</p>
+                                        {{-- <input type="text" id="nip_peserta" class="form-control" value=""> --}}
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="nama_peserta" class="col-form-label">Nama :</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <p class="card-text">{{ auth()->user()->name }}</p>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <a href="{{ route('btq') }}" class="btn btn-primary">Daftar
+                                            Jadwal</a>
+                                        <a href="{{ route('btq.riwayat') }}" class="btn btn-warning">Riwayat
+                                            Jadwal</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-4">
                     <div class="card">

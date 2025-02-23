@@ -35,7 +35,7 @@ class BtqJadwal extends Model
         'jam_selesai' => 'datetime:H:i',
     ];
 
-    protected $appends = ['jumlah_peserta'];
+    protected $appends = ['jumlah_peserta', 'jumlah_peserta_hadir'];
 
     // Relasi ke tabel 'users'
     public function penguji()
@@ -65,4 +65,15 @@ class BtqJadwal extends Model
     {
         return $this->mahasiswaTerdaftar()->count();
     }
+
+    public function jumlahPesertaHadir()
+    {
+        return $this->mahasiswaTerdaftar()->where('presensi', 1)->count();
+    }
+
+    public function getJumlahPesertaHadirAttribute()
+    {
+        return $this->mahasiswaTerdaftar()->where('presensi', 1)->count();
+    }
+
 }

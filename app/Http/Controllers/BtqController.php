@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\UnitKerja;
+use App\Helpers\UnitKerjaHelper;
 use App\Models\BtqJadwal;
 use App\Models\BtqJadwalMahasiswa;
+use App\Models\RoleUser;
 
 class BtqController extends Controller
 {
@@ -76,20 +79,61 @@ class BtqController extends Controller
 
     // indexAdmin
     public function indexAdmin()
-    {
-        // jumlah mahasiswa total
-        // jumlah mahasiswa yang ikut BTQ
-        // jumlah pementor
-        // 
+    {   
+        $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
+        $unitKerjaIds = UnitKerjaHelper::getUnitKerjaIds();
 
+        $pementor = RoleUser::where('role_id','9d3d80b0-8700-4411-b971-2d9426f62f71')
+                    ->whereIn('unit_kerja_id', $unitKerjaIds)
+                    ->get();
+
+        $countPementor = $pementor->count();
+        
+        // jumlahpeserta mahasiswa yang terdaftar btq
+        $jadwal_mahasiswa = BtqJadwalMahasiswa::with(['jadwal', 'mahasiswa'])
+            ->whereHas('jadwal', function($query){
+                $query->where('kode_periode', '20241');
+            })
+            ->get();
+        
+        $countPeserta = $jadwal_mahasiswa->count();
+
+        $jadwal_aktif = BtqJadwal::where('is_active', 'Aktif')->where('kode_periode', '20241')->get();
+        $countJadwalAktif = $jadwal_aktif->count();
+
+        $jadwal_selesai = BtqJadwal::with('penguji')->where('is_active', 'Selesai')->where('kode_periode', '20241')->get();
+        $countJadwalSelesai = $jadwal_selesai->count();
 
         $jadwal = BtqJadwal::with(['periode', 'penguji'])
             ->where('is_active', "!=", "Selesai")
             ->orderBy('tanggal', 'asc')
             ->get();
 
+        // $rekap = BtqJadwal::select('penguji_id')
+        //     ->with('penguji')
+        //     ->groupBy('penguji_id')
+        //     ->get();
+
+        // $rekap = BtqJadwal::with('penguji') // Mengambil data pementor
+        //         ->withCount('mahasiswaTerdaftar') // Menghitung total mahasiswa terdaftar
+        //         ->withCount(['mahasiswaTerdaftar as jumlah_peserta_hadir' => function ($query) {
+        //             $query->where('presensi', true); // Hanya hitung yang hadir
+        //         }])
+        //         ->groupBy('penguji_id')
+        //         ->selectRaw('COUNT(id) as jumlah_jadwal, penguji_id')
+        //         ->get();
+
+        // echo $jadwal_selesai;
+
         return view('btq.index-admin', [
-            'jadwal' => $jadwal
+            'jadwal' => $jadwal,
+            'unitKerja' => $unitKerja,
+            'countPementor' => $countPementor,  
+            'countPeserta' => $countPeserta,
+            'countJadwalAktif' => $countJadwalAktif,
+            'countJadwalSelesai' => $countJadwalSelesai
         ]);
+
+        // no, periode, tanggal, ruang, jam mulai , jam selesai, jumlahpeserta yang presensinya hadir
     }
 }

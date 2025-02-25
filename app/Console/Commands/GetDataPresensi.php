@@ -38,10 +38,20 @@ class GetDataPresensi extends Command
             ->delete();
 
         $kelasKuliah = KelasKuliah::where('periodeakademik', $periode)
-            ->where('programstudi', 'ilike', '%' . $programstudi . '%')
-            // ->where('kodemk', 'HSW213182')
+            // ->where('programstudi', 'ilike', '%' . $programstudi . '%')
+            // // ->where('kodemk', 'HSW213182')
+            // ->get();
+            ->whereIn('programstudi', [
+                'Teknik Industri',
+                'Teknologi Pangan',
+                'Teknik Mesin',
+                'Teknik Informatika',
+                'Teknik Lingkungan',
+                'Perencanaan Wilayah dan Kota'
+            ])
             ->get();
 
+            
         $count_insert = 0;
 
         $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTczOTYxMzU2NiwiZXhwIjoxNzM5NjE3MTY2fQ.LIY1Xd-g69Hv68bPsJ88tUk9QQNSU1Wj6tBviCqXlrk"; // Ganti dengan token yang valid

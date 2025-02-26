@@ -74,7 +74,7 @@ class synKRS extends Command
             ->get();
 
         foreach ($kelasKuliah as $kelas) {
-            $formData['idperiode'] = $kelas->idperiode;
+            $formData['idperiode'] = '20241';
             $formData['namakelas'] = $kelas->namakelas;
             $formData['idmk'] = $kelas->kodemk;
             $formData['krsdiajukan'] = 'Ya';

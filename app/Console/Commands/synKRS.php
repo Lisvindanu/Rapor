@@ -93,42 +93,45 @@ class synKRS extends Command
                 $body = $response->getBody()->getContents();
                 $data = json_decode($body, true);
 
-                if ($data != null) {
-                    // Menggunakan array asosiatif untuk mengelompokkan data dan menghapus duplikat
-                    $groupedData = [];
+                // info
+                $this->info($data);
 
-                    foreach ($data as $item) {
-                        // Kombinasi kunci untuk mengelompokkan data
-                        $key = $item['idperiode'] . '-' . $item['namakelas'] . '-' . $item['nim'] . '-' . $item['idmk'] . '-' . $item['nhuruf'];
+                // if ($data != null) {
+                //     // Menggunakan array asosiatif untuk mengelompokkan data dan menghapus duplikat
+                //     $groupedData = [];
 
-                        // Jika kunci belum ada dalam array, tambahkan item
-                        if (!isset($groupedData[$key])) {
-                            $groupedData[$key] = $item;
-                        }
-                    }
+                //     foreach ($data as $item) {
+                //         // Kombinasi kunci untuk mengelompokkan data
+                //         $key = $item['idperiode'] . '-' . $item['namakelas'] . '-' . $item['nim'] . '-' . $item['idmk'] . '-' . $item['nhuruf'];
 
-                    // Mengubah kembali array asosiatif menjadi array numerik
-                    $uniqueData = array_values($groupedData);
+                //         // Jika kunci belum ada dalam array, tambahkan item
+                //         if (!isset($groupedData[$key])) {
+                //             $groupedData[$key] = $item;
+                //         }
+                //     }
 
-                    foreach ($uniqueData as $krsData) {
-                        $krs = Krs::where('idperiode', $krsData['idperiode'])
-                            ->where('namakelas', $krsData['namakelas'])
-                            ->where('nim', $krsData['nim'])
-                            ->where('idmk', $krsData['idmk'])
-                            ->first();
+                //     // Mengubah kembali array asosiatif menjadi array numerik
+                //     $uniqueData = array_values($groupedData);
 
-                        // Jika data krs sudah ada, perbarui
-                        if ($krs) {
-                            $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' sudah ada, perbarui data');
-                            // $krs->update($krsData);
-                        } else {
-                            Krs::create($krsData);
-                            $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' berhasil disimpan');
-                        }
+                //     foreach ($uniqueData as $krsData) {
+                //         $krs = Krs::where('idperiode', $krsData['idperiode'])
+                //             ->where('namakelas', $krsData['namakelas'])
+                //             ->where('nim', $krsData['nim'])
+                //             ->where('idmk', $krsData['idmk'])
+                //             ->first();
 
-                        $this->info($krs);
-                    }
-                }
+                //         // Jika data krs sudah ada, perbarui
+                //         if ($krs) {
+                //             $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' sudah ada, perbarui data');
+                //             // $krs->update($krsData);
+                //         } else {
+                //             Krs::create($krsData);
+                //             $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' berhasil disimpan');
+                //         }
+
+                //         $this->info($krs);
+                //     }
+                // }
             } catch (\Throwable $th) {
                 $this->error('Error: ' . $th->getMessage());
             }

@@ -61,16 +61,16 @@ class synKRS extends Command
 
         // kelaskuliah where in idperiode
         $kelasKuliah = KelasKuliah::where('periodeakademik', '20241')
-            // ->whereIn('programstudi', [
-            //     // 'Teknik Industri',
-            //     // 'Teknologi Pangan',
-            //     // 'Teknik Mesin',
-            //     'Teknik Informatika',
-            //     // 'Teknik Lingkungan',
-            //     // 'Perencanaan Wilayah dan Kota'
-            // ])
-            ->where('programstudi', 'Teknik Informatika')
-            ->where('kodemk', 'IF21W0705')
+            ->whereIn('programstudi', [
+                'Teknik Industri',
+                'Teknologi Pangan',
+                'Teknik Mesin',
+                'Teknik Informatika',
+                'Teknik Lingkungan',
+                'Perencanaan Wilayah dan Kota'
+            ])
+            // ->where('programstudi', 'Teknik Informatika')
+            // ->where('kodemk', 'IF21W0705')
             ->get();
 
         foreach ($kelasKuliah as $kelas) {

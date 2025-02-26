@@ -125,6 +125,8 @@ class synKRS extends Command
                             Krs::create($krsData);
                             $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' berhasil disimpan');
                         }
+
+                        $this->info($krs);
                     }
                 }
             } catch (\Throwable $th) {

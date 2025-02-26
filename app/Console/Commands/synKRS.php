@@ -94,7 +94,9 @@ class synKRS extends Command
                 $data = json_decode($body, true);
 
                 // info
-                $this->info($data);
+                // $this->info($data);
+                $this->info(json_encode($data, JSON_PRETTY_PRINT));
+
 
                 // if ($data != null) {
                 //     // Menggunakan array asosiatif untuk mengelompokkan data dan menghapus duplikat

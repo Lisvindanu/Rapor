@@ -219,7 +219,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Masuk</button>
                 <div class="forgot-password" style="text-align: left">
-                    <a href="{{ route('forgotpassword') }}">Lupa Kata Sandi?</a>
+                    <a href="#">Lupa Kata Sandi?</a>
                 </div>
             </form>
         </div>

@@ -121,4 +121,10 @@ class LoginController extends Controller
         // Kirim respons dengan pesan sukses
         return redirect('/gate');
     }
+
+    // forgotpassword
+    public function forgotPassword()
+    {
+        return view('auth.forgotpassword');
+    }
 }

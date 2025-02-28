@@ -37,6 +37,7 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
 Route::post('/login/verify', [LoginController::class, 'verify']);
 Route::post('/login/exit', [LoginController::class, 'logout']);
+Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');  
 // Route::get('/login', "LoginController@showLoginForm")->name('login');
 
 // faq

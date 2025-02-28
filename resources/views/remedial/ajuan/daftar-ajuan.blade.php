@@ -302,8 +302,13 @@
 
                                 '</tr>');
                         });
-                        $('#buktiPembayaran').html('<a href="' + buktiPembayaran +
-                            '" target="_blank">Lihat Bukti Pembayaran</a>');
+                        // $('#buktiPembayaran').html('<a href="' + buktiPembayaran +
+                        //     '" target="_blank">Lihat Bukti Pembayaran</a>');
+                        if (buktiPembayaran) {
+                            $('#buktiPembayaran').html(`<a href="${buktiPembayaran}" target="_blank">Lihat Bukti Pembayaran</a>`);
+                        } else {
+                            $('#buktiPembayaran').html('<span class="text-danger">Tidak ada bukti pembayaran</span>');
+                        }
                         $('#totalBayar').text(formatRupiah(totalBayar));
                         $('#modalDetailData').modal('show');
                     },

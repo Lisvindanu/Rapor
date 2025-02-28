@@ -131,8 +131,56 @@ class LoginController extends Controller
         return view('auth.forgotpassword');
     }
 
-    public function resetPassword(Request $request)
-    {
+    // public function resetPassword(Request $request)
+    // {
+    //     // Validasi input
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'dob' => 'required|date',
+    //     ]);
+
+    //     // Cari user berdasarkan email
+    //     $user = User::where('email', $request->email)->first();
+
+    //     // Cek apakah email ada di database & ambil tanggal lahir
+    //     if ($user) {
+    //         $dobFromDatabase = null;
+
+    //         if ($user->pegawai) {
+    //             $dobFromDatabase = $user->pegawai->tanggallahir; // Sesuai dengan nama field di model Pegawai
+    //         } elseif ($user->mahasiswa) {
+    //             $dobFromDatabase = $user->mahasiswa->tanggallahir; // Sesuai dengan nama field di model Mahasiswa
+    //         }
+
+    //         // Jika tanggal lahir tidak cocok atau tidak ditemukan, tetap beri response yang sama
+    //         if (!$dobFromDatabase || $dobFromDatabase != Carbon::parse($request->dob)->format('Y-m-d')) {
+    //             return back()->with('error', 'Email atau tanggal lahir tidak sesuai.');
+    //         }
+
+    //         // Buat password acak baru
+    //         $newPassword = Str::random(12);
+
+    //         // Simpan password baru di database
+    //         $user->update([
+    //             'password' => Hash::make($newPassword),
+    //             'is_default_password' => true
+    //         ]);
+
+    //         // // Kirim email berisi password baru
+    //         // Mail::send('auth.resetpassword', ['user' => $user, 'password' => $newPassword], function ($message) use ($user) {
+    //         //     $message->to($user->email)
+    //         //             ->subject('Reset Password Berhasil - Universitas Pasundan')
+    //         //             ->from('stafwadek1ft@unpas.ac.id', 'Universitas Pasundan');
+    //         // });
+
+    //         // return view('auth.show_new_password', ['newPassword' => $newPassword]);
+    //     }
+
+    //     // Tetap berikan response yang sama untuk semua kasus
+    //     return back()->with('status', 'Jika email dan tanggal lahir sesuai, password baru telah dikirim ke email Anda.');
+    // }
+
+    public function resetPassword(Request $request) {
         // Validasi input
         $request->validate([
             'email' => 'required|email',
@@ -142,17 +190,17 @@ class LoginController extends Controller
         // Cari user berdasarkan email
         $user = User::where('email', $request->email)->first();
 
-        // Cek apakah email ada di database & ambil tanggal lahir
         if ($user) {
+            // Cek tanggal lahir dari Pegawai atau Mahasiswa
             $dobFromDatabase = null;
 
             if ($user->pegawai) {
-                $dobFromDatabase = $user->pegawai->tanggallahir; // Sesuai dengan nama field di model Pegawai
+                $dobFromDatabase = $user->pegawai->tanggallahir;
             } elseif ($user->mahasiswa) {
-                $dobFromDatabase = $user->mahasiswa->tanggallahir; // Sesuai dengan nama field di model Mahasiswa
+                $dobFromDatabase = $user->mahasiswa->tanggallahir;
             }
 
-            // Jika tanggal lahir tidak cocok atau tidak ditemukan, tetap beri response yang sama
+            // Jika tanggal lahir tidak cocok atau tidak ditemukan, tampilkan pesan error yang sama
             if (!$dobFromDatabase || $dobFromDatabase != Carbon::parse($request->dob)->format('Y-m-d')) {
                 return back()->with('error', 'Email atau tanggal lahir tidak sesuai.');
             }
@@ -160,21 +208,18 @@ class LoginController extends Controller
             // Buat password acak baru
             $newPassword = Str::random(12);
 
-            // Simpan password baru di database
+            // Simpan password baru di database & tandai sebagai default password
             $user->update([
                 'password' => Hash::make($newPassword),
                 'is_default_password' => true
             ]);
 
-            // Kirim email berisi password baru
-            Mail::send('auth.resetpassword', ['user' => $user, 'password' => $newPassword], function ($message) use ($user) {
-                $message->to($user->email)
-                        ->subject('Reset Password Berhasil - Universitas Pasundan')
-                        ->from('stafwadek1ft@unpas.ac.id', 'Universitas Pasundan');
-            });
+            // Redirect ke halaman tampilan password baru
+            return view('auth.newpassword', ['newPassword' => $newPassword]);
         }
 
-        // Tetap berikan response yang sama untuk semua kasus
-        return back()->with('status', 'Jika email dan tanggal lahir sesuai, password baru telah dikirim ke email Anda.');
+        // Jika email tidak ditemukan, tetap berikan response yang sama
+        return back()->with('error', 'Email atau tanggal lahir tidak sesuai.');
+        
     }
 }

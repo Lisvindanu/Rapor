@@ -27,6 +27,7 @@ class User extends Authenticatable
         'password',
         'username', // Add this line
         'key_relation', // Add this line
+        'is_default_password', // Add this line
     ];
 
     /**

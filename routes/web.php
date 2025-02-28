@@ -38,6 +38,7 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->
 Route::post('/login/verify', [LoginController::class, 'verify']);
 Route::post('/login/exit', [LoginController::class, 'logout']);
 Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');  
+Route::post('forgotpassword/request', [LoginController::class, 'resetPassword']);
 // Route::get('/login', "LoginController@showLoginForm")->name('login');
 
 // faq

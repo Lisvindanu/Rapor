@@ -207,7 +207,7 @@
                     <label for="email">Email/NIP</label>
                     <input type="text" class="form-control @error('email') is-invalid @enderror" id="email"
                         name="email" value="{{ old('email') }}"
-                        placeholder="Masukkan email/NIM/NIP/username yang terdaftar" required>
+                        placeholder="Masukkan NIM/NIP/username yang terdaftar" required>
                     @error('email')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -218,9 +218,9 @@
                         placeholder="Masukkan password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Masuk</button>
-                <!-- <div class="forgot-password" style="text-align: left">
+                <div class="forgot-password" style="text-align: left">
                     <a href="{{ route('forgotpassword') }}">Lupa Kata Sandi?</a>
-                </div> -->
+                </div>
             </form>
         </div>
     </div>

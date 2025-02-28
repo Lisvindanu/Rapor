@@ -29,7 +29,7 @@ class synKRS extends Command
      */
     public function handle()
     {
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTc0MDU1MDcwNSwiZXhwIjoxNzQwNTU0MzA1fQ._3EZXbT637Q3ZwPZraay_r7ypsoov3Zr79hXwnFjVXk";
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTc0MDcxMDUzOCwiZXhwIjoxNzQwNzE0MTM4fQ.yxcIw_fZR2igZM18qMm2DgRhMEKcFLpeDsX-QRGy8yQ";
         $limit = 1000;
 
         $formData = [];

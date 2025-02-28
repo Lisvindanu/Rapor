@@ -55,7 +55,8 @@ class RemedialAjuanController extends Controller
             $query = RemedialAjuan::with('remedialajuandetail')
                 ->whereIn('programstudi', $unitKerjaNames)
                 ->where('remedial_periode_id', $periodeTerpilih->id)
-                ->where('status_pembayaran', 'Menunggu Konfirmasi');
+                ->where('status_pembayaran', 'Menunggu Konfirmasi')
+                ->orderBy('tgl_pembayaran', 'desc');
 
             //filter terkait dengan program studi
             if ($request->filled('programstudi')) {

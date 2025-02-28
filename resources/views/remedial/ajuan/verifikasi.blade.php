@@ -133,6 +133,9 @@
                                                 Total Bayar
                                             </th>
                                             <th>
+                                                Tanggal Bayar
+                                            </th>
+                                            <th>
                                                 Bukti Bayar
                                             </th>
                                             <th style="text-align: center;vertical-align: middle;">
@@ -151,6 +154,7 @@
                                                     <td>{{ $ajuan->programstudi }}</td>
                                                     <td>Rp. {{ number_format($ajuan->total_bayar, 0, ',', '.') }}</td>
                                                     <td>Rp. {{ number_format($ajuan->jumlah_bayar, 0, ',', '.') }}</td>
+                                                    <td>{{ $ajuan->tgl_pembayaran }}</td>
                                                     <td>
                                                         <a href="{{ asset('storage/' . $ajuan->bukti_pembayaran) }}"
                                                             target="_blank">
@@ -168,7 +172,7 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="9">Tidak ada data</td>
+                                                <td colspan="10">Tidak ada data</td>
                                             </tr>
                                         @endif
                                     </tbody>

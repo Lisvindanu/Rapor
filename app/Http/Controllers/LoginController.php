@@ -122,9 +122,9 @@ class LoginController extends Controller
         return redirect('/gate');
     }
 
-    // forgotpassword
-    public function forgotPassword()
-    {
-        return view('auth.forgotpassword');
-    }
+    // // forgotpassword
+    // public function forgotPassword()
+    // {
+    //     return view('auth.forgotpassword');
+    // }
 }

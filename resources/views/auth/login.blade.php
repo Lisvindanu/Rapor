@@ -218,9 +218,9 @@
                         placeholder="Masukkan password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Masuk</button>
-                <div class="forgot-password" style="text-align: left">
+                <!-- <div class="forgot-password" style="text-align: left">
                     <a href="{{ route('forgotpassword') }}">Lupa Kata Sandi?</a>
-                </div>
+                </div> -->
             </form>
         </div>
     </div>

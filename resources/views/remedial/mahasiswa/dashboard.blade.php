@@ -111,7 +111,9 @@
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end"">
                                         @if (
                                             $data_ajuan->count() == 0 &&
-                                                \Carbon\Carbon::now()->gte($periodeTerpilih->tanggal_mulai))
+                                                \Carbon\Carbon::now()->gte($periodeTerpilih->tanggal_mulai) &&
+                                                \Carbon\Carbon::now()->lte($periodeTerpilih->tanggal_selesai) &&
+                                                $periodeTerpilih->is_aktif)
 
                                                 <!-- $data_ajuan->count() == 0 &&
                                                 \Carbon\Carbon::now()->gte($periodeTerpilih->tanggal_mulai) &&

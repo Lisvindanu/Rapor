@@ -60,10 +60,10 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-2">
+                                        <!-- <div class="col-2">
                                             <button id="btn-cari-filter" style="width: 100px; color:white"
                                                 class="btn btn-primary" type="submit">Cari</button>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </form>

@@ -196,7 +196,7 @@
             <form method="POST" action="{{ route('updatePassword') }}">
                 @csrf
                 <div class="form-group position-relative">
-                    <label for="old_password">Password Lama</label>
+                    <label for="old_password">Password Sebelumnya</label>
                     <input type="password"
                         class="form-control @error('old_password') is-invalid
                     @enderror"

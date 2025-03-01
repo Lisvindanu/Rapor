@@ -104,6 +104,10 @@ class RemedialAjuanController extends Controller
     // daftar ajuan
     public function daftarAjuan(Request $request)
     {
+        if (session('selected_role') == 'Mahasiswa') {
+            return redirect()->route('gate');
+        }
+        
         try {
             // untuk dropdown unit kerja
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();

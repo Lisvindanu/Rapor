@@ -183,11 +183,11 @@
                                                             <i class="fas fa-edit fa-xs"></i>
                                                         </a>
                                                         
-                                                            <button type="button" class="btn btn-sm btn-danger delete"
+                                                            <!-- <button type="button" class="btn btn-sm btn-danger delete"
                                                                 title="Batalkan Ajuan">
                                                                 <i class="fas fa-trash-alt fa-xs"></i>
                                                             </button>
-                                                        
+                                                         -->
 
                                                     </td>
                                                 </tr>

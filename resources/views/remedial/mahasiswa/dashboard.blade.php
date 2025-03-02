@@ -175,11 +175,17 @@
                                                 <td>
                                                     @if ($ajuan->is_lunas == false)
                                                         <div class="d-grid gap 2 d-md-flex justify-content-md-center">
+                                                        @if (
+                                                            \Carbon\Carbon::now()->gte($periodeTerpilih->tanggal_mulai) &&
+                                                            \Carbon\Carbon::now()->lte($periodeTerpilih->tanggal_selesai) &&
+                                                            $periodeTerpilih->is_aktif)
                                                             <button type="button" class="btn btn-sm btn-warning edit"
                                                                 id="btnUnggahData">
                                                                 <i class="fas fa-upload fa-xs"
                                                                     title="Unggah Bukti Bayar"></i>
                                                             </button>
+                                                        @endif
+                                                            
                                                             &nbsp;
                                                             <button type="button" class="btn btn-sm btn-danger delete"
                                                                 title="Batalkan Ajuan">

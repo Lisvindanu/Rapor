@@ -184,13 +184,17 @@
                                                                 <i class="fas fa-upload fa-xs"
                                                                     title="Unggah Bukti Bayar"></i>
                                                             </button>
-                                                        @endif
-                                                            
                                                             &nbsp;
                                                             <button type="button" class="btn btn-sm btn-danger delete"
                                                                 title="Batalkan Ajuan">
                                                                 <i class="fas fa-trash-alt fa-xs"></i>
                                                             </button>
+                                                        @else
+                                                            <!-- text pembayaran sudah ditutup -->
+                                                            <span class="badge bg-danger">Pembayaran Ditutup</span>
+                                                        @endif
+                                                            
+                                                            
                                                         </div>
                                                     @endif
 
@@ -295,6 +299,12 @@
                                     value="{{ $periodeTerpilih->remedialperiodeprodi[0]->presensi_batas }} %"
                                     aria-describedby="basic-addon1" readonly>
                             </div>
+
+                            <!-- tampilkan informasi pendaftaran dan pembayaran yang melebihi batas waktu akan ditolak -->
+                            
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    Pendaftaran & Pembayaran Remedial yang melebihi dari tanggal yang ditentukan akan ditolak.
+                                </div>
                         </div>
                     </div>
                 </div>

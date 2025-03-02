@@ -41,7 +41,11 @@ class LoginController extends Controller
         // return response()->json($user);
 
         if ($user && Auth::attempt(['email' => $user->email, 'password' => $request->input('password')])) {
-            $request->session()->regenerate();
+            // $request->session()->regenerate();
+            if (!$request->session()->has('last_login')) {
+                $request->session()->put('last_login', now());
+                $request->session()->regenerate(); // Regenerasi hanya jika sesi kosong
+            }
             // Authentication passed...
             if ($user->is_default_password) {
                 return redirect()->route('changePassword');

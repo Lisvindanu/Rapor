@@ -61,7 +61,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::post('/set-role', "GateController@setRole")->name('gate.setRole');
     });
 
-    Route::prefix('master')->group(function () {
+    Route::prefix('master')->middleware('superadmin')->group(function () {
         // Dashboard
         Route::get('/', "MasterController@index")->name('master');
 
@@ -481,6 +481,16 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::get('/', "BtqLaporanController@index")->name('btq.laporan');
             Route::post('/print-laporan', "BtqLaporanController@printLaporan")->name('btq.laporan.print');
         });
+    });
+
+    // whistleblower
+    Route::prefix('whistleblower')->group(function () {
+        Route::get('/', "WhistleblowerController@index")->name('whistleblower');
+        Route::get('/riwayat', "WhistleblowerController@riwayat")->name('whistleblower.riwayat');
+        Route::get('/detail/{id}', "WhistleblowerController@detail")->name('whistleblower.detail');
+        Route::post('/store', "WhistleblowerController@store")->name('whistleblower.store');
+        Route::post('/update', "WhistleblowerController@update")->name('whistleblower.update');
+        Route::delete('/{id}', "WhistleblowerController@destroy")->name('whistleblower.delete');
     });
 
     //test

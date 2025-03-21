@@ -2,59 +2,51 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Soal;
-use App\Models\Pertanyaan;
 use Illuminate\Support\Str;
 
 class SoalSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Jalankan seeder untuk mengisi tabel kuesioner_soal.
      */
     public function run(): void
     {
-        // Seed data untuk Soal
-        $soal1 = Soal::create([
-            'id' => Str::uuid(),
-            'nama_soal' => 'Kuisioner Kepuasan Pelanggan',
-            'keterangan' => 'Kuisioner untuk mengukur tingkat kepuasan pelanggan terhadap produk kami.',
-            'soal_acak' => false,
-            'jawaban_acak' => true,
-            'publik' => true,
-        ]);
+        $soal_list = [
+            // Soal untuk Bawahan
+            'Kejujuran (Bawahan)',
+            'Loyalitas pada Perusahaan (Bawahan)',
+            'Kerjasama (Bawahan)',
+            'Kehadiran Tepat Waktu (Bawahan)',
+            'Kepemimpinan (Bawahan)',
+            'Inisiatif/Prakarsa (Bawahan)',
+            'Tanggungjawab (Bawahan)',
+            'Ketaatan pada Organisasi (Bawahan)',
+            'Nyunda dan Nyantri (Bawahan)',
+            'Prestasi Kerja (Bawahan)',
 
-        // Seed data untuk Pertanyaan
-        Pertanyaan::create([
-            'id' => Str::uuid(),
-            'soal_id' => $soal1->id,
-            'pertanyaan' => 'Apakah Anda puas dengan kualitas produk kami?',
-            'jawaban_benar' => 'Ya',
-            'opsi_a' => 'Ya',
-            'opsi_b' => 'Tidak',
-            'tipe' => 'Range Nilai',
-        ]);
+            // Soal untuk Sejawat
+            'Kejujuran (Sejawat)',
+            'Loyalitas pada Perusahaan (Sejawat)',
+            'Kerjasama (Sejawat)',
+            'Kehadiran Tepat Waktu (Sejawat)',
+            'Kepemimpinan (Sejawat)',
+            'Inisiatif/Prakarsa (Sejawat)',
+            'Tanggungjawab (Sejawat)',
+            'Ketaatan pada Organisasi (Sejawat)',
+            'Nyunda dan Nyantri (Sejawat)',
+            'Prestasi Kerja (Sejawat)',
+        ];
 
-        Pertanyaan::create([
-            'id' => Str::uuid(),
-            'soal_id' => $soal1->id,
-            'pertanyaan' => 'Bagaimana pendapat Anda mengenai harga produk kami?',
-            'jawaban_benar' => 'Sangat baik',
-            'opsi_a' => 'Sangat baik',
-            'opsi_b' => 'Baik',
-            'opsi_c' => 'Cukup',
-            'opsi_d' => 'Kurang',
-            'opsi_e' => 'Tidak baik',
-            'tipe' => 'Pilihan Ganda',
-        ]);
-
-        Pertanyaan::create([
-            'id' => Str::uuid(),
-            'soal_id' => $soal1->id,
-            'pertanyaan' => 'Berikan saran atau masukan untuk produk kami:',
-            'jawaban_benar' => 'Es krim rasa stroberi sangat enak!',
-            'tipe' => 'Essay',
-        ]);
+        foreach ($soal_list as $nama_soal) {
+            Soal::create([
+                'id' => Str::uuid(),
+                'nama_soal' => $nama_soal,
+                'keterangan' => "Penilaian terhadap $nama_soal",
+                'soal_acak' => false,
+                'publik' => true,
+            ]);
+        }
     }
 }

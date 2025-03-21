@@ -10,7 +10,7 @@ class UnsurPenilaian extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'unsur_penilaian';
+    protected $table = 'kuesioner_unsur_penilaian';
 
     protected $fillable = [
         'id',

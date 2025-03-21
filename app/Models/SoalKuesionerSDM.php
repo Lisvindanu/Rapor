@@ -10,7 +10,7 @@ class SoalKuesionerSDM extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'soal_kuesionerSDM';
+    protected $table = 'kuesioner_soal_kuesionerSDM';
 
     protected $fillable = [
         'id',

@@ -10,7 +10,7 @@ class Penilaian extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'penilaian';
+    protected $table = 'kuesioner_penilaian';
 
     protected $fillable = [
         'id',

@@ -10,7 +10,7 @@ class Soal extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'soal';
+    protected $table = 'kuesioner_soal';
     protected $appends = ['jumlah_pertanyaan'];
 
     protected $fillable = [

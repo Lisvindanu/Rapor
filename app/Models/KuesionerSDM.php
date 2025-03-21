@@ -42,7 +42,7 @@ class KuesionerSDM extends Model
 
     public function soal()
     {
-        return $this->belongsToMany(Soal::class, 'soal_kuesionerSDM', 'kuesioner_sdm_id', 'soal_id');
+        return $this->belongsToMany(Soal::class, 'kuesioner_soal_kuesionerSDM', 'kuesioner_sdm_id', 'soal_id');
     }
 
     // Accessor untuk mengambil jumlah pertanyaan

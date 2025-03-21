@@ -38,7 +38,7 @@ class GenerateUserFromPegawai extends Command
         // where jenispegawai != 'Tendik'
 
         $pegawais = Pegawai::whereDoesntHave('user')
-            ->where('jenispegawai', '==', 'Pegawai')
+            // ->where('jenispegawai', '==', 'Pegawai')
             // ->where('jenispegawai', 'Pegawai')
             ->get();
 
@@ -71,6 +71,7 @@ class GenerateUserFromPegawai extends Command
                 'key_relation' => $pegawai->nip,
             ]);
 
+            $this->info('User ' . $pegawai->nama . ' berhasil dibuat.');
             $this->info('User ' . $user->name . ' berhasil dibuat.');
             // Hubungkan user dengan pegawai
             $pegawai->user()->save($user);

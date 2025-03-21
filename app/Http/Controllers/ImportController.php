@@ -226,7 +226,9 @@ class ImportController extends Controller
                             return redirect()->back()->with('message', $message);
                         }
 
-                        $pegawai = Pegawai::where('nip', $row[2])->first();
+                        $pegawai = Pegawai::where('nip', $row[2])
+                        ->orWhere('nama', 'ilike', '%' . $row[3] . '%')
+                        ->first();
                         if ($pegawai) {
                             $kuesionerSDM['subjek_penilaian'] = $pegawai->nip;
                         } else {

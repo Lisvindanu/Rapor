@@ -225,6 +225,16 @@
         </div>
     </div>
 
+    <div id="mobile-warning" class="alert alert-warning text-center" style="display: none;">
+        Untuk pengalaman terbaik, silakan akses menggunakan <strong>laptop atau komputer</strong>.
+    </div>
+
 </body>
+<script>
+    // Cek jika lebar layar kurang dari 768px (umumnya handphone)
+    if (window.innerWidth < 768) {
+        alert("Untuk pengalaman terbaik, silakan akses halaman ini menggunakan laptop atau komputer karena ada beberapa fitur yang tidak didukung pada perangkat mobile.");
+    }
+</script>
 
 </html>

@@ -15,9 +15,12 @@ class PenilaianController extends Controller
     public function index()
     {
         $responden = Responden::with(['kuesionerSDM', 'pegawai', 'penilaian'])
-            ->where('pegawai_nip', auth()->user()->username)
+            ->where('pegawai_nip', auth()->user()->pegawai->nip)
             ->where('status_selesai', false)
             ->get();
+        
+            // $nohp = auth()->user()->pegawai->nip;
+            // dd($nohp);
 
         // return response()->json($responden);
         return view('kuesioner.penilaian.index', [

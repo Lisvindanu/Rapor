@@ -56,14 +56,14 @@
                         <div class="card-body" style="display: flex">
                             <div class="col-md-12">
                                 <div class="row align-items-center">
-                                    <div class="col-2">
+                                    <div class="col-3">
                                         <label for="nip_peserta" class="col-form-label">NIP :</label>
                                     </div>
-                                    <div class="col-10">
-                                        <p class="card-text">{{ auth()->user()->username }}</p>
+                                    <div class="col-9">
+                                        <p class="card-text">{{ auth()->user()->pegawai->nip }}</p>
                                         {{-- <input type="text" id="nip_peserta" class="form-control" value=""> --}}
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-3">
                                         <label for="nama_peserta" class="col-form-label">Nama :</label>
                                     </div>
                                     <div class="col-9">

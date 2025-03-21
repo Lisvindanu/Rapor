@@ -10,7 +10,7 @@ class Pertanyaan extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'pertanyaan';
+    protected $table = 'kuesioner_pertanyaan';
 
     protected $fillable = [
         'id',

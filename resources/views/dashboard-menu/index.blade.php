@@ -299,27 +299,6 @@
                     const judulRole = $('#judul-role');
                     judulRole.text(route);
 
-                    // data.forEach(function(role) {
-                    //     const roleDiv = $('<div>').addClass('role');
-
-                    //     const roleLink = $('<span>').addClass('role-link')
-                    //         .css('text-decoration', 'none')
-                    //         .css('cursor', 'pointer')
-                    //         .click(function() {
-                    //             setRole(role.id, route);
-                    //         });
-
-                    //     const roleJudul = $('<p>').addClass('role-judul')
-                    //         .html(`<strong>${role.name}</strong>`);
-
-                    //     const roleBidang = $('<span>').addClass('role-bidang')
-                    //         .text(role.deskripsi);
-
-                    //     roleLink.append(roleJudul);
-                    //     roleLink.append(roleBidang);
-                    //     roleDiv.append(roleLink);
-                    //     roleContainer.append(roleDiv);
-                    // });
                     data.forEach(function(item) {
                         const role = item.role; // Akses objek role dari setiap item
                         const unitkerja = item.unitkerja; // Akses objek unirkerja dari setiap item

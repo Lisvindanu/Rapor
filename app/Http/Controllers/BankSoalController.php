@@ -14,7 +14,12 @@ class BankSoalController extends Controller
     public function index(Request $request)
     {
         $dataSoal = Soal::with(['pertanyaan'])->orderBy('created_at', 'desc')->paginate($request->get('perPage', 10));
-        $total = $dataSoal->total(); // Mendapatkan total data
+        $total = $dataSoal->total(); // Mendapatkan total data?
+
+        if($dataSoal == null){
+            $dataSoal = [];
+        }
+        // $total = 0;
 
         // return response()->json($dataRapor);
         return view('kuesioner.banksoal.index', [

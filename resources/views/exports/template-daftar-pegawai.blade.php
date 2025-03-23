@@ -35,6 +35,9 @@
                 <td>
                     {{ $item->jenispegawai }}
                 </td>
+                <td>
+                    {{ $item->nohp }}
+                </td>
         @endforeach
 
     </table>

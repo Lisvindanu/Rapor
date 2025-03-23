@@ -307,6 +307,7 @@
                 <td>
                     ${kuesionerSDM.publik == 1 ? '<i class="fas fa-check-circle" style="color: green"></i>' : '<i class="fas fa-times-circle" style="color: red"></i>'}
                 </td>
+                
                 <td>
                     <a href="/kuesioner/kuesioner-sdm/detail/${kuesionerSDM.id}" class="btn btn-sm btn-info detail">
                         <i class="fas fa-link fa-xs"></i>

@@ -138,6 +138,9 @@
                                     <div class="col-sm-6">
                                         <select class="form-select" id="jenis_kuesioner" name="jenis_kuesioner">
                                             <option value="">Pilih Jenis Penilaian...</option>
+                                            <option value="UPPS"
+                                                {{ isset($kuesioner) && $kuesioner->jenis_kuesioner == 'UPPS' ? 'selected' : '' }}>
+                                                UPPS</option>
                                             <option value="Atasan"
                                                 {{ isset($kuesioner) && $kuesioner->jenis_kuesioner == 'Atasan' ? 'selected' : '' }}>
                                                 Atasan</option>

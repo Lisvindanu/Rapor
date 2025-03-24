@@ -169,8 +169,9 @@
                                 </ul>
                                 <div style="clear: both"></div>
                                 <!-- Tombol Submit -->
-                                <button type="submit" class="btn btn-primary" form="form-penilaian">Selesai
-                                    Penilaian</button>
+                                <button type="submit" class="btn btn-primary" form="form-penilaian" id="btn-selesai" disabled>
+    Selesai Penilaian
+</button>
                             </div>
                         </div>
                     </div>
@@ -293,6 +294,23 @@
                 $('#konfirmasiSubmit').on('click', function() {
                     $('#form-penilaian').unbind('submit').submit();
                 });
+            });
+
+            const pertanyaanTerakhir = $('.btn-soal').last().data('pertanyaan');
+
+            btnSoal.on('click', function(e) {
+                e.preventDefault();
+                const pertanyaanID = $(this).data('pertanyaan');
+                const pertanyaan = $('.pertanyaan[data-pertanyaan="' + pertanyaanID + '"]');
+
+                // Tampilkan pertanyaan yang sesuai
+                $('.pertanyaan').hide();
+                pertanyaan.show();
+
+                // Cek apakah pertanyaan terakhir yang diklik
+                if (pertanyaanID == pertanyaanTerakhir) {
+                    $('#btn-selesai').prop('disabled', false); // Enable tombol
+                }
             });
         });
     </script>

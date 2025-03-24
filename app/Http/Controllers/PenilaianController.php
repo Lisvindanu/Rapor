@@ -31,7 +31,7 @@ class PenilaianController extends Controller
     public function riwayat()
     {
         $responden = Responden::with(['kuesionerSDM', 'pegawai', 'penilaian'])
-            ->where('pegawai_nip', auth()->user()->username)
+            ->where('pegawai_nip',  auth()->user()->pegawai->nip)
             ->where('status_selesai', true)
             ->get();
 
@@ -45,7 +45,7 @@ class PenilaianController extends Controller
     public function mulaiPenilaian($id)
     {
         $responden = Responden::with(['kuesionerSDM', 'pegawai', 'penilaian'])
-            ->where('pegawai_nip', auth()->user()->username)
+            ->where('pegawai_nip', auth()->user()->pegawai->nip)
             ->where('id', $id)
             ->first();
 

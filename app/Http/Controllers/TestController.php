@@ -173,4 +173,13 @@ class TestController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
         ])->deleteFileAfterSend(true); // Hapus file setelah didownload
     }
+
+    // helloworld
+    public function helloworld()
+    {
+        return response()->json([
+            'message' => 'Hello, world!',
+            'status' => 200
+        ], 200);
+    }
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('v1')->group(function () {
+    Route::get('/login', [AuthController::class, 'login']);
+});
+
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
@@ -22,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 //     return response()->json(['message' => 'Hello, world!']);
 // });
 
-Route::namespace('App\Http\Controllers')->group(function () {
+// Route::namespace('App\Http\Controllers')->group(function () {
     // Route::prefix('sinkronasi')->group(function () {
     //     Route::get('/', "SinkronasiController@index");
     //     Route::get('/getToken', "SinkronasiController@getToken");
@@ -50,8 +55,4 @@ Route::namespace('App\Http\Controllers')->group(function () {
     // Route::prefix('kuesioner')->group(function () {
     //     Route::post('/soalkuesionersdm/store', "KuesionerSDMController@createSoalKuesionerSDM");
     // });
-
-    Route::prefix('test')->group(function () {
-        Route::get('/audit-data', "TestController@auditData");
-    });
-});
+// });

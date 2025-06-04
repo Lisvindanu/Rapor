@@ -55,7 +55,7 @@ class ambilDataPerwalian extends Command
             // ambil data nim dari mhs
             $nim = $mhs->nim;
 
-            sleep(2); // delay 1 detik untuk menghindari rate limit
+            sleep(1); // delay 1 detik untuk menghindari rate limit
 
             $url = "https://api.sevimaplatform.com/siakadcloud/v1/mahasiswa/{$nim}/perwalian";
 

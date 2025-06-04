@@ -47,6 +47,7 @@ class ambilDataPerwalian extends Command
                 'Teknik Lingkungan',
                 'Perencanaan Wilayah dan Kota'
             ])
+            ->orderBy('nim', 'asc')
             ->get();
 
         $this->info('Jumlah mahasiswa yang ditemukan: ' . $mahasiswa->count());

@@ -135,8 +135,14 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         //hitung presensi krs mahasiswa
         Route::post('/sinkronasi/hitung-presensi', "SinkronasiController@hitungPresensi")->name('master.sinkronasi.hitungPresensi');
 
+        Route::prefix('laporan')->group(function () {
+            Route::get('/', "MasterLaporanController@index")->name('master.laporan');
+            // Route::post('/print-laporan', "RemedialLaporanController@printLaporan")->name('remedial.laporan.print');
+        });
         // sinkronasiv2
         Route::get('/sinkronasiV2', "SinkronasiV2Controller@index")->name('master.sinkronasi-v2');
+
+
     });
 
     Route::prefix('rapor')->group(function () {

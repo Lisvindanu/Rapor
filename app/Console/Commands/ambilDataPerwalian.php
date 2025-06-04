@@ -31,8 +31,14 @@ class ambilDataPerwalian extends Command
     {
         $this->info('Mulai mengambil data perwalian...');
 
-        // ambil data mahasiswa terlebih dahulu where periode masuk dan program studi Teknik Industri, Teknologi Pangan, Teknik Mesin, Teknik Informatika, Teknik Lingkungan, Perencanaan Wilayah dan Kota
-        $mahasiswa = Mahasiswa::where('periodemasuk', '20191')
+        // ambil data mahasiswa terlebih dahulu where periode masuk 20191, 20201, 20211, 20221, 20231, dan program studi Teknik Industri, Teknologi Pangan, Teknik Mesin, Teknik Informatika, Teknik Lingkungan, Perencanaan Wilayah dan Kota
+        $mahasiswa = Mahasiswa::whereIn('periodemasuk', [
+                '20191',
+                '20201',
+                '20211',
+                '20221',
+                '20231'
+            ])
             ->whereIn('programstudi', [
                 'Teknik Industri',
                 'Teknologi Pangan',

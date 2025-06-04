@@ -34,7 +34,26 @@ class AuthController extends Controller
 
         if ($user->pegawai) {
             $type = 'pegawai';
-            $relationData = $user->pegawai;
+             // Konversi model pegawai ke array
+            $pegawai = $user->pegawai->toArray();
+
+            // Tambahkan nama unit dari relasi unitKerja
+            $pegawai['unit_kerja'] = [
+                'id' => $user->pegawai->unitKerja->id ?? null,
+                'nama_unit' => $user->pegawai->unitKerja->nama_unit ?? null,
+            ];
+
+            $relationData = $pegawai;
+            // $relationData = $user->pegawai;
+            // $relationData = [
+            //     'nama' => $user->pegawai->nama,
+            //     'nip' => $user->pegawai->nip,
+            //     'jabatan' => $user->pegawai->jabatanstruktural,
+            //     'unit_kerja' => [
+            //         'id' => $user->pegawai->unitKerja->id ?? null,
+            //         'nama_unit' => $user->pegawai->unitKerja->nama_unit ?? null
+            //     ]
+            // ];
         } elseif ($user->mahasiswa) {
             $type = 'mahasiswa';
             $relationData = $user->mahasiswa;

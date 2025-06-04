@@ -22,20 +22,20 @@
         <div class="filter-konten">
             <div class="row justify-content-md-center">
                 <div class="col-6">
-                    <form action="{{ route('remedial.laporan.print') }}" method="POST">
+                    <form action="{{ route('master.laporan.print') }}" method="POST">
                         @csrf
                         <div class="card">
                             <div class="card-body">
                                 <div class="form-row">
                                     <div class="form-group col-md-12 mb-3">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <label for="remedial_periode_id" class="text-right mb-0 pr-2 col-md-3">Periode
+                                            <label for="perwalian_periode_id" class="text-right mb-0 pr-2 col-md-3">Periode
                                                 Masuk</label>
                                             <select id="periode-dropdown" class="form-select"
-                                                aria-label="Default select example" name="remedial_periode_id" required>
+                                                aria-label="Default select example" name="perwalian_periode_id" required>
                                                 <option value="">Pilih Periode ...</option>
                                                 @foreach ($daftar_periode as $periode)
-                                                    <option value="{{ $periode->id }}">{{ $periode->nama_periode }}
+                                                    <option value="{{ $periode->kode_periode }}">{{ $periode->nama_periode }}
                                                     </option>
                                                 @endforeach
                                             </select>

@@ -137,7 +137,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         Route::prefix('laporan')->group(function () {
             Route::get('/', "MasterLaporanController@index")->name('master.laporan');
-            // Route::post('/print-laporan', "RemedialLaporanController@printLaporan")->name('remedial.laporan.print');
+            Route::post('/print-laporan', "MasterLaporanController@printLaporan")->name('master.laporan.print');
         });
         // sinkronasiv2
         Route::get('/sinkronasiV2', "SinkronasiV2Controller@index")->name('master.sinkronasi-v2');

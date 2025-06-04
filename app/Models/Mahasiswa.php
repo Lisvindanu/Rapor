@@ -47,4 +47,10 @@ class Mahasiswa extends Model
     {
         return $this->hasOne(User::class, 'key_relation', 'nim');
     }
+
+    // perwalian
+    public function perwalian()
+    {
+        return $this->hasMany(MasterPerwalian::class, 'nim', 'nim');
+    }
 }

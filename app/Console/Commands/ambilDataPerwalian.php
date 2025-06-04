@@ -33,11 +33,11 @@ class ambilDataPerwalian extends Command
 
         // ambil data mahasiswa terlebih dahulu where periode masuk 20191, 20201, 20211, 20221, 20231, dan program studi Teknik Industri, Teknologi Pangan, Teknik Mesin, Teknik Informatika, Teknik Lingkungan, Perencanaan Wilayah dan Kota
         $mahasiswa = Mahasiswa::whereIn('periodemasuk', [
-                '20191',
-                '20201',
-                '20211',
-                '20221',
-                '20231'
+                '20191'
+                // '20201',
+                // '20211',
+                // '20221',
+                // '20231'
             ])
             ->whereIn('programstudi', [
                 'Teknik Industri',
@@ -55,7 +55,7 @@ class ambilDataPerwalian extends Command
             // ambil data nim dari mhs
             $nim = $mhs->nim;
 
-            sleep(1); // delay 1 detik untuk menghindari rate limit
+            sleep(2); // delay 1 detik untuk menghindari rate limit
 
             $url = "https://api.sevimaplatform.com/siakadcloud/v1/mahasiswa/{$nim}/perwalian";
 

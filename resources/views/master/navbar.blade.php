@@ -58,6 +58,7 @@
                                         <li><a class="dropdown-item" href="{{ route('master.laporan') }}">Laporan</a>
                                         </li>
                                     </ul>
+                                </li>
                             </ul>
                         </div>
                     </div>

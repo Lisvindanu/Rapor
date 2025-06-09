@@ -49,15 +49,24 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
 
         if (strtolower($row->statusmahasiswa) === 'aktif') {
             $totalPeriode = count($this->periodeList);
-            $jumlahPerwalian = count($row->perwalian);
-            $nonAktifCount = collect($row->perwalian)
-                ->whereIn('id_periode', $this->periodeList)
-                ->where('status_mahasiswa', 'Non Aktif')
-                ->count();
+            $filteredPerwalian = collect($row->perwalian)->whereIn('id_periode', $this->periodeList);
 
-            if (($jumlahPerwalian / $totalPeriode) <= 0.5 || $nonAktifCount >= 5) {
+            $jumlahPerwalian = $filteredPerwalian->count();
+            $nonAktifCount = $filteredPerwalian->where('status_mahasiswa', 'Non Aktif')->count();
+            $aktifCount = $filteredPerwalian->where('status_mahasiswa', 'Aktif')->count();
+
+            $persentasePerwalian = $totalPeriode > 0 ? ($jumlahPerwalian / $totalPeriode) : 0;
+
+            if ($nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
+                // Tambahkan kondisi jika sudah terlalu lama kuliah
+                if ($aktifCount >= 12) {
+                    $rekomendasi = 'Cuti';
+                } else {
+                    $rekomendasi = '-';
+                }
+            } elseif ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5) {
                 $rekomendasi = 'Mengundurkan Diri';
-            } else  {
+            } elseif ($nonAktifCount > 0) {
                 $rekomendasi = 'Cuti';
             }
         }

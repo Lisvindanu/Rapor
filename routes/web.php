@@ -236,6 +236,13 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         //responden
         Route::delete('/hapus-semua-responden', "RespondenController@deleteAllResponden")->name('deleteAllResponden');
+
+        //laporan
+        Route::prefix('laporan')->group(function () {
+            Route::get('/', "KuesionerLaporanController@index")->name('kuesioner.laporan');
+            Route::post('/print-laporan', "KuesionerLaporanController@printLaporan")->name('kuesioner.laporan.print');
+        });
+
     });
 
     Route::prefix('dosen')->group(function () {

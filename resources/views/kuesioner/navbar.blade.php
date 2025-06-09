@@ -25,13 +25,13 @@
                                             <li><a class="dropdown-item"
                                                     href="{{ route('kuesioner.kuesioner-sdm') }}">Kuesioner SDM</a>
                                             </li>
-                                            {{-- <li><a class="dropdown-item" href="{{ route('master.user') }}">Kuesioner Unit
-                                                Kerja</a></li> --}}
+                                            <li><a class="dropdown-item" href="{{ route('master.user') }}">Kuesioner Unit
+                                                Kerja</a></li> 
 
                                         </ul>
                                     </li>
 
-                                    {{-- <li class="nav-item dropdown">
+                                    <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" role="button"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             Referensi
@@ -42,7 +42,18 @@
                                                 </a>
                                             </li>
                                         </ul>
-                                    </li> --}}
+                                    </li> 
+                                    <!-- laporan  -->
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            Laporan
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                            <li><a class="dropdown-item" href="{{ route('kuesioner.laporan') }}">Laporan</a>
+                                            </li>
+                                        </ul>
+                                    </li>
                                 @endif
                             </ul>
                         </div>

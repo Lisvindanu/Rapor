@@ -71,29 +71,48 @@
     </footer>
 
     @foreach($result as $data)
-    <h2>Laporan Rekap Kuesioner SDM</h2>
+    <h2>Laporan Rekap Kuesioner</h2>
     <h3>Periode: {{ $result->first()['periode'] ?? '-' }}</h3>
         <div class="pegawai-block">
             <table>
-                <tr>
-                    <th style="width: 20%">NIP</th>
-                    <td>{{ $data['nip'] }}</td>
-                </tr>
-                <tr>
-                    <th>Nama Pegawai</th>
-                    <td>{{ $data['nama'] }}</td>
-                </tr>
-                <tr>
-                    <th>Unit Kerja</th>
-                    <td>{{ $data['unit'] }}</td>
-                </tr>
+                
+                @if($data['nama'] == $data['unit'])
+                    <tr>
+                        <th style="width: 20%">Kode Unit Kerja</th>
+                        <td>{{ $data['nip'] }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Unit Kerja</th>
+                        <td>{{ $data['unit'] }}</td>
+                    </tr>
+                @else
+                    <tr>
+                        <th style="width: 20%">NIP</th>
+                        <td>{{ $data['nip'] }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nama Pegawai</th>
+                        <td>{{ $data['nama'] }}</td>
+                        </tr>
+                    <tr>
+                        <th>Unit Kerja</th>
+                        <td>{{ $data['unit'] }}</td>
+                    </tr>
+                @endif
+
                 <tr>
                     <th>Periode</th>
                     <td>{{ $data['periode'] }}</td>
                 </tr>
             </table>
 
-            <h4 style="margin-top: 10px;">Rekapitulasi Unsur Penilaian</h4>
+            @if($data['nama'] == $data['unit'])
+                <h4 style="margin-top: 10px;">Rekapitulasi Unsur Penilaian Pimpinan</h4>
+            @else
+                 <h4 style="margin-top: 10px;">Rekapitulasi Unsur Penilaian DP3</h4>
+            @endif
+
             <table>
                 <thead>
                     <tr>

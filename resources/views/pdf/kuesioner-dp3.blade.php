@@ -120,7 +120,8 @@
                  <h4 style="margin-top: 10px;">Rekapitulasi Unsur Penilaian DP3</h4>
             @endif
 
-            <div class="table-container" style="width: 40%;float: left;">
+            <div class="table-container" style="width: 100%;">
+                <!-- <div class="table-container" style="width: 40%;float: left;"> -->
                     <table>
                         <thead>
                             <tr>

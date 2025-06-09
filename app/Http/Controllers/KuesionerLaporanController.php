@@ -168,7 +168,7 @@ class KuesionerLaporanController extends Controller
         $pdf = PDF::loadView('pdf.kuesioner-dp3', [
                 'result' => $grouped,
             ]);
-        $pdf->setPaper('A4', 'landscape');
+        $pdf->setPaper('A4', 'potrait');
         return $pdf->download('laporan-kuesioner-sdm.pdf');
         
         // return response()->json($grouped, 200, [], JSON_PRETTY_PRINT);

@@ -153,21 +153,11 @@ class KuesionerLaporanController extends Controller
             }
 
             // Generate radar chart as base64 image
-            $labels = collect($data['unsur'])->pluck('nama')->toArray();
-            $values = collect($data['unsur'])->pluck('rata_rata')->toArray();
+            // $labels = collect($data['unsur'])->pluck('nama')->toArray();
+            // $values = collect($data['unsur'])->pluck('rata_rata')->toArray();
             
-            $data['chart'] = ChartHelper::generateRadarChartBase64($labels, $values);
-
-            // $html = view('kuesioner.kuesioner-sdm.chart-template', compact('labels', 'values'))->render();
-
-            // $base64 = Browsershot::html($html)
-            //     ->windowSize(500, 500)
-            //     ->setNodeBinary('/root/.nvm/versions/node/v18.14.0/bin/node')
-            //     ->setNpmBinary('/root/.nvm/versions/node/v18.14.0/bin/npm')
-            //     ->deviceScaleFactor(2)
-            //     ->screenshot();
-
-            // $data['chart'] = 'data:image/png;base64,' . base64_encode($base64);
+            // $data['chart'] = ChartHelper::generateRadarChartBase64($labels, $values);
+            
             $grouped->put($key, $data);
         }
 

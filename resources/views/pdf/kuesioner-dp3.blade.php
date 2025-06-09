@@ -41,6 +41,13 @@
             margin-right: 50px;
             margin-bottom: 30px;
         }
+
+        .wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 20px;
+        }
     
         h2, h3 {
             text-align: center;
@@ -113,31 +120,34 @@
                  <h4 style="margin-top: 10px;">Rekapitulasi Unsur Penilaian DP3</h4>
             @endif
 
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">No</th>
-                        <th>Unsur Penilaian</th>
-                        <th style="width: 15%;">Rata-rata</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $no = 1; @endphp
-                    @foreach($data['unsur'] as $unsur)
-                        <tr>
-                            <td>{{ $no++ }}</td>
-                            <td>{{ $unsur['nama'] }}</td>
-                            <td style="text-align: center;">{{ number_format($unsur['rata_rata'], 2) }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            <!-- @if (!empty($data['chart']))
-                <div class="chart-container">
-                    <img src="{{ $data['chart'] }}" alt="Radar Chart" width="300">
-                </div>
-            @endif -->
-        </div>
+            <div class="table-container" style="width: 40%;float: left;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">No</th>
+                                <th>Unsur Penilaian</th>
+                                <th style="width: 15%;">Rata-rata</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $no = 1; @endphp
+                            @foreach($data['unsur'] as $unsur)
+                                <tr>
+                                    <td>{{ $no++ }}</td>
+                                    <td>{{ $unsur['nama'] }}</td>
+                                    <td style="text-align: center;">{{ number_format($unsur['rata_rata'], 2) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+            </div>
+            <!-- <div class="chart-container" style="width: 40%;">
+                        @if (!empty($data['chart']))
+                            <img src="{{ $data['chart'] }}" alt="Radar Chart" width="300">
+                        @else
+                            <p>Grafik tidak tersedia.</p>
+                        @endif
+            </div> -->
         <div class="page-break"></div>
     @endforeach
 

@@ -16,6 +16,8 @@ use Exception;
 use App\Models\Periode;
 use App\Models\Penilaian;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Helpers\ChartHelper;
+use Spatie\Browsershot\Browsershot;
 
 class KuesionerLaporanController extends Controller
 {
@@ -103,7 +105,7 @@ class KuesionerLaporanController extends Controller
         
         $grouped = collect();
 
-                foreach ($kuesionerList as $kuesioner) {
+        foreach ($kuesionerList as $kuesioner) {
             $nip = $kuesioner->pegawai->nip;
             $periode = $kuesioner->kode_periode;
             $key = $nip . '-' . $periode;
@@ -149,6 +151,23 @@ class KuesionerLaporanController extends Controller
                 $count = max($unsur['count'], 1);
                 $data['unsur'][$id]['rata_rata'] = round($unsur['total'] / $count, 2);
             }
+
+            // Generate radar chart as base64 image
+            $labels = collect($data['unsur'])->pluck('nama')->toArray();
+            $values = collect($data['unsur'])->pluck('rata_rata')->toArray();
+            
+            $data['chart'] = ChartHelper::generateRadarChartBase64($labels, $values);
+
+            // $html = view('kuesioner.kuesioner-sdm.chart-template', compact('labels', 'values'))->render();
+
+            // $base64 = Browsershot::html($html)
+            //     ->windowSize(500, 500)
+            //     ->setNodeBinary('/root/.nvm/versions/node/v18.14.0/bin/node')
+            //     ->setNpmBinary('/root/.nvm/versions/node/v18.14.0/bin/npm')
+            //     ->deviceScaleFactor(2)
+            //     ->screenshot();
+
+            // $data['chart'] = 'data:image/png;base64,' . base64_encode($base64);
             $grouped->put($key, $data);
         }
 

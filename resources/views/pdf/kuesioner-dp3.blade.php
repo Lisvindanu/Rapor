@@ -132,6 +132,11 @@
                     @endforeach
                 </tbody>
             </table>
+            @if (!empty($data['chart']))
+                <div class="chart-container">
+                    <img src="{{ $data['chart'] }}" alt="Radar Chart" width="300">
+                </div>
+            @endif
         </div>
         <div class="page-break"></div>
     @endforeach

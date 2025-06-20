@@ -41,12 +41,12 @@ class ambilDataPerwalian extends Command
                 // 20181
             ])
             ->whereIn('programstudi', [
-                'Teknik Industri',
-                // 'Teknologi Pangan',
-                // 'Teknik Mesin',
-                // 'Teknik Informatika',
-                // 'Teknik Lingkungan',
-                // 'Perencanaan Wilayah dan Kota'
+                // 'Teknik Industri',
+                'Teknologi Pangan',
+                'Teknik Mesin',
+                'Teknik Informatika',
+                'Teknik Lingkungan',
+                'Perencanaan Wilayah dan Kota'
             ])
             ->where('statusmahasiswa', 'Aktif')
             ->orderBy('nim', 'asc')

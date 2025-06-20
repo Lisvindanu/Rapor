@@ -249,36 +249,42 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
         $jumlahBelumLunas = $belumLunasInvoices->count();
         $totalNominalBelumLunas = $belumLunasInvoices->sum(fn($inv) => floatval($inv['nominal_sisa_tagihan'] ?? 0));
 
+        // Rekap status perwalian
+        $totalPeriode = count($this->periodeList);
+        $filteredPerwalian = collect($row->perwalian)->whereIn('id_periode', $this->periodeList);
+        $jumlahPerwalian = $filteredPerwalian->count();
+        $nonAktifCount = $filteredPerwalian->where('status_mahasiswa', 'Non Aktif')->count();
+
         // Rekomendasi
         $rekomendasi = '-';
 
         if (strtolower($row->statusmahasiswa) === 'aktif') {
-            $totalPeriode = count($this->periodeList);
-            $filteredPerwalian = collect($row->perwalian)->whereIn('id_periode', $this->periodeList);
+            
+            // logika rekomendasi
+            // '-' untuk kondisi tidak ada tunggakan, nonaktif = 0, jumlah perwalian = total periode
+            // 'cuti' jika jumlah perwalian = total periode
+            // 'mengundurkan diri' jika persentase perwalian <= 0.5 atau nonaktif >= 5, belum lunas >= 4
 
-            $jumlahPerwalian = $filteredPerwalian->count();
-            $nonAktifCount = $filteredPerwalian->where('status_mahasiswa', 'Non Aktif')->count();
-            $aktifCount = $filteredPerwalian
-                            ->whereIn('status_mahasiswa', ['Aktif', 'Hanya TA/Skripsi'])
-                            ->count();
-
-            $persentasePerwalian = $totalPeriode > 0 ? ($jumlahPerwalian / $totalPeriode) : 0;
-
-            // Logika rekomendasi
-            // jika tidak ada tunggakan sama sekali, nonaktif count 0, dan jumlah perwalian sama dengan total periode maka rekomendasi adalah -
-            if ($jumlahBelumLunas === 0 && $nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
+            if (
+                $jumlahBelumLunas === 0 &&
+                $nonAktifCount === 0 &&
+                $jumlahPerwalian === $totalPeriode
+            ) {
                 $rekomendasi = '-';
-            } elseif ($nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode && $jumlahBelumLunas <= 4) {
-                // Jika semua perwalian aktif
-                $rekomendasi = $aktifCount >= 12 ? 'Cuti' : '-';
-            } elseif ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5 || $jumlahBelumLunas >= 5) {
-                // Jika persentase perwalian kurang dari 50% atau ada lebih dari 5 nonaktif atau tunggakan lebih dari 5
+            } elseif ($jumlahPerwalian === $totalPeriode) {
+                if($nonAktifCount <=4) {
+                    $rekomendasi = 'Cuti';
+                } else {
+                    $rekomendasi = 'Mengundurkan Diri';
+                }
+            } elseif (
+                ($totalPeriode > 0 && ($jumlahPerwalian / $totalPeriode) <= 0.5) ||
+                $nonAktifCount >= 5 ||
+                $jumlahBelumLunas >= 5
+            ) {
                 $rekomendasi = 'Mengundurkan Diri';
-            } elseif ($nonAktifCount > 0) {
-                // Jika ada yang nonaktif
-                $rekomendasi = 'Cuti';
             }
-
+            
         }
 
         return array_merge([

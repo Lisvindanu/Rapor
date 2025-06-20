@@ -48,12 +48,12 @@ class MasterLaporanController extends Controller
                 ->where('statusmahasiswa', '!=', 'Lulus')
                 ->where('periodemasuk', $periodemasuk)
                 ->whereIn('programstudi', [
-                    'Teknik Industri',
-                    'Teknologi Pangan',
-                    'Teknik Mesin',
-                    'Teknik Informatika',
-                    'Teknik Lingkungan',
-                    'Perencanaan Wilayah dan Kota'
+                    'Teknik Industri'
+                    // 'Teknologi Pangan',
+                    // 'Teknik Mesin',
+                    // 'Teknik Informatika',
+                    // 'Teknik Lingkungan',
+                    // 'Perencanaan Wilayah dan Kota'
                 ])
                 ->orderBy('nim', 'asc')
                 ->get();

@@ -13,21 +13,21 @@ return new class extends Migration
     {
         Schema::create('master_invoice', function (Blueprint $table) {
             $table->string('id')->primary(); // contoh: 476912-624023
-            $table->bigInteger('id_tagihan');
-            $table->bigInteger('id_transaksi');
-            $table->string('kode_transaksi');
-            $table->string('id_periode');
+            $table->string('id_tagihan')->nullable();
+            $table->string('id_transaksi')->nullable();;
+            $table->string('kode_transaksi')->nullable();;
+            $table->string('id_periode')->nullable();;
             $table->string('uraian')->nullable();
-            $table->timestamp('tanggal_transaksi')->nullable();
-            $table->timestamp('tanggal_akhir')->nullable();
-            $table->string('nim');
-            $table->string('nama_mahasiswa');
-            $table->bigInteger('id_pendaftar')->nullable();
+            $table->string('tanggal_transaksi')->nullable();
+            $table->string('tanggal_akhir')->nullable();
+            $table->string('nim')->nullable();
+            $table->string('nama_mahasiswa')->nullable();
+            $table->string('id_pendaftar')->nullable();
             $table->string('nama_pendaftar')->nullable();
             $table->string('id_periode_daftar')->nullable();
-            $table->string('id_jenis_akun');
-            $table->string('jenis_akun');
-            $table->string('id_mata_uang');
+            $table->string('id_jenis_akun')->nullable();
+            $table->string('jenis_akun')->nullable();
+            $table->string('id_mata_uang')->nullable();
             $table->decimal('nominal_tagihan', 15, 2)->default(0);
             $table->decimal('nominal_denda', 15, 2)->default(0);
             $table->decimal('nominal_potongan', 15, 2)->default(0);
@@ -37,10 +37,10 @@ return new class extends Migration
             $table->boolean('is_lunas')->default(false);
             $table->boolean('is_batal')->default(false);
             $table->boolean('is_rekon')->default(false);
-            $table->timestamp('waktu_rekon')->nullable();
-            $table->timestamp('tanggal_suspend')->nullable();
+            $table->string('waktu_rekon')->nullable();
+            $table->string('tanggal_suspend')->nullable();
             $table->boolean('is_transfer_nanti')->default(false);
-            $table->timestamp('tanggal_transfer')->nullable();
+            $table->string('tanggal_transfer')->nullable();
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();
         });

@@ -45,7 +45,14 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
         return array_merge(
             ['No', 'NRP', 'Nama', 'Program Studi', 'Status Mahasiswa'],
             $periodeCols,
-            ['Total DPP Belum Lunas (Rp)', 'Rekomendasi']
+            [
+                'Total DPP Belum Lunas (Rp)', 
+                'Rekomendasi', 
+                'Jumlah Belum Lunas',
+                'Jumlah Non Aktif',
+                'Jumlah Perwalian',
+                'Total Periode'
+            ]
         );
     }
 
@@ -296,7 +303,11 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             $row->statusmahasiswa,
         ], $periodeData, [
             number_format($totalNominalBelumLunas, 2, ',', '.'),
-            $rekomendasi
+            $rekomendasi,
+            $jumlahBelumLunas,
+            $nonAktifCount,
+            $jumlahPerwalian,
+            $totalPeriode
         ]);
     }
 }

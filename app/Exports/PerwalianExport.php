@@ -262,19 +262,21 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
 
             $persentasePerwalian = $totalPeriode > 0 ? ($jumlahPerwalian / $totalPeriode) : 0;
 
-            if ($nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
+            // Logika rekomendasi
+            // jika tidak ada tunggakan sama sekali, nonaktif count 0, dan jumlah perwalian sama dengan total periode maka rekomendasi adalah -
+            if ($jumlahBelumLunas === 0 && $nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
+                $rekomendasi = '-';
+            } elseif ($nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode && $jumlahBelumLunas <= 4) {
+                // Jika semua perwalian aktif
                 $rekomendasi = $aktifCount >= 12 ? 'Cuti' : '-';
             } elseif ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5 || $jumlahBelumLunas >= 5) {
+                // Jika persentase perwalian kurang dari 50% atau ada lebih dari 5 nonaktif atau tunggakan lebih dari 5
                 $rekomendasi = 'Mengundurkan Diri';
             } elseif ($nonAktifCount > 0) {
+                // Jika ada yang nonaktif
                 $rekomendasi = 'Cuti';
             }
 
-            // Override jika tidak ada tunggakan sama sekali
-            $adaTagihan = collect($row->invoice)->where('id_jenis_akun', 'DPP')->count() > 0;
-            if ($jumlahBelumLunas === 0 && $adaTagihan) {
-                $rekomendasi = '-';
-            }
         }
 
         return array_merge([

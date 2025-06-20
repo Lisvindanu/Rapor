@@ -267,6 +267,12 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
         $jumlahPerwalian = $filteredPerwalian->count();
         $nonAktifCount = $filteredPerwalian->where('status_mahasiswa', 'Non Aktif')->count();
 
+        // Cek dua periode terakhir apakah Non Aktif semua
+        $duaPeriodeAkhir = array_slice($this->periodeList, -2);
+        $duaPeriodeNonAktif = collect($duaPeriodeAkhir)->every(function ($periode) use ($perwalianMap) {
+            return isset($perwalianMap[$periode]) && $perwalianMap[$periode]['status_mahasiswa'] === 'Non Aktif';
+        });
+
         // Rekomendasi
         $rekomendasi = '-';
 
@@ -281,8 +287,7 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
                 $jumlahBelumLunas <= 2 &&
                 $jumlahPerwalian === $totalPeriode
             ) {
-                // Semua baik-baik saja: hampir tidak ada tunggakan, aktif semua, dan perwalian lengkap
-                $rekomendasi = '-';
+                $rekomendasi = $duaPeriodeNonAktif ? 'Cuti' : '-';
             } elseif (
                 ($totalPeriode > 0 && ($jumlahPerwalian / $totalPeriode) <= 0.5) ||
                 $nonAktifCount >= 5 ||

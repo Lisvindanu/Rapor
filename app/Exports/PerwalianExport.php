@@ -279,7 +279,6 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
 
             if (
                 $jumlahBelumLunas <= 2 &&
-                $nonAktifCount === 0 &&
                 $jumlahPerwalian === $totalPeriode
             ) {
                 // Semua baik-baik saja: hampir tidak ada tunggakan, aktif semua, dan perwalian lengkap

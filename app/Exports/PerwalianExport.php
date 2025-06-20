@@ -266,7 +266,7 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             // 'mengundurkan diri' jika persentase perwalian <= 0.5 atau nonaktif >= 5, belum lunas >= 4
 
             if (
-                $jumlahBelumLunas === 0 &&
+                $jumlahBelumLunas <= 1 &&
                 // $nonAktifCount === 0 &&
                 $jumlahPerwalian === $totalPeriode
             ) {

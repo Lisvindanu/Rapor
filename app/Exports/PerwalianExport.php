@@ -270,21 +270,22 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
                 $nonAktifCount === 0 &&
                 $jumlahPerwalian === $totalPeriode
             ) {
+                // Semua baik-baik saja: hampir tidak ada tunggakan, aktif semua, dan perwalian lengkap
                 $rekomendasi = '-';
-            } elseif ($jumlahPerwalian === $totalPeriode) {
-                if($nonAktifCount <=4) {
-                    $rekomendasi = 'Cuti';
-                } else {
-                    $rekomendasi = 'Mengundurkan Diri';
-                }
             } elseif (
                 ($totalPeriode > 0 && ($jumlahPerwalian / $totalPeriode) <= 0.5) ||
                 $nonAktifCount >= 5 ||
                 $jumlahBelumLunas >= 5
             ) {
+                // Banyak masalah: terlalu sering non-aktif, banyak tunggakan, atau perwalian sangat rendah
                 $rekomendasi = 'Mengundurkan Diri';
+            } elseif ($jumlahPerwalian === $totalPeriode) {
+                // Perwalian lengkap, tapi ada catatan
+                $rekomendasi = $nonAktifCount <= 4 ? 'Cuti' : 'Mengundurkan Diri';
+            } else {
+                // Jika belum memenuhi kondisi di atas, tetap sarankan cuti sebagai default fallback
+                $rekomendasi = 'Cuti';
             }
-            
         }
 
         return array_merge([

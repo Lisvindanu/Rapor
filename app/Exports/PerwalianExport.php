@@ -47,11 +47,11 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             $periodeCols,
             [
                 'Total DPP Belum Lunas (Rp)', 
-                'Rekomendasi', 
-                'Jumlah Belum Lunas',
-                'Jumlah Non Aktif',
-                'Jumlah Perwalian',
-                'Total Periode'
+                'Rekomendasi'
+                // 'Jumlah Belum Lunas',
+                // 'Jumlah Non Aktif',
+                // 'Jumlah Perwalian',
+                // 'Total Periode'
             ]
         );
     }
@@ -267,6 +267,8 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
         $jumlahPerwalian = $filteredPerwalian->count();
         $nonAktifCount = $filteredPerwalian->where('status_mahasiswa', 'Non Aktif')->count();
 
+        $persentasePerwalian = $totalPeriode > 0 ? ($jumlahPerwalian / $totalPeriode) : 0;
+
         // Cek dua periode terakhir apakah Non Aktif semua
         $duaPeriodeAkhir = array_slice($this->periodeList, -2);
         $duaPeriodeNonAktif = collect($duaPeriodeAkhir)->every(function ($periode) use ($perwalianMap) {
@@ -276,30 +278,36 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
         // Rekomendasi
         $rekomendasi = '-';
 
-        if (strtolower($row->statusmahasiswa) === 'aktif') {
+        // if (strtolower($row->statusmahasiswa) === 'aktif') {
             
             // logika rekomendasi
-            // '-' untuk kondisi tidak ada tunggakan, nonaktif = 0, jumlah perwalian = total periode
-            // 'cuti' jika jumlah perwalian = total periode
-            // 'mengundurkan diri' jika persentase perwalian <= 0.5 atau nonaktif >= 5, belum lunas >= 4
+            // '-' untuk kondisi jumlah belum lunas ada dibawah 2, nonaktif = 0, jumlah perwalian = total periode
+            // 'cuti' jika jumlah perwalian = total periode, nonaktif <= 4,
+            // 'mengundurkan diri' jika persentase perwalian <= 0.5 atau nonaktif >= 5, belum lunas >= 5
 
+
+            // kategori 1 (Tidak ada tindakan)
+                // aktif semua, tunggakan ada kurang dari 1, tidak ada nonaktif, perwalian lengkap 
+                
+            // kategori 2 (Cuti)
+                // ada tunggakan <= 2, perwalian lengkap, nonaktif <= 4
+                // ada tunggakan <= 4 dan dua periode terakhir nonaktif semua
+
+            // kategori 3 (Mengundurkan Diri)
+                // persentase perwalian <= 0.5, nonaktif >= 5, atau tunggakan >= 5
+            
+        // }
+        if (strtolower($row->statusmahasiswa) === 'aktif') {
             if (
-                $jumlahBelumLunas <= 2 &&
-                $jumlahPerwalian === $totalPeriode
-            ) {
-                $rekomendasi = $duaPeriodeNonAktif ? 'Cuti' : '-';
-            } elseif (
-                ($totalPeriode > 0 && ($jumlahPerwalian / $totalPeriode) <= 0.5) ||
+                $jumlahBelumLunas >= 5 ||
                 $nonAktifCount >= 5 ||
-                $jumlahBelumLunas >= 5
+                $persentasePerwalian <= 0.5
             ) {
-                // Banyak masalah: terlalu sering non-aktif, banyak tunggakan, atau perwalian sangat rendah
                 $rekomendasi = 'Mengundurkan Diri';
-            } elseif ($jumlahPerwalian === $totalPeriode) {
-                // Perwalian lengkap, tapi ada catatan
-                $rekomendasi = $nonAktifCount <= 4 ? 'Cuti' : 'Mengundurkan Diri';
-            } else {
-                // Jika belum memenuhi kondisi di atas, tetap sarankan cuti sebagai default fallback
+            } elseif (
+                ($jumlahBelumLunas <= 2 && $jumlahPerwalian === $totalPeriode && $nonAktifCount <= 4) ||
+                ($jumlahBelumLunas <= 4 && $duaPeriodeNonAktif)
+            ) {
                 $rekomendasi = 'Cuti';
             }
         }
@@ -312,11 +320,11 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             $row->statusmahasiswa,
         ], $periodeData, [
             number_format($totalNominalBelumLunas, 2, ',', '.'),
-            $rekomendasi,
-            $jumlahBelumLunas,
-            $nonAktifCount,
-            $jumlahPerwalian,
-            $totalPeriode
+            $rekomendasi
+            // $jumlahBelumLunas,
+            // $nonAktifCount,
+            // $jumlahPerwalian,
+            // $totalPeriode
         ]);
     }
 }

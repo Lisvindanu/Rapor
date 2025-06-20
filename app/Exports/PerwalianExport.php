@@ -262,11 +262,9 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
 
             $persentasePerwalian = $totalPeriode > 0 ? ($jumlahPerwalian / $totalPeriode) : 0;
 
-            if ($jumlahBelumLunas >= 5) {
-                $rekomendasi = 'Mengundurkan Diri';
-            } elseif ($nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
+            if ($nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
                 $rekomendasi = $aktifCount >= 12 ? 'Cuti' : '-';
-            } elseif ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5) {
+            } elseif ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5 || $jumlahBelumLunas >= 5) {
                 $rekomendasi = 'Mengundurkan Diri';
             } elseif ($nonAktifCount > 0) {
                 $rekomendasi = 'Cuti';

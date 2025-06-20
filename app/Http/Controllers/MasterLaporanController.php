@@ -35,18 +35,25 @@ class MasterLaporanController extends Controller
             // $nama_laporan = $request->nama_laporan;
 
             // dapatkan data mahasiswa with perwalian where statusmahasiswa != Lulus dan periodemasuk sesuai dengan request
-            $mahasiswa = Mahasiswa::with(['perwalian' => function ($query) use ($daftarPeriode) {
-                    $query->whereIn('id_periode', $daftarPeriode);
-                }])
+            $mahasiswa = Mahasiswa::with(
+                [
+                    'perwalian' => function ($query) use ($daftarPeriode) {
+                        $query->whereIn('id_periode', $daftarPeriode);
+                },
+                    'invoice' => function ($query) use ($daftarPeriode) {
+                        $query->whereIn('id_periode', $daftarPeriode)
+                         ->where('id_jenis_akun', 'DPP');;
+                }
+                ])
                 ->where('statusmahasiswa', '!=', 'Lulus')
                 ->where('periodemasuk', $periodemasuk)
                 ->whereIn('programstudi', [
-                    'Teknik Industri',
-                    'Teknologi Pangan',
-                    'Teknik Mesin',
-                    'Teknik Informatika',
-                    'Teknik Lingkungan',
-                    'Perencanaan Wilayah dan Kota'
+                    'Teknik Industri'
+                    // 'Teknologi Pangan',
+                    // 'Teknik Mesin',
+                    // 'Teknik Informatika',
+                    // 'Teknik Lingkungan',
+                    // 'Perencanaan Wilayah dan Kota'
                 ])
                 ->orderBy('nim', 'asc')
                 ->get();
@@ -65,6 +72,20 @@ class MasterLaporanController extends Controller
                                 'id_periode' => $p->id_periode,
                                 'id_status_mahasiswa' => $p->id_status_mahasiswa,
                                 'status_mahasiswa' => $p->status_mahasiswa,
+                            ];
+                        }),
+                    'invoice' => collect($mhs->invoice)
+                        ->sortBy('id_periode')
+                        ->values()
+                        ->map(function ($inv) {
+                            return [
+                                'id_periode' => $inv->id_periode,
+                                'id_jenis_akun' => $inv->id_jenis_akun,
+                                'uraian' => $inv->uraian,
+                                'nominal_tagihan' => $inv->nominal_tagihan,
+                                'nominal_terbayar' => $inv->nominal_terbayar,
+                                'nominal_sisa_tagihan' => $inv->nominal_sisa_tagihan,
+                                'is_lunas' => $inv->is_lunas,
                             ];
                         }),
                 ];

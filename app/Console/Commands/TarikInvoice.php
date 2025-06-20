@@ -32,20 +32,20 @@ class TarikInvoice extends Command
 
         // kita ambil data mahasiswa telebih dahulu, misal dari tabel mahasiswa
         $mahasiswa = Mahasiswa::whereIn('periodemasuk', [
-                '20191',
-                '20201',
-                '20211',
-                '20221',
-                '20231'
+                '20191'
+                // '20201',
+                // '20211',
+                // '20221',
+                // '20231'
                 // 20181
             ])
             ->whereIn('programstudi', [
                 'Teknik Industri',
-                'Teknologi Pangan',
-                'Teknik Mesin',
-                'Teknik Informatika',
-                'Teknik Lingkungan',
-                'Perencanaan Wilayah dan Kota'
+                // 'Teknologi Pangan',
+                // 'Teknik Mesin',
+                // 'Teknik Informatika',
+                // 'Teknik Lingkungan',
+                // 'Perencanaan Wilayah dan Kota'
             ])
             ->where('statusmahasiswa', 'Aktif')
             ->orderBy('nim', 'asc')

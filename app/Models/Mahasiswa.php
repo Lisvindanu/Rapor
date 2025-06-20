@@ -53,4 +53,10 @@ class Mahasiswa extends Model
     {
         return $this->hasMany(MasterPerwalian::class, 'nim', 'nim');
     }
+
+    // invoice
+    public function invoice()
+    {
+        return $this->hasMany(MasterInvoice::class, 'nim', 'nim');
+    }
 }

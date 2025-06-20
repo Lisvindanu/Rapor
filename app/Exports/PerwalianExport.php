@@ -229,7 +229,6 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             ->groupBy('id_periode');
 
         $periodeData = [];
-        $jumlahBelumLunas = 0;
 
         foreach ($this->periodeList as $periode) {
             $statusPerwalian = isset($perwalianMap[$periode])
@@ -243,7 +242,6 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             } else {
                 $belumLunas = $tagihan->where('is_lunas', false)->sum('nominal_sisa_tagihan');
                 $statusKeuangan = $belumLunas > 0 ? 'Belum Lunas' : 'Lunas';
-                $jumlahBelumLunas++;
             }
 
             $periodeData[] = $statusPerwalian;
@@ -255,7 +253,12 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             ->where('id_jenis_akun', 'DPP')
             ->where('is_lunas', false);
 
-        // $jumlahBelumLunas = $belumLunasInvoices->count();
+        $jumlahBelumLunas = collect($row->invoice)
+            ->where('id_jenis_akun', 'DPP')
+            ->where('is_lunas', false)
+            ->groupBy('id_periode') // penting: kelompokan berdasarkan periode
+            ->count();
+
         $totalNominalBelumLunas = $belumLunasInvoices->sum(fn($inv) => floatval($inv['nominal_sisa_tagihan'] ?? 0));
 
         // Rekap status perwalian

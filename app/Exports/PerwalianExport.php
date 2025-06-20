@@ -258,7 +258,9 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
 
             $jumlahPerwalian = $filteredPerwalian->count();
             $nonAktifCount = $filteredPerwalian->where('status_mahasiswa', 'Non Aktif')->count();
-            $aktifCount = $filteredPerwalian->where('status_mahasiswa', 'Aktif')->count();
+            $aktifCount = $filteredPerwalian
+                            ->whereIn('status_mahasiswa', ['Aktif', 'Hanya TA/Skripsi'])
+                            ->count();
 
             $persentasePerwalian = $totalPeriode > 0 ? ($jumlahPerwalian / $totalPeriode) : 0;
 

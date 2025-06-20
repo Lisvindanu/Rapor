@@ -267,7 +267,7 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
 
             if (
                 $jumlahBelumLunas === 0 &&
-                $nonAktifCount === 0 &&
+                // $nonAktifCount === 0 &&
                 $jumlahPerwalian === $totalPeriode
             ) {
                 $rekomendasi = '-';

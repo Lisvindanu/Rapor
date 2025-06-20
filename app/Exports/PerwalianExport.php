@@ -298,18 +298,22 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             
         // }
         if (strtolower($row->statusmahasiswa) === 'aktif') {
-            if (
-                $jumlahBelumLunas >= 5 ||
-                $nonAktifCount >= 5 ||
-                $persentasePerwalian <= 0.5
-            ) {
+            
+            // mengudurkanDiri:
+            if ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5 || $jumlahBelumLunas >= 5) {
                 $rekomendasi = 'Mengundurkan Diri';
-            } elseif (
-                ($jumlahBelumLunas <= 2 && $jumlahPerwalian === $totalPeriode && $nonAktifCount <= 4) ||
-                ($jumlahBelumLunas <= 4 && $duaPeriodeNonAktif)
-            ) {
+            }
+
+            if ($jumlahBelumLunas == 0 && $nonAktifCount == 0 && $jumlahPerwalian == $totalPeriode) {
+                $rekomendasi = '-';
+            }
+
+            // cuti
+            if ($jumlahBelumLunas <= 3 && $nonAktifCount <= 4 && $jumlahPerwalian == $totalPeriode) {
                 $rekomendasi = 'Cuti';
             }
+            
+
         }
 
         return array_merge([

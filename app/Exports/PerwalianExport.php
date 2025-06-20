@@ -146,12 +146,78 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
     //     ], $periodePerwalian, $periodeDPP, [$rekomendasi]);
     // }
 
-   public function map($row): array
+//    public function map($row): array
+//     {
+//         static $no = 1;
+
+//         $perwalianMap = collect($row->perwalian)->keyBy('id_periode');
+//         $invoiceDPP = collect($row->invoice)
+//             ->where('id_jenis_akun', 'DPP')
+//             ->groupBy('id_periode');
+
+//         $periodeData = [];
+
+//         foreach ($this->periodeList as $periode) {
+//             $statusPerwalian = isset($perwalianMap[$periode])
+//                 ? $perwalianMap[$periode]['status_mahasiswa']
+//                 : '-';
+
+//             if (!isset($invoiceDPP[$periode])) {
+//                 $statusDPP = '-';
+//             } else {
+//                 $invoices = $invoiceDPP[$periode];
+//                 $statusDPP = $invoices->every(fn($inv) => $inv['is_lunas']) ? 'Lunas' : 'Belum Lunas';
+//             }
+
+//             $periodeData[] = $statusPerwalian;
+//             $periodeData[] = $statusDPP;
+//         }
+
+//         // Hitung total nominal_sisa_tagihan untuk DPP yang belum lunas
+//         $totalBelumLunas = collect($row->invoice)
+//             ->where('id_jenis_akun', 'DPP')
+//             ->where('is_lunas', false)
+//             ->sum(fn($inv) => floatval($inv['nominal_sisa_tagihan'] ?? 0));
+
+//         // Rekomendasi tetap
+//         $rekomendasi = '-';
+//         if (strtolower($row->statusmahasiswa) === 'aktif') {
+//             $totalPeriode = count($this->periodeList);
+//             $filteredPerwalian = collect($row->perwalian)->whereIn('id_periode', $this->periodeList);
+
+//             $jumlahPerwalian = $filteredPerwalian->count();
+//             $nonAktifCount = $filteredPerwalian->where('status_mahasiswa', 'Non Aktif')->count();
+//             $aktifCount = $filteredPerwalian->where('status_mahasiswa', 'Aktif')->count();
+
+//             $persentasePerwalian = $totalPeriode > 0 ? ($jumlahPerwalian / $totalPeriode) : 0;
+
+//             if ($nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
+//                 $rekomendasi = $aktifCount >= 12 ? 'Cuti' : '-';
+//             } elseif ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5) {
+//                 $rekomendasi = 'Mengundurkan Diri';
+//             } elseif ($nonAktifCount > 0) {
+//                 $rekomendasi = 'Cuti';
+//             }
+//         }
+
+//         return array_merge([
+//             $no++,
+//             $row->nim,
+//             $row->nama,
+//             $row->programstudi,
+//             $row->statusmahasiswa,
+//         ], $periodeData, [
+//             number_format($totalBelumLunas, 0, ',', '.'), // misalnya dalam format ribuan
+//             $rekomendasi
+//         ]);
+//     }
+
+  public function map($row): array
     {
         static $no = 1;
 
         $perwalianMap = collect($row->perwalian)->keyBy('id_periode');
-        $invoiceDPP = collect($row->invoice)
+        $invoiceDpp = collect($row->invoice)
             ->where('id_jenis_akun', 'DPP')
             ->groupBy('id_periode');
 
@@ -162,25 +228,30 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
                 ? $perwalianMap[$periode]['status_mahasiswa']
                 : '-';
 
-            if (!isset($invoiceDPP[$periode])) {
-                $statusDPP = '-';
+            $tagihan = $invoiceDpp->get($periode, collect());
+
+            if ($tagihan->isEmpty()) {
+                $statusKeuangan = '-';
             } else {
-                $invoices = $invoiceDPP[$periode];
-                $statusDPP = $invoices->every(fn($inv) => $inv['is_lunas']) ? 'Lunas' : 'Belum Lunas';
+                $belumLunas = $tagihan->where('is_lunas', false)->sum('nominal_sisa_tagihan');
+                $statusKeuangan = $belumLunas > 0 ? 'Belum Lunas' : 'Lunas';
             }
 
             $periodeData[] = $statusPerwalian;
-            $periodeData[] = $statusDPP;
+            $periodeData[] = $statusKeuangan;
         }
 
-        // Hitung total nominal_sisa_tagihan untuk DPP yang belum lunas
-        $totalBelumLunas = collect($row->invoice)
+        // Hitung jumlah belum lunas secara total
+        $belumLunasInvoices = collect($row->invoice)
             ->where('id_jenis_akun', 'DPP')
-            ->where('is_lunas', false)
-            ->sum(fn($inv) => floatval($inv['nominal_sisa_tagihan'] ?? 0));
+            ->where('is_lunas', false);
 
-        // Rekomendasi tetap
+        $jumlahBelumLunas = $belumLunasInvoices->count();
+        $totalNominalBelumLunas = $belumLunasInvoices->sum(fn($inv) => floatval($inv['nominal_sisa_tagihan'] ?? 0));
+
+        // Rekomendasi
         $rekomendasi = '-';
+
         if (strtolower($row->statusmahasiswa) === 'aktif') {
             $totalPeriode = count($this->periodeList);
             $filteredPerwalian = collect($row->perwalian)->whereIn('id_periode', $this->periodeList);
@@ -191,12 +262,20 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
 
             $persentasePerwalian = $totalPeriode > 0 ? ($jumlahPerwalian / $totalPeriode) : 0;
 
-            if ($nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
+            if ($jumlahBelumLunas >= 5) {
+                $rekomendasi = 'Mengundurkan Diri';
+            } elseif ($nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
                 $rekomendasi = $aktifCount >= 12 ? 'Cuti' : '-';
             } elseif ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5) {
                 $rekomendasi = 'Mengundurkan Diri';
             } elseif ($nonAktifCount > 0) {
                 $rekomendasi = 'Cuti';
+            }
+
+            // Override jika tidak ada tunggakan sama sekali
+            $adaTagihan = collect($row->invoice)->where('id_jenis_akun', 'DPP')->count() > 0;
+            if ($jumlahBelumLunas === 0 && $adaTagihan) {
+                $rekomendasi = '-';
             }
         }
 
@@ -207,7 +286,7 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             $row->programstudi,
             $row->statusmahasiswa,
         ], $periodeData, [
-            number_format($totalBelumLunas, 0, ',', '.'), // misalnya dalam format ribuan
+            number_format($totalNominalBelumLunas, 2, ',', '.'),
             $rekomendasi
         ]);
     }

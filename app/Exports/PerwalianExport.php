@@ -47,11 +47,11 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             $periodeCols,
             [
                 'Total DPP Belum Lunas (Rp)', 
-                'Rekomendasi'
-                // 'Jumlah Belum Lunas',
-                // 'Jumlah Non Aktif',
-                // 'Jumlah Perwalian',
-                // 'Total Periode'
+                'Rekomendasi',
+                'Jumlah Belum Lunas',
+                'Jumlah Non Aktif',
+                'Jumlah Perwalian',
+                'Total Periode'
             ]
         );
     }
@@ -302,17 +302,7 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             // mengudurkanDiri:
             if ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5 || $jumlahBelumLunas >= 5) {
                 $rekomendasi = 'Mengundurkan Diri';
-            }
-
-            if ($jumlahBelumLunas == 0 && $nonAktifCount == 0 && $jumlahPerwalian == $totalPeriode) {
-                $rekomendasi = '-';
-            }
-
-            // cuti
-            if ($jumlahBelumLunas <= 3 && $nonAktifCount <= 4 && $jumlahPerwalian == $totalPeriode) {
-                $rekomendasi = 'Cuti';
-            }
-            
+            }            
 
         }
 
@@ -324,11 +314,11 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             $row->statusmahasiswa,
         ], $periodeData, [
             number_format($totalNominalBelumLunas, 2, ',', '.'),
-            $rekomendasi
-            // $jumlahBelumLunas,
-            // $nonAktifCount,
-            // $jumlahPerwalian,
-            // $totalPeriode
+            $rekomendasi,
+            $jumlahBelumLunas,
+            $nonAktifCount,
+            $jumlahPerwalian,
+            $totalPeriode
         ]);
     }
 }

@@ -305,14 +305,16 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             // } 
             
             // tidak ada tindakan:
-            if ($jumlahBelumLunas < 1 && $nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
-                $rekomendasi = '-';
-            }
-
+            
             //cuti:
             if ($jumlahBelumLunas <= 2 && $jumlahPerwalian === $totalPeriode && $nonAktifCount <= 4) {
                 $rekomendasi = 'Cuti';
             }
+
+            if ($jumlahBelumLunas < 1 && $nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
+                $rekomendasi = '-';
+            }
+
 
         }
 

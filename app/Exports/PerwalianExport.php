@@ -304,18 +304,13 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             //     $rekomendasi = 'Mengundurkan Diri';
             // } 
             
-            // tidak ada tindakan:
-            
-            //cuti:
-            if ($jumlahBelumLunas <= 2 && $jumlahPerwalian === $totalPeriode && $nonAktifCount <= 4) {
-                $rekomendasi = 'Cuti';
+            if ($jumlahPerwalian === $totalPeriode) {
+                if ($jumlahBelumLunas <= 1 && $nonAktifCount === 0) {
+                    $rekomendasi = '-'; // prioritas tertinggi
+                } elseif ($jumlahBelumLunas <= 2 && $nonAktifCount <= 4) {
+                    $rekomendasi = 'Cuti'; // hanya diambil jika kondisi '-' tidak terpenuhi
+                }
             }
-
-            if ($jumlahBelumLunas < 1 && $nonAktifCount === 0 && $jumlahPerwalian === $totalPeriode) {
-                $rekomendasi = '-';
-            }
-
-
         }
 
         return array_merge([

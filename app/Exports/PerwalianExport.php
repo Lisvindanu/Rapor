@@ -300,9 +300,14 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
         if (strtolower($row->statusmahasiswa) === 'aktif') {
             
             // mengudurkanDiri:
-            if ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5 || $jumlahBelumLunas >= 5) {
-                $rekomendasi = 'Mengundurkan Diri';
-            }            
+            // if ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5 || ($jumlahBelumLunas >= 5 && $jumlah) {
+            //     $rekomendasi = 'Mengundurkan Diri';
+            // } 
+            
+            //cuti:
+            if ($jumlahBelumLunas <= 2 && $jumlahPerwalian === $totalPeriode && $nonAktifCount <= 4) {
+                $rekomendasi = 'Cuti';
+            }
 
         }
 

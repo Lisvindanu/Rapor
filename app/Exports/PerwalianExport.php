@@ -299,24 +299,30 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
         // }
         if (strtolower($row->statusmahasiswa) === 'aktif') {
             
+            // cuti
+            if($nonAktifCount == 0 && ($jumlahBelumLunas >= 2 && $jumlahBelumLunas <=4)){
+                $rekomendasi = 'Cuti';
+            }
+
+            
             // mengudurkanDiri:
             // if ($persentasePerwalian <= 0.5 || $nonAktifCount >= 5 || ($jumlahBelumLunas >= 5 && $jumlah) {
             //     $rekomendasi = 'Mengundurkan Diri';
             // } 
 
-            if ($jumlahPerwalian === $totalPeriode) {
-                if ($jumlahBelumLunas >= 0 && $jumlahBelumLunas <= 1 && $nonAktifCount >= 0 && $nonAktifCount <= 1) {
-                    $rekomendasi = '-'; // prioritas tertinggi
-                } elseif ($jumlahBelumLunas >= 2 && $jumlahBelumLunas <= 4 && $nonAktifCount >= 2 && $nonAktifCount <= 4 && $duaPeriodeNonAktif) {
-                    $rekomendasi = 'Cuti'; // hanya diambil jika kondisi '-' tidak terpenuhi
-                } elseif ($jumlahBelumLunas >= 2 && $jumlahBelumLunas <= 4 && $nonAktifCount == 0) {
-                    $rekomendasi = 'Cuti'; // prioritas menengah
-                } else if ($jumlahBelumLunas >= 5 || $persentasePerwalian <= 0.5 || $nonAktifCount >= 5) {
-                    $rekomendasi = 'Mengundurkan Diri'; // prioritas terendah
-                }
-            }else{
-                $rekomendasi = 'Mengundurkan Diri';
-            }
+            // if ($jumlahPerwalian === $totalPeriode) {
+            //     if ($jumlahBelumLunas >= 0 && $jumlahBelumLunas <= 1 && $nonAktifCount >= 0 && $nonAktifCount <= 1) {
+            //         $rekomendasi = '-'; // prioritas tertinggi
+            //     } elseif ($jumlahBelumLunas >= 2 && $jumlahBelumLunas <= 4 && $nonAktifCount >= 2 && $nonAktifCount <= 4 && $duaPeriodeNonAktif) {
+            //         $rekomendasi = 'Cuti'; // hanya diambil jika kondisi '-' tidak terpenuhi
+            //     } elseif ($jumlahBelumLunas >= 2 && $jumlahBelumLunas <= 4 && $nonAktifCount == 0) {
+            //         $rekomendasi = 'Cuti'; // prioritas menengah
+            //     } else if ($jumlahBelumLunas >= 5 || $persentasePerwalian <= 0.5 || $nonAktifCount >= 5) {
+            //         $rekomendasi = 'Mengundurkan Diri'; // prioritas terendah
+            //     }
+            // }else{
+            //     $rekomendasi = 'Mengundurkan Diri';
+            // }
         }
 
         return array_merge([

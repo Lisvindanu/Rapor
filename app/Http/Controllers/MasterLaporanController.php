@@ -72,6 +72,7 @@ class MasterLaporanController extends Controller
                                 'id_periode' => $p->id_periode,
                                 'id_status_mahasiswa' => $p->id_status_mahasiswa,
                                 'status_mahasiswa' => $p->status_mahasiswa,
+                                'sks_lulus' => $p->sks_lulus,
                             ];
                         }),
                     'invoice' => collect($mhs->invoice)

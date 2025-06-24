@@ -47,6 +47,7 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             $periodeCols,
             [
                 'Total DPP Belum Lunas (Rp)', 
+                'SKS Lulus Terakhir',
                 'Rekomendasi',
                 'Jumlah Belum Lunas',
                 'Jumlah Non Aktif',
@@ -229,6 +230,7 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             ->groupBy('id_periode');
 
         $periodeData = [];
+        $sksLulusTerakhir = 0;
 
         foreach ($this->periodeList as $periode) {
             $statusPerwalian = isset($perwalianMap[$periode])
@@ -247,6 +249,12 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             $periodeData[] = $statusPerwalian;
             $periodeData[] = $statusKeuangan;
         }
+
+        $sksLulusTerakhir = collect($row->perwalian)
+        ->sortByDesc('id_periode')
+        ->pluck('sks_lulus')
+        ->filter()
+        ->first() ?? 0;
 
         // Hitung jumlah belum lunas secara total
         $belumLunasInvoices = collect($row->invoice)
@@ -341,6 +349,7 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             $row->statusmahasiswa,
         ], $periodeData, [
             number_format($totalNominalBelumLunas, 2, ',', '.'),
+            $sksLulusTerakhir,
             $rekomendasi,
             $jumlahBelumLunas,
             $nonAktifCount,

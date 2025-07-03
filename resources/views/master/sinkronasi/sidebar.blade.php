@@ -80,6 +80,10 @@
                 <a class="nav-link {{ Request::is('*master/sinkronasi/akm*') ? 'active' : '' }}"
                     href="{{ route('master.sinkronasi.akm') }}">AKM</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('*master/sinkronasi/presensi-mahasiswa*') ? 'active' : '' }}"
+                    href="{{ route('master.sinkronasi.presensiMahasiswa') }}">Synk Presensi Mahasiswa</a>
+            </li>
         </ul>
     </div>
 </body>

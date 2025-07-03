@@ -71,7 +71,7 @@ class GetDataPresensi extends Command
             
         $count_insert = 0;
 
-        $accessToken = ""; // Ganti dengan token yang valid
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTc1MTUyNzc4NSwiZXhwIjoxNzUxNTMxMzg1fQ.5hU7PfW_PxLX_hfVwEgLe-pwv26lD5lc0KUqvwBlZOM"; // Ganti dengan token yang valid
         $limit = 1000;
 
         $formData = [];

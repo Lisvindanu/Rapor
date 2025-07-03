@@ -1121,6 +1121,8 @@ class SinkronasiController extends Controller
         }
     }
 
+
+
     // hitung presensi
     function hitungPresensi(Request $request)
     {
@@ -1149,6 +1151,93 @@ class SinkronasiController extends Controller
 
             return response()->json(['message' => 'Presensi berhasil dihitung']);
         } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    // mahasiswa
+    function presensiMahasiswa()
+    {
+        $programstudi = ProgramStudi::all();
+        $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
+
+        $periode = Periode::orderBy('kode_periode', 'desc')->take(50)->get();
+        return view(
+            'master.sinkronasi.presensi-mahasiswa',
+            [
+                'programstudi' => $programstudi,
+                'periode' => $periode,
+                'unitkerja' => $unitKerja
+            ]
+        );
+    }
+
+    // getDataMahasiswa
+    function getPresensiMahasiswa(Request $request)
+    {
+        try {
+            // Ambil access token yang sudah disimpan
+            $accessToken = $request->get("access_token");
+
+            $formData = [];
+
+            if ($request->programstudi != null) {
+                $formData['programstudi'] = $request->get('programstudi');
+            }
+
+            if ($request->periodemasuk != null) {
+                $formData['periodemasuk'] = $request->get('periodemasuk');
+            }
+
+            if ($request->limit != null) {
+                $formData['limit'] = $request->get('limit');
+            }
+
+            // Jika access token tidak ada, kembalikan pesan kesalahan
+            if (!$accessToken) {
+                return response()->json(['error' => 'Access token tidak tersedia'], 500);
+            }
+
+            // Buat instance dari Guzzle Client
+            $client = new Client();
+
+            // Menggunakan access token untuk request mendapatkan data mahasiswa
+            $response = $client->request('GET', 'https://unpas.siakadcloud.com/live/biodatamhs', [
+                'query' => $formData,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken // Gunakan access token yang sudah ada
+                ]
+            ]);
+
+            // Mendapatkan body respons sebagai string
+            $body = $response->getBody()->getContents();
+
+            // Mendapatkan data dari body respons
+            $data = json_decode($body, true);
+
+            // Simpan data mahasiswa ke dalam tabel Mahasiswa
+            $count_update = 0;
+            $count_insert = 0;
+            foreach ($data as $mahasiswaData) {
+                $mahasiswa = Mahasiswa::where('nim', $mahasiswaData['nim'])
+                    ->where('programstudi', $mahasiswaData['programstudi'])
+                    ->first();
+
+                // Jika data mahasiswa sudah ada, perbarui
+                if ($mahasiswa) {
+                    $mahasiswa->update($mahasiswaData);
+                    $count_update++;
+                } else {
+                    // Jika tidak, buat data mahasiswa baru
+                    $mahasiswaData['id'] = Str::uuid();
+                    Mahasiswa::create($mahasiswaData);
+                    $count_insert++;
+                }
+            }
+            // Tampilkan data yang diperoleh dari request
+            return response()->json(['message' => 'Data mahasiswa berhasil disinkronkan,' . $count_update . " data berhasil diperbarui dan " . $count_insert . " data baru", 'data' => json_decode($body, true)]);
+        } catch (Exception $e) {
+            // Tangani kesalahan jika permintaan gagal
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

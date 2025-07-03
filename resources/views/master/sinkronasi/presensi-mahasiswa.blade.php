@@ -154,19 +154,35 @@
                     nim: nrp
                 },
                 success: function (response) {
-                    hasilTextarea.value = response.message || 'Berhasil';
-                    btn.disabled = false;
-                    spinner.classList.add('d-none');
-                    btn.childNodes[2].textContent = ' Sinkronasi';
+                    // hasilTextarea.value = response.message || 'Berhasil';
+                    // btn.disabled = false;
+                    // spinner.classList.add('d-none');
+                    // btn.childNodes[2].textContent = ' Sinkronasi';
+                    let output = response.message + '\n\n';
+                    if (response.data && Array.isArray(response.data)) {
+                        response.data.forEach((item, index) => {
+                            output += `#${index + 1}\n`;
+                            output += `Kode MK       : ${item.kode_mk}\n`;
+                            output += `Nama MK       : ${item.nama_mk}\n`;
+                            output += `Pertemuan     : ${item.hasil.total_pertemuan ?? 0}\n`;
+                            output += `Hadir/Izin/Sakit : ${item.hasil.hadir_sakit_izin ?? 0}\n`;
+                            output += `Persentase    : ${item.hasil.persentase ?? 0}%\n`;
+                            output += '\n';
+                        });
+                    }
+
+                    hasilTextarea.value = output;
                 },
                 error: function (xhr, status, error) {
                     let message = 'Terjadi kesalahan.';
                     try {
                         const res = JSON.parse(xhr.responseText);
-                        message = res.message || status + ' : ' + error;
+                        message = res.error || status + ' : ' + error;
                     } catch (_) {}
 
                     hasilTextarea.value = message;
+                },
+                complete: function () {
                     btn.disabled = false;
                     spinner.classList.add('d-none');
                     btn.childNodes[2].textContent = ' Sinkronasi';

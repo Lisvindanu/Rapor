@@ -76,5 +76,11 @@ class Krs extends Model
 
         $this->presensi = $persentase;
         $this->save();
+
+        return [
+            'total_pertemuan' => $jumlahPresensi,
+            'hadir_sakit_izin' => $jumlahHadir,
+            'persentase' => $persentase
+        ];
     }
 }

@@ -151,7 +151,7 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                     periodemasuk: periode,
-                    nrp: nrp
+                    nim: nrp
                 },
                 success: function (response) {
                     hasilTextarea.value = response.message || 'Berhasil';

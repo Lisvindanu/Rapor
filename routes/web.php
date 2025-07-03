@@ -125,7 +125,8 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::post('/sinkronasi/get-krs', "SinkronasiController@getDataKrs")->name('master.sinkronasi.getDataKrs');
         
         Route::get('/sinkronasi/presensi-mahasiswa', "SinkronasiController@presensiMahasiswa")->name('master.sinkronasi.presensiMahasiswa');
-
+        Route::post('/sinkronasi/get-presensi-mahasiswa', "SinkronasiController@getPresensiMahasiswa")->name('master.sinkronasi.getPresensiMahasiswa');
+        
         // AKM
         Route::get('/sinkronasi/akm', "SinkronasiController@akm")->name('master.sinkronasi.akm');
         Route::post('/sinkronasi/get-akm', "SinkronasiController@getDataAkm")->name('master.sinkronasi.getDataAkm');

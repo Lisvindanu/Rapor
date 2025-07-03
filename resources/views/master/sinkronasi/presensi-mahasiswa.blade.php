@@ -146,7 +146,7 @@
             const nrp = document.getElementById('nrpInput').value;
 
             $.ajax({
-                url: '{{ route('')}}',
+                url: '{{ route('master.sinkronasi.getPresensiMahasiswa')}}',
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',

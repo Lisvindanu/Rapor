@@ -1213,10 +1213,10 @@ class SinkronasiController extends Controller
                 ];
             }
 
-            // return response()->json([
-            //     'message' => 'Presensi berhasil dihitung untuk ' . $listKRS->count() . ' matakuliah.',
-            //     'data' => $dataPresensi
-            // ]);
+            return response()->json([
+                'message' => 'Presensi berhasil dihitung untuk ' . $listKRS->count() . ' matakuliah.',
+                'data' => $dataPresensi
+            ]);
         } catch (Exception $e) {
             // Tangani kesalahan jika permintaan gagal
             return response()->json(['error' => $e->getMessage()], 500);

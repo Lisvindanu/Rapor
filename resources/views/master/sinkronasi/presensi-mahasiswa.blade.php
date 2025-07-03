@@ -96,7 +96,7 @@
                                     </div>
                                 </form>
 
-                                <div class="form-group row">
+                                <!-- <div class="form-group row">
                                     <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
                                         <label for="hasilSinkronasi" class="create-label">
                                             Hasil </label>
@@ -104,7 +104,34 @@
                                     <div class="col-sm-10">
                                         <textarea class="form-control" readonly id="hasilSinkronasi" name="hasilSinkronasi" cols="30" rows="5"></textarea>
                                     </div>
+                                </div> -->
+                                <!-- Ganti textarea hasilSinkronasi -->
+                                <div class="form-group row">
+                                    <div class="col-sm-2 col-form-label" style="margin-bottom: 10px;">
+                                        <label class="create-label">Hasil</label>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <p id="pesanPresensi" class="fw-bold text-success mb-2"></p>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="tabelHasilPresensi">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Kode MK</th>
+                                                        <th>Nama MK</th>
+                                                        <th>Pertemuan</th>
+                                                        <th>Hadir/Izin/Sakit</th>
+                                                        <th>Persentase</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- akan diisi oleh JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -153,26 +180,53 @@
                     periode: periode,
                     nim: nrp
                 },
+                // success: function (response) {
+                //     // hasilTextarea.value = response.message || 'Berhasil';
+                //     // btn.disabled = false;
+                //     // spinner.classList.add('d-none');
+                //     // btn.childNodes[2].textContent = ' Sinkronasi';
+                //     let output = response.message + '\n\n';
+                //     if (response.data && Array.isArray(response.data)) {
+                //         response.data.forEach((item, index) => {
+                //             output += `#${index + 1}\n`;
+                //             output += `Kode MK       : ${item.kode_mk}\n`;
+                //             output += `Nama MK       : ${item.nama_mk}\n`;
+                //             output += `Pertemuan     : ${item.hasil.total_pertemuan ?? 0}\n`;
+                //             output += `Hadir/Izin/Sakit : ${item.hasil.hadir_sakit_izin ?? 0}\n`;
+                //             output += `Persentase    : ${item.hasil.persentase ?? 0}%\n`;
+                //             output += '\n';
+                //         });
+                //     }
+
+                //     hasilTextarea.value = output;
+                // },
                 success: function (response) {
-                    // hasilTextarea.value = response.message || 'Berhasil';
-                    // btn.disabled = false;
-                    // spinner.classList.add('d-none');
-                    // btn.childNodes[2].textContent = ' Sinkronasi';
-                    let output = response.message + '\n\n';
+                    document.getElementById('pesanPresensi').textContent = response.message;
+                    const tbody = document.querySelector('#tabelHasilPresensi tbody');
+                    tbody.innerHTML = ''; // bersihkan isi lama
+
                     if (response.data && Array.isArray(response.data)) {
                         response.data.forEach((item, index) => {
-                            output += `#${index + 1}\n`;
-                            output += `Kode MK       : ${item.kode_mk}\n`;
-                            output += `Nama MK       : ${item.nama_mk}\n`;
-                            output += `Pertemuan     : ${item.hasil.total_pertemuan ?? 0}\n`;
-                            output += `Hadir/Izin/Sakit : ${item.hasil.hadir_sakit_izin ?? 0}\n`;
-                            output += `Persentase    : ${item.hasil.persentase ?? 0}%\n`;
-                            output += '\n';
-                        });
-                    }
+                            const row = document.createElement('tr');
 
-                    hasilTextarea.value = output;
+                            row.innerHTML = `
+                                <td>${index + 1}</td>
+                                <td>${item.kode_mk}</td>
+                                <td>${item.nama_mk}</td>
+                                <td>${item.hasil.total_pertemuan ?? 0}</td>
+                                <td>${item.hasil.hadir_sakit_izin ?? 0}</td>
+                                <td>${item.hasil.persentase ?? 0}%</td>
+                            `;
+
+                            tbody.appendChild(row);
+                        });
+                    } else {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td colspan="6" class="text-center">Tidak ada data.</td>`;
+                        tbody.appendChild(row);
+                    }
                 },
+
                 error: function (xhr, status, error) {
                     let message = 'Terjadi kesalahan.';
                     try {

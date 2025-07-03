@@ -126,7 +126,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         
         Route::get('/sinkronasi/presensi-mahasiswa', "SinkronasiController@presensiMahasiswa")->name('master.sinkronasi.presensiMahasiswa');
         Route::post('/sinkronasi/get-presensi-mahasiswa', "SinkronasiController@getPresensiMahasiswa")->name('master.sinkronasi.getPresensiMahasiswa');
-        
+
         // AKM
         Route::get('/sinkronasi/akm', "SinkronasiController@akm")->name('master.sinkronasi.akm');
         Route::post('/sinkronasi/get-akm', "SinkronasiController@getDataAkm")->name('master.sinkronasi.getDataAkm');
@@ -351,7 +351,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::post('/verifikasi-ajuan', "RemedialAjuanController@verifikasiAjuan")->name('remedial.ajuan.verifikasiAjuan');
             Route::delete('/{id}', "RemedialAjuanController@deleteAjax")->name('remedial.ajuan.deleteAjax');
 
-            Route::get('/kelayakan', "RemedialAjuanController@index")->name('remedial.ajuan');
+            // Route::get('/kelayakan', "RemedialAjuanController@index")->name('remedial.ajuan');
 
         });
 

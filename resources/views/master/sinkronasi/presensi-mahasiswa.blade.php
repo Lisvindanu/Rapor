@@ -150,7 +150,7 @@
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
-                    periodemasuk: periode,
+                    periode: periode,
                     nim: nrp
                 },
                 success: function (response) {

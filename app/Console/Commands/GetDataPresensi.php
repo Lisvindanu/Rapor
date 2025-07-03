@@ -30,12 +30,29 @@ class GetDataPresensi extends Command
      */
     public function handle()
     {
-        $periode = '20241';
+        $periode = '20242';
         $programstudi = 'Ilmu Hukum';
 
-        PresensiKuliah::where('periodeakademik', $periode)
-            ->where('programstudi', 'ilike', '%' . $programstudi . '%')
-            ->delete();
+        // $programstudi = [
+        //     'Teknik Industri',
+        //     'Teknologi Pangan',
+        //     'Teknik Mesin',
+        //     'Teknik Informatika',
+        //     'Teknik Lingkungan',
+        //     'Perencanaan Wilayah dan Kota'
+        // ];
+
+        // PresensiKuliah::where('periodeakademik', $periode)
+        //     // ->where('programstudi', 'ilike', '%' . $programstudi . '%')
+        //     ->whereIn('programstudi', [
+        //         'Teknik Industri',
+        //         'Teknologi Pangan',
+        //         'Teknik Mesin',
+        //         'Teknik Informatika',
+        //         'Teknik Lingkungan',
+        //         'Perencanaan Wilayah dan Kota'
+        //     ])
+        //     ->delete();
 
         $kelasKuliah = KelasKuliah::where('periodeakademik', $periode)
             // ->where('programstudi', 'ilike', '%' . $programstudi . '%')
@@ -54,7 +71,7 @@ class GetDataPresensi extends Command
             
         $count_insert = 0;
 
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTc0MDQ0OTM5NCwiZXhwIjoxNzQwNDUyOTk0fQ.QOgjBG_6hDH8Yth2LDzIFJPQEiCDuRuhqXPVAyjJnJw"; // Ganti dengan token yang valid
+        $accessToken = ""; // Ganti dengan token yang valid
         $limit = 1000;
 
         $formData = [];

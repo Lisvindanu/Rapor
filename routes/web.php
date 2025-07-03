@@ -347,6 +347,9 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
             Route::post('/verifikasi-ajuan', "RemedialAjuanController@verifikasiAjuan")->name('remedial.ajuan.verifikasiAjuan');
             Route::delete('/{id}', "RemedialAjuanController@deleteAjax")->name('remedial.ajuan.deleteAjax');
+
+            Route::get('/kelayakan', "RemedialAjuanController@index")->name('remedial.ajuan');
+
         });
 
         Route::prefix('pelaksanaan')->group(function () {

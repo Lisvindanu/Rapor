@@ -60,7 +60,7 @@ class synKRS extends Command
         // ];
 
         // kelaskuliah where in idperiode
-        $kelasKuliah = KelasKuliah::where('periodeakademik', '20241')
+        $kelasKuliah = KelasKuliah::where('periodeakademik', '20242')
             ->whereIn('programstudi', [
                 'Teknik Industri',
                 'Teknologi Pangan',
@@ -74,7 +74,7 @@ class synKRS extends Command
             ->get();
 
         foreach ($kelasKuliah as $kelas) {
-            $formData['idperiode'] = '20241';
+            $formData['idperiode'] = '20242';
             $formData['namakelas'] = $kelas->namakelas;
             $formData['idmk'] = $kelas->kodemk;
             $formData['krsdiajukan'] = 'Ya';

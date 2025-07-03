@@ -43,6 +43,10 @@
                                                     href="{{ route('remedial.ajuan.daftarAjuan') }}">Daftar
                                                     Ajuan</a>
                                             </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    href="{{ route('remedial.ajuan.daftarAjuan') }}">Kelayakan</a>
+                                            </li>
                                         </ul>
                                     </li>
                                 @endif

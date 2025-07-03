@@ -1202,21 +1202,24 @@ class SinkronasiController extends Controller
                 ]);
             }
 
-            foreach ($listKRS as $krs) {
-            // Asumsikan fungsi hitungJumlahPresensi mengembalikan data
-            $hasil = $krs->hitungJumlahPresensi(); // misalnya return array
+            // log untuk mengembalikan list KRS
+            return response()->json($listKRS);
 
-            $dataPresensi[] = [
-                'kode_mk' => $krs->kode_mk ?? '(tidak ada)',
-                'nama_mk' => $krs->nama_mk ?? '(tidak ada)',
-                'hasil' => $hasil
-            ];
-        }
+            // foreach ($listKRS as $krs) {
+            //     // Asumsikan fungsi hitungJumlahPresensi mengembalikan data
+            //     $hasil = $krs->hitungJumlahPresensi(); // misalnya return array
 
-        return response()->json([
-            'message' => 'Presensi berhasil dihitung untuk ' . $listKRS->count() . ' matakuliah.',
-            'data' => $dataPresensi
-        ]);
+            //     $dataPresensi[] = [
+            //         'kode_mk' => $krs->kode_mk ?? '(tidak ada)',
+            //         'nama_mk' => $krs->nama_mk ?? '(tidak ada)',
+            //         'hasil' => $hasil
+            //     ];
+            // }
+
+            // return response()->json([
+            //     'message' => 'Presensi berhasil dihitung untuk ' . $listKRS->count() . ' matakuliah.',
+            //     'data' => $dataPresensi
+            // ]);
         } catch (Exception $e) {
             // Tangani kesalahan jika permintaan gagal
             return response()->json(['error' => $e->getMessage()], 500);

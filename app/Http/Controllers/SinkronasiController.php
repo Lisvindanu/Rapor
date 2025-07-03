@@ -1202,14 +1202,21 @@ class SinkronasiController extends Controller
                 ]);
             }
 
-            // 🔄 Iterasi dan panggil fungsi hitung presensi
             foreach ($listKRS as $krs) {
-                $krs->hitungJumlahPresensi(); // Pastikan fungsi ini sudah ada di model Krs
-            }
+            // Asumsikan fungsi hitungJumlahPresensi mengembalikan data
+            $hasil = $krs->hitungJumlahPresensi(); // misalnya return array
 
-            return response()->json([
-                'message' => 'Presensi berhasil dihitung untuk ' . $listKRS->count() . ' matakuliah.'
-            ]);
+            $dataPresensi[] = [
+                'kode_mk' => $krs->kode_mk ?? '(tidak ada)',
+                'nama_mk' => $krs->nama_mk ?? '(tidak ada)',
+                'hasil' => $hasil
+            ];
+        }
+
+        return response()->json([
+            'message' => 'Presensi berhasil dihitung untuk ' . $listKRS->count() . ' matakuliah.',
+            'data' => $dataPresensi
+        ]);
         } catch (Exception $e) {
             // Tangani kesalahan jika permintaan gagal
             return response()->json(['error' => $e->getMessage()], 500);

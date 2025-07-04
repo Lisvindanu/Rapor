@@ -29,7 +29,7 @@ class synKRS extends Command
      */
     public function handle()
     {
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTc1MTUyNTY3NywiZXhwIjoxNzUxNTI5Mjc3fQ.BNPpE081lmOAb4kl6Su98Nx1wxId50vIrUqAgpOl9SA";
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTc1MTYwMjIzMiwiZXhwIjoxNzUxNjA1ODMyfQ.onZbvPf_HZcBWkqVlZQG0i7FZITDJsL7uHWrnq2zdTk";
         $limit = 1000;
 
         $formData = [];
@@ -61,15 +61,15 @@ class synKRS extends Command
 
         // kelaskuliah where in idperiode
         $kelasKuliah = KelasKuliah::where('periodeakademik', '20242')
-            ->whereIn('programstudi', [
-                'Teknik Industri',
-                'Teknologi Pangan',
-                'Teknik Mesin',
-                'Teknik Informatika',
-                'Teknik Lingkungan',
-                'Perencanaan Wilayah dan Kota'
-            ])
-            // ->where('programstudi', 'Teknik Informatika')
+            // ->whereIn('programstudi', [
+            //     'Teknik Industri',
+            //     'Teknologi Pangan',
+            //     'Teknik Mesin',
+            //     'Teknik Informatika',
+            //     'Teknik Lingkungan',
+            //     'Perencanaan Wilayah dan Kota'
+            // ])
+            ->where('programstudi', 'Ilmu Hukum')
             // ->where('kodemk', 'IF21W0705')
             ->get();
 

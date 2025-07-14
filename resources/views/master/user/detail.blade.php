@@ -46,7 +46,7 @@
                             </div>
                             <div class="col-8">
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <a href="/kuesioner/banksoal" class="btn btn-secondary" type="button">Kembali</a>
+                                    <a href="/master/user" class="btn btn-secondary" type="button">Kembali</a>
                                     {{-- button reset password --}}
                                     <button type="button" class="btn btn-warning" data-bs-toggle="modal"
                                         data-bs-target="#modalResetPassword">

@@ -1146,7 +1146,7 @@ class SinkronasiController extends Controller
 
             // Iterasi setiap KRS dan hitung jumlah presensi
             foreach ($listKRS as $krs) {
-                $krs->hitungJumlahPresensi();
+                $krs->hitungJumlahPresensi2();
             }
 
             return response()->json(['message' => 'Presensi berhasil dihitung']);

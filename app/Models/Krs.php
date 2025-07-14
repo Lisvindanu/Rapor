@@ -83,4 +83,31 @@ class Krs extends Model
             'persentase' => $persentase
         ];
     }
+
+    // Method untuk menghitung jumlah presensi
+    public function hitungJumlahPresensi2()
+    {
+        $jumlahPresensi = $this->presensiKuliahs()->count();
+        // $jumlahHadir = $this->presensiKuliahs()
+        //     ->where('presensi', 'HADIR')
+        //     ->orWhere('presensi', null)
+        //     ->count();
+        $jumlahHadir = $this->presensiKuliahs()
+            ->where(function ($query) {
+                $query->where('presensi', 'HADIR')
+                    // ->orWhereNull('presensi');
+                    ->orWhere('presensi', 'SAKIT')
+                    ->orWhere('presensi', 'IJIN');
+            })->count();
+
+        // hitung persentasenya
+        if ($jumlahPresensi == 0) {
+            $persentase = 0;
+        } else {
+            $persentase = ceil(($jumlahHadir / $jumlahPresensi) * 100);
+        }
+
+        $this->presensi = $persentase;
+        $this->save();
+    }
 }

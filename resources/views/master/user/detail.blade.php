@@ -3,6 +3,11 @@
 @section('css-tambahan')
 @endsection
 
+@section('navbar')
+    @include('master.navbar')
+@endsection
+
+
 @section('konten')
     <div class="container">
         <div class="row justify-content-md-center">

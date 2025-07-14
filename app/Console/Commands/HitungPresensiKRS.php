@@ -41,7 +41,7 @@ class HitungPresensiKRS extends Command
 
             foreach ($listKRS as $item) {
                 // hitung jumlah presensi
-                $result = $item->hitungJumlahPresensi2();
+                $result = $item->hitungJumlahPresensi();
 
                 // tampilkan hasil
                 $this->info("NIM: {$mhs->nim}, KRS ID: {$item->id}, Total Pertemuan: {$result['total_pertemuan']}, Hadir/Sakit/Izin: {$result['hadir_sakit_izin']}, Persentase: {$result['persentase']}%");

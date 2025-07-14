@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Mahasiswa;
 use Illuminate\Console\Command;
+use App\Models\Krs;
 
 class HitungPresensiKRS extends Command
 {
@@ -34,9 +35,11 @@ class HitungPresensiKRS extends Command
 
         foreach ($mahasiswa as $mhs) {
             // get krs where idperiode and nim
-            $krs = $mhs->krs()->where('idperiode', $periode)->get();
+            $listKRS = Krs::where('nim', $mhs->nim)
+                ->where('idperiode', $periode)
+                ->get();
 
-            foreach ($krs as $item) {
+            foreach ($listKRS as $item) {
                 // hitung jumlah presensi
                 $result = $item->hitungJumlahPresensi2();
 

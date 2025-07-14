@@ -31,7 +31,9 @@ class HitungPresensiKRS extends Command
         $prodi = 'Ilmu Hukum';
 
         // get data mahasiswa where program studi
-        $mahasiswa = Mahasiswa::where('programstudi', $prodi)->get();
+        $mahasiswa = Mahasiswa::where('programstudi', $prodi)
+        ->where('periodemasuk', '20241')    
+        ->get();
 
         foreach ($mahasiswa as $mhs) {
             // get krs where idperiode and nim

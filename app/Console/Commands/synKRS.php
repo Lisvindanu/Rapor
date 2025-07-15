@@ -124,8 +124,8 @@ class synKRS extends Command
 
                         // Jika data krs sudah ada, perbarui
                         if ($krs) {
+                            $krs->update($krsData);
                             $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' sudah ada, perbarui data');
-                            // $krs->update($krsData);
                         } else {
                             Krs::create($krsData);
                             $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' berhasil disimpan');

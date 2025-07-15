@@ -70,7 +70,7 @@ class synKRS extends Command
             //     'Perencanaan Wilayah dan Kota'
             // ])
             ->where('programstudi', 'Ilmu Hukum')
-            ->where('kodemk', 'HSW212122')
+            // ->where('kodemk', 'HSW212122')
             ->get();
 
         foreach ($kelasKuliah as $kelas) {

@@ -16,6 +16,7 @@ use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\KeuanganController;
+use App\Http\Controllers\KeuanganLaporanController;
 
 
 /*
@@ -520,10 +521,16 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     Route::get('/test', "TestController@index");
 
 
+
     Route::prefix('keuangan')->group(function () {
+        // Dashboard
         Route::get('/', "KeuanganController@index")->name('keuangan');
-    });
 
+        // Laporan routes (following BTQ pattern)
+        Route::prefix('laporan')->group(function () {
+            Route::get('/', "KeuanganLaporanController@index")->name('keuangan.laporan');
+            Route::post('/print-laporan', "KeuanganLaporanController@printLaporan")->name('keuangan.laporan.print');
+        });
 
-    Route::get('/Keuangan', "KeuanganController@index")->name('Keuangan');
+});
 });

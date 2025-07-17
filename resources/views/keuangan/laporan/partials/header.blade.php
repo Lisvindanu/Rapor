@@ -1,5 +1,5 @@
 <div class="row justify-content-md-center">
-    <div class="col-8">
+    <div class="container">
         <div class="judul-modul">
             <span>
                 <h3>Laporan Keuangan</h3>

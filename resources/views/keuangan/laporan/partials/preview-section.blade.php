@@ -1,5 +1,5 @@
 <div class="row justify-content-md-center">
-    <div class="col-8">
+    <div class="container">
         <div class="card" id="previewCard" style="display: none;">
             <div class="card-header" style="background-color: #fff; margin-top:10px">
                 <h5 class="card-title">Preview Laporan</h5>

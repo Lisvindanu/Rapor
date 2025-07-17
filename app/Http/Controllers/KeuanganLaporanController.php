@@ -80,17 +80,16 @@ class KeuanganLaporanController extends Controller
     public function printLaporan(Request $request)
     {
         try {
-            // Enhanced validation
+            // Enhanced validation - FIXED for single select
             $validated = $request->validate([
                 'kode_periode' => 'required|string',
                 'nama_laporan' => 'required|string',
-                'programstudi' => 'required|array|min:1',
+                'programstudi' => 'required|string', // Changed from array to string
                 'format_export' => 'required|string|in:excel,pdf'
             ], [
                 'kode_periode.required' => 'Periode harus dipilih.',
                 'nama_laporan.required' => 'Jenis laporan harus dipilih.',
                 'programstudi.required' => 'Program studi harus dipilih.',
-                'programstudi.min' => 'Minimal 1 program studi harus dipilih.',
                 'format_export.required' => 'Format export harus dipilih.',
                 'format_export.in' => 'Format export harus Excel atau PDF.'
             ]);
@@ -104,11 +103,15 @@ class KeuanganLaporanController extends Controller
                 'user_id' => auth()->id() ?? 'guest'
             ]);
 
+            // Convert single programstudi to array for helper compatibility
+            $programStudiArray = [$request->programstudi];
+
             // Get unit kerja names (following BTQ pattern)
-            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($request->programstudi);
+            $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($programStudiArray);
 
             Log::info('KeuanganLaporan - Unit Kerja Names:', [
-                'input_ids' => $request->programstudi,
+                'input_id' => $request->programstudi,
+                'converted_array' => $programStudiArray,
                 'unit_kerja_names' => $unitKerjaNames
             ]);
 

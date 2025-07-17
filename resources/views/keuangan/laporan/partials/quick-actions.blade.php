@@ -1,5 +1,5 @@
 <div class="row justify-content-md-center mt-4">
-    <div class="col-8">
+    <div class="container">
         <div class="card">
             <div class="card-header" style="background-color: #fff; margin-top:10px">
                 <h5 class="card-title">Aksi Cepat Laporan</h5>

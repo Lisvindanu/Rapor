@@ -15,7 +15,7 @@
                                 {{-- Dashboard --}}
                                 <li class="nav-item">
                                     <a class="nav-link {{ Request::routeIs('keuangan') ? 'active' : '' }}" href="{{ route('keuangan') }}">
-                                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                                        Dashboard
                                     </a>
                                 </li>
 
@@ -23,7 +23,7 @@
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle disabled" href="#" id="navbarMaster" role="button"
                                        data-bs-toggle="dropdown" aria-expanded="false" tabindex="-1" aria-disabled="true">
-                                        <i class="fas fa-cogs"></i> Master Data
+                                        Master Data
                                         <small class="text-muted">(dev)</small>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarMaster">
@@ -36,29 +36,27 @@
                                     </ul>
                                 </li>
 
-
-
                                 {{-- Laporan --}}
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle {{ Request::routeIs('keuangan.laporan*') ? 'active' : '' }}"
                                        href="#" id="navbarLaporan" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-chart-line"></i> Laporan
+                                        Laporan
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarLaporan">
                                         <li>
                                             <h6 class="dropdown-header">Laporan Utama</h6>
                                         </li>
                                         <li><a class="dropdown-item" href="{{ route('keuangan.laporan') }}">
-                                                <i class="fas fa-book"></i> Jurnal Pengeluaran
+                                                Jurnal Pengeluaran
                                             </a></li>
                                         <li><a class="dropdown-item" href="{{ route('keuangan.laporan') }}">
-                                                <i class="fas fa-list-alt"></i> Jurnal Per Mata Anggaran
+                                                Jurnal Per Mata Anggaran
                                             </a></li>
                                         <li><a class="dropdown-item" href="{{ route('keuangan.laporan') }}">
-                                                <i class="fas fa-book-open"></i> Buku Besar
+                                                Buku Besar
                                             </a></li>
                                         <li><a class="dropdown-item" href="{{ route('keuangan.laporan') }}">
-                                                <i class="fas fa-receipt"></i> Bukti Pengeluaran Kas
+                                                Bukti Pengeluaran Kas
                                             </a></li>
 
                                         <li><hr class="dropdown-divider"></li>
@@ -66,16 +64,16 @@
                                             <h6 class="dropdown-header">Laporan Khusus</h6>
                                         </li>
                                         <li><a class="dropdown-item" href="{{ route('keuangan.laporan') }}">
-                                                <i class="fas fa-graduation-cap"></i> Pembayaran Tugas Akhir
+                                                Pembayaran Tugas Akhir
                                             </a></li>
                                         <li><a class="dropdown-item" href="{{ route('keuangan.laporan') }}">
-                                                <i class="fas fa-edit"></i> Honor Koreksi
+                                                Honor Koreksi
                                             </a></li>
                                         <li><a class="dropdown-item" href="{{ route('keuangan.laporan') }}">
-                                                <i class="fas fa-money-bill"></i> Honor & Vakasi
+                                                Honor & Vakasi
                                             </a></li>
                                         <li><a class="dropdown-item" href="{{ route('keuangan.laporan') }}">
-                                                <i class="fas fa-university"></i> Pengeluaran Fakultas
+                                                Pengeluaran Fakultas
                                             </a></li>
                                     </ul>
                                 </li>
@@ -84,7 +82,7 @@
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle disabled" href="#" id="navbarTransaksi" role="button"
                                        data-bs-toggle="dropdown" aria-expanded="false" tabindex="-1" aria-disabled="true">
-                                        <i class="fas fa-exchange-alt"></i> Transaksi
+                                        Transaksi
                                         <small class="text-muted">(dev)</small>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarTransaksi">
@@ -94,18 +92,6 @@
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Riwayat Transaksi</a></li>
                                     </ul>
-                                </li>
-                            </ul>
-
-                            {{-- Right side navigation --}}
-                            <ul class="navbar-nav">
-                                {{-- Development Status --}}
-                                <li class="nav-item">
-                                    <span class="navbar-text">
-                                        <span class="badge bg-warning">
-                                            <i class="fas fa-code"></i> In Development
-                                        </span>
-                                    </span>
                                 </li>
                             </ul>
                         </div>

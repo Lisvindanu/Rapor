@@ -1,6 +1,6 @@
 <div class="filter-konten">
     <div class="row justify-content-md-center">
-        <div class="col-8">
+        <div class="container">
             <form action="{{ route('keuangan.laporan.print') }}" method="POST" id="laporanForm">
                 @csrf
                 <div class="card">
@@ -8,69 +8,85 @@
                         <h5 class="card-title">Filter Laporan</h5>
                     </div>
                     <div class="card-body">
-                        <div class="form-row">
+                        {{-- Horizontal Layout - All in one row --}}
+                        <div class="row">
                             {{-- Periode Selection --}}
-                            <div class="form-group col-md-6">
-                                <label for="kode_periode">Periode <span class="text-danger">*</span></label>
-                                <select class="form-control" name="kode_periode" id="kode_periode" required>
-                                    <option value="">Pilih Periode</option>
-                                    @foreach ($daftar_periode as $periode)
-                                        <option value="{{ $periode->kode_periode }}">
-                                            {{ $periode->kode_periode }} - {{ $periode->nama_periode }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="kode_periode">Periode <span class="text-danger">*</span></label>
+                                    <select class="form-control" name="kode_periode" id="kode_periode" required>
+                                        <option value="">Pilih Periode</option>
+                                        @foreach ($daftar_periode as $periode)
+                                            <option value="{{ $periode->kode_periode }}">
+                                                {{ $periode->kode_periode }} - {{ $periode->nama_periode }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
                             {{-- Report Type Selection --}}
-                            <div class="form-group col-md-6">
-                                <label for="nama_laporan">Jenis Laporan <span class="text-danger">*</span></label>
-                                <select class="form-control" name="nama_laporan" id="nama_laporan" required>
-                                    <option value="">Pilih Jenis Laporan</option>
-                                    <optgroup label="Laporan Utama">
-                                        <option value="jurnal-pengeluaran">Jurnal Pengeluaran Anggaran</option>
-                                        <option value="jurnal-per-mata-anggaran">Jurnal Per Mata Anggaran</option>
-                                        <option value="buku-besar">Buku Besar</option>
-                                        <option value="buku-kas">Bukti Pengeluaran Kas</option>
-                                    </optgroup>
-                                    <optgroup label="Laporan Khusus">
-                                        <option value="pembayaran-tugas-akhir">Pembayaran Tugas Akhir</option>
-                                        <option value="honor-koreksi">Honor Koreksi</option>
-                                        <option value="honor-vakasi">Honor & Vakasi</option>
-                                        <option value="pengeluaran-fakultas">Pengeluaran Fakultas</option>
-                                    </optgroup>
-                                </select>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="nama_laporan">Jenis Laporan <span class="text-danger">*</span></label>
+                                    <select class="form-control" name="nama_laporan" id="nama_laporan" required>
+                                        <option value="">Pilih Jenis Laporan</option>
+                                        <optgroup label="Laporan Utama">
+                                            <option value="jurnal-pengeluaran">Jurnal Pengeluaran Anggaran</option>
+                                            <option value="jurnal-per-mata-anggaran">Jurnal Per Mata Anggaran</option>
+                                            <option value="buku-besar">Buku Besar</option>
+                                            <option value="buku-kas">Bukti Pengeluaran Kas</option>
+                                        </optgroup>
+                                        <optgroup label="Laporan Khusus">
+                                            <option value="pembayaran-tugas-akhir">Pembayaran Tugas Akhir</option>
+                                            <option value="honor-koreksi">Honor Koreksi</option>
+                                            <option value="honor-vakasi">Honor & Vakasi</option>
+                                            <option value="pengeluaran-fakultas">Pengeluaran Fakultas</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-row">
-                            {{-- Program Studi Selection - PERBAIKAN APPLIED HERE --}}
-                            <div class="form-group col-md-6">
-                                <label for="programstudi">Program Studi <span class="text-danger">*</span></label>
-                                <select class="form-control" name="programstudi[]" id="programstudi" multiple required>
-                                    @if(isset($unitkerja) && $unitkerja)
-                                        {{-- PERBAIKAN: gunakan nama_unit bukan nama --}}
-                                        <option value="{{ $unitkerja->id }}" selected>{{ $unitkerja->nama_unit }}</option>
-                                        @if($unitkerja->childUnit && count($unitkerja->childUnit) > 0)
-                                            @foreach($unitkerja->childUnit as $child)
-                                                <option value="{{ $child->id }}">{{ $child->nama_unit }}</option>
-                                            @endforeach
+                            {{-- Program Studi Selection --}}
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="programstudi">Program Studi <span class="text-danger">*</span></label>
+                                    <select class="form-control" name="programstudi" id="programstudi" required>
+                                        <option value="">Pilih Program Studi</option>
+                                        @if(isset($unitkerja) && $unitkerja)
+                                            <option value="{{ $unitkerja->id }}">{{ $unitkerja->nama_unit }}</option>
+                                            @if($unitkerja->childUnit && count($unitkerja->childUnit) > 0)
+                                                @foreach($unitkerja->childUnit as $child)
+                                                    <option value="{{ $child->id }}">{{ $child->nama_unit }}</option>
+                                                @endforeach
+                                            @endif
+                                        @else
+                                            <option value="all">Semua Program Studi</option>
+                                            <option value="fakultas-teknik">FAKULTAS TEKNIK</option>
+                                            <option value="teknik-informatika">Teknik Informatika</option>
+                                            <option value="teknik-lingkungan">Teknik Lingkungan</option>
+                                            <option value="teknik-mesin">Teknik Mesin</option>
+                                            <option value="perencanaan-wilayah">Perencanaan Wilayah dan Kota</option>
+                                            <option value="teknik-industri">Teknik Industri</option>
+                                            <option value="teknologi-pangan">Teknologi Pangan</option>
                                         @endif
-                                    @else
-                                        <option value="all">Semua Program Studi</option>
-                                    @endif
-                                </select>
-                                <small class="form-text text-muted">Ctrl + Click untuk pilih multiple</small>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Mohon pilih program studi terlebih dahulu
+                                    </div>
+                                </div>
                             </div>
 
                             {{-- Export Format Selection --}}
-                            <div class="form-group col-md-6">
-                                <label for="format_export">Format Export <span class="text-danger">*</span></label>
-                                <select class="form-control" name="format_export" id="format_export" required>
-                                    <option value="">Pilih Format</option>
-                                    <option value="excel">Excel (.xlsx)</option>
-                                    <option value="pdf">PDF (.pdf)</option>
-                                </select>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="format_export">Format Export <span class="text-danger">*</span></label>
+                                    <select class="form-control" name="format_export" id="format_export" required>
+                                        <option value="">Pilih Format</option>
+                                        <option value="excel">Excel (.xlsx)</option>
+                                        <option value="pdf">PDF (.pdf)</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -92,4 +108,3 @@
         </div>
     </div>
 </div>
-

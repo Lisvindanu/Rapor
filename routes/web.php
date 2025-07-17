@@ -15,6 +15,10 @@ use App\Http\Controllers\KuesionerSDMController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\KeuanganController;
+use App\Http\Controllers\KeuanganLaporanController;
+use App\Http\Controllers\KeuanganMataAnggaranController;
+use App\Http\Controllers\KeuanganSubMataAnggaranController;
 
 
 /*
@@ -37,7 +41,7 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
 Route::post('/login/verify', [LoginController::class, 'verify']);
 Route::post('/login/exit', [LoginController::class, 'logout']);
-Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');  
+Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');
 Route::post('forgotpassword/request', [LoginController::class, 'resetPassword']);
 // Route::get('/login', "LoginController@showLoginForm")->name('login');
 
@@ -123,7 +127,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         // sinkronasi remedial
         Route::get('/sinkronasi/remedial', "SinkronasiController@remedial")->name('master.sinkronasi.remedial');
         Route::post('/sinkronasi/get-krs', "SinkronasiController@getDataKrs")->name('master.sinkronasi.getDataKrs');
-        
+
         Route::get('/sinkronasi/presensi-mahasiswa', "SinkronasiController@presensiMahasiswa")->name('master.sinkronasi.presensiMahasiswa');
         Route::post('/sinkronasi/get-presensi-mahasiswa', "SinkronasiController@getPresensiMahasiswa")->name('master.sinkronasi.getPresensiMahasiswa');
 
@@ -220,7 +224,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::post('/kuesioner-sdm/responden/tambah-responden', "KuesionerSDMController@tambahResponden")->name('tambahResponden');
         Route::delete('/kuesioner-sdm/responden/{id}', "KuesionerSDMController@deleteResponden")->name('kuesioner.kuesioner-sdm.responden.delete');
 
-        //hasil kuesioner 
+        //hasil kuesioner
         Route::get('/kuesioner-sdm/hasil/{id}', "KuesionerSDMController@hasilKuesionerSDM")->name('kuesioner.kuesioner-sdm.hasil');
 
         //SoalKuesionerSDM
@@ -517,4 +521,59 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
     //test
     Route::get('/test', "TestController@index");
+
+
+
+    Route::prefix('keuangan')->group(function () {
+
+        // Dashboard -> Nama rute tetap 'keuangan'
+        Route::get('/', "KeuanganController@index")->name('keuangan');
+
+        // Laporan routes -> Nama rute tetap 'keuangan.laporan' dan 'keuangan.laporan.print'
+        Route::prefix('laporan')->group(function () {
+            Route::get('/', "KeuanganLaporanController@index")->name('keuangan.laporan');
+            Route::post('/print-laporan', "KeuanganLaporanController@printLaporan")->name('keuangan.laporan.print');
+        });
+
+        // Master Mata Anggaran Routes
+        // Nama grup diubah untuk menambahkan awalan 'keuangan.' secara manual
+        Route::prefix('mata-anggaran')->name('keuangan.mata-anggaran.')->group(function () {
+            // Nama rute menjadi: 'keuangan.mata-anggaran.index'
+            Route::get('/', "KeuanganMataAnggaranController@index")->name('index');
+            // Nama rute menjadi: 'keuangan.mata-anggaran.create'
+            Route::get('/create', "KeuanganMataAnggaranController@create")->name('create');
+            // Nama rute menjadi: 'keuangan.mata-anggaran.store'
+            Route::post('/', "KeuanganMataAnggaranController@store")->name('store');
+            // Nama rute menjadi: 'keuangan.mata-anggaran.show'
+            Route::get('/{id}', "KeuanganMataAnggaranController@show")->name('show');
+            // Nama rute menjadi: 'keuangan.mata-anggaran.edit'
+            Route::get('/{id}/edit', "KeuanganMataAnggaranController@edit")->name('edit');
+            // Nama rute menjadi: 'keuangan.mata-anggaran.update'
+            Route::put('/{id}', "KeuanganMataAnggaranController@update")->name('update');
+            // Nama rute menjadi: 'keuangan.mata-anggaran.destroy'
+            Route::delete('/{id}', "KeuanganMataAnggaranController@destroy")->name('destroy');
+        });
+
+        // Master Sub Mata Anggaran Routes
+        // Nama grup diubah untuk menambahkan awalan 'keuangan.' secara manual
+        Route::prefix('mata-anggaran/{parentId}/sub')->name('keuangan.sub-mata-anggaran.')->group(function () {
+            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.index'
+            Route::get('/', "KeuanganSubMataAnggaranController@index")->name('index');
+            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.create'
+            Route::get('/create', "KeuanganSubMataAnggaranController@create")->name('create');
+            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.store'
+            Route::post('/', "KeuanganSubMataAnggaranController@store")->name('store');
+            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.edit'
+            Route::get('/{id}/edit', "KeuanganSubMataAnggaranController@edit")->name('edit');
+            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.update'
+            Route::put('/{id}', "KeuanganSubMataAnggaranController@update")->name('update');
+            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.destroy'
+            Route::delete('/{id}', "KeuanganSubMataAnggaranController@destroy")->name('destroy');
+
+            // API endpoint for getting sub mata anggaran by parent
+            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.api.by-parent'
+            Route::get('/api/by-parent', "KeuanganSubMataAnggaranController@getByParent")->name('api.by-parent');
+        });
+
+    });
 });

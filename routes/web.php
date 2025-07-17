@@ -17,6 +17,8 @@ use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\KeuanganLaporanController;
+use App\Http\Controllers\KeuanganMataAnggaranController;
+use App\Http\Controllers\KeuanganSubMataAnggaranController;
 
 
 /*
@@ -532,5 +534,29 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::post('/print-laporan', "KeuanganLaporanController@printLaporan")->name('keuangan.laporan.print');
         });
 
-});
+        // Mata Anggaran Management Routes
+        Route::prefix('mata-anggaran')->name('mata-anggaran.')->group(function () {
+            Route::get('/', "KeuanganMataAnggaranController@index")->name('index');
+            Route::get('/create', "KeuanganMataAnggaranController@create")->name('create');
+            Route::post('/', "KeuanganMataAnggaranController@store")->name('store');
+            Route::get('/{id}', "KeuanganMataAnggaranController@show")->name('show');
+            Route::get('/{id}/edit', "KeuanganMataAnggaranController@edit")->name('edit');
+            Route::put('/{id}', "KeuanganMataAnggaranController@update")->name('update');
+            Route::delete('/{id}', "KeuanganMataAnggaranController@destroy")->name('destroy');
+        });
+
+        // Sub Mata Anggaran Management Routes
+        Route::prefix('mata-anggaran/{parentId}/sub')->name('sub-mata-anggaran.')->group(function () {
+            Route::get('/', "KeuanganSubMataAnggaranController@index")->name('index');
+            Route::get('/create', "KeuanganSubMataAnggaranController@create")->name('create');
+            Route::post('/', "KeuanganSubMataAnggaranController@store")->name('store');
+            Route::get('/{id}/edit', "KeuanganSubMataAnggaranController@edit")->name('edit');
+            Route::put('/{id}', "KeuanganSubMataAnggaranController@update")->name('update');
+            Route::delete('/{id}', "KeuanganSubMataAnggaranController@destroy")->name('destroy');
+
+            // API endpoint for getting sub mata anggaran by parent
+            Route::get('/api/by-parent', "KeuanganSubMataAnggaranController@getByParent")->name('api.by-parent');
+        });
+
+    });
 });

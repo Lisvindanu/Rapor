@@ -15,6 +15,7 @@ use App\Http\Controllers\KuesionerSDMController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\KeuanganController;
 
 
 /*
@@ -37,7 +38,7 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
 Route::post('/login/verify', [LoginController::class, 'verify']);
 Route::post('/login/exit', [LoginController::class, 'logout']);
-Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');  
+Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');
 Route::post('forgotpassword/request', [LoginController::class, 'resetPassword']);
 // Route::get('/login', "LoginController@showLoginForm")->name('login');
 
@@ -123,7 +124,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         // sinkronasi remedial
         Route::get('/sinkronasi/remedial', "SinkronasiController@remedial")->name('master.sinkronasi.remedial');
         Route::post('/sinkronasi/get-krs', "SinkronasiController@getDataKrs")->name('master.sinkronasi.getDataKrs');
-        
+
         Route::get('/sinkronasi/presensi-mahasiswa', "SinkronasiController@presensiMahasiswa")->name('master.sinkronasi.presensiMahasiswa');
         Route::post('/sinkronasi/get-presensi-mahasiswa', "SinkronasiController@getPresensiMahasiswa")->name('master.sinkronasi.getPresensiMahasiswa');
 
@@ -220,7 +221,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::post('/kuesioner-sdm/responden/tambah-responden', "KuesionerSDMController@tambahResponden")->name('tambahResponden');
         Route::delete('/kuesioner-sdm/responden/{id}', "KuesionerSDMController@deleteResponden")->name('kuesioner.kuesioner-sdm.responden.delete');
 
-        //hasil kuesioner 
+        //hasil kuesioner
         Route::get('/kuesioner-sdm/hasil/{id}', "KuesionerSDMController@hasilKuesionerSDM")->name('kuesioner.kuesioner-sdm.hasil');
 
         //SoalKuesionerSDM
@@ -517,4 +518,12 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
     //test
     Route::get('/test', "TestController@index");
+
+
+    Route::prefix('keuangan')->group(function () {
+        Route::get('/', "KeuanganController@index")->name('keuangan');
+    });
+
+
+    Route::get('/Keuangan', "KeuanganController@index")->name('Keuangan');
 });

@@ -19,21 +19,24 @@
                                     </a>
                                 </li>
 
-                                {{-- Transaksi --}}
+                                {{-- Master Data --}}
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle disabled" href="#" id="navbarTransaksi" role="button"
+                                    <a class="nav-link dropdown-toggle disabled" href="#" id="navbarMaster" role="button"
                                        data-bs-toggle="dropdown" aria-expanded="false" tabindex="-1" aria-disabled="true">
-                                        <i class="fas fa-exchange-alt"></i> Transaksi
+                                        <i class="fas fa-cogs"></i> Master Data
                                         <small class="text-muted">(dev)</small>
                                     </a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarTransaksi">
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Input Transaksi</a></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Review Transaksi</a></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Approval</a></li>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarMaster">
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Kategori Transaksi</a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Mata Anggaran</a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Unit Kerja</a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Riwayat Transaksi</a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Periode Akademik</a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Template Laporan</a></li>
                                     </ul>
                                 </li>
+
+
 
                                 {{-- Laporan --}}
                                 <li class="nav-item dropdown">
@@ -77,20 +80,19 @@
                                     </ul>
                                 </li>
 
-                                {{-- Master Data --}}
+                                {{-- Transaksi --}}
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle disabled" href="#" id="navbarMaster" role="button"
+                                    <a class="nav-link dropdown-toggle disabled" href="#" id="navbarTransaksi" role="button"
                                        data-bs-toggle="dropdown" aria-expanded="false" tabindex="-1" aria-disabled="true">
-                                        <i class="fas fa-cogs"></i> Master Data
+                                        <i class="fas fa-exchange-alt"></i> Transaksi
                                         <small class="text-muted">(dev)</small>
                                     </a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarMaster">
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Kategori Transaksi</a></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Mata Anggaran</a></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Unit Kerja</a></li>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarTransaksi">
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Input Transaksi</a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Review Transaksi</a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Approval</a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Periode Akademik</a></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Template Laporan</a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Riwayat Transaksi</a></li>
                                     </ul>
                                 </li>
                             </ul>

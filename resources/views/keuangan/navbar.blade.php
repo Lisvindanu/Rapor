@@ -105,13 +105,6 @@
                                         </span>
                                     </span>
                                 </li>
-
-                                {{-- Back to Main Menu --}}
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('gate') }}">
-                                        <i class="fas fa-home"></i> Menu Utama
-                                    </a>
-                                </li>
                             </ul>
                         </div>
                     </div>

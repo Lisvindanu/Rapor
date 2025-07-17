@@ -44,15 +44,16 @@
                         </div>
 
                         <div class="form-row">
-                            {{-- Program Studi Selection --}}
+                            {{-- Program Studi Selection - PERBAIKAN APPLIED HERE --}}
                             <div class="form-group col-md-6">
                                 <label for="programstudi">Program Studi <span class="text-danger">*</span></label>
                                 <select class="form-control" name="programstudi[]" id="programstudi" multiple required>
-                                    @if(isset($unitkerja))
-                                        <option value="{{ $unitkerja->id }}" selected>{{ $unitkerja->nama }}</option>
+                                    @if(isset($unitkerja) && $unitkerja)
+                                        {{-- PERBAIKAN: gunakan nama_unit bukan nama --}}
+                                        <option value="{{ $unitkerja->id }}" selected>{{ $unitkerja->nama_unit }}</option>
                                         @if($unitkerja->childUnit && count($unitkerja->childUnit) > 0)
                                             @foreach($unitkerja->childUnit as $child)
-                                                <option value="{{ $child->id }}">{{ $child->nama }}</option>
+                                                <option value="{{ $child->id }}">{{ $child->nama_unit }}</option>
                                             @endforeach
                                         @endif
                                     @else
@@ -91,3 +92,4 @@
         </div>
     </div>
 </div>
+

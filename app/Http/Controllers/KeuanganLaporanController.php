@@ -6,9 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Periode;
 use App\Models\UnitKerja;
 use App\Helpers\UnitKerjaHelper;
-// use App\Exports\KeuanganLaporanExport;
-// use Maatwebsite\Excel\Facades\Excel;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class KeuanganLaporanController extends Controller
 {
@@ -23,15 +22,52 @@ class KeuanganLaporanController extends Controller
             // Get current unit kerja from session (following BTQ pattern)
             $unitKerja = UnitKerja::with('childUnit')->where('id', session('selected_filter'))->first();
 
-            // Get available periods (following BTQ pattern)
+            // Enhanced debugging
+            Log::info('KeuanganLaporan - Session Data:', [
+                'selected_filter' => session('selected_filter'),
+                'unit_kerja_found' => $unitKerja ? true : false,
+                'unit_kerja_id' => $unitKerja ? $unitKerja->id : null,
+                'unit_kerja_nama' => $unitKerja ? $unitKerja->nama_unit : null,
+                'child_count' => $unitKerja && $unitKerja->childUnit ? $unitKerja->childUnit->count() : 0
+            ]);
+
+            // Check if unit kerja exists - provide fallback
+            if (!$unitKerja) {
+                // Try to get any available unit kerja as fallback
+                $unitKerja = UnitKerja::with('childUnit')
+                    ->whereIn('jenis_unit', ['FAKULTAS', 'Program Studi'])
+                    ->first();
+
+                if ($unitKerja) {
+                    Log::warning('Using fallback unit kerja:', ['id' => $unitKerja->id, 'nama' => $unitKerja->nama_unit]);
+                } else {
+                    return back()->with('error', 'Unit kerja tidak ditemukan. Silakan pilih unit kerja terlebih dahulu melalui menu profil.');
+                }
+            }
+
+            // Get available periods
             $daftar_periode = Periode::orderBy('kode_periode', 'desc')->take(10)->get();
+
+            // Log periode data for debugging
+            Log::info('KeuanganLaporan - Periode Data:', [
+                'count' => $daftar_periode->count(),
+                'first_periode' => $daftar_periode->first() ? $daftar_periode->first()->kode_periode : null
+            ]);
 
             return view('keuangan.laporan.index', [
                 'daftar_periode' => $daftar_periode,
                 'unitkerja' => $unitKerja,
             ]);
+
         } catch (Exception $e) {
-            return back()->with('message', 'Terjadi kesalahan: ' . $e->getMessage());
+            Log::error('KeuanganLaporan - Error in index:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'session_data' => session()->all()
+            ]);
+
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
@@ -44,15 +80,37 @@ class KeuanganLaporanController extends Controller
     public function printLaporan(Request $request)
     {
         try {
+            // Enhanced validation
             $validated = $request->validate([
                 'kode_periode' => 'required|string',
                 'nama_laporan' => 'required|string',
-                'programstudi' => 'required|array',
+                'programstudi' => 'required|array|min:1',
                 'format_export' => 'required|string|in:excel,pdf'
+            ], [
+                'kode_periode.required' => 'Periode harus dipilih.',
+                'nama_laporan.required' => 'Jenis laporan harus dipilih.',
+                'programstudi.required' => 'Program studi harus dipilih.',
+                'programstudi.min' => 'Minimal 1 program studi harus dipilih.',
+                'format_export.required' => 'Format export harus dipilih.',
+                'format_export.in' => 'Format export harus Excel atau PDF.'
+            ]);
+
+            // Log request data for debugging
+            Log::info('KeuanganLaporan - Print Request:', [
+                'kode_periode' => $request->kode_periode,
+                'nama_laporan' => $request->nama_laporan,
+                'programstudi' => $request->programstudi,
+                'format_export' => $request->format_export,
+                'user_id' => auth()->id() ?? 'guest'
             ]);
 
             // Get unit kerja names (following BTQ pattern)
             $unitKerjaNames = UnitKerjaHelper::getUnitKerjaNamesV1($request->programstudi);
+
+            Log::info('KeuanganLaporan - Unit Kerja Names:', [
+                'input_ids' => $request->programstudi,
+                'unit_kerja_names' => $unitKerjaNames
+            ]);
 
             // Handle different report types
             switch ($request->nama_laporan) {
@@ -81,11 +139,21 @@ class KeuanganLaporanController extends Controller
                     return $this->generatePengeluaranFakultas($request, $unitKerjaNames);
 
                 default:
-                    throw new Exception('Tipe laporan tidak dikenali');
+                    throw new Exception('Tipe laporan tidak dikenali: ' . $request->nama_laporan);
             }
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+
         } catch (Exception $e) {
-            return back()->with('message', 'Terjadi kesalahan: ' . $e->getMessage());
+            Log::error('KeuanganLaporan - Error in printLaporan:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'request_data' => $request->all()
+            ]);
+
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -94,12 +162,18 @@ class KeuanganLaporanController extends Controller
      */
     private function generateJurnalPengeluaran($request, $unitKerjaNames)
     {
+        Log::info('Generating Jurnal Pengeluaran Report');
+
         // TODO: Implement actual data fetching
         $mockData = $this->getMockJurnalPengeluaran();
 
         if ($request->format_export === 'excel') {
             // return Excel::download(new KeuanganJurnalPengeluaranExport($mockData), 'jurnal-pengeluaran.xlsx');
-            return response()->json(['message' => 'Excel export belum diimplementasi'], 501);
+            return response()->json([
+                'status' => 'development',
+                'message' => 'Excel export untuk Jurnal Pengeluaran sedang dalam pengembangan',
+                'data' => $mockData
+            ], 501);
         }
 
         return $this->generatePDF('jurnal-pengeluaran', $mockData, $request);
@@ -110,11 +184,17 @@ class KeuanganLaporanController extends Controller
      */
     private function generateJurnalPerMataAnggaran($request, $unitKerjaNames)
     {
+        Log::info('Generating Jurnal Per Mata Anggaran Report');
+
         // TODO: Implement actual data fetching
         $mockData = $this->getMockJurnalPerMataAnggaran();
 
         if ($request->format_export === 'excel') {
-            return response()->json(['message' => 'Excel export belum diimplementasi'], 501);
+            return response()->json([
+                'status' => 'development',
+                'message' => 'Excel export untuk Jurnal Per Mata Anggaran sedang dalam pengembangan',
+                'data' => $mockData
+            ], 501);
         }
 
         return $this->generatePDF('jurnal-per-mata-anggaran', $mockData, $request);
@@ -125,11 +205,17 @@ class KeuanganLaporanController extends Controller
      */
     private function generateBukuBesar($request, $unitKerjaNames)
     {
+        Log::info('Generating Buku Besar Report');
+
         // TODO: Implement actual data fetching
         $mockData = $this->getMockBukuBesar();
 
         if ($request->format_export === 'excel') {
-            return response()->json(['message' => 'Excel export belum diimplementasi'], 501);
+            return response()->json([
+                'status' => 'development',
+                'message' => 'Excel export untuk Buku Besar sedang dalam pengembangan',
+                'data' => $mockData
+            ], 501);
         }
 
         return $this->generatePDF('buku-besar', $mockData, $request);
@@ -140,11 +226,17 @@ class KeuanganLaporanController extends Controller
      */
     private function generateBukuKas($request, $unitKerjaNames)
     {
+        Log::info('Generating Buku Kas Report');
+
         // TODO: Implement actual data fetching
         $mockData = $this->getMockBukuKas();
 
         if ($request->format_export === 'excel') {
-            return response()->json(['message' => 'Excel export belum diimplementasi'], 501);
+            return response()->json([
+                'status' => 'development',
+                'message' => 'Excel export untuk Buku Kas sedang dalam pengembangan',
+                'data' => $mockData
+            ], 501);
         }
 
         return $this->generatePDF('buku-kas', $mockData, $request);
@@ -155,11 +247,17 @@ class KeuanganLaporanController extends Controller
      */
     private function generatePembayaranTugasAkhir($request, $unitKerjaNames)
     {
+        Log::info('Generating Pembayaran Tugas Akhir Report');
+
         // TODO: Implement actual data fetching
         $mockData = $this->getMockPembayaranTugasAkhir();
 
         if ($request->format_export === 'excel') {
-            return response()->json(['message' => 'Excel export belum diimplementasi'], 501);
+            return response()->json([
+                'status' => 'development',
+                'message' => 'Excel export untuk Pembayaran Tugas Akhir sedang dalam pengembangan',
+                'data' => $mockData
+            ], 501);
         }
 
         return $this->generatePDF('pembayaran-tugas-akhir', $mockData, $request);
@@ -170,11 +268,17 @@ class KeuanganLaporanController extends Controller
      */
     private function generateHonorKoreksi($request, $unitKerjaNames)
     {
+        Log::info('Generating Honor Koreksi Report');
+
         // TODO: Implement actual data fetching
         $mockData = $this->getMockHonorKoreksi();
 
         if ($request->format_export === 'excel') {
-            return response()->json(['message' => 'Excel export belum diimplementasi'], 501);
+            return response()->json([
+                'status' => 'development',
+                'message' => 'Excel export untuk Honor Koreksi sedang dalam pengembangan',
+                'data' => $mockData
+            ], 501);
         }
 
         return $this->generatePDF('honor-koreksi', $mockData, $request);
@@ -185,11 +289,17 @@ class KeuanganLaporanController extends Controller
      */
     private function generateHonorVakasi($request, $unitKerjaNames)
     {
+        Log::info('Generating Honor Vakasi Report');
+
         // TODO: Implement actual data fetching
         $mockData = $this->getMockHonorVakasi();
 
         if ($request->format_export === 'excel') {
-            return response()->json(['message' => 'Excel export belum diimplementasi'], 501);
+            return response()->json([
+                'status' => 'development',
+                'message' => 'Excel export untuk Honor Vakasi sedang dalam pengembangan',
+                'data' => $mockData
+            ], 501);
         }
 
         return $this->generatePDF('honor-vakasi', $mockData, $request);
@@ -200,11 +310,17 @@ class KeuanganLaporanController extends Controller
      */
     private function generatePengeluaranFakultas($request, $unitKerjaNames)
     {
+        Log::info('Generating Pengeluaran Fakultas Report');
+
         // TODO: Implement actual data fetching
         $mockData = $this->getMockPengeluaranFakultas();
 
         if ($request->format_export === 'excel') {
-            return response()->json(['message' => 'Excel export belum diimplementasi'], 501);
+            return response()->json([
+                'status' => 'development',
+                'message' => 'Excel export untuk Pengeluaran Fakultas sedang dalam pengembangan',
+                'data' => $mockData
+            ], 501);
         }
 
         return $this->generatePDF('pengeluaran-fakultas', $mockData, $request);
@@ -215,11 +331,16 @@ class KeuanganLaporanController extends Controller
      */
     private function generatePDF($reportType, $data, $request)
     {
+        Log::info('Generating PDF for: ' . $reportType);
+
         // TODO: Implement PDF generation using DomPDF or similar
         return response()->json([
-            'message' => "PDF untuk laporan {$reportType} belum diimplementasi",
+            'status' => 'development',
+            'message' => "PDF untuk laporan {$reportType} sedang dalam pengembangan",
             'data' => $data,
-            'request' => $request->all()
+            'periode' => $request->kode_periode,
+            'format' => $request->format_export,
+            'timestamp' => now()->toISOString()
         ], 501);
     }
 
@@ -240,7 +361,14 @@ class KeuanganLaporanController extends Controller
                     'uraian' => 'Bantuan Pengobatan Dede Suherman anak dari bapak Rohman',
                     'jumlah' => 'Rp 6.400.000'
                 ],
-                // Add more mock data...
+                [
+                    'no' => 2,
+                    'kwitansi' => 'P.2507.002',
+                    'tanggal' => '01-07-2025',
+                    'uraian' => 'Transport Membantu Pelaksanaan Kegiatan Tata Usaha',
+                    'jumlah' => 'Rp 6.600.000'
+                ],
+                // Add more mock data as needed...
             ]
         ];
     }
@@ -269,8 +397,10 @@ class KeuanganLaporanController extends Controller
     {
         return [
             'title' => 'BUKU BESAR',
-            'periode' => 'sampai',
-            'data' => []
+            'periode' => date('Y'),
+            'data' => [
+                // Add mock data for buku besar
+            ]
         ];
     }
 
@@ -279,6 +409,7 @@ class KeuanganLaporanController extends Controller
         return [
             'title' => 'BUKTI PENGELUARAN KAS',
             'nomor' => 'P.2507.001',
+            'tanggal' => date('d-m-Y'),
             'data' => [
                 'sudah_terima' => 'Fakultas Teknik Universitas Pasundan',
                 'uang_sebanyak' => 'DUA RATUS RIBU RUPIAH',
@@ -302,6 +433,14 @@ class KeuanganLaporanController extends Controller
                     'periode' => '20201',
                     'jumlah' => 'Rp 300.000'
                 ],
+                [
+                    'no' => 2,
+                    'npm' => '223040038',
+                    'nama' => 'Lisvindanu',
+                    'program_studi' => 'Teknik Informatika',
+                    'periode' => '20202',
+                    'jumlah' => 'Rp 300.000'
+                ],
                 // Add more mock data...
             ]
         ];
@@ -312,7 +451,9 @@ class KeuanganLaporanController extends Controller
         return [
             'title' => 'LAPORAN HONOR KOREKSI',
             'periode' => 'Juli 2025',
-            'data' => []
+            'data' => [
+                // Add mock data for honor koreksi
+            ]
         ];
     }
 
@@ -321,7 +462,9 @@ class KeuanganLaporanController extends Controller
         return [
             'title' => 'LAPORAN HONOR VAKASI',
             'periode' => 'Juli 2025',
-            'data' => []
+            'data' => [
+                // Add mock data for honor vakasi
+            ]
         ];
     }
 
@@ -330,7 +473,9 @@ class KeuanganLaporanController extends Controller
         return [
             'title' => 'PENGELUARAN FAKULTAS PERIODE',
             'periode' => 'Juli 2025',
-            'data' => []
+            'data' => [
+                // Add mock data for pengeluaran fakultas
+            ]
         ];
     }
 }

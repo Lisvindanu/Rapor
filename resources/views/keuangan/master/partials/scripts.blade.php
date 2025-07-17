@@ -11,6 +11,7 @@
             this.initializeComponents();
             console.log('🎯 Keuangan Master Data Module v1.0.0');
             console.log('📋 Pattern: Clean Architecture | Status: Ready');
+            console.log('💰 Following BTQ module pattern for master data...');
         }
 
         bindEvents() {
@@ -25,6 +26,9 @@
 
             // Bind search functionality
             this.bindSearchEvents();
+
+            // Bind form validation
+            this.bindFormValidation();
         }
 
         bindFilterEvents() {
@@ -43,11 +47,13 @@
 
         initTooltips() {
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title], [data-bs-toggle="tooltip"]'));
-            const tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl, {
-                    delay: { show: 500, hide: 100 }
+            if (typeof bootstrap !== 'undefined') {
+                const tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl, {
+                        delay: { show: 500, hide: 100 }
+                    });
                 });
-            });
+            }
         }
 
         bindActionConfirmations() {
@@ -97,10 +103,74 @@
             }
         }
 
+        bindFormValidation() {
+            // Real-time validation for required fields
+            const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
+            requiredFields.forEach(field => {
+                field.addEventListener('blur', function() {
+                    this.validateField();
+                });
+
+                field.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                });
+
+                // Add validateField method to each field
+                field.validateField = function() {
+                    if (!this.value.trim() && this.required) {
+                        this.classList.add('is-invalid');
+                        this.classList.remove('is-valid');
+                        return false;
+                    } else {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                        return true;
+                    }
+                };
+            });
+
+            // Form submission validation
+            const forms = document.querySelectorAll('form[id*="master"]');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    if (!this.validateAllFields()) {
+                        e.preventDefault();
+                        this.showValidationErrors();
+                    }
+                });
+
+                // Add validation methods to form
+                form.validateAllFields = function() {
+                    const fields = this.querySelectorAll('input[required], select[required], textarea[required]');
+                    let isValid = true;
+
+                    fields.forEach(field => {
+                        if (!field.validateField()) {
+                            isValid = false;
+                        }
+                    });
+
+                    return isValid;
+                };
+
+                form.showValidationErrors = function() {
+                    const firstInvalidField = this.querySelector('.is-invalid');
+                    if (firstInvalidField) {
+                        firstInvalidField.focus();
+                        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    this.showNotification('Mohon lengkapi semua field yang wajib diisi', 'error');
+                };
+            });
+        }
+
         initializeComponents() {
             // Initialize any additional components
             this.initDataTable();
-            this.initFormValidation();
+            this.initFormComponents();
         }
 
         initDataTable() {
@@ -114,32 +184,67 @@
                     }
                 });
             });
-        }
 
-        initFormValidation() {
-            // Real-time validation for required fields
-            const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
-            requiredFields.forEach(field => {
-                field.addEventListener('blur', function() {
-                    if (!this.value.trim()) {
-                        this.classList.add('is-invalid');
-                    } else {
-                        this.classList.remove('is-invalid');
-                    }
-                });
-
-                field.addEventListener('input', function() {
-                    if (this.value.trim()) {
-                        this.classList.remove('is-invalid');
+            // Add row click handler for better UX
+            const tableRows = document.querySelectorAll('#masterDataTable tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('click', function(e) {
+                    if (!e.target.closest('button') && !e.target.closest('form')) {
+                        const detailBtn = this.querySelector('a[title="Lihat Detail"]');
+                        if (detailBtn) {
+                            window.location.href = detailBtn.href;
+                        }
                     }
                 });
             });
         }
 
+        initFormComponents() {
+            // Auto-format currency inputs
+            const currencyInputs = document.querySelectorAll('input[type="number"][name*="anggaran"], input[type="number"][name*="nominal"]');
+            currencyInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    this.formatCurrency();
+                });
+
+                input.formatCurrency = function() {
+                    if (this.value) {
+                        const value = parseFloat(this.value);
+                        if (!isNaN(value)) {
+                            // You can add currency formatting here if needed
+                        }
+                    }
+                };
+            });
+
+            // Auto-generate kode based on nama
+            const namaFields = document.querySelectorAll('input[name*="nama"]');
+            namaFields.forEach(namaField => {
+                const kodeField = document.querySelector(`input[name="${namaField.name.replace('nama', 'kode')}"]`);
+                if (kodeField && !kodeField.value) {
+                    namaField.addEventListener('input', function() {
+                        if (!kodeField.value) {
+                            kodeField.value = this.generateKode();
+                        }
+                    });
+
+                    namaField.generateKode = function() {
+                        return this.value
+                            .toUpperCase()
+                            .replace(/[^A-Z0-9\s]/g, '')
+                            .replace(/\s+/g, '')
+                            .substring(0, 10);
+                    };
+                }
+            });
+        }
+
         // Utility methods
         showLoading(element) {
+            const originalText = element.innerHTML;
             element.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
             element.disabled = true;
+            return originalText;
         }
 
         hideLoading(element, originalText) {
@@ -150,12 +255,13 @@
         showNotification(message, type = 'info') {
             // Simple notification system
             const notification = document.createElement('div');
-            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
             notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
             notification.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
+                <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
 
             document.body.appendChild(notification);
 
@@ -166,11 +272,35 @@
                 }
             }, 5000);
         }
+
+        // Quick actions for master data
+        handleQuickAction(action) {
+            console.log(`Quick action: ${action}`);
+            this.showNotification(`Aksi ${action} akan segera tersedia`, 'info');
+        }
+    }
+
+    // Global Functions (for backward compatibility)
+    function resetForm() {
+        const form = document.querySelector('form[id*="master"]');
+        if (form) {
+            form.reset();
+            // Remove validation classes
+            form.querySelectorAll('.is-invalid, .is-valid').forEach(field => {
+                field.classList.remove('is-invalid', 'is-valid');
+            });
+        }
     }
 
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
         window.masterHandler = new KeuanganMasterHandler();
+
+        // Initialize form auto-save (optional)
+        const forms = document.querySelectorAll('form[id*="master"]');
+        forms.forEach(form => {
+            // Auto-save draft functionality can be added here
+        });
     });
 
     // Export for use in other scripts

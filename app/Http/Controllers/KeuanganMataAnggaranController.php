@@ -9,6 +9,8 @@ use Exception;
 
 class KeuanganMataAnggaranController extends Controller
 {
+// app/Http/Controllers/KeuanganMataAnggaranController.php
+
     public function index(Request $request)
     {
         try {
@@ -17,8 +19,9 @@ class KeuanganMataAnggaranController extends Controller
                 'search' => $request->search ?? 'none'
             ]);
 
-            $query = KeuanganMataAnggaran::with(['parentMataAnggaran', 'childMataAnggaran'])
-                ->active();
+
+            $query = KeuanganMataAnggaran::with(['parentMataAnggaran'])
+            ->active();
 
             if ($request->filled('search')) {
                 $search = $request->search;
@@ -37,7 +40,9 @@ class KeuanganMataAnggaranController extends Controller
                 ->paginate(15)
                 ->withQueryString();
 
-            return view('keuangan.master.mata-anggaran.index', compact('mataAnggarans'));
+            return view('keuangan.master.mata-anggaran.index', [
+                'mataAnggarans' => $mataAnggarans
+            ]);
 
         } catch (Exception $e) {
             Log::error('KeuanganMataAnggaran - Error in index:', [

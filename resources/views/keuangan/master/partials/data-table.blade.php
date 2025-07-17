@@ -119,15 +119,12 @@
                             </table>
                         </div>
 
-                        {{-- Pagination --}}
+                        {{-- Custom Pagination --}}
                         @if(method_exists($tableConfig['data'], 'links'))
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <div class="text-muted small">
-                                    Menampilkan {{ $tableConfig['data']->firstItem() }} sampai {{ $tableConfig['data']->lastItem() }}
-                                    dari {{ $tableConfig['data']->total() }} data
-                                </div>
-                                {{ $tableConfig['data']->links() }}
-                            </div>
+                            @include('keuangan.master.partials.custom-pagination', [
+                                'paginationData' => $tableConfig['data'],
+                                'showPerPageSelector' => true
+                            ])
                         @endif
                     @else
                         <div class="empty-state">

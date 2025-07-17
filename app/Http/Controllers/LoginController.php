@@ -20,6 +20,7 @@ class LoginController extends Controller
 
     public function verify(Request $request)
     {
+
         // if (Auth::check()) {
         //     return redirect('/gate');
         // }
@@ -225,6 +226,6 @@ class LoginController extends Controller
 
     //     // Jika email tidak ditemukan, tetap berikan response yang sama
     //     return back()->with('error', 'Email atau tanggal lahir tidak sesuai.');
-        
+
     // }
 }

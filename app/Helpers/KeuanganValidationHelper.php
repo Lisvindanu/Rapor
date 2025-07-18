@@ -2,44 +2,8 @@
 
 namespace App\Helpers;
 
-use Illuminate\Http\Request;
-
 class KeuanganValidationHelper
 {
-    /**
-     * Clean and prepare mata anggaran data
-     */
-    public static function prepareMataAnggaranData(Request $request): array
-    {
-        $data = $request->all();
-
-        // Handle parent
-        $data['parent_mata_anggaran'] = empty($data['parent_mata_anggaran']) ? null : $data['parent_mata_anggaran'];
-
-        // Handle currency - fix NaN issue
-        $data['alokasi_anggaran'] = self::cleanCurrency($data['alokasi_anggaran'] ?? 0);
-
-        // Handle checkbox
-        $data['status_aktif'] = $request->has('status_aktif');
-
-        return $data;
-    }
-
-    /**
-     * Clean currency input
-     */
-    public static function cleanCurrency($value): float
-    {
-        if (is_null($value) || $value === '') return 0.0;
-
-        // Remove non-numeric except decimal
-        $cleaned = preg_replace('/[^\d.]/', '', $value);
-
-        if ($cleaned === '' || $cleaned === '.') return 0.0;
-
-        return max(0, floatval($cleaned));
-    }
-
     /**
      * Validation rules for mata anggaran
      */
@@ -50,13 +14,8 @@ class KeuanganValidationHelper
         return [
             'kode_mata_anggaran' => "required|string|max:20|{$unique}|regex:/^[A-Za-z0-9.\-]+$/",
             'nama_mata_anggaran' => 'required|string|max:255',
-            'nama_mata_anggaran_en' => 'nullable|string|max:255',
-            'deskripsi' => 'nullable|string|max:65535',
             'parent_mata_anggaran' => 'nullable|exists:keuangan_mtang,id',
-            'kategori' => 'nullable|string|max:100|in:operasional,investasi,pembiayaan,lainnya',
-            'alokasi_anggaran' => 'nullable|numeric|min:0|max:999999999999.99',
-            'tahun_anggaran' => 'required|integer|between:2020,2030',
-            'status_aktif' => 'boolean',
+            'kategori' => 'required|in:debet,kredit',
         ];
     }
 
@@ -70,31 +29,90 @@ class KeuanganValidationHelper
             'kode_mata_anggaran.unique' => 'Kode mata anggaran sudah digunakan',
             'kode_mata_anggaran.regex' => 'Kode hanya boleh huruf, angka, titik, dan tanda hubung',
             'nama_mata_anggaran.required' => 'Nama mata anggaran wajib diisi',
-            'tahun_anggaran.required' => 'Tahun anggaran wajib dipilih',
-            'tahun_anggaran.between' => 'Tahun anggaran harus antara 2020-2030',
-            'alokasi_anggaran.numeric' => 'Alokasi anggaran harus berupa angka',
-            'alokasi_anggaran.min' => 'Alokasi anggaran tidak boleh negatif',
+            'nama_mata_anggaran.max' => 'Nama mata anggaran maksimal 255 karakter',
             'parent_mata_anggaran.exists' => 'Parent mata anggaran tidak valid',
-            'kategori.in' => 'Kategori tidak valid',
+            'kategori.required' => 'Kategori wajib dipilih',
+            'kategori.in' => 'Kategori harus debet atau kredit',
         ];
     }
 
     /**
-     * Calculate level and set defaults
+     * Prevent circular reference in parent-child relationship
      */
-    public static function setMataAnggaranDefaults(array $data, $parent = null): array
+    public static function validateParentChild($parentId, $currentId = null): bool
     {
-        // Set sisa anggaran
-        $data['sisa_anggaran'] = $data['alokasi_anggaran'] ?? 0;
-
-        // Calculate level
-        if ($data['parent_mata_anggaran'] && $parent) {
-            $data['level_mata_anggaran'] = ($parent->level_mata_anggaran ?? 0) + 1;
-            $data['tahun_anggaran'] = $parent->tahun_anggaran;
-        } else {
-            $data['level_mata_anggaran'] = 0;
+        if (!$parentId || !$currentId) {
+            return true;
         }
 
-        return $data;
+        // Jika parent sama dengan current, maka circular
+        if ($parentId === $currentId) {
+            return false;
+        }
+
+        // Check apakah current adalah ancestor dari parent
+        $parent = \App\Models\KeuanganMataAnggaran::find($parentId);
+        if (!$parent) {
+            return true;
+        }
+
+        $ancestor = $parent->parentMataAnggaran;
+        while ($ancestor) {
+            if ($ancestor->id === $currentId) {
+                return false;
+            }
+            $ancestor = $ancestor->parentMataAnggaran;
+        }
+
+        return true;
+    }
+
+    /**
+     * Format kode mata anggaran
+     */
+    public static function formatKodeMataAnggaran(string $kode): string
+    {
+        return strtoupper(trim($kode));
+    }
+
+    /**
+     * Generate kode mata anggaran otomatis berdasarkan parent
+     */
+    public static function generateKodeMataAnggaran($parentId = null): string
+    {
+        if (!$parentId) {
+            // Generate kode untuk parent (level 0)
+            $lastParent = \App\Models\KeuanganMataAnggaran::whereNull('parent_mata_anggaran')
+                ->orderBy('kode_mata_anggaran', 'desc')
+                ->first();
+
+            if (!$lastParent) {
+                return '1';
+            }
+
+            $lastNumber = intval($lastParent->kode_mata_anggaran);
+            return strval($lastNumber + 1);
+        }
+
+        // Generate kode untuk child
+        $parent = \App\Models\KeuanganMataAnggaran::find($parentId);
+        if (!$parent) {
+            return '1';
+        }
+
+        $lastChild = \App\Models\KeuanganMataAnggaran::where('parent_mata_anggaran', $parentId)
+            ->orderBy('kode_mata_anggaran', 'desc')
+            ->first();
+
+        if (!$lastChild) {
+            return $parent->kode_mata_anggaran . '.1';
+        }
+
+        // Extract number setelah titik terakhir
+        $parts = explode('.', $lastChild->kode_mata_anggaran);
+        $lastNumber = intval(end($parts));
+
+        array_pop($parts);
+        return implode('.', $parts) . '.' . ($lastNumber + 1);
     }
 }

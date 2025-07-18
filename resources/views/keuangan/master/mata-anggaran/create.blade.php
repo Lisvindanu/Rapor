@@ -19,7 +19,7 @@
                 'label' => 'Kode Mata Anggaran',
                 'type' => 'text',
                 'required' => true,
-                'placeholder' => 'Contoh: MA001',
+                'placeholder' => 'Contoh: 1 atau 1.1',
                 'col_size' => '6',
                 'help_text' => 'Kode unik untuk mata anggaran (maksimal 20 karakter)'
             ],
@@ -29,14 +29,6 @@
                 'type' => 'text',
                 'required' => true,
                 'placeholder' => 'Masukkan nama mata anggaran',
-                'col_size' => '6'
-            ],
-            [
-                'name' => 'nama_mata_anggaran_en',
-                'label' => 'Nama Mata Anggaran (English)',
-                'type' => 'text',
-                'required' => false,
-                'placeholder' => 'English name (optional)',
                 'col_size' => '6'
             ],
             [
@@ -52,50 +44,13 @@
                 'name' => 'kategori',
                 'label' => 'Kategori',
                 'type' => 'select',
-                'required' => false,
+                'required' => true,
                 'options' => [
-                    'operasional' => 'Operasional',
-                    'investasi' => 'Investasi',
-                    'pembiayaan' => 'Pembiayaan',
-                    'lainnya' => 'Lainnya'
+                    'debet' => 'Debet (Pengeluaran/Biaya)',
+                    'kredit' => 'Kredit (Pendapatan/Penerimaan)'
                 ],
                 'placeholder' => 'Pilih kategori',
                 'col_size' => '6'
-            ],
-            [
-                'name' => 'tahun_anggaran',
-                'label' => 'Tahun Anggaran',
-                'type' => 'select',
-                'required' => true,
-                'options' => array_combine($tahunOptions, $tahunOptions),
-                'placeholder' => 'Pilih tahun anggaran',
-                'col_size' => '6'
-            ],
-            [
-                'name' => 'alokasi_anggaran',
-                'label' => 'Alokasi Anggaran',
-                'type' => 'currency',
-                'required' => false,
-                'placeholder' => '0',
-                'col_size' => '6',
-                'help_text' => 'Dalam Rupiah, kosongkan jika belum ditentukan'
-            ],
-            [
-                'name' => 'deskripsi',
-                'label' => 'Deskripsi',
-                'type' => 'textarea',
-                'required' => false,
-                'placeholder' => 'Deskripsi detail mata anggaran',
-                'rows' => '4',
-                'col_size' => '12'
-            ],
-            [
-                'name' => 'status_aktif',
-                'label' => 'Status',
-                'type' => 'checkbox',
-                'required' => false,
-                'checkbox_label' => 'Aktif',
-                'col_size' => '12'
             ]
         ]
     ];

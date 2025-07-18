@@ -43,6 +43,16 @@
                                                     <span class="badge bg-{{ $column['badge_class'] ?? 'primary' }}">
                                                         {{ data_get($item, $column['field']) }}
                                                     </span>
+                                                @elseif($column['type'] === 'kategori_badge')
+                                                    @php
+                                                        $kategori = data_get($item, $column['field']);
+                                                        $badgeClass = $kategori === 'debet' ? 'danger' : 'success';
+                                                        $icon = $kategori === 'debet' ? 'minus-circle' : 'plus-circle';
+                                                    @endphp
+                                                    <span class="badge bg-{{ $badgeClass }}">
+                                                        <i class="fas fa-{{ $icon }} me-1"></i>
+                                                        {{ ucfirst($kategori) }}
+                                                    </span>
                                                 @elseif($column['type'] === 'status')
                                                     @if(data_get($item, $column['field']))
                                                         <span class="badge bg-success">Aktif</span>
@@ -56,6 +66,18 @@
                                                     @if(isset($column['description_field']) && data_get($item, $column['description_field']))
                                                         <small class="text-muted">{{ Str::limit(data_get($item, $column['description_field']), 60) }}</small>
                                                     @endif
+                                                @elseif($column['type'] === 'text_with_hierarchy')
+                                                    @php
+                                                        $level = data_get($item, 'hierarchy_level', 0);
+                                                        $indent = str_repeat('&nbsp;&nbsp;&nbsp;', $level);
+                                                    @endphp
+                                                    <div class="fw-bold">
+                                                        {!! $indent !!}
+                                                        @if($level > 0)
+                                                            <i class="fas fa-level-up-alt text-muted me-1" style="transform: rotate(90deg);"></i>
+                                                        @endif
+                                                        {{ data_get($item, $column['field']) }}
+                                                    </div>
                                                 @elseif($column['type'] === 'children_count')
                                                     @if(data_get($item, 'children_count', 0) > 0)
                                                         <span class="badge bg-info small">
@@ -70,7 +92,7 @@
                                                             {{ data_get($item, $column['relationship'] . '.' . $column['field']) }}
                                                         </span>
                                                     @else
-                                                        <span class="text-muted">-</span>
+                                                        <span class="text-muted">Level Utama</span>
                                                     @endif
                                                 @else
                                                     {{ data_get($item, $column['field']) }}

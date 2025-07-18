@@ -35,6 +35,21 @@
                                                         <span class="text-muted">{{ $field['empty_text'] ?? '-' }}</span>
                                                     @endif
 
+                                                @elseif($field['type'] === 'kategori_badge')
+                                                    @if($value)
+                                                        @php
+                                                            $badgeClass = $value === 'debet' ? 'danger' : 'success';
+                                                            $icon = $value === 'debet' ? 'minus-circle' : 'plus-circle';
+                                                            $text = $value === 'debet' ? 'Debet (Pengeluaran/Biaya)' : 'Kredit (Pendapatan/Penerimaan)';
+                                                        @endphp
+                                                        <span class="badge bg-{{ $badgeClass }}">
+                                                            <i class="fas fa-{{ $icon }} me-1"></i>
+                                                            {{ $text }}
+                                                        </span>
+                                                    @else
+                                                        <span class="text-muted">{{ $field['empty_text'] ?? 'Belum ditentukan' }}</span>
+                                                    @endif
+
                                                 @elseif($field['type'] === 'status')
                                                     @if($value)
                                                         <span class="badge bg-success">

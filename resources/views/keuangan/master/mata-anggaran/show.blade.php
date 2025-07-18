@@ -21,111 +21,101 @@
         'sections' => [
             [
                 'title' => 'Informasi Umum',
+                'icon' => 'info-circle',
                 'fields' => [
                     [
                         'label' => 'Kode Mata Anggaran',
                         'field' => 'kode_mata_anggaran',
                         'type' => 'badge',
-                        'badge_class' => 'primary'
+                        'badge_class' => 'primary',
+                        'col_size' => '6'
                     ],
                     [
                         'label' => 'Nama Mata Anggaran',
                         'field' => 'nama_mata_anggaran',
-                        'type' => 'text'
+                        'type' => 'text',
+                        'col_size' => '6'
                     ],
                     [
-                        'label' => 'Nama (English)',
-                        'field' => 'nama_mata_anggaran_en',
-                        'type' => 'text'
+                        'label' => 'Kategori',
+                        'field' => 'kategori',
+                        'type' => 'kategori_badge',
+                        'col_size' => '6'
                     ],
+                    [
+                        'label' => 'Level Hierarki',
+                        'field' => 'hierarchy_level',
+                        'type' => 'badge',
+                        'badge_class' => 'info',
+                        'col_size' => '6'
+                    ]
+                ]
+            ],
+            [
+                'title' => 'Hierarki & Struktur',
+                'icon' => 'sitemap',
+                'fields' => [
                     [
                         'label' => 'Parent Mata Anggaran',
                         'field' => 'parentMataAnggaran.nama_mata_anggaran',
                         'type' => 'text',
-                        'empty_text' => 'Level Utama'
+                        'empty_text' => 'Level Utama (Tidak ada parent)',
+                        'col_size' => '6'
+                    ],
+                    [
+                        'label' => 'Jumlah Sub Item',
+                        'field' => 'children_count',
+                        'type' => 'badge',
+                        'badge_class' => 'success',
+                        'col_size' => '6'
+                    ],
+                    [
+                        'label' => 'Path Lengkap',
+                        'field' => 'full_path',
+                        'type' => 'text',
+                        'col_size' => '12'
                     ]
                 ]
             ],
             [
-                'title' => 'Kategori & Anggaran',
+                'title' => 'Informasi Sistem',
+                'icon' => 'clock',
                 'fields' => [
-                    [
-                        'label' => 'Kategori',
-                        'field' => 'kategori',
-                        'type' => 'badge',
-                        'badge_class' => 'info'
-                    ],
-                    [
-                        'label' => 'Tahun Anggaran',
-                        'field' => 'tahun_anggaran',
-                        'type' => 'badge',
-                        'badge_class' => 'info'
-                    ],
-                    [
-                        'label' => 'Alokasi Anggaran',
-                        'field' => 'alokasi_anggaran',
-                        'type' => 'currency'
-                    ],
-                    [
-                        'label' => 'Sisa Anggaran',
-                        'field' => 'sisa_anggaran',
-                        'type' => 'currency'
-                    ]
-                ]
-            ],
-            [
-                'title' => 'Status & Waktu',
-                'fields' => [
-                    [
-                        'label' => 'Status',
-                        'field' => 'status_aktif',
-                        'type' => 'status'
-                    ],
                     [
                         'label' => 'Dibuat Pada',
                         'field' => 'created_at',
-                        'type' => 'datetime'
+                        'type' => 'datetime',
+                        'col_size' => '6'
                     ],
                     [
                         'label' => 'Terakhir Diubah',
                         'field' => 'updated_at',
-                        'type' => 'datetime'
+                        'type' => 'datetime',
+                        'col_size' => '6'
                     ]
                 ]
             ]
         ]
     ];
 
-    if (!empty($mataAnggaran->deskripsi)) {
-        $detailConfig['sections'][] = [
-            'title' => 'Deskripsi',
-            'fields' => [
-                [
-                    'label' => 'Deskripsi',
-                    'field' => 'deskripsi',
-                    'type' => 'longtext'
-                ]
-            ]
-        ];
-    }
-
     $actionConfig = [
         'buttons' => [
             [
                 'route' => route('keuangan.mata-anggaran.edit', $mataAnggaran->id),
-                'text' => 'Edit',
+                'text' => 'Edit Data',
                 'icon' => 'fas fa-edit',
                 'class' => 'btn-warning'
             ]
         ]
     ];
 
-    if ($mataAnggaran->hasChildren()) {
+    // Add create child button if this is a parent
+    if ($mataAnggaran->is_parent || $mataAnggaran->children_count == 0) {
         $actionConfig['buttons'][] = [
-            'route' => route('keuangan.sub-mata-anggaran.index', $mataAnggaran->id),
-            'text' => 'Lihat Sub Mata Anggaran',
-            'icon' => 'fas fa-sitemap',
-            'class' => 'btn-info'
+            'route' => route('keuangan.mata-anggaran.create') . '?parent=' . $mataAnggaran->id,
+            'text' => 'Tambah Sub Item',
+            'icon' => 'fas fa-plus',
+            'class' => 'btn-success'
         ];
     }
 

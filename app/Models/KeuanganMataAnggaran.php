@@ -15,25 +15,12 @@ class KeuanganMataAnggaran extends Model
     protected $fillable = [
         'kode_mata_anggaran',
         'nama_mata_anggaran',
-        'nama_mata_anggaran_en',
-        'deskripsi',
         'parent_mata_anggaran',
-        'level_mata_anggaran',
         'kategori',
-        'alokasi_anggaran',
-        'sisa_anggaran',
-        'tahun_anggaran',
-        'status_aktif',
-        'created_by',
-        'updated_by',
     ];
 
     protected $casts = [
-        'alokasi_anggaran' => 'decimal:2',
-        'sisa_anggaran' => 'decimal:2',
-        'status_aktif' => 'boolean',
-        'tahun_anggaran' => 'integer',
-        'level_mata_anggaran' => 'integer',
+        'kategori' => 'string',
     ];
 
     // Relationships
@@ -54,25 +41,61 @@ class KeuanganMataAnggaran extends Model
     }
 
     // Scopes
-    public function scopeActive($query)
-    {
-        return $query->where('status_aktif', true);
-    }
-
     public function scopeParents($query)
     {
         return $query->whereNull('parent_mata_anggaran');
     }
 
-    public function scopeByTahunAnggaran($query, $tahun)
+    public function scopeByKategori($query, $kategori)
     {
-        return $query->where('tahun_anggaran', $tahun);
+        return $query->where('kategori', $kategori);
+    }
+
+    public function scopeDebet($query)
+    {
+        return $query->where('kategori', 'debet');
+    }
+
+    public function scopeKredit($query)
+    {
+        return $query->where('kategori', 'kredit');
     }
 
     // Accessors & Mutators
     public function getChildrenCountAttribute()
     {
         return $this->countRecursiveChildren($this);
+    }
+
+    public function getIsParentAttribute()
+    {
+        return is_null($this->parent_mata_anggaran);
+    }
+
+    public function getHierarchyLevelAttribute()
+    {
+        $level = 0;
+        $parent = $this->parentMataAnggaran;
+
+        while ($parent) {
+            $level++;
+            $parent = $parent->parentMataAnggaran;
+        }
+
+        return $level;
+    }
+
+    public function getFullPathAttribute()
+    {
+        $path = collect([$this->nama_mata_anggaran]);
+        $parent = $this->parentMataAnggaran;
+
+        while ($parent) {
+            $path->prepend($parent->nama_mata_anggaran);
+            $parent = $parent->parentMataAnggaran;
+        }
+
+        return $path->implode(' → ');
     }
 
     // Helper Methods
@@ -94,23 +117,44 @@ class KeuanganMataAnggaran extends Model
         return $this->childMataAnggaran()->exists();
     }
 
-    // Boot method for auto-filling created_by and updated_by
-    protected static function boot()
+    public function getChildrenRecursive()
     {
-        parent::boot();
+        $children = collect();
 
-        static::creating(function ($model) {
-            if (auth()->check()) {
-                $model->created_by = auth()->id();
-            }
-        });
+        foreach ($this->childMataAnggaran as $child) {
+            $children->push($child);
+            $children = $children->merge($child->getChildrenRecursive());
+        }
 
-        static::updating(function ($model) {
-            if (auth()->check()) {
-                $model->updated_by = auth()->id();
-            }
-        });
+        return $children;
     }
 
-    protected $appends = ['children_count'];
+    public function getAllDescendants()
+    {
+        return $this->getChildrenRecursive();
+    }
+
+    public function isChildOf($parentId)
+    {
+        if ($this->parent_mata_anggaran === $parentId) {
+            return true;
+        }
+
+        if ($this->parentMataAnggaran) {
+            return $this->parentMataAnggaran->isChildOf($parentId);
+        }
+
+        return false;
+    }
+
+    public function canBeParentOf($childId)
+    {
+        if ($this->id === $childId) {
+            return false;
+        }
+
+        return !$this->isChildOf($childId);
+    }
+
+    protected $appends = ['children_count', 'is_parent', 'hierarchy_level', 'full_path'];
 }

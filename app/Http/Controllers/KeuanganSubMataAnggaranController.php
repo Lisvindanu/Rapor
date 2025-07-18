@@ -12,6 +12,12 @@ class KeuanganSubMataAnggaranController extends Controller
     public function index($parentId, Request $request)
     {
         try {
+            Log::info('KeuanganSubMataAnggaran - Index accessed', [
+                'parentId' => $parentId,
+                'user_id' => auth()->id(),
+                'search' => $request->search ?? 'none'
+            ]);
+
             $parent = KeuanganMataAnggaran::findOrFail($parentId);
 
             $query = KeuanganMataAnggaran::with(['parentMataAnggaran', 'childMataAnggaran'])
@@ -19,24 +25,33 @@ class KeuanganSubMataAnggaranController extends Controller
                 ->active();
 
             if ($request->filled('search')) {
-                $search = $request->search;
+                $search = trim($request->search);
                 $query->where(function ($q) use ($search) {
-                    $q->where('kode_mata_anggaran', 'like', "%{$search}%")
-                        ->orWhere('nama_mata_anggaran', 'like', "%{$search}%");
+                    $q->where('kode_mata_anggaran', 'ilike', "%{$search}%")
+                        ->orWhere('nama_mata_anggaran', 'ilike', "%{$search}%")
+                        ->orWhere('deskripsi', 'ilike', "%{$search}%")
+                        ->orWhere('kategori', 'ilike', "%{$search}%");
                 });
             }
 
+            $perPage = $this->validatePerPage($request);
             $subMataAnggarans = $query->orderBy('kode_mata_anggaran')
-                ->paginate(15)
+                ->paginate($perPage)
                 ->withQueryString();
 
+            Log::info('Query results', [
+                'parent_id' => $parentId,
+                'total' => $subMataAnggarans->total(),
+                'current_page' => $subMataAnggarans->currentPage()
+            ]);
 
             return view('keuangan.master.sub-mata-anggaran.index', compact('parent', 'subMataAnggarans'));
 
         } catch (Exception $e) {
             Log::error('KeuanganSubMataAnggaran - Error in index:', [
                 'parentId' => $parentId,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
+                'line' => $e->getLine()
             ]);
 
             return back()->with('error', 'Terjadi kesalahan saat memuat data sub mata anggaran.');
@@ -48,6 +63,10 @@ class KeuanganSubMataAnggaranController extends Controller
         try {
             $parent = KeuanganMataAnggaran::findOrFail($parentId);
 
+            Log::info('KeuanganSubMataAnggaran - Create form accessed', [
+                'parentId' => $parentId,
+                'parent_nama' => $parent->nama_mata_anggaran
+            ]);
 
             return view('keuangan.master.sub-mata-anggaran.create', compact('parent'));
 
@@ -80,6 +99,7 @@ class KeuanganSubMataAnggaranController extends Controller
             $validated['tahun_anggaran'] = $parent->tahun_anggaran;
             $validated['status_aktif'] = $request->has('status_aktif');
             $validated['sisa_anggaran'] = $validated['alokasi_anggaran'] ?? 0;
+            $validated['level_mata_anggaran'] = ($parent->level_mata_anggaran ?? 0) + 1;
 
             $subMataAnggaran = KeuanganMataAnggaran::create($validated);
 
@@ -111,6 +131,13 @@ class KeuanganSubMataAnggaranController extends Controller
             $parent = KeuanganMataAnggaran::findOrFail($parentId);
             $subMataAnggaran = KeuanganMataAnggaran::where('parent_mata_anggaran', $parentId)
                 ->findOrFail($id);
+
+            Log::info('KeuanganSubMataAnggaran - Edit form accessed', [
+                'parentId' => $parentId,
+                'id' => $id,
+                'kode' => $subMataAnggaran->kode_mata_anggaran
+            ]);
+
             return view('keuangan.master.sub-mata-anggaran.edit', compact('parent', 'subMataAnggaran'));
 
         } catch (Exception $e) {
@@ -227,5 +254,13 @@ class KeuanganSubMataAnggaranController extends Controller
                 'message' => 'Gagal memuat sub mata anggaran.'
             ], 500);
         }
+    }
+
+    // Private helper methods
+    private function validatePerPage(Request $request)
+    {
+        $perPage = $request->get('per_page', 15);
+        $allowedPerPage = [10, 15, 25, 50, 100];
+        return in_array((int)$perPage, $allowedPerPage) ? $perPage : 15;
     }
 }

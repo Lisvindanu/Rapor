@@ -127,26 +127,41 @@
 @endif
 
 <style>
+    /* ==========================================================================
+       1. Konfigurasi Tombol Expand/Collapse
+       ========================================================================== */
     .expand-btn {
-        border: none !important;
         background: none !important;
+        border: none !important;
         padding: 0 !important;
         font-size: 16px;
         cursor: pointer;
+        transition: transform 0.3s ease;
     }
 
     .expand-btn:hover {
-        background: none !important;
-        border: none !important;
+        transform: scale(1.1);
     }
 
-    .expand-btn i {
+    .expand-btn .fas {
         transition: all 0.3s ease;
     }
 
+
+    /* ==========================================================================
+       2. Style untuk Baris Data (Row)
+       ========================================================================== */
     .child-row {
         background-color: #f8f9fc !important;
         border-left: 4px solid #4e73df !important;
+    }
+
+    .loading-row,
+    .info-row {
+        background-color: #f8f9fa !important;
+        text-align: center;
+        font-style: italic;
+        color: #6c757d;
     }
 
     .child-row td {
@@ -155,10 +170,27 @@
         border-top: 1px solid #e3e6f0;
     }
 
+
+    /* ==========================================================================
+       3. Efek Hover
+       ========================================================================== */
+    .table-hover .parent-row:hover {
+        background-color: rgba(0, 123, 255, 0.05) !important;
+    }
+
+    .table-hover .child-row:hover {
+        background-color: rgba(78, 115, 223, 0.1) !important;
+    }
+
+
+    /* ==========================================================================
+       4. Style Konten di dalam Baris Anak (Child Row)
+       ========================================================================== */
+    /* Style untuk KODE di baris anak, teks diubah jadi putih */
     .child-row .child-kode {
         font-family: 'Courier New', monospace;
         font-weight: bold;
-        color: #5a5c69 !important;
+        color: #ffffff !important;
         font-size: 0.85rem;
     }
 
@@ -177,26 +209,16 @@
         left: 0;
     }
 
+    /* Style untuk PARENT di baris anak, teks diubah jadi putih */
     .child-row .child-parent {
-        color: #6c757d !important;
+        color: #ffffff !important;
         font-size: 0.8rem;
     }
 
-    .loading-row {
-        background-color: #f8f9fa !important;
-        text-align: center;
-        font-style: italic;
-        color: #6c757d;
-    }
 
-    .table-hover .parent-row:hover {
-        background-color: rgba(0, 123, 255, 0.05) !important;
-    }
-
-    .table-hover .child-row:hover {
-        background-color: rgba(78, 115, 223, 0.1) !important;
-    }
-
+    /* ==========================================================================
+       5. Desain Responsif
+       ========================================================================== */
     @media (max-width: 768px) {
         .child-row td {
             padding: 0.5rem 0.25rem !important;

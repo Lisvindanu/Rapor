@@ -25,114 +25,74 @@
                             <table class="table table-hover" id="masterDataTable">
                                 <thead class="table-light">
                                 <tr>
-                                    @foreach($tableConfig['columns'] as $column)
-                                        <th style="width: {{ $column['width'] ?? 'auto' }}">{{ $column['label'] }}</th>
-                                    @endforeach
+                                    <th style="width: 5%">No</th>
+                                    <th style="width: 5%"></th> {{-- Expand/Collapse column --}}
+                                    <th style="width: 10%">Kode</th>
+                                    <th style="width: 35%">Nama Mata Anggaran</th>
+                                    <th style="width: 15%">Parent</th>
+                                    <th style="width: 10%">Sub Item</th>
+                                    <th style="width: 15%">Kategori</th>
                                     <th style="width: 150px;">Aksi</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($tableConfig['data'] as $index => $item)
-                                    <tr>
-                                        {{-- Dynamic columns based on config --}}
-                                        @foreach($tableConfig['columns'] as $column)
-                                            <td>
-                                                @if($column['type'] === 'number')
-                                                    {{ $tableConfig['data']->firstItem() + $index }}
-                                                @elseif($column['type'] === 'badge')
-                                                    <span class="badge bg-{{ $column['badge_class'] ?? 'primary' }}">
-                                                        {{ data_get($item, $column['field']) }}
-                                                    </span>
-                                                @elseif($column['type'] === 'kategori_badge')
-                                                    @php
-                                                        $kategori = data_get($item, $column['field']);
-                                                        $badgeClass = $kategori === 'debet' ? 'danger' : 'success';
-                                                        $icon = $kategori === 'debet' ? 'minus-circle' : 'plus-circle';
-                                                    @endphp
-                                                    <span class="badge bg-{{ $badgeClass }}">
-                                                        <i class="fas fa-{{ $icon }} me-1"></i>
-                                                        {{ ucfirst($kategori) }}
-                                                    </span>
-                                                @elseif($column['type'] === 'status')
-                                                    @if(data_get($item, $column['field']))
-                                                        <span class="badge bg-success">Aktif</span>
-                                                    @else
-                                                        <span class="badge bg-danger">Tidak Aktif</span>
-                                                    @endif
-                                                @elseif($column['type'] === 'currency')
-                                                    Rp {{ number_format(data_get($item, $column['field'], 0), 0, ',', '.') }}
-                                                @elseif($column['type'] === 'text_with_description')
-                                                    <div class="fw-bold">{{ data_get($item, $column['field']) }}</div>
-                                                    @if(isset($column['description_field']) && data_get($item, $column['description_field']))
-                                                        <small class="text-muted">{{ Str::limit(data_get($item, $column['description_field']), 60) }}</small>
-                                                    @endif
-                                                @elseif($column['type'] === 'text_with_hierarchy')
-                                                    @php
-                                                        $level = data_get($item, 'hierarchy_level', 0);
-                                                        $indent = str_repeat('&nbsp;&nbsp;&nbsp;', $level);
-                                                    @endphp
-                                                    <div class="fw-bold">
-                                                        {!! $indent !!}
-                                                        @if($level > 0)
-                                                            <i class="fas fa-level-up-alt text-muted me-1" style="transform: rotate(90deg);"></i>
-                                                        @endif
-                                                        {{ data_get($item, $column['field']) }}
-                                                    </div>
-                                                @elseif($column['type'] === 'children_count')
-                                                    @if(data_get($item, 'children_count', 0) > 0)
-                                                        <span class="badge bg-info small">
-                                                            {{ data_get($item, 'children_count') }} sub item
-                                                        </span>
-                                                    @else
-                                                        <span class="text-muted">-</span>
-                                                    @endif
-                                                @elseif($column['type'] === 'parent_name')
-                                                    @if(data_get($item, $column['relationship']))
-                                                        <span class="badge bg-secondary">
-                                                            {{ data_get($item, $column['relationship'] . '.' . $column['field']) }}
-                                                        </span>
-                                                    @else
-                                                        <span class="text-muted">Level Utama</span>
-                                                    @endif
-                                                @else
-                                                    {{ data_get($item, $column['field']) }}
-                                                @endif
-                                            </td>
-                                        @endforeach
-
-                                        {{-- Actions Column --}}
+                                    <tr class="parent-row" data-parent-id="{{ $item->id }}">
+                                        <td>{{ $tableConfig['data']->firstItem() + $index }}</td>
+                                        <td>
+                                            @if($item->children_count > 0)
+                                                <button class="btn btn-sm btn-link expand-btn p-0"
+                                                        data-parent-id="{{ $item->id }}"
+                                                        title="Tampilkan sub item">
+                                                    <i class="fas fa-plus-square text-primary"></i>
+                                                </button>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ $item->kode_mata_anggaran }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">{{ $item->nama_mata_anggaran }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">Level Utama</span>
+                                        </td>
+                                        <td>
+                                            @if($item->children_count > 0)
+                                                <span class="badge bg-info small">{{ $item->children_count }} sub item</span>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @php
+                                                $badgeClass = $item->kategori === 'debet' ? 'danger' : 'success';
+                                                $icon = $item->kategori === 'debet' ? 'minus-circle' : 'plus-circle';
+                                            @endphp
+                                            <span class="badge bg-{{ $badgeClass }}">
+                                                <i class="fas fa-{{ $icon }} me-1"></i>
+                                                {{ ucfirst($item->kategori) }}
+                                            </span>
+                                        </td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                @if(isset($tableConfig['actions']['children']) && data_get($item, 'children_count', 0) > 0)
-                                                    <a href="{{ str_replace(':id', $item->id, $tableConfig['actions']['children']) }}"
-                                                       class="btn btn-sm btn-outline-success" title="Lihat Sub">
-                                                        <i class="fas fa-sitemap"></i>
-                                                    </a>
-                                                @endif
-                                                @if(isset($tableConfig['actions']['show']))
-                                                    <a href="{{ str_replace(':id', $item->id, $tableConfig['actions']['show']) }}"
-                                                       class="btn btn-sm btn-outline-info" title="Lihat Detail">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
-                                                @endif
-                                                @if(isset($tableConfig['actions']['edit']))
-                                                    <a href="{{ str_replace(':id', $item->id, $tableConfig['actions']['edit']) }}"
-                                                       class="btn btn-sm btn-outline-warning" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                @endif
-                                                @if(isset($tableConfig['actions']['delete']))
-                                                    <form action="{{ str_replace(':id', $item->id, $tableConfig['actions']['delete']) }}"
-                                                          method="POST" class="d-inline"
-                                                          data-item-name="{{ data_get($item, $tableConfig['delete_name_field'] ?? 'nama', 'data ini') }}"
-                                                          onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                @endif
+                                                <a href="{{ str_replace(':id', $item->id, $tableConfig['actions']['show']) }}"
+                                                   class="btn btn-sm btn-outline-info" title="Lihat Detail">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ str_replace(':id', $item->id, $tableConfig['actions']['edit']) }}"
+                                                   class="btn btn-sm btn-outline-warning" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form action="{{ str_replace(':id', $item->id, $tableConfig['actions']['delete']) }}"
+                                                      method="POST" class="d-inline"
+                                                      onsubmit="return confirm('Yakin ingin menghapus mata anggaran {{ $item->nama_mata_anggaran }}?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>
@@ -165,3 +125,234 @@
         </div>
     </div>
 @endif
+
+<style>
+    .expand-btn {
+        border: none !important;
+        background: none !important;
+        padding: 0 !important;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .expand-btn:hover {
+        background: none !important;
+        border: none !important;
+    }
+
+    .expand-btn i {
+        transition: all 0.3s ease;
+    }
+
+    .child-row {
+        background-color: #f8f9fc !important;
+        border-left: 4px solid #4e73df !important;
+    }
+
+    .child-row td {
+        padding: 0.75rem 0.5rem !important;
+        font-size: 0.9rem;
+        border-top: 1px solid #e3e6f0;
+    }
+
+    .child-row .child-kode {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        color: #5a5c69 !important;
+        font-size: 0.85rem;
+    }
+
+    .child-row .child-nama {
+        color: #2c3e50 !important;
+        font-weight: 500;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .child-row .child-nama::before {
+        content: "└── ";
+        color: #6c757d;
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+    }
+
+    .child-row .child-parent {
+        color: #6c757d !important;
+        font-size: 0.8rem;
+    }
+
+    .loading-row {
+        background-color: #f8f9fa !important;
+        text-align: center;
+        font-style: italic;
+        color: #6c757d;
+    }
+
+    .table-hover .parent-row:hover {
+        background-color: rgba(0, 123, 255, 0.05) !important;
+    }
+
+    .table-hover .child-row:hover {
+        background-color: rgba(78, 115, 223, 0.1) !important;
+    }
+
+    @media (max-width: 768px) {
+        .child-row td {
+            padding: 0.5rem 0.25rem !important;
+            font-size: 0.8rem;
+        }
+
+        .child-row .child-nama {
+            padding-left: 1rem;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🎯 Data Table with Expand/Collapse loaded');
+
+        const expandButtons = document.querySelectorAll('.expand-btn');
+
+        expandButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const parentId = this.dataset.parentId;
+                const parentRow = this.closest('tr');
+                const icon = this.querySelector('i');
+
+                if (icon.classList.contains('fa-plus-square')) {
+                    expandChildren(parentId, parentRow, icon);
+                } else {
+                    collapseChildren(parentId, parentRow, icon);
+                }
+            });
+        });
+
+        function expandChildren(parentId, parentRow, icon) {
+            // Show loading
+            const loadingRow = document.createElement('tr');
+            loadingRow.className = 'loading-row';
+            loadingRow.innerHTML = `
+            <td colspan="8" class="text-center py-3">
+                <i class="fas fa-spinner fa-spin me-2"></i>Memuat sub item...
+            </td>
+        `;
+            parentRow.insertAdjacentElement('afterend', loadingRow);
+
+            // Change icon
+            icon.classList.remove('fa-plus-square');
+            icon.classList.add('fa-minus-square');
+
+            // Fetch children
+            fetch(`/keuangan/mata-anggaran/${parentId}/children`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    loadingRow.remove();
+
+                    if (data.success && data.data.length > 0) {
+                        data.data.forEach((child) => {
+                            const childRow = createChildRow(child, parentId);
+                            parentRow.insertAdjacentElement('afterend', childRow);
+                        });
+                    } else {
+                        showNoChildrenRow(parentRow, parentId);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingRow.remove();
+                    showErrorRow(parentRow, parentId);
+                });
+        }
+
+        function collapseChildren(parentId, parentRow, icon) {
+            const childRows = document.querySelectorAll(`tr[data-parent-id="${parentId}"]`);
+            childRows.forEach(row => {
+                if (row !== parentRow) {
+                    row.remove();
+                }
+            });
+
+            icon.classList.remove('fa-minus-square');
+            icon.classList.add('fa-plus-square');
+        }
+
+        function createChildRow(child, parentId) {
+            const row = document.createElement('tr');
+            row.className = 'child-row';
+            row.dataset.parentId = parentId;
+
+            const kategoriClass = child.kategori === 'debet' ? 'danger' : 'success';
+            const kategoriIcon = child.kategori === 'debet' ? 'minus-circle' : 'plus-circle';
+            const parentKode = child.kode_mata_anggaran.split('.')[0];
+
+            row.innerHTML = `
+            <td></td>
+            <td></td>
+            <td>
+                <span class="badge bg-secondary child-kode">${child.kode_mata_anggaran}</span>
+            </td>
+            <td>
+                <div class="child-nama">${child.nama_mata_anggaran}</div>
+            </td>
+            <td>
+                <span class="badge bg-secondary small child-parent">${parentKode}</span>
+            </td>
+            <td>
+                <span class="text-muted">-</span>
+            </td>
+            <td>
+                <span class="badge bg-${kategoriClass}">
+                    <i class="fas fa-${kategoriIcon} me-1"></i>
+                    ${child.kategori.charAt(0).toUpperCase() + child.kategori.slice(1)}
+                </span>
+            </td>
+            <td>
+                <div class="btn-group" role="group">
+                    <a href="/keuangan/mata-anggaran/${child.id}" class="btn btn-sm btn-outline-info" title="Detail">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="/keuangan/mata-anggaran/${child.id}/edit" class="btn btn-sm btn-outline-warning" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+            </td>
+        `;
+
+            return row;
+        }
+
+        function showNoChildrenRow(parentRow, parentId) {
+            const noChildRow = document.createElement('tr');
+            noChildRow.className = 'child-row';
+            noChildRow.dataset.parentId = parentId;
+            noChildRow.innerHTML = `
+            <td colspan="8" class="text-center py-3 text-muted">
+                <i class="fas fa-info-circle me-2"></i>Tidak ada sub item
+            </td>
+        `;
+            parentRow.insertAdjacentElement('afterend', noChildRow);
+        }
+
+        function showErrorRow(parentRow, parentId) {
+            const errorRow = document.createElement('tr');
+            errorRow.className = 'child-row';
+            errorRow.dataset.parentId = parentId;
+            errorRow.innerHTML = `
+            <td colspan="8" class="text-center py-3 text-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>Gagal memuat sub item
+            </td>
+        `;
+            parentRow.insertAdjacentElement('afterend', errorRow);
+        }
+    });
+</script>

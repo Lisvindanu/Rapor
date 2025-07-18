@@ -11,11 +11,11 @@ return new class extends Migration
         // Drop existing table first if you want complete fresh start
         Schema::dropIfExists('keuangan_mtang');
 
-        // Create new simplified structure
+        // Create new structure with proper field sizes for Roman numerals and longer names
         Schema::create('keuangan_mtang', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('kode_mata_anggaran', 20)->unique();
-            $table->string('nama_mata_anggaran', 255);
+            $table->string('kode_mata_anggaran', 50)->unique(); // Increased from 20 to 50
+            $table->string('nama_mata_anggaran', 500); // Increased from 255 to 500
             $table->uuid('parent_mata_anggaran')->nullable();
             $table->enum('kategori', ['debet', 'kredit']);
             $table->timestamps();

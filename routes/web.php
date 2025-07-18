@@ -535,22 +535,17 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         });
 
         // Master Mata Anggaran Routes
-        // Nama grup diubah untuk menambahkan awalan 'keuangan.' secara manual
         Route::prefix('mata-anggaran')->name('keuangan.mata-anggaran.')->group(function () {
-            // Nama rute menjadi: 'keuangan.mata-anggaran.index'
             Route::get('/', "KeuanganMataAnggaranController@index")->name('index');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.create'
             Route::get('/create', "KeuanganMataAnggaranController@create")->name('create');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.store'
             Route::post('/', "KeuanganMataAnggaranController@store")->name('store');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.show'
             Route::get('/{id}', "KeuanganMataAnggaranController@show")->name('show');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.edit'
             Route::get('/{id}/edit', "KeuanganMataAnggaranController@edit")->name('edit');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.update'
             Route::put('/{id}', "KeuanganMataAnggaranController@update")->name('update');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.destroy'
             Route::delete('/{id}', "KeuanganMataAnggaranController@destroy")->name('destroy');
+
+            // API untuk ambil children via AJAX
+            Route::get('/{parentId}/children', "KeuanganMataAnggaranController@getChildren")->name('children');
         });
 
     });

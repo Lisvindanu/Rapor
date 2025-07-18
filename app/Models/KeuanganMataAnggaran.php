@@ -13,7 +13,6 @@ class KeuanganMataAnggaran extends Model
     protected $table = 'keuangan_mtang';
 
     protected $fillable = [
-        'id',
         'kode_mata_anggaran',
         'nama_mata_anggaran',
         'nama_mata_anggaran_en',
@@ -33,8 +32,11 @@ class KeuanganMataAnggaran extends Model
         'alokasi_anggaran' => 'decimal:2',
         'sisa_anggaran' => 'decimal:2',
         'status_aktif' => 'boolean',
+        'tahun_anggaran' => 'integer',
+        'level_mata_anggaran' => 'integer',
     ];
 
+    // Relationships
     public function parentMataAnggaran()
     {
         return $this->belongsTo(KeuanganMataAnggaran::class, 'parent_mata_anggaran', 'id');
@@ -51,6 +53,7 @@ class KeuanganMataAnggaran extends Model
             ->with('childrenRecursive');
     }
 
+    // Scopes
     public function scopeActive($query)
     {
         return $query->where('status_aktif', true);
@@ -66,11 +69,13 @@ class KeuanganMataAnggaran extends Model
         return $query->where('tahun_anggaran', $tahun);
     }
 
+    // Accessors & Mutators
     public function getChildrenCountAttribute()
     {
         return $this->countRecursiveChildren($this);
     }
 
+    // Helper Methods
     protected function countRecursiveChildren($mataAnggaran)
     {
         $count = 0;
@@ -89,16 +94,21 @@ class KeuanganMataAnggaran extends Model
         return $this->childMataAnggaran()->exists();
     }
 
+    // Boot method for auto-filling created_by and updated_by
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($model) {
-            $model->created_by = auth()->id();
+            if (auth()->check()) {
+                $model->created_by = auth()->id();
+            }
         });
 
         static::updating(function ($model) {
-            $model->updated_by = auth()->id();
+            if (auth()->check()) {
+                $model->updated_by = auth()->id();
+            }
         });
     }
 

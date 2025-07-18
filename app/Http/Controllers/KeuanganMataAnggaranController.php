@@ -68,9 +68,24 @@ class KeuanganMataAnggaranController extends Controller
     public function store(Request $request)
     {
         try {
+            Log::info('KeuanganMataAnggaran - Store attempt:', $request->except(['_token']));
+
             $validated = $this->validateMataAnggaran($request);
+
+            // Handle status_aktif checkbox
             $validated['status_aktif'] = $request->has('status_aktif');
+
+            // Set default values
             $validated['sisa_anggaran'] = $validated['alokasi_anggaran'] ?? 0;
+            $validated['level_mata_anggaran'] = 0;
+
+            // Calculate level if has parent
+            if ($validated['parent_mata_anggaran']) {
+                $parent = KeuanganMataAnggaran::find($validated['parent_mata_anggaran']);
+                if ($parent) {
+                    $validated['level_mata_anggaran'] = $parent->level_mata_anggaran + 1;
+                }
+            }
 
             $mataAnggaran = KeuanganMataAnggaran::create($validated);
 
@@ -82,11 +97,21 @@ class KeuanganMataAnggaranController extends Controller
             return redirect()->route('keuangan.mata-anggaran.index')
                 ->with('success', 'Mata anggaran berhasil ditambahkan.');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation errors:', $e->errors());
+            return back()->withErrors($e->errors())->withInput();
+
         } catch (Exception $e) {
-            Log::error('KeuanganMataAnggaran - Store error:', ['message' => $e->getMessage()]);
-            return back()->with('error', 'Terjadi kesalahan saat menyimpan mata anggaran.')->withInput();
+            Log::error('Store error:', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()->with('error', 'Error: ' . $e->getMessage())->withInput();
         }
     }
+
 
     public function show($id)
     {
@@ -289,16 +314,30 @@ class KeuanganMataAnggaranController extends Controller
     {
         $uniqueRule = $id ? "unique:keuangan_mtang,kode_mata_anggaran,{$id}" : 'unique:keuangan_mtang,kode_mata_anggaran';
 
+        // Clean request data
+        $data = $request->all();
+
+        // Handle parent_mata_anggaran
+        if (empty($data['parent_mata_anggaran']) || $data['parent_mata_anggaran'] === '') {
+            $data['parent_mata_anggaran'] = null;
+        }
+
+        // Handle alokasi_anggaran
+        if (empty($data['alokasi_anggaran']) || $data['alokasi_anggaran'] === '') {
+            $data['alokasi_anggaran'] = 0;
+        }
+
+        $request->merge($data);
+
         return $request->validate([
             'kode_mata_anggaran' => "required|string|max:20|{$uniqueRule}",
             'nama_mata_anggaran' => 'required|string|max:255',
             'nama_mata_anggaran_en' => 'nullable|string|max:255',
             'deskripsi' => 'nullable|string',
-            'parent_mata_anggaran' => 'nullable|uuid|exists:keuangan_mtang,id',
+            'parent_mata_anggaran' => 'nullable|exists:keuangan_mtang,id',
             'kategori' => 'nullable|string|max:100',
             'alokasi_anggaran' => 'nullable|numeric|min:0',
-            'tahun_anggaran' => 'required|integer|min:2020|max:2030',
-            'status_aktif' => 'boolean'
+            'tahun_anggaran' => 'required|integer|between:2020,2030',
         ]);
     }
 }

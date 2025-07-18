@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KeuanganMataAnggaran;
+use App\Helpers\KeuanganValidationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -12,12 +13,6 @@ class KeuanganSubMataAnggaranController extends Controller
     public function index($parentId, Request $request)
     {
         try {
-            Log::info('KeuanganSubMataAnggaran - Index accessed', [
-                'parentId' => $parentId,
-                'user_id' => auth()->id(),
-                'search' => $request->search ?? 'none'
-            ]);
-
             $parent = KeuanganMataAnggaran::findOrFail($parentId);
 
             $query = KeuanganMataAnggaran::with(['parentMataAnggaran', 'childMataAnggaran'])
@@ -29,8 +24,7 @@ class KeuanganSubMataAnggaranController extends Controller
                 $query->where(function ($q) use ($search) {
                     $q->where('kode_mata_anggaran', 'ilike', "%{$search}%")
                         ->orWhere('nama_mata_anggaran', 'ilike', "%{$search}%")
-                        ->orWhere('deskripsi', 'ilike', "%{$search}%")
-                        ->orWhere('kategori', 'ilike', "%{$search}%");
+                        ->orWhere('deskripsi', 'ilike', "%{$search}%");
                 });
             }
 
@@ -39,19 +33,12 @@ class KeuanganSubMataAnggaranController extends Controller
                 ->paginate($perPage)
                 ->withQueryString();
 
-            Log::info('Query results', [
-                'parent_id' => $parentId,
-                'total' => $subMataAnggarans->total(),
-                'current_page' => $subMataAnggarans->currentPage()
-            ]);
-
             return view('keuangan.master.sub-mata-anggaran.index', compact('parent', 'subMataAnggarans'));
 
         } catch (Exception $e) {
             Log::error('KeuanganSubMataAnggaran - Error in index:', [
                 'parentId' => $parentId,
-                'message' => $e->getMessage(),
-                'line' => $e->getLine()
+                'message' => $e->getMessage()
             ]);
 
             return back()->with('error', 'Terjadi kesalahan saat memuat data sub mata anggaran.');
@@ -62,12 +49,6 @@ class KeuanganSubMataAnggaranController extends Controller
     {
         try {
             $parent = KeuanganMataAnggaran::findOrFail($parentId);
-
-            Log::info('KeuanganSubMataAnggaran - Create form accessed', [
-                'parentId' => $parentId,
-                'parent_nama' => $parent->nama_mata_anggaran
-            ]);
-
             return view('keuangan.master.sub-mata-anggaran.create', compact('parent'));
 
         } catch (Exception $e) {
@@ -85,29 +66,26 @@ class KeuanganSubMataAnggaranController extends Controller
         try {
             $parent = KeuanganMataAnggaran::findOrFail($parentId);
 
-            $validated = $request->validate([
-                'kode_mata_anggaran' => 'required|string|max:20|unique:keuangan_mtang,kode_mata_anggaran',
-                'nama_mata_anggaran' => 'required|string|max:255',
-                'nama_mata_anggaran_en' => 'nullable|string|max:255',
-                'deskripsi' => 'nullable|string',
-                'kategori' => 'nullable|string|max:100',
-                'alokasi_anggaran' => 'nullable|numeric|min:0',
-                'status_aktif' => 'boolean'
-            ]);
+            // Clean and prepare data
+            $cleanData = KeuanganValidationHelper::prepareMataAnggaranData($request);
+            $request->merge($cleanData);
 
+            // Get validation rules (without tahun_anggaran since it comes from parent)
+            $rules = KeuanganValidationHelper::getMataAnggaranRules();
+            unset($rules['tahun_anggaran']); // Remove since it's set from parent
+
+            $validated = $request->validate($rules, KeuanganValidationHelper::getMessages());
+
+            // Set sub mata anggaran specific data
             $validated['parent_mata_anggaran'] = $parentId;
-            $validated['tahun_anggaran'] = $parent->tahun_anggaran;
-            $validated['status_aktif'] = $request->has('status_aktif');
-            $validated['sisa_anggaran'] = $validated['alokasi_anggaran'] ?? 0;
-            $validated['level_mata_anggaran'] = ($parent->level_mata_anggaran ?? 0) + 1;
+            $validated = KeuanganValidationHelper::setMataAnggaranDefaults($validated, $parent);
 
             $subMataAnggaran = KeuanganMataAnggaran::create($validated);
 
             Log::info('KeuanganSubMataAnggaran - Created successfully:', [
                 'id' => $subMataAnggaran->id,
                 'parent_id' => $parentId,
-                'kode' => $subMataAnggaran->kode_mata_anggaran,
-                'user_id' => auth()->id()
+                'kode' => $subMataAnggaran->kode_mata_anggaran
             ]);
 
             return redirect()->route('keuangan.sub-mata-anggaran.index', $parentId)
@@ -116,8 +94,7 @@ class KeuanganSubMataAnggaranController extends Controller
         } catch (Exception $e) {
             Log::error('KeuanganSubMataAnggaran - Error in store:', [
                 'parentId' => $parentId,
-                'message' => $e->getMessage(),
-                'request_data' => $request->all()
+                'message' => $e->getMessage()
             ]);
 
             return back()->with('error', 'Terjadi kesalahan saat menyimpan sub mata anggaran.')
@@ -131,12 +108,6 @@ class KeuanganSubMataAnggaranController extends Controller
             $parent = KeuanganMataAnggaran::findOrFail($parentId);
             $subMataAnggaran = KeuanganMataAnggaran::where('parent_mata_anggaran', $parentId)
                 ->findOrFail($id);
-
-            Log::info('KeuanganSubMataAnggaran - Edit form accessed', [
-                'parentId' => $parentId,
-                'id' => $id,
-                'kode' => $subMataAnggaran->kode_mata_anggaran
-            ]);
 
             return view('keuangan.master.sub-mata-anggaran.edit', compact('parent', 'subMataAnggaran'));
 
@@ -158,25 +129,22 @@ class KeuanganSubMataAnggaranController extends Controller
             $subMataAnggaran = KeuanganMataAnggaran::where('parent_mata_anggaran', $parentId)
                 ->findOrFail($id);
 
-            $validated = $request->validate([
-                'kode_mata_anggaran' => "required|string|max:20|unique:keuangan_mtang,kode_mata_anggaran,{$id}",
-                'nama_mata_anggaran' => 'required|string|max:255',
-                'nama_mata_anggaran_en' => 'nullable|string|max:255',
-                'deskripsi' => 'nullable|string',
-                'kategori' => 'nullable|string|max:100',
-                'alokasi_anggaran' => 'nullable|numeric|min:0',
-                'status_aktif' => 'boolean'
-            ]);
+            // Clean and prepare data
+            $cleanData = KeuanganValidationHelper::prepareMataAnggaranData($request);
+            $request->merge($cleanData);
 
-            $validated['status_aktif'] = $request->has('status_aktif');
+            // Get validation rules (without tahun_anggaran)
+            $rules = KeuanganValidationHelper::getMataAnggaranRules($id);
+            unset($rules['tahun_anggaran']);
+
+            $validated = $request->validate($rules, KeuanganValidationHelper::getMessages());
 
             $subMataAnggaran->update($validated);
 
             Log::info('KeuanganSubMataAnggaran - Updated successfully:', [
                 'id' => $subMataAnggaran->id,
                 'parent_id' => $parentId,
-                'kode' => $subMataAnggaran->kode_mata_anggaran,
-                'user_id' => auth()->id()
+                'kode' => $subMataAnggaran->kode_mata_anggaran
             ]);
 
             return redirect()->route('keuangan.sub-mata-anggaran.index', $parentId)
@@ -186,8 +154,7 @@ class KeuanganSubMataAnggaranController extends Controller
             Log::error('KeuanganSubMataAnggaran - Error in update:', [
                 'parentId' => $parentId,
                 'id' => $id,
-                'message' => $e->getMessage(),
-                'request_data' => $request->all()
+                'message' => $e->getMessage()
             ]);
 
             return back()->with('error', 'Terjadi kesalahan saat memperbarui sub mata anggaran.')
@@ -212,8 +179,7 @@ class KeuanganSubMataAnggaranController extends Controller
             Log::info('KeuanganSubMataAnggaran - Deleted successfully:', [
                 'id' => $id,
                 'parent_id' => $parentId,
-                'kode' => $kode,
-                'user_id' => auth()->id()
+                'kode' => $kode
             ]);
 
             return redirect()->route('keuangan.sub-mata-anggaran.index', $parentId)
@@ -256,11 +222,9 @@ class KeuanganSubMataAnggaranController extends Controller
         }
     }
 
-    // Private helper methods
     private function validatePerPage(Request $request)
     {
         $perPage = $request->get('per_page', 15);
-        $allowedPerPage = [10, 15, 25, 50, 100];
-        return in_array((int)$perPage, $allowedPerPage) ? $perPage : 15;
+        return in_array((int)$perPage, [10, 15, 25, 50, 100]) ? $perPage : 15;
     }
 }

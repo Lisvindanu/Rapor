@@ -25,8 +25,9 @@
                                                    class="form-control @error($field['name']) is-invalid @enderror"
                                                    id="{{ $field['name'] }}"
                                                    name="{{ $field['name'] }}"
-                                                   value="{{ old($field['name']) }}"
+                                                   value="{{ old($field['name'], '') }}"
                                                    placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                   autocomplete="off"
                                                 {{ ($field['required'] ?? false) ? 'required' : '' }}>
 
                                         @elseif($field['type'] === 'email')
@@ -34,8 +35,9 @@
                                                    class="form-control @error($field['name']) is-invalid @enderror"
                                                    id="{{ $field['name'] }}"
                                                    name="{{ $field['name'] }}"
-                                                   value="{{ old($field['name']) }}"
+                                                   value="{{ old($field['name'], '') }}"
                                                    placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                   autocomplete="off"
                                                 {{ ($field['required'] ?? false) ? 'required' : '' }}>
 
                                         @elseif($field['type'] === 'number')
@@ -43,11 +45,12 @@
                                                    class="form-control @error($field['name']) is-invalid @enderror"
                                                    id="{{ $field['name'] }}"
                                                    name="{{ $field['name'] }}"
-                                                   value="{{ old($field['name']) }}"
+                                                   value="{{ old($field['name'], '') }}"
                                                    placeholder="{{ $field['placeholder'] ?? '' }}"
                                                    min="{{ $field['min'] ?? '' }}"
                                                    max="{{ $field['max'] ?? '' }}"
                                                    step="{{ $field['step'] ?? '' }}"
+                                                   autocomplete="off"
                                                 {{ ($field['required'] ?? false) ? 'required' : '' }}>
 
                                         @elseif($field['type'] === 'textarea')
@@ -56,7 +59,7 @@
                                                       name="{{ $field['name'] }}"
                                                       rows="{{ $field['rows'] ?? '3' }}"
                                                       placeholder="{{ $field['placeholder'] ?? '' }}"
-                                                  {{ ($field['required'] ?? false) ? 'required' : '' }}>{{ old($field['name']) }}</textarea>
+                                                  {{ ($field['required'] ?? false) ? 'required' : '' }}>{{ old($field['name'], '') }}</textarea>
 
                                         @elseif($field['type'] === 'select')
                                             <select class="form-control @error($field['name']) is-invalid @enderror"
@@ -91,10 +94,11 @@
                                                        class="form-control @error($field['name']) is-invalid @enderror"
                                                        id="{{ $field['name'] }}"
                                                        name="{{ $field['name'] }}"
-                                                       value="{{ old($field['name']) }}"
+                                                       value="{{ old($field['name'], '0') }}"
                                                        placeholder="{{ $field['placeholder'] ?? '0' }}"
                                                        min="0"
                                                        step="0.01"
+                                                       autocomplete="off"
                                                     {{ ($field['required'] ?? false) ? 'required' : '' }}>
                                             </div>
                                         @endif

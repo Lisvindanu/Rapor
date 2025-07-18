@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KeuanganMataAnggaran;
+use App\Helpers\KeuanganValidationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -18,24 +19,11 @@ class KeuanganMataAnggaranController extends Controller
             $query = $this->buildQuery($request, $availableYears);
             $perPage = $this->validatePerPage($request);
 
-            // Quick fix: Check if page is beyond available data
-            $totalRecords = $query->count();
-            $requestedPage = max(1, (int) $request->get('page', 1));
-            $maxPage = max(1, (int) ceil($totalRecords / $perPage));
-
-            // Redirect to valid page if needed
-            if ($requestedPage > $maxPage && $totalRecords > 0) {
-                $params = $request->query();
-                $params['page'] = $maxPage;
-                return redirect()->route('keuangan.mata-anggaran.index', $params);
-            }
-
             $mataAnggarans = $query->orderBy('kode_mata_anggaran')
                 ->paginate($perPage)
                 ->withQueryString();
 
             $data = $this->prepareViewData($request, $mataAnggarans, $availableYears);
-            $this->logResults($mataAnggarans, $availableYears, $data['selectedYear']);
 
             return view('keuangan.master.mata-anggaran.index', $data);
 
@@ -47,6 +35,7 @@ class KeuanganMataAnggaranController extends Controller
             return back()->with('error', 'Terjadi kesalahan saat memuat data mata anggaran.');
         }
     }
+
     public function create()
     {
         try {
@@ -68,24 +57,22 @@ class KeuanganMataAnggaranController extends Controller
     public function store(Request $request)
     {
         try {
-            Log::info('KeuanganMataAnggaran - Store attempt:', $request->except(['_token']));
+            // Clean and prepare data using helper
+            $cleanData = KeuanganValidationHelper::prepareMataAnggaranData($request);
+            $request->merge($cleanData);
 
-            $validated = $this->validateMataAnggaran($request);
+            // Validate
+            $validated = $request->validate(
+                KeuanganValidationHelper::getMataAnggaranRules(),
+                KeuanganValidationHelper::getMessages()
+            );
 
-            // Handle status_aktif checkbox
-            $validated['status_aktif'] = $request->has('status_aktif');
+            // Set defaults
+            $parent = $validated['parent_mata_anggaran']
+                ? KeuanganMataAnggaran::find($validated['parent_mata_anggaran'])
+                : null;
 
-            // Set default values
-            $validated['sisa_anggaran'] = $validated['alokasi_anggaran'] ?? 0;
-            $validated['level_mata_anggaran'] = 0;
-
-            // Calculate level if has parent
-            if ($validated['parent_mata_anggaran']) {
-                $parent = KeuanganMataAnggaran::find($validated['parent_mata_anggaran']);
-                if ($parent) {
-                    $validated['level_mata_anggaran'] = $parent->level_mata_anggaran + 1;
-                }
-            }
+            $validated = KeuanganValidationHelper::setMataAnggaranDefaults($validated, $parent);
 
             $mataAnggaran = KeuanganMataAnggaran::create($validated);
 
@@ -97,21 +84,15 @@ class KeuanganMataAnggaranController extends Controller
             return redirect()->route('keuangan.mata-anggaran.index')
                 ->with('success', 'Mata anggaran berhasil ditambahkan.');
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation errors:', $e->errors());
-            return back()->withErrors($e->errors())->withInput();
-
         } catch (Exception $e) {
             Log::error('Store error:', [
                 'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+                'line' => $e->getLine()
             ]);
 
             return back()->with('error', 'Error: ' . $e->getMessage())->withInput();
         }
     }
-
 
     public function show($id)
     {
@@ -153,8 +134,15 @@ class KeuanganMataAnggaranController extends Controller
     {
         try {
             $mataAnggaran = KeuanganMataAnggaran::findOrFail($id);
-            $validated = $this->validateMataAnggaran($request, $id);
-            $validated['status_aktif'] = $request->has('status_aktif');
+
+            // Clean and prepare data
+            $cleanData = KeuanganValidationHelper::prepareMataAnggaranData($request);
+            $request->merge($cleanData);
+
+            $validated = $request->validate(
+                KeuanganValidationHelper::getMataAnggaranRules($id),
+                KeuanganValidationHelper::getMessages()
+            );
 
             $mataAnggaran->update($validated);
 
@@ -200,8 +188,7 @@ class KeuanganMataAnggaranController extends Controller
         Log::info('KeuanganMataAnggaran - Index accessed', [
             'user_id' => auth()->id(),
             'search' => $request->search ?? 'none',
-            'tahun_anggaran' => $request->tahun_anggaran ?? 'none',
-            'per_page' => $request->per_page ?? 'default'
+            'tahun_anggaran' => $request->tahun_anggaran ?? 'none'
         ]);
     }
 
@@ -218,64 +205,26 @@ class KeuanganMataAnggaranController extends Controller
     {
         $query = KeuanganMataAnggaran::with(['parentMataAnggaran'])->active();
 
-        // Search filter
         if ($request->filled('search')) {
-            $query = $this->applySearchFilter($query, $request->search);
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('kode_mata_anggaran', 'ilike', "%{$search}%")
+                    ->orWhere('nama_mata_anggaran', 'ilike', "%{$search}%")
+                    ->orWhere('deskripsi', 'ilike', "%{$search}%");
+            });
         }
 
-        // Year filter
-        if ($request->filled('tahun_anggaran') && $request->tahun_anggaran !== '') {
-            $this->applyYearFilter($query, $request, $availableYears);
+        if ($request->filled('tahun_anggaran') && in_array((int)$request->tahun_anggaran, $availableYears)) {
+            $query->where('tahun_anggaran', (int)$request->tahun_anggaran);
         }
 
         return $query;
     }
 
-    private function applySearchFilter($query, $search)
-    {
-        $search = trim(preg_replace('/\s+/', ' ', $search));
-        $searchTerms = array_filter(explode(' ', $search));
-
-        return $query->where(function ($q) use ($searchTerms, $search) {
-            $q->where('kode_mata_anggaran', 'ilike', "%{$search}%")
-                ->orWhere('nama_mata_anggaran', 'ilike', "%{$search}%")
-                ->orWhere('deskripsi', 'ilike', "%{$search}%")
-                ->orWhere('kategori', 'ilike', "%{$search}%");
-
-            if (count($searchTerms) > 1) {
-                $q->orWhere(function ($subQuery) use ($searchTerms) {
-                    foreach ($searchTerms as $term) {
-                        $subQuery->where(function ($termQuery) use ($term) {
-                            $termQuery->where('kode_mata_anggaran', 'ilike', "%{$term}%")
-                                ->orWhere('nama_mata_anggaran', 'ilike', "%{$term}%");
-                        });
-                    }
-                });
-            }
-
-            $q->orWhereHas('parentMataAnggaran', function ($parentQuery) use ($search) {
-                $parentQuery->where('kode_mata_anggaran', 'ilike', "%{$search}%")
-                    ->orWhere('nama_mata_anggaran', 'ilike', "%{$search}%");
-            });
-        });
-    }
-
-    private function applyYearFilter($query, Request $request, array $availableYears)
-    {
-        $tahun = (int) $request->tahun_anggaran;
-
-        if (in_array($tahun, $availableYears)) {
-            $query->where('tahun_anggaran', $tahun);
-        } else {
-            session()->flash('warning', "Data untuk tahun {$tahun} tidak ditemukan. Menampilkan semua data.");
-        }
-    }
-
     private function validatePerPage(Request $request)
     {
         $perPage = $request->get('per_page', 15);
-        $allowedPerPage = [10, 15, 25, 50, 100];
-        return in_array((int)$perPage, $allowedPerPage) ? $perPage : 15;
+        return in_array((int)$perPage, [10, 15, 25, 50, 100]) ? $perPage : 15;
     }
 
     private function prepareViewData(Request $request, $mataAnggarans, array $availableYears)
@@ -297,47 +246,5 @@ class KeuanganMataAnggaranController extends Controller
             'selectedYear' => $selectedYear,
             'emptyMessage' => $emptyMessage
         ];
-    }
-
-    private function logResults($mataAnggarans, array $availableYears, $selectedYear)
-    {
-        Log::info('Query results', [
-            'total' => $mataAnggarans->total(),
-            'current_page' => $mataAnggarans->currentPage(),
-            'per_page' => $mataAnggarans->perPage(),
-            'available_years' => $availableYears,
-            'selected_year' => $selectedYear
-        ]);
-    }
-
-    private function validateMataAnggaran(Request $request, $id = null)
-    {
-        $uniqueRule = $id ? "unique:keuangan_mtang,kode_mata_anggaran,{$id}" : 'unique:keuangan_mtang,kode_mata_anggaran';
-
-        // Clean request data
-        $data = $request->all();
-
-        // Handle parent_mata_anggaran
-        if (empty($data['parent_mata_anggaran']) || $data['parent_mata_anggaran'] === '') {
-            $data['parent_mata_anggaran'] = null;
-        }
-
-        // Handle alokasi_anggaran
-        if (empty($data['alokasi_anggaran']) || $data['alokasi_anggaran'] === '') {
-            $data['alokasi_anggaran'] = 0;
-        }
-
-        $request->merge($data);
-
-        return $request->validate([
-            'kode_mata_anggaran' => "required|string|max:20|{$uniqueRule}",
-            'nama_mata_anggaran' => 'required|string|max:255',
-            'nama_mata_anggaran_en' => 'nullable|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'parent_mata_anggaran' => 'nullable|exists:keuangan_mtang,id',
-            'kategori' => 'nullable|string|max:100',
-            'alokasi_anggaran' => 'nullable|numeric|min:0',
-            'tahun_anggaran' => 'required|integer|between:2020,2030',
-        ]);
     }
 }

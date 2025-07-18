@@ -25,38 +25,38 @@
                                         <li>
                                             <a class="dropdown-item {{ request()->routeIs('whistleblower.admin.pengaduan.index') && !request()->has('status') ? 'active' : '' }}" 
                                                href="{{ route('whistleblower.admin.pengaduan.index') }}">
-                                                <i class="fas fa-list"></i> Semua Pengaduan
+                                                Semua Pengaduan
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item {{ request('status') == 'pending' ? 'active' : '' }}" 
                                                href="{{ route('whistleblower.admin.pengaduan.index') }}?status=pending">
-                                                <i class="fas fa-clock text-warning"></i> Menunggu Review
+                                                Menunggu Review
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item {{ request('status') == 'proses' ? 'active' : '' }}" 
                                                href="{{ route('whistleblower.admin.pengaduan.index') }}?status=proses">
-                                                <i class="fas fa-spinner text-info"></i> Dalam Proses
+                                                Dalam Proses
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item {{ request('filter') == 'prioritas' ? 'active' : '' }}" 
                                                href="{{ route('whistleblower.admin.pengaduan.index') }}?filter=prioritas">
-                                                <i class="fas fa-exclamation-triangle text-danger"></i> Pengaduan Prioritas
+                                                Pengaduan Prioritas
                                             </a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <a class="dropdown-item {{ request('status') == 'selesai' ? 'active' : '' }}" 
                                                href="{{ route('whistleblower.admin.pengaduan.index') }}?status=selesai">
-                                                <i class="fas fa-check text-success"></i> Pengaduan Selesai
+                                                Pengaduan Selesai
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item {{ request('status') == 'ditolak' ? 'active' : '' }}" 
                                                href="{{ route('whistleblower.admin.pengaduan.index') }}?status=ditolak">
-                                                <i class="fas fa-times text-danger"></i> Pengaduan Ditolak
+                                                Pengaduan Ditolak
                                             </a>
                                         </li>
                                     </ul>
@@ -70,23 +70,23 @@
                                     <ul class="dropdown-menu">
                                         <li>
                                             <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalLaporan">
-                                                <i class="fas fa-file-alt"></i> Generate Laporan
+                                                Generate Laporan
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="#">
-                                                <i class="fas fa-chart-bar"></i> Statistik Pengaduan
+                                                Statistik Pengaduan
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="#">
-                                                <i class="fas fa-chart-line"></i> Trend Analysis
+                                                Trend Analysis
                                             </a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <a class="dropdown-item" href="{{ route('whistleblower.admin.pengaduan.export') }}">
-                                                <i class="fas fa-download"></i> Export Data
+                                                Export Data
                                             </a>
                                         </li>
                                     </ul>
@@ -100,23 +100,23 @@
                                     <ul class="dropdown-menu">
                                         <li>
                                             <a class="dropdown-item" href="#">
-                                                <i class="fas fa-tags"></i> Kategori Pengaduan
+                                                Kategori Pengaduan
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="#">
-                                                <i class="fas fa-file-alt"></i> Template Response
+                                                Template Response
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="#">
-                                                <i class="fas fa-users"></i> Manajemen Tim
+                                                Manajemen Tim
                                             </a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <a class="dropdown-item" href="#">
-                                                <i class="fas fa-bell"></i> Notifikasi
+                                                Notifikasi
                                             </a>
                                         </li>
                                     </ul>
@@ -127,44 +127,6 @@
                                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modalBantuanAdmin">
                                         Bantuan
                                     </a>
-                                </li>
-                            </ul>
-                            
-                            <!-- Admin Info di kanan -->
-                            <ul class="navbar-nav ms-auto">
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-user-shield text-primary"></i>
-                                        {{ auth()->user()->name }}
-                                        <small class="d-block text-muted">{{ session('selected_role') }}</small>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                                <i class="fas fa-user"></i> Profile
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="#">
-                                                <i class="fas fa-cog"></i> Pengaturan
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('gate') }}">
-                                                <i class="fas fa-exchange-alt"></i> Ganti Role
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="/login/exit"
-                                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                                <i class="fas fa-sign-out-alt"></i> Logout
-                                            </a>
-                                            <form id="logout-form" action="/login/exit" method="POST" class="d-none">
-                                                @csrf
-                                            </form>
-                                        </li>
-                                    </ul>
                                 </li>
                             </ul>
                         </div>
@@ -261,9 +223,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <a href="#" class="btn btn-primary">
-                    <i class="fas fa-download"></i> Download Manual Admin
-                </a>
             </div>
         </div>
     </div>

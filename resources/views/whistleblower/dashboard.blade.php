@@ -15,11 +15,6 @@
                     <h2>Dashboard Whistleblower</h2>
                     <p class="text-muted">Sistem Pencegahan dan Penanganan Kekerasan Seksual</p>
                 </div>
-                <div>
-                    <a href="{{ route('whistleblower.create') }}" class="btn btn-danger">
-                        <i class="fas fa-plus"></i> Buat Pengaduan Baru
-                    </a>
-                </div>
             </div>
 
             <!-- Statistics Cards -->
@@ -33,7 +28,7 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-warning text-white">
+                    <div class="card bg-info text-white">
                         <div class="card-body text-center">
                             <h3>{{ $stats['pending'] }}</h3>
                             <p class="mb-0">Menunggu Review</p>
@@ -41,7 +36,7 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-info text-white">
+                    <div class="card bg-warning text-white">
                         <div class="card-body text-center">
                             <h3>{{ $stats['proses'] }}</h3>
                             <p class="mb-0">Dalam Proses</p>

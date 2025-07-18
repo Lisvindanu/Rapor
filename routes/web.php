@@ -509,15 +509,67 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         });
     });
 
-    // whistleblower
-    Route::prefix('whistleblower')->group(function () {
-        Route::get('/', "WhistleblowerController@index")->name('whistleblower');
-        Route::get('/riwayat', "WhistleblowerController@riwayat")->name('whistleblower.riwayat');
-        Route::get('/detail/{id}', "WhistleblowerController@detail")->name('whistleblower.detail');
-        Route::post('/store', "WhistleblowerController@store")->name('whistleblower.store');
-        Route::post('/update', "WhistleblowerController@update")->name('whistleblower.update');
-        Route::delete('/{id}', "WhistleblowerController@destroy")->name('whistleblower.delete');
+    // // whistleblower
+    // Route::prefix('whistleblower')->group(function () {
+    //     Route::get('/', "WhistleblowerController@index")->name('whistleblower');
+    //     Route::get('/riwayat', "WhistleblowerController@riwayat")->name('whistleblower.riwayat');
+    //     Route::get('/detail/{id}', "WhistleblowerController@detail")->name('whistleblower.detail');
+    //     Route::post('/store', "WhistleblowerController@store")->name('whistleblower.store');
+    //     Route::post('/update', "WhistleblowerController@update")->name('whistleblower.update');
+    //     Route::delete('/{id}', "WhistleblowerController@destroy")->name('whistleblower.delete');
+    // });
+
+    // Whistleblower Routes
+    Route::prefix('whistleblower')->middleware('auth')->name('whistleblower.')->group(function () {
+        
+        // Route untuk dashboard yang akan melakukan redirect berdasarkan role
+        Route::get('/dashboard', function() {
+            $selectedRole = session('selected_role');
+            
+            // Cek apakah user adalah admin PPKPT
+            if ($selectedRole === 'Admin PPKPT Fakultas' || $selectedRole === 'Admin PPKPT Prodi') {
+                return redirect()->route('whistleblower.admin.dashboard');
+            } else {
+                return redirect()->route('whistleblower.user.dashboard');
+            }
+        })->name('dashboard');
+        
+        // Route untuk user biasa - auto redirect jika admin
+        Route::get('/user/dashboard', [App\Http\Controllers\WhistleblowerController::class, 'userDashboard'])->name('user.dashboard');
+        Route::get('/', [App\Http\Controllers\WhistleblowerController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\WhistleblowerController::class, 'create'])->name('create');
+        Route::post('/store', [App\Http\Controllers\WhistleblowerController::class, 'store'])->name('store');
+        Route::get('/show/{id}', [App\Http\Controllers\WhistleblowerController::class, 'show'])->name('show');
+        Route::delete('/{id}', [App\Http\Controllers\WhistleblowerController::class, 'destroy'])->name('delete');
+        
+        // Route yang sudah ada sebelumnya (untuk kompatibilitas)
+        Route::get('/riwayat', [App\Http\Controllers\WhistleblowerController::class, 'riwayat'])->name('riwayat');
+        Route::get('/detail/{id}', [App\Http\Controllers\WhistleblowerController::class, 'detail'])->name('detail');
+        Route::post('/update', [App\Http\Controllers\WhistleblowerController::class, 'update'])->name('update');
+        
+        // Route untuk cek status anonim (bisa diakses semua user)
+        Route::get('/status', [App\Http\Controllers\WhistleblowerController::class, 'statusPage'])->name('status-page');
+        Route::post('/check-status', [App\Http\Controllers\WhistleblowerController::class, 'checkStatus'])->name('check-status');
+        
+        // Route khusus untuk admin dengan middleware protection
+        Route::middleware('whistleblower.admin')->prefix('admin')->name('admin.')->group(function () {
+            Route::get('/dashboard', [App\Http\Controllers\WhistleblowerController::class, 'adminDashboard'])->name('dashboard');
+            
+            // Route admin untuk manajemen pengaduan
+            Route::prefix('pengaduan')->name('pengaduan.')->group(function () {
+                Route::get('/', [App\Http\Controllers\WhistleblowerAdminController::class, 'index'])->name('index');
+                Route::get('/{id}', [App\Http\Controllers\WhistleblowerAdminController::class, 'show'])->name('show');
+                Route::post('/{id}/update-status', [App\Http\Controllers\WhistleblowerAdminController::class, 'updateStatus'])->name('update-status');
+                Route::post('/{id}/assign', [App\Http\Controllers\WhistleblowerAdminController::class, 'assignTo'])->name('assign');
+                Route::post('/bulk-action', [App\Http\Controllers\WhistleblowerAdminController::class, 'bulkAction'])->name('bulk-action');
+                Route::get('/export', [App\Http\Controllers\WhistleblowerAdminController::class, 'export'])->name('export');
+            });
+        });
     });
+
+    Route::get('/debug-whistleblower', [App\Http\Controllers\WhistleblowerController::class, 'debugData'])
+    ->middleware('auth')
+    ->name('debug.whistleblower');
 
     //test
     Route::get('/test', "TestController@index");

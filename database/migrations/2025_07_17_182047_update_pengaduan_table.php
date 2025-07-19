@@ -13,58 +13,73 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Langkah 1: Tambah kolom sebagai nullable terlebih dahulu
+        // Step 1: Add nullable columns first
         Schema::table('pengaduan', function (Blueprint $table) {
-            // Field baru untuk whistleblower
-            $table->string('status_pelapor')->nullable()->after('status_pengaduan');
-            $table->text('cerita_singkat_peristiwa')->nullable()->after('deskripsi_pengaduan');
-            $table->date('tanggal_kejadian')->nullable()->after('cerita_singkat_peristiwa');
-            $table->string('lokasi_kejadian')->nullable()->after('tanggal_kejadian');
-            $table->boolean('memiliki_disabilitas')->default(false)->after('lokasi_kejadian');
-            $table->text('jenis_disabilitas')->nullable()->after('memiliki_disabilitas');
-            $table->json('alasan_pengaduan')->nullable()->after('jenis_disabilitas');
-            $table->string('evidence_type')->nullable()->after('evidence_path');
-            $table->text('evidence_gdrive_link')->nullable()->after('evidence_type');
+            $table->string('status_pelapor')->nullable();
+            $table->text('cerita_singkat_peristiwa')->nullable();
+            $table->date('tanggal_kejadian')->nullable();
+            $table->string('lokasi_kejadian')->nullable();
+            $table->boolean('memiliki_disabilitas')->default(false);
+            $table->text('jenis_disabilitas')->nullable();
+            $table->json('alasan_pengaduan')->nullable();
+            $table->string('evidence_type')->nullable();
+            $table->text('evidence_gdrive_link')->nullable();
         });
 
-        // Langkah 2: Update data existing dengan nilai default
+        // Step 2: Update existing data dengan default values
         $this->updateExistingData();
 
-        // Langkah 3: Ubah kolom yang required menjadi NOT NULL
-        $this->makeColumnsRequired();
+        // Step 3: Modify columns to NOT NULL setelah data diupdate
+        try {
+            DB::statement('ALTER TABLE pengaduan ALTER COLUMN status_pelapor SET NOT NULL');
+            DB::statement('ALTER TABLE pengaduan ALTER COLUMN cerita_singkat_peristiwa SET NOT NULL');
+        } catch (\Exception $e) {
+            Log::warning('Could not set NOT NULL constraints: ' . $e->getMessage());
+        }
 
-        // Langkah 4: Update enum status_pengaduan
-        $this->updateStatusEnum();
+        // Step 4: Add constraints
+        $this->addConstraints();
     }
 
     private function updateExistingData()
     {
-        // Update existing records dengan default values
-        DB::table('pengaduan')->whereNull('status_pelapor')->update([
-            'status_pelapor' => 'saksi'
-        ]);
+        try {
+            // Update status_pelapor default
+            DB::table('pengaduan')
+                ->whereNull('status_pelapor')
+                ->update(['status_pelapor' => 'saksi']);
 
-        // Copy deskripsi_pengaduan ke cerita_singkat_peristiwa untuk data existing
-        DB::table('pengaduan')->whereNull('cerita_singkat_peristiwa')->update([
-            'cerita_singkat_peristiwa' => DB::raw('deskripsi_pengaduan')
-        ]);
+            // Update cerita_singkat_peristiwa dengan data dari deskripsi
+            DB::table('pengaduan')
+                ->whereNull('cerita_singkat_peristiwa')
+                ->update([
+                    'cerita_singkat_peristiwa' => DB::raw('COALESCE(deskripsi_pengaduan, "Deskripsi belum diisi")')
+                ]);
 
-        // Set default evidence_type
-        DB::table('pengaduan')->whereNull('evidence_type')->update([
-            'evidence_type' => 'file'
-        ]);
+            // Set default evidence_type
+            DB::table('pengaduan')
+                ->whereNull('evidence_type')
+                ->update(['evidence_type' => 'file']);
+
+        } catch (\Exception $e) {
+            Log::warning('Could not update existing data: ' . $e->getMessage());
+        }
     }
 
-    private function makeColumnsRequired()
+    private function addConstraints()
     {
         try {
-            // PostgreSQL specific constraints
-            DB::statement("ALTER TABLE pengaduan ADD CONSTRAINT pengaduan_status_pelapor_check CHECK (status_pelapor IN ('saksi', 'korban'))");
-            DB::statement('ALTER TABLE pengaduan ALTER COLUMN status_pelapor SET NOT NULL');
-            DB::statement('ALTER TABLE pengaduan ALTER COLUMN cerita_singkat_peristiwa SET NOT NULL');
+            // Add status_pelapor constraint
+            DB::statement('ALTER TABLE pengaduan ADD CONSTRAINT pengaduan_status_pelapor_check CHECK (status_pelapor IN (\'saksi\', \'korban\'))');
+            
+            // Add evidence_type constraint
+            DB::statement('ALTER TABLE pengaduan ADD CONSTRAINT pengaduan_evidence_type_check CHECK (evidence_type IN (\'file\', \'gdrive\'))');
+            
+            // Update status_pengaduan constraint
+            $this->updateStatusEnum();
+            
         } catch (\Exception $e) {
-            // Fallback for other databases or if constraints fail
-            Log::warning('Could not add NOT NULL constraints: ' . $e->getMessage());
+            Log::warning('Could not add constraints: ' . $e->getMessage());
         }
     }
 
@@ -77,7 +92,6 @@ return new class extends Migration
             // Add new constraint dengan status tambahan
             DB::statement("ALTER TABLE pengaduan ADD CONSTRAINT pengaduan_status_pengaduan_check CHECK (status_pengaduan IN ('pending', 'proses', 'selesai', 'ditolak', 'butuh_bukti', 'dibatalkan'))");
         } catch (\Exception $e) {
-            // Log error jika constraint gagal ditambahkan
             Log::warning('Could not update status_pengaduan enum: ' . $e->getMessage());
         }
     }
@@ -89,6 +103,7 @@ return new class extends Migration
     {
         // Drop constraints
         DB::statement('ALTER TABLE pengaduan DROP CONSTRAINT IF EXISTS pengaduan_status_pelapor_check');
+        DB::statement('ALTER TABLE pengaduan DROP CONSTRAINT IF EXISTS pengaduan_evidence_type_check');
         
         // Restore original status constraint
         DB::statement('ALTER TABLE pengaduan DROP CONSTRAINT IF EXISTS pengaduan_status_pengaduan_check');

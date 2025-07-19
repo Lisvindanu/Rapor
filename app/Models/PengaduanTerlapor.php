@@ -17,19 +17,58 @@ class PengaduanTerlapor extends Model
         'status_terlapor',
         'nomor_identitas',
         'unit_kerja_fakultas',
-        'kontak_terlapor'
+        'kontak_terlapor',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**
-     * Relasi dengan Pengaduan
+     * Relationship dengan Pengaduan
      */
     public function pengaduan()
     {
-        return $this->belongsTo(Pengaduan::class);
+        return $this->belongsTo(Pengaduan::class, 'pengaduan_id');
     }
 
     /**
-     * Scope untuk terlapor mahasiswa
+     * Accessor untuk status terlapor yang lebih readable
+     */
+    public function getStatusTerlaporLabelAttribute()
+    {
+        $labels = [
+            'mahasiswa' => 'Mahasiswa',
+            'pegawai' => 'Pegawai/Dosen',
+        ];
+
+        return $labels[$this->status_terlapor] ?? ucfirst($this->status_terlapor);
+    }
+
+    /**
+     * Accessor untuk badge status terlapor
+     */
+    public function getStatusTerlaporBadgeAttribute()
+    {
+        $badges = [
+            'mahasiswa' => 'bg-primary',
+            'pegawai' => 'bg-success',
+        ];
+
+        return $badges[$this->status_terlapor] ?? 'bg-secondary';
+    }
+
+    /**
+     * Scope untuk filter berdasarkan status
+     */
+    public function scopeByStatus($query, $status)
+    {
+        return $query->where('status_terlapor', $status);
+    }
+
+    /**
+     * Scope untuk filter mahasiswa
      */
     public function scopeMahasiswa($query)
     {
@@ -37,18 +76,10 @@ class PengaduanTerlapor extends Model
     }
 
     /**
-     * Scope untuk terlapor pegawai
+     * Scope untuk filter pegawai
      */
     public function scopePegawai($query)
     {
         return $query->where('status_terlapor', 'pegawai');
-    }
-
-    /**
-     * Accessor untuk mendapatkan label status terlapor
-     */
-    public function getStatusLabelAttribute()
-    {
-        return $this->status_terlapor === 'mahasiswa' ? 'Mahasiswa' : 'Pegawai';
     }
 }

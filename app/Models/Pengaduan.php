@@ -11,16 +11,25 @@ class Pengaduan extends Model
 
     protected $table = 'pengaduan';
 
-    protected $fillable = [
+protected $fillable = [
         'user_id',
         'kategori_id',
         'kode_pengaduan',
         'judul_pengaduan',
         'deskripsi_pengaduan',
+        'status_pelapor',
+        'cerita_singkat_peristiwa',
+        'tanggal_kejadian',
+        'lokasi_kejadian',
+        'memiliki_disabilitas',
+        'jenis_disabilitas',
+        'alasan_pengaduan',
         'tanggal_pengaduan',
         'status_pengaduan',
         'is_anonim',
         'evidence_path',
+        'evidence_type',
+        'evidence_gdrive_link',
         'admin_response',
         'handled_by',
         'closed_at'
@@ -28,7 +37,10 @@ class Pengaduan extends Model
 
     protected $casts = [
         'tanggal_pengaduan' => 'datetime',
+        'tanggal_kejadian' => 'date',
         'is_anonim' => 'boolean',
+        'memiliki_disabilitas' => 'boolean',
+        'alasan_pengaduan' => 'array', // Cast JSON ke array
         'closed_at' => 'datetime'
     ];
 
@@ -49,27 +61,19 @@ class Pengaduan extends Model
     }
 
     /**
+     * Relasi dengan Terlapor (One to Many)
+     */
+    public function terlapor()
+    {
+        return $this->hasMany(\App\Models\PengaduanTerlapor::class);
+    }
+
+    /**
      * Relasi dengan Admin yang menangani
      */
     public function handler()
     {
         return $this->belongsTo(User::class, 'handled_by');
-    }
-
-    /**
-     * Relasi ke unit kerja melalui user -> pegawai -> unit_kerja
-     */
-    public function unitKerja()
-    {
-        return $this->hasOneThrough(
-            UnitKerja::class,
-            User::class,
-            'id', // Foreign key pada users table
-            'id', // Foreign key pada unit_kerja table  
-            'user_id', // Local key pada pengaduan table
-            'key_relation' // Local key yang menghubungkan ke pegawai
-        )->join('pegawai', 'users.key_relation', '=', 'pegawai.nip')
-          ->where('unit_kerja.id', '=', 'pegawai.unit_kerja_id');
     }
 
     /**
@@ -90,22 +94,11 @@ class Pengaduan extends Model
     }
 
     /**
-     * Scope untuk pengaduan hari ini
+     * Scope untuk pengaduan yang bisa dibatalkan
      */
-    public function scopeHariIni($query)
+    public function scopeCanBeCancelled($query)
     {
-        return $query->whereDate('created_at', today());
-    }
-
-    /**
-     * Scope untuk pengaduan minggu ini
-     */
-    public function scopeMingguIni($query)
-    {
-        return $query->whereBetween('created_at', [
-            now()->startOfWeek(),
-            now()->endOfWeek()
-        ]);
+        return $query->whereIn('status_pengaduan', ['pending', 'butuh_bukti']);
     }
 
     /**
@@ -117,33 +110,66 @@ class Pengaduan extends Model
             'pending' => 'warning',
             'proses' => 'info', 
             'selesai' => 'success',
-            'ditolak' => 'danger'
+            'ditolak' => 'danger',
+            'butuh_bukti' => 'secondary',
+            'dibatalkan' => 'dark'
         ];
 
         return $colors[$this->status_pengaduan] ?? 'secondary';
     }
 
     /**
-     * Get status text
+     * Get status label
      */
-    public function getStatusTextAttribute()
+    public function getStatusLabelAttribute()
     {
-        $texts = [
-            'pending' => 'Menunggu Review',
-            'proses' => 'Dalam Proses',
+        $labels = [
+            'pending' => 'Menunggu',
+            'proses' => 'Sedang Diproses', 
             'selesai' => 'Selesai',
-            'ditolak' => 'Ditolak'
+            'ditolak' => 'Ditolak',
+            'butuh_bukti' => 'Butuh Bukti Tambahan',
+            'dibatalkan' => 'Dibatalkan'
         ];
 
-        return $texts[$this->status_pengaduan] ?? 'Unknown';
+        return $labels[$this->status_pengaduan] ?? 'Unknown';
     }
 
     /**
-     * Check if pengaduan is prioritas
+     * Get alasan pengaduan labels
      */
-    public function getIsPrioritasAttribute()
+    public function getAlasanPengaduanLabelsAttribute()
     {
-        return $this->status_pengaduan === 'pending' && 
-               $this->created_at->lt(now()->subDays(3));
+        $options = [
+            'saksi_khawatir' => 'Saya seorang saksi yang khawatir dengan keadaan Korban',
+            'korban_bantuan' => 'Saya seorang Korban yang memerlukan bantuan pemulihan',
+            'tindak_tegas' => 'Saya ingin Perguruan Tinggi menindak tegas Terlapor',
+            'dokumentasi_keamanan' => 'Saya ingin Satuan Tugas mendokumentasikan kejadiannya, meningkatkan keamanan Perguruan Tinggi dari Kekerasan, dan memberi pelindungan bagi saya',
+            'lainnya' => 'Lainnya'
+        ];
+
+        if (!$this->alasan_pengaduan) {
+            return [];
+        }
+
+        return array_map(function($alasan) use ($options) {
+            return $options[$alasan] ?? $alasan;
+        }, $this->alasan_pengaduan);
+    }
+
+    /**
+     * Check if pengaduan can be cancelled
+     */
+    public function canBeCancelled()
+    {
+        return in_array($this->status_pengaduan, ['pending', 'butuh_bukti']);
+    }
+
+    /**
+     * Check if evidence is required
+     */
+    public function needsEvidence()
+    {
+        return empty($this->evidence_path) && empty($this->evidence_gdrive_link);
     }
 }

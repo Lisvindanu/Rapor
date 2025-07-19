@@ -9,8 +9,8 @@
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <!-- Dashboard -->
                                 <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('whistleblower.user.dashboard', 'whistleblower.dashboard') ? 'active' : '' }}"
-                                        href="{{ route('whistleblower.user.dashboard') }}">
+                                    <a class="nav-link {{ request()->routeIs('whistleblower.dashboard') ? 'active' : '' }}"
+                                        href="{{ route('whistleblower.dashboard') }}">
                                         Dashboard
                                     </a>
                                 </li>

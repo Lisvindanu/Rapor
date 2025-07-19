@@ -19,6 +19,8 @@ use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\KeuanganLaporanController;
 use App\Http\Controllers\KeuanganMataAnggaranController;
 use App\Http\Controllers\KeuanganSubMataAnggaranController;
+use App\Http\Controllers\WhistleblowerController;
+use App\Http\Controllers\WhistleblowerAdminController;
 
 
 /*
@@ -520,52 +522,54 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     // });
 
     // Whistleblower Routes
-    Route::prefix('whistleblower')->middleware('auth')->name('whistleblower.')->group(function () {
+    // Routes untuk user whistleblower
+    Route::prefix('whistleblower')->name('whistleblower.')->middleware(['auth'])->group(function () {
+        // Dashboard user - route utama yang akan mengarahkan ke dashboard yang sesuai
+        Route::get('/', [WhistleblowerController::class, 'dashboard'])->name('dashboard');
         
-        // Route untuk dashboard yang akan melakukan redirect berdasarkan role
-        Route::get('/dashboard', function() {
-            $selectedRole = session('selected_role');
-            
-            // Cek apakah user adalah admin PPKPT
-            if ($selectedRole === 'Admin PPKPT Fakultas' || $selectedRole === 'Admin PPKPT Prodi') {
-                return redirect()->route('whistleblower.admin.dashboard');
-            } else {
-                return redirect()->route('whistleblower.user.dashboard');
-            }
-        })->name('dashboard');
+        // Pengaduan CRUD
+        Route::get('/pengaduan', [WhistleblowerController::class, 'index'])->name('index');
+        Route::get('/pengaduan/create', [WhistleblowerController::class, 'create'])->name('create');
+        Route::post('/pengaduan/store', [WhistleblowerController::class, 'store'])->name('store');
+        Route::get('/pengaduan/{id}', [WhistleblowerController::class, 'show'])->name('show');
+        Route::delete('/pengaduan/{id}', [WhistleblowerController::class, 'destroy'])->name('destroy');
         
-        // Route untuk user biasa - auto redirect jika admin
-        Route::get('/user/dashboard', [App\Http\Controllers\WhistleblowerController::class, 'userDashboard'])->name('user.dashboard');
-        Route::get('/', [App\Http\Controllers\WhistleblowerController::class, 'index'])->name('index');
-        Route::get('/create', [App\Http\Controllers\WhistleblowerController::class, 'create'])->name('create');
-        Route::post('/store', [App\Http\Controllers\WhistleblowerController::class, 'store'])->name('store');
-        Route::get('/show/{id}', [App\Http\Controllers\WhistleblowerController::class, 'show'])->name('show');
-        Route::delete('/{id}', [App\Http\Controllers\WhistleblowerController::class, 'destroy'])->name('delete');
+        // Fitur baru - cancel pengaduan
+        Route::patch('/pengaduan/{id}/cancel', [WhistleblowerController::class, 'cancel'])->name('cancel');
         
-        // Route yang sudah ada sebelumnya (untuk kompatibilitas)
-        Route::get('/riwayat', [App\Http\Controllers\WhistleblowerController::class, 'riwayat'])->name('riwayat');
-        Route::get('/detail/{id}', [App\Http\Controllers\WhistleblowerController::class, 'detail'])->name('detail');
-        Route::post('/update', [App\Http\Controllers\WhistleblowerController::class, 'update'])->name('update');
+        // Success page
+        Route::get('/success/{kodePengaduan}', [WhistleblowerController::class, 'success'])->name('success');
         
-        // Route untuk cek status anonim (bisa diakses semua user)
-        Route::get('/status', [App\Http\Controllers\WhistleblowerController::class, 'statusPage'])->name('status-page');
-        Route::post('/check-status', [App\Http\Controllers\WhistleblowerController::class, 'checkStatus'])->name('check-status');
+        // Cek status untuk pengaduan anonim
+        Route::get('/status', [WhistleblowerController::class, 'statusPage'])->name('status-page');
+        Route::post('/status/check', [WhistleblowerController::class, 'checkStatus'])->name('check-status');
         
-        // Route khusus untuk admin dengan middleware protection
-        Route::middleware('whistleblower.admin')->prefix('admin')->name('admin.')->group(function () {
-            Route::get('/dashboard', [App\Http\Controllers\WhistleblowerController::class, 'adminDashboard'])->name('dashboard');
-            
-            // Route admin untuk manajemen pengaduan
-            Route::prefix('pengaduan')->name('pengaduan.')->group(function () {
-                Route::get('/', [App\Http\Controllers\WhistleblowerAdminController::class, 'index'])->name('index');
-                Route::get('/{id}', [App\Http\Controllers\WhistleblowerAdminController::class, 'show'])->name('show');
-                Route::post('/{id}/update-status', [App\Http\Controllers\WhistleblowerAdminController::class, 'updateStatus'])->name('update-status');
-                Route::post('/{id}/assign', [App\Http\Controllers\WhistleblowerAdminController::class, 'assignTo'])->name('assign');
-                Route::post('/bulk-action', [App\Http\Controllers\WhistleblowerAdminController::class, 'bulkAction'])->name('bulk-action');
-                Route::get('/export', [App\Http\Controllers\WhistleblowerAdminController::class, 'export'])->name('export');
-            });
-        });
+        // Legacy routes (backward compatibility)
+        Route::get('/riwayat', [WhistleblowerController::class, 'index'])->name('riwayat');
+        Route::get('/detail/{id}', [WhistleblowerController::class, 'show'])->name('detail');
     });
+
+    // Routes untuk admin whistleblower
+    Route::prefix('admin/whistleblower')->name('whistleblower.admin.')->middleware(['auth', 'role:Admin PPKPT Fakultas,Admin PPKPT Prodi'])->group(function () {
+        // Dashboard admin
+        Route::get('/', [WhistleblowerAdminController::class, 'dashboard'])->name('dashboard');
+        
+        // Kelola pengaduan
+        Route::get('/pengaduan', [WhistleblowerAdminController::class, 'index'])->name('index');
+        Route::get('/pengaduan/{id}', [WhistleblowerController::class, 'adminShow'])->name('show');
+        
+        // Update status pengaduan
+        Route::put('/pengaduan/{id}/status', [WhistleblowerController::class, 'updateStatus'])->name('update-status');
+        
+        // Export data
+        Route::get('/pengaduan/export/excel', [WhistleblowerAdminController::class, 'exportExcel'])->name('export.excel');
+        Route::get('/pengaduan/export/pdf', [WhistleblowerAdminController::class, 'exportPdf'])->name('export.pdf');
+        
+        // Statistik dan laporan
+        Route::get('/statistik', [WhistleblowerAdminController::class, 'statistik'])->name('statistik');
+        Route::get('/laporan/{periode?}', [WhistleblowerAdminController::class, 'laporan'])->name('laporan');
+    });
+
 
     Route::get('/debug-whistleblower', [App\Http\Controllers\WhistleblowerController::class, 'debugData'])
     ->middleware('auth')

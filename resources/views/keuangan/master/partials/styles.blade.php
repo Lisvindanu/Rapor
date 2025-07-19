@@ -1,4 +1,8 @@
 {{-- F:\rapor-dosen\resources\views\keuangan\master\partials\styles.blade.php --}}
+
+{{-- CSRF Token - IMPORTANT untuk delete functionality --}}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <style>
     /* Essential Styles Only */
     .form-group {
@@ -99,6 +103,26 @@
     .card-header {
         background-color: #f8f9fa;
         border-bottom: 1px solid #e3e6f0;
+    }
+
+    /* Delete Modal Styling */
+    .modal-header {
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #e9ecef;
+    }
+
+    /* Loading States */
+    .btn:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+    .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
     }
 
     /* Responsive Mobile */

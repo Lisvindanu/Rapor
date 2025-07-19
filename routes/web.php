@@ -548,5 +548,26 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::get('/{parentId}/children', "KeuanganMataAnggaranController@getChildren")->name('children');
         });
 
+        // Master Tahun Anggaran Routes
+        Route::prefix('tahun-anggaran')->name('keuangan.tahun-anggaran.')->group(function () {
+            Route::get('/', 'KeuanganTahunAnggaranController@index')->name('index');
+            Route::get('/create', 'KeuanganTahunAnggaranController@create')->name('create');
+            Route::post('/', 'KeuanganTahunAnggaranController@store')->name('store');
+            Route::get('/{id}', 'KeuanganTahunAnggaranController@show')->name('show');
+            Route::get('/{id}/edit', 'KeuanganTahunAnggaranController@edit')->name('edit');
+            Route::put('/{id}', 'KeuanganTahunAnggaranController@update')->name('update');
+            Route::delete('/{id}', 'KeuanganTahunAnggaranController@destroy')->name('destroy');
+        });
+
+        Route::prefix('program')->name('keuangan.program.')->group(function () {
+            Route::get('/', 'KeuanganProgramController@index')->name('index');
+            Route::get('/create', 'KeuanganProgramController@create')->name('create');
+            Route::post('/', 'KeuanganProgramController@store')->name('store');
+            Route::get('/{id}', 'KeuanganProgramController@show')->name('show');
+            Route::get('/{id}/edit', 'KeuanganProgramController@edit')->name('edit');
+            Route::put('/{id}', 'KeuanganProgramController@update')->name('update');
+            Route::delete('/{id}', 'KeuanganProgramController@destroy')->name('destroy');
+        });
+
     });
 });

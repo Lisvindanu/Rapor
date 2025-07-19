@@ -33,27 +33,28 @@
                     @foreach($tableConfig['data'] as $index => $item)
                         <tr>
                             @foreach($tableConfig['columns'] as $column)
-                                <td @if($column['type'] == 'preview_ttd') class="text-center align-middle" @endif>
+                                {{-- PERUBAHAN DI SINI: Menambahkan class untuk menengahkan kolom TTD --}}
+                                <td @if($column['type'] == 'preview_ttd') style="text-align: center !important; vertical-align: middle !important;" @endif>
                                     @if($column['type'] == 'number')
                                         {{ $index + 1 }}
 
                                     @elseif($column['type'] == 'badge')
                                         <span class="badge bg-{{ $column['badge_class'] ?? 'primary' }}">
-                                                {{ data_get($item, $column['field']) }}
-                                            </span>
+                                            {{ data_get($item, $column['field']) }}
+                                        </span>
 
                                     @elseif($column['type'] == 'program_badge')
                                         <span class="badge bg-{{ data_get($item, 'badge_class') }} me-2">
-                                                <i class="fas fa-{{ data_get($item, 'icon') }} me-1"></i>
-                                                {{ data_get($item, $column['field']) }}
-                                            </span>
+                                            <i class="fas fa-{{ data_get($item, 'icon') }} me-1"></i>
+                                            {{ data_get($item, $column['field']) }}
+                                        </span>
 
                                     @elseif($column['type'] == 'program_badge_large')
                                         <div class="d-flex align-items-center">
-                                                <span class="badge bg-{{ data_get($item, 'badge_class') }} fs-6 me-2">
-                                                    <i class="fas fa-{{ data_get($item, 'icon') }} me-2"></i>
-                                                    {{ data_get($item, $column['field']) }}
-                                                </span>
+                                            <span class="badge bg-{{ data_get($item, 'badge_class') }} fs-6 me-2">
+                                                <i class="fas fa-{{ data_get($item, 'icon') }} me-2"></i>
+                                                {{ data_get($item, $column['field']) }}
+                                            </span>
                                         </div>
 
                                     @elseif($column['type'] == 'periode_lengkap')
@@ -63,13 +64,13 @@
 
                                     @elseif($column['type'] == 'durasi_hari')
                                         <span class="badge bg-info">
-                                                {{ data_get($item, $column['field']) }} hari
-                                            </span>
+                                            {{ data_get($item, $column['field']) }} hari
+                                        </span>
 
                                     @elseif($column['type'] == 'status_badge')
                                         <span class="badge bg-{{ data_get($item, 'status_class') }}">
-                                                {{ data_get($item, $column['field']) }}
-                                            </span>
+                                            {{ data_get($item, $column['field']) }}
+                                        </span>
 
                                     @elseif($column['type'] == 'date')
                                         @php
@@ -116,7 +117,7 @@
                                             @endphp
                                             <img src="{{ $imagePreview }}"
                                                  alt="TTD"
-                                                 class="signature-preview"
+                                                 style="max-width: 80px; max-height: 50px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #dee2e6; border-radius: 4px;"
                                                  data-bs-toggle="tooltip"
                                                  data-bs-placement="top"
                                                  title="Tanda Tangan {{ $item->nama }}">

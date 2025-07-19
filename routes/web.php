@@ -18,6 +18,7 @@ use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\KeuanganLaporanController;
 use App\Http\Controllers\KeuanganMataAnggaranController;
+use App\Http\Controllers\KeuanganSumberDanaController;
 
 
 /*
@@ -567,6 +568,16 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::get('/{id}/edit', 'KeuanganProgramController@edit')->name('edit');
             Route::put('/{id}', 'KeuanganProgramController@update')->name('update');
             Route::delete('/{id}', 'KeuanganProgramController@destroy')->name('destroy');
+        });
+
+        Route::prefix('sumber-dana')->name('keuangan.sumber-dana.')->group(function () {
+            Route::get('/', [KeuanganSumberDanaController::class, 'index'])->name('index');
+            Route::get('/create', [KeuanganSumberDanaController::class, 'create'])->name('create');
+            Route::post('/', [KeuanganSumberDanaController::class, 'store'])->name('store');
+            Route::get('/{id}', [KeuanganSumberDanaController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [KeuanganSumberDanaController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [KeuanganSumberDanaController::class, 'update'])->name('update');
+            Route::delete('/{id}', [KeuanganSumberDanaController::class, 'destroy'])->name('destroy');
         });
 
     });

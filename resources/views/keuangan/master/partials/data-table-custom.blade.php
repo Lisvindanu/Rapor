@@ -106,6 +106,28 @@
                                     @elseif($column['type'] == 'text')
                                         {{ data_get($item, $column['field']) ?? '-' }}
 
+                                    @elseif($column['type'] == 'preview_ttd')
+                                        <div class="text-center">
+                                            @if(!empty(data_get($item, $column['field'])))
+                                                @php
+                                                    $signatureData = data_get($item, $column['field']);
+                                                    $imagePreview = strpos($signatureData, 'data:image/') === 0
+                                                        ? $signatureData
+                                                        : 'data:image/png;base64,' . $signatureData;
+                                                @endphp
+                                                <img src="{{ $imagePreview }}"
+                                                     alt="TTD"
+                                                     class="signature-preview"
+                                                     data-bs-toggle="tooltip"
+                                                     data-bs-placement="top"
+                                                     title="Tanda Tangan {{ $item->nama }}">
+                                            @else
+                                                <span class="no-signature">
+                <i class="fas fa-minus text-muted"></i>
+            </span>
+                                            @endif
+                                        </div>
+
                                     @else
                                         {{ data_get($item, $column['field']) ?? '-' }}
                                     @endif

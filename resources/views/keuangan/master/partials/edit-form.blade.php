@@ -73,6 +73,9 @@
                                                 @endforeach
                                             </select>
 
+                                        @elseif($field['type'] === 'tanda_tangan')
+                                            @include('keuangan.master.partials.tanda-tangan-form-fields', ['field' => $field])
+
                                         @elseif($field['type'] === 'checkbox')
                                             <div class="form-check">
                                                 <input class="form-check-input @error($field['name']) is-invalid @enderror"

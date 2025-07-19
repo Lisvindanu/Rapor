@@ -580,5 +580,17 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::delete('/{id}', [KeuanganSumberDanaController::class, 'destroy'])->name('destroy');
         });
 
+
+
+
+        Route::prefix('tanda-tangan')->name('keuangan.tanda-tangan.')->group(function () {
+            Route::get('/', 'KeuanganTandaTanganController@index')->name('index');
+            Route::get('/create', 'KeuanganTandaTanganController@create')->name('create');
+            Route::post('/', 'KeuanganTandaTanganController@store')->name('store');
+            Route::get('/{id}', 'KeuanganTandaTanganController@show')->name('show');
+            Route::get('/{id}/edit', 'KeuanganTandaTanganController@edit')->name('edit');
+            Route::put('/{id}', 'KeuanganTandaTanganController@update')->name('update');
+            Route::delete('/{id}', 'KeuanganTandaTanganController@destroy')->name('destroy');
+        });
     });
 });

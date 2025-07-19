@@ -1,4 +1,4 @@
-{{-- F:\rapor-dosen\resources\views\keuangan\master\partials\delete-script.blade.php --}}
+{{-- resources/views/keuangan/master/partials/delete-script.blade.php --}}
 
 {{-- Delete Confirmation Modal --}}
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -39,10 +39,20 @@
         let deleteUrl = '';
         let deleteItemName = '';
 
+        // Ensure CSRF token is available
+        if (!$('meta[name="csrf-token"]').length) {
+            $('head').append('<meta name="csrf-token" content="{{ csrf_token() }}">');
+        }
+
         // Handle delete button clicks
-        $(document).on('click', '.delete-btn', function() {
+        $(document).on('click', '.delete-btn', function(e) {
+            e.preventDefault();
+
             deleteUrl = $(this).data('url');
             deleteItemName = $(this).data('name');
+
+            console.log('Delete URL:', deleteUrl);
+            console.log('Delete Item:', deleteItemName);
 
             // Set item name in modal
             $('#deleteItemName').html('<strong>"' + deleteItemName + '"</strong>');
@@ -50,55 +60,85 @@
             // Reset button state
             $('#confirmDeleteBtn').prop('disabled', false).html('<i class="fas fa-trash me-1"></i>Hapus');
 
+            // Clear any existing alerts
+            $('#deleteModal .alert-danger').remove();
+
             // Show modal
             $('#deleteModal').modal('show');
         });
 
         // Handle confirm delete
-        $('#confirmDeleteBtn').click(function() {
-            if (!deleteUrl) return;
+        $('#confirmDeleteBtn').click(function(e) {
+            e.preventDefault();
+
+            if (!deleteUrl) {
+                console.error('No delete URL specified');
+                return;
+            }
 
             // Show loading state
             $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Menghapus...');
 
-            // Perform delete using jQuery AJAX - sesuai pattern repository
+            // Get CSRF token
+            const csrfToken = $('meta[name="csrf-token"]').attr('content') ||
+                $('input[name="_token"]').val() ||
+                '{{ csrf_token() }}';
+
+            console.log('Sending DELETE request to:', deleteUrl);
+            console.log('CSRF Token:', csrfToken);
+
+            // Perform delete using jQuery AJAX - SAMA SEPERTI TAHUN ANGGARAN
             $.ajax({
-                type: "DELETE",
+                type: "POST",
                 url: deleteUrl,
                 data: {
-                    _token: $('meta[name="csrf-token"]').attr('content') || $('input[name="_token"]').val(),
+                    _token: csrfToken,
                     _method: 'DELETE'
+                },
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 success: function(response) {
                     console.log('Delete success:', response);
 
-                    // Save success message for after reload
-                    const message = response.message || 'Data berhasil dihapus';
-                    sessionStorage.setItem('success_message', message);
+                    // Hide modal
+                    $('#deleteModal').modal('hide');
 
-                    // Reload page
+
                     window.location.reload();
                 },
                 error: function(xhr, status, error) {
                     console.error('Delete error:', xhr.responseText);
+                    console.error('Status:', status);
+                    console.error('Error:', error);
 
-                    // Parse error message
+                    // Parse error message dari JSON response (seperti tahun anggaran)
                     let errorMessage = 'Terjadi kesalahan saat menghapus data';
                     try {
                         const response = JSON.parse(xhr.responseText);
                         errorMessage = response.message || errorMessage;
                     } catch (e) {
-                        // Use default error message
+                        // Use status text or default message
+                        if (xhr.status === 404) {
+                            errorMessage = 'Data tidak ditemukan';
+                        } else if (xhr.status === 403) {
+                            errorMessage = 'Tidak memiliki permission untuk menghapus data';
+                        } else if (xhr.status === 405) {
+                            errorMessage = 'Method DELETE tidak diizinkan';
+                        } else {
+                            errorMessage = `Error ${xhr.status}: ${xhr.statusText || errorMessage}`;
+                        }
                     }
 
                     // Show error alert in modal
                     const alertHtml = `
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            ${errorMessage}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    `;
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        ${errorMessage}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
 
                     $('#deleteModal .modal-body').prepend(alertHtml);
 
@@ -112,30 +152,6 @@
                 }
             });
         });
-
-        // Show success message after page reload
-        const successMessage = sessionStorage.getItem('success_message');
-        if (successMessage) {
-            // Create success alert
-            const alertHtml = `
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    ${successMessage}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-
-            // Insert at top of container
-            $('.container').first().prepend(alertHtml);
-
-            // Clear the message
-            sessionStorage.removeItem('success_message');
-
-            // Auto remove after 5 seconds
-            setTimeout(function() {
-                $('.alert-success').fadeOut();
-            }, 5000);
-        }
 
         console.log('✅ Delete functionality ready');
     });

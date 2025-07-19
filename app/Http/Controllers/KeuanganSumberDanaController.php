@@ -83,7 +83,7 @@ class KeuanganSumberDanaController extends Controller
             DB::commit();
 
             return redirect()->route('keuangan.sumber-dana.index')
-                ->with('success', 'Sumber dana berhasil ditambahkan');
+                ->with('message', 'Sumber dana berhasil ditambahkan');
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -103,7 +103,8 @@ class KeuanganSumberDanaController extends Controller
 
         } catch (Exception $e) {
             Log::error('KeuanganSumberDana - Show error: ' . $e->getMessage());
-            return back()->with('error', 'Sumber dana tidak ditemukan.');
+            return redirect()->route('keuangan.sumber-dana.index')
+                ->with('error', 'Sumber dana tidak ditemukan.');
         }
     }
 
@@ -118,7 +119,8 @@ class KeuanganSumberDanaController extends Controller
 
         } catch (Exception $e) {
             Log::error('KeuanganSumberDana - Edit form error: ' . $e->getMessage());
-            return back()->with('error', 'Sumber dana tidak ditemukan.');
+            return redirect()->route('keuangan.sumber-dana.index')
+                ->with('error', 'Sumber dana tidak ditemukan.');
         }
     }
 
@@ -148,7 +150,7 @@ class KeuanganSumberDanaController extends Controller
             DB::commit();
 
             return redirect()->route('keuangan.sumber-dana.index')
-                ->with('success', 'Sumber dana berhasil diperbarui');
+                ->with('message', 'Sumber dana berhasil diperbarui');
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -165,27 +167,48 @@ class KeuanganSumberDanaController extends Controller
         try {
             $sumberDana = KeuanganSumberDana::findOrFail($id);
 
-            // Validasi apakah sumber dana bisa dihapus
             if (!KeuanganSumberDanaValidationHelper::canBeDeleted($id)) {
-                return response()->json([
-                    'message' => 'Tidak dapat menghapus sumber dana yang sedang digunakan dalam transaksi'
-                ], 400);
+                // Untuk AJAX request, return JSON error
+                if (request()->expectsJson() || request()->ajax()) {
+                    return response()->json([
+                        'message' => 'Sumber dana tidak dapat dihapus karena masih digunakan dalam transaksi.'
+                    ], 400);
+                }
+
+                return redirect()->route('keuangan.sumber-dana.index')
+                    ->with('error', 'Sumber dana tidak dapat dihapus karena masih digunakan dalam transaksi.');
             }
 
             DB::beginTransaction();
+
+            $namaSebelumHapus = $sumberDana->nama_sumber_dana;
             $sumberDana->delete();
+
             DB::commit();
 
-            return response()->json([
-                'message' => 'Sumber dana berhasil dihapus'
-            ], 200);
+            // Untuk AJAX request, return JSON success seperti tahun anggaran
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json([
+                    'message' => 'Sumber dana "' . $namaSebelumHapus . '" berhasil dihapus.'
+                ], 200);
+            }
+
+            return redirect()->route('keuangan.sumber-dana.index')
+                ->with('message', 'Sumber dana berhasil dihapus');
 
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('KeuanganSumberDana - Delete error: ' . $e->getMessage());
-            return response()->json([
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ], 500);
+
+            // Untuk AJAX request, return JSON error seperti tahun anggaran
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json([
+                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->route('keuangan.sumber-dana.index')
+                ->with('error', 'Gagal menghapus sumber dana: ' . $e->getMessage());
         }
     }
 }

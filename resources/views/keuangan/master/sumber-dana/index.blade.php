@@ -1,5 +1,5 @@
 {{-- resources/views/keuangan/master/sumber-dana/index.blade.php --}}
-@extends('app')
+@extends('layouts.main2')
 
 @php
     $tableConfig = [
@@ -22,7 +22,7 @@
             ],
             [
                 'label' => 'Tanggal Dibuat',
-                'type' => 'datetime',
+                'type' => 'text',
                 'field' => 'formatted_created_at',
                 'width' => '20%'
             ]

@@ -1,10 +1,10 @@
 {{-- resources/views/keuangan/master/sumber-dana/create.blade.php --}}
-@extends('app')
+@extends('layouts.main2')
 
 @php
     $headerConfig = [
         'title' => 'Tambah Sumber Dana',
-        'description' => 'Tambah data sumber dana untuk sistem keuangan',
+        'description' => 'Tambah data sumber dana baru untuk sistem keuangan',
         'back_route' => route('keuangan.sumber-dana.index'),
         'back_text' => 'Kembali ke Daftar'
     ];
@@ -12,9 +12,10 @@
     $formConfig = [
         'title' => 'Form Tambah Sumber Dana',
         'action' => route('keuangan.sumber-dana.store'),
+        'method' => 'POST',
         'submit_text' => 'Simpan Sumber Dana',
         'cancel_route' => route('keuangan.sumber-dana.index'),
-        'icon' => 'plus-circle',
+        'icon' => 'plus',
         'fields' => [
             [
                 'name' => 'nama_sumber_dana',
@@ -28,13 +29,29 @@
         'info_panel' => [
             'type' => 'info',
             'icon' => 'info-circle',
-            'title' => 'Informasi',
-            'subtitle' => 'Petunjuk pengisian:',
+            'title' => 'Informasi Sumber Dana',
+            'subtitle' => 'Panduan pengisian:',
             'items' => [
-                ['icon' => 'check', 'color' => 'success', 'text' => 'Nama sumber dana wajib diisi'],
-                ['icon' => 'check', 'color' => 'success', 'text' => 'Maksimal 200 karakter'],
-                ['icon' => 'check', 'color' => 'success', 'text' => 'Nama tidak boleh duplikat'],
-                ['icon' => 'lightbulb', 'color' => 'warning', 'text' => 'Gunakan nama yang jelas dan mudah dipahami']
+                [
+                    'icon' => 'check-circle',
+                    'color' => 'success',
+                    'text' => 'Nama sumber dana harus unik dan tidak boleh sama'
+                ],
+                [
+                    'icon' => 'edit',
+                    'color' => 'info',
+                    'text' => 'Gunakan nama yang jelas dan mudah dipahami'
+                ],
+                [
+                    'icon' => 'lightbulb',
+                    'color' => 'warning',
+                    'text' => 'Contoh: "Dropping dari Fakultas", "Dana Internal"'
+                ],
+                [
+                    'icon' => 'database',
+                    'color' => 'info',
+                    'text' => 'Data akan tersimpan permanent di database'
+                ]
             ]
         ]
     ];

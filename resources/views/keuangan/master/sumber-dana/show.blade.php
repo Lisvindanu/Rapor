@@ -1,7 +1,12 @@
 {{-- resources/views/keuangan/master/sumber-dana/show.blade.php --}}
-@extends('app')
+@extends('layouts.main2')
 
 @php
+    // Pastikan $sumberDana tersedia dan valid
+    if (!isset($sumberDana) || !$sumberDana) {
+        abort(404, 'Sumber dana tidak ditemukan');
+    }
+
     $headerConfig = [
         'title' => 'Detail Sumber Dana',
         'description' => 'Informasi detail sumber dana: ' . $sumberDana->nama_sumber_dana,
@@ -38,8 +43,8 @@
                 'fields' => [
                     [
                         'label' => 'Tanggal Dibuat',
-                        'field' => 'created_at',
-                        'type' => 'datetime',
+                        'field' => 'formatted_created_at',
+                        'type' => 'text',
                         'col_size' => '6'
                     ],
                     [

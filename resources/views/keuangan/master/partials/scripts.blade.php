@@ -3,8 +3,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🎯 Keuangan Master Data - Simplified Version');
 
-        // Filter auto-submit
-        const filterSelects = document.querySelectorAll('select[name="kategori"], select[name="status"]');
+        // Filter auto-submit - HANYA untuk filter di index page, bukan form
+        const filterSelects = document.querySelectorAll('.filter-form select[name="kategori"], .filter-form select[name="status"]');
         filterSelects.forEach(select => {
             select.addEventListener('change', function() {
                 this.style.opacity = '0.6';

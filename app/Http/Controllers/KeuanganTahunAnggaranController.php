@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\KeuanganTahunAnggaran;
+use App\Helpers\KeuanganTahunAnggaranValidationHelper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Exception;
 
@@ -44,6 +46,7 @@ class KeuanganTahunAnggaranController extends Controller
             return view('keuangan.master.tahun-anggaran.index', compact('tahunAnggarans'));
 
         } catch (Exception $e) {
+            Log::error('KeuanganTahunAnggaran - Index error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
@@ -56,6 +59,7 @@ class KeuanganTahunAnggaranController extends Controller
         try {
             return view('keuangan.master.tahun-anggaran.create');
         } catch (Exception $e) {
+            Log::error('KeuanganTahunAnggaran - Create form error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
@@ -66,39 +70,19 @@ class KeuanganTahunAnggaranController extends Controller
     public function store(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'tahun_anggaran' => 'required|string|max:10|unique:keuangan_tahun_anggaran,tahun_anggaran',
-                'tgl_awal_anggaran' => 'required|date',
-                'tgl_akhir_anggaran' => 'required|date|after:tgl_awal_anggaran'
-            ], [
-                'tahun_anggaran.required' => 'Tahun anggaran wajib diisi.',
-                'tahun_anggaran.unique' => 'Tahun anggaran sudah ada.',
-                'tgl_awal_anggaran.required' => 'Tanggal awal anggaran wajib diisi.',
-                'tgl_akhir_anggaran.required' => 'Tanggal akhir anggaran wajib diisi.',
-                'tgl_akhir_anggaran.after' => 'Tanggal akhir harus setelah tanggal awal.'
-            ]);
+            $request->validate(
+                KeuanganTahunAnggaranValidationHelper::getTahunAnggaranRules(),
+                KeuanganTahunAnggaranValidationHelper::getMessages()
+            );
 
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-            // Validasi tambahan untuk overlap tanggal
-            $overlap = KeuanganTahunAnggaran::where(function ($query) use ($request) {
-                $query->whereBetween('tgl_awal_anggaran', [$request->tgl_awal_anggaran, $request->tgl_akhir_anggaran])
-                    ->orWhereBetween('tgl_akhir_anggaran', [$request->tgl_awal_anggaran, $request->tgl_akhir_anggaran])
-                    ->orWhere(function ($q) use ($request) {
-                        $q->where('tgl_awal_anggaran', '<=', $request->tgl_awal_anggaran)
-                            ->where('tgl_akhir_anggaran', '>=', $request->tgl_akhir_anggaran);
-                    });
-            })->exists();
-
-            if ($overlap) {
+            // Validasi overlap menggunakan helper
+            if (KeuanganTahunAnggaranValidationHelper::validateOverlap($request)) {
                 return redirect()->back()
                     ->withErrors(['overlap' => 'Periode tahun anggaran tidak boleh overlap dengan yang sudah ada.'])
                     ->withInput();
             }
+
+            DB::beginTransaction();
 
             KeuanganTahunAnggaran::create($request->only([
                 'tahun_anggaran',
@@ -106,10 +90,14 @@ class KeuanganTahunAnggaranController extends Controller
                 'tgl_akhir_anggaran'
             ]));
 
+            DB::commit();
+
             return redirect()->route('keuangan.tahun-anggaran.index')
                 ->with('message', 'Tahun anggaran berhasil ditambahkan.');
 
         } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('KeuanganTahunAnggaran - Store error: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
                 ->withInput();
@@ -125,6 +113,7 @@ class KeuanganTahunAnggaranController extends Controller
             $tahunAnggaran = KeuanganTahunAnggaran::findOrFail($id);
             return view('keuangan.master.tahun-anggaran.show', compact('tahunAnggaran'));
         } catch (Exception $e) {
+            Log::error('KeuanganTahunAnggaran - Show error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Data tidak ditemukan.');
         }
     }
@@ -138,6 +127,7 @@ class KeuanganTahunAnggaranController extends Controller
             $tahunAnggaran = KeuanganTahunAnggaran::findOrFail($id);
             return view('keuangan.master.tahun-anggaran.edit', compact('tahunAnggaran'));
         } catch (Exception $e) {
+            Log::error('KeuanganTahunAnggaran - Edit form error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Data tidak ditemukan.');
         }
     }
@@ -150,40 +140,19 @@ class KeuanganTahunAnggaranController extends Controller
         try {
             $tahunAnggaran = KeuanganTahunAnggaran::findOrFail($id);
 
-            $validator = Validator::make($request->all(), [
-                'tahun_anggaran' => 'required|string|max:10|unique:keuangan_tahun_anggaran,tahun_anggaran,' . $id,
-                'tgl_awal_anggaran' => 'required|date',
-                'tgl_akhir_anggaran' => 'required|date|after:tgl_awal_anggaran'
-            ], [
-                'tahun_anggaran.required' => 'Tahun anggaran wajib diisi.',
-                'tahun_anggaran.unique' => 'Tahun anggaran sudah ada.',
-                'tgl_awal_anggaran.required' => 'Tanggal awal anggaran wajib diisi.',
-                'tgl_akhir_anggaran.required' => 'Tanggal akhir anggaran wajib diisi.',
-                'tgl_akhir_anggaran.after' => 'Tanggal akhir harus setelah tanggal awal.'
-            ]);
+            $request->validate(
+                KeuanganTahunAnggaranValidationHelper::getTahunAnggaranRules($id),
+                KeuanganTahunAnggaranValidationHelper::getMessages()
+            );
 
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-            // Validasi tambahan untuk overlap tanggal (exclude current record)
-            $overlap = KeuanganTahunAnggaran::where('id', '!=', $id)
-                ->where(function ($query) use ($request) {
-                    $query->whereBetween('tgl_awal_anggaran', [$request->tgl_awal_anggaran, $request->tgl_akhir_anggaran])
-                        ->orWhereBetween('tgl_akhir_anggaran', [$request->tgl_awal_anggaran, $request->tgl_akhir_anggaran])
-                        ->orWhere(function ($q) use ($request) {
-                            $q->where('tgl_awal_anggaran', '<=', $request->tgl_awal_anggaran)
-                                ->where('tgl_akhir_anggaran', '>=', $request->tgl_akhir_anggaran);
-                        });
-                })->exists();
-
-            if ($overlap) {
+            // Validasi overlap menggunakan helper (exclude current record)
+            if (KeuanganTahunAnggaranValidationHelper::validateOverlap($request, $id)) {
                 return redirect()->back()
                     ->withErrors(['overlap' => 'Periode tahun anggaran tidak boleh overlap dengan yang sudah ada.'])
                     ->withInput();
             }
+
+            DB::beginTransaction();
 
             $tahunAnggaran->update($request->only([
                 'tahun_anggaran',
@@ -191,10 +160,14 @@ class KeuanganTahunAnggaranController extends Controller
                 'tgl_akhir_anggaran'
             ]));
 
+            DB::commit();
+
             return redirect()->route('keuangan.tahun-anggaran.index')
                 ->with('message', 'Tahun anggaran berhasil diperbarui.');
 
         } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('KeuanganTahunAnggaran - Update error: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
                 ->withInput();
@@ -216,13 +189,17 @@ class KeuanganTahunAnggaranController extends Controller
                 ], 400);
             }
 
+            DB::beginTransaction();
             $tahunAnggaran->delete();
+            DB::commit();
 
             return response()->json([
                 'message' => 'Tahun anggaran berhasil dihapus.'
             ], 200);
 
         } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('KeuanganTahunAnggaran - Delete error: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);

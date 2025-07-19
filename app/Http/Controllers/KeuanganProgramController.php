@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\KeuanganProgram;
+use App\Helpers\KeuanganProgramValidationHelper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class KeuanganProgramController extends Controller
@@ -27,6 +29,7 @@ class KeuanganProgramController extends Controller
             return view('keuangan.master.program.index', compact('programs'));
 
         } catch (Exception $e) {
+            Log::error('KeuanganProgram - Index error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
@@ -39,6 +42,7 @@ class KeuanganProgramController extends Controller
         try {
             return view('keuangan.master.program.create');
         } catch (Exception $e) {
+            Log::error('KeuanganProgram - Create form error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
@@ -49,28 +53,25 @@ class KeuanganProgramController extends Controller
     public function store(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'nama_program' => 'required|string|max:100|unique:keuangan_program,nama_program',
-            ], [
-                'nama_program.required' => 'Nama program wajib diisi.',
-                'nama_program.unique' => 'Nama program sudah ada.',
-                'nama_program.max' => 'Nama program maksimal 100 karakter.'
-            ]);
+            $request->validate(
+                KeuanganProgramValidationHelper::getProgramRules(),
+                KeuanganProgramValidationHelper::getMessages()
+            );
 
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
+            DB::beginTransaction();
 
             KeuanganProgram::create([
                 'nama_program' => $request->nama_program
             ]);
 
+            DB::commit();
+
             return redirect()->route('keuangan.program.index')
                 ->with('message', 'Program berhasil ditambahkan.');
 
         } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('KeuanganProgram - Store error: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
                 ->withInput();
@@ -86,6 +87,7 @@ class KeuanganProgramController extends Controller
             $program = KeuanganProgram::findOrFail($id);
             return view('keuangan.master.program.show', compact('program'));
         } catch (Exception $e) {
+            Log::error('KeuanganProgram - Show error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Data tidak ditemukan.');
         }
     }
@@ -99,6 +101,7 @@ class KeuanganProgramController extends Controller
             $program = KeuanganProgram::findOrFail($id);
             return view('keuangan.master.program.edit', compact('program'));
         } catch (Exception $e) {
+            Log::error('KeuanganProgram - Edit form error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Data tidak ditemukan.');
         }
     }
@@ -111,28 +114,25 @@ class KeuanganProgramController extends Controller
         try {
             $program = KeuanganProgram::findOrFail($id);
 
-            $validator = Validator::make($request->all(), [
-                'nama_program' => 'required|string|max:100|unique:keuangan_program,nama_program,' . $id,
-            ], [
-                'nama_program.required' => 'Nama program wajib diisi.',
-                'nama_program.unique' => 'Nama program sudah ada.',
-                'nama_program.max' => 'Nama program maksimal 100 karakter.'
-            ]);
+            $request->validate(
+                KeuanganProgramValidationHelper::getProgramRules($id),
+                KeuanganProgramValidationHelper::getMessages()
+            );
 
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
+            DB::beginTransaction();
 
             $program->update([
                 'nama_program' => $request->nama_program
             ]);
 
+            DB::commit();
+
             return redirect()->route('keuangan.program.index')
                 ->with('message', 'Program berhasil diperbarui.');
 
         } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('KeuanganProgram - Update error: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
                 ->withInput();
@@ -154,13 +154,17 @@ class KeuanganProgramController extends Controller
             //     ], 400);
             // }
 
+            DB::beginTransaction();
             $program->delete();
+            DB::commit();
 
             return response()->json([
                 'message' => 'Program berhasil dihapus.'
             ], 200);
 
         } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('KeuanganProgram - Delete error: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);

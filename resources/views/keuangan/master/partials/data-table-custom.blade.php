@@ -19,13 +19,13 @@
                     <tr>
                         @if(isset($tableConfig['columns']))
                             @foreach($tableConfig['columns'] as $column)
-                                <th style="width: {{ $column['width'] ?? 'auto' }};">
+                                <th style="width: {{ $column['width'] ?? 'auto' }}; color: #000000 !important;">
                                     {{ $column['label'] }}
                                 </th>
                             @endforeach
                         @endif
                         @if(isset($tableConfig['actions']))
-                            <th style="width: 15%;" class="text-center">Aksi</th>
+                            <th style="width: 15%; color: white !important;" class="text-center">Aksi</th>
                         @endif
                     </tr>
                     </thead>
@@ -33,7 +33,7 @@
                     @foreach($tableConfig['data'] as $index => $item)
                         <tr>
                             @foreach($tableConfig['columns'] as $column)
-                                <td>
+                                <td @if($column['type'] == 'preview_ttd') class="text-center align-middle" @endif>
                                     @if($column['type'] == 'number')
                                         {{ $index + 1 }}
 
@@ -107,26 +107,22 @@
                                         {{ data_get($item, $column['field']) ?? '-' }}
 
                                     @elseif($column['type'] == 'preview_ttd')
-                                        <div class="text-center">
-                                            @if(!empty(data_get($item, $column['field'])))
-                                                @php
-                                                    $signatureData = data_get($item, $column['field']);
-                                                    $imagePreview = strpos($signatureData, 'data:image/') === 0
-                                                        ? $signatureData
-                                                        : 'data:image/png;base64,' . $signatureData;
-                                                @endphp
-                                                <img src="{{ $imagePreview }}"
-                                                     alt="TTD"
-                                                     class="signature-preview"
-                                                     data-bs-toggle="tooltip"
-                                                     data-bs-placement="top"
-                                                     title="Tanda Tangan {{ $item->nama }}">
-                                            @else
-                                                <span class="no-signature">
-                <i class="fas fa-minus text-muted"></i>
-            </span>
-                                            @endif
-                                        </div>
+                                        @if(!empty(data_get($item, $column['field'])))
+                                            @php
+                                                $signatureData = data_get($item, $column['field']);
+                                                $imagePreview = strpos($signatureData, 'data:image/') === 0
+                                                    ? $signatureData
+                                                    : 'data:image/png;base64,' . $signatureData;
+                                            @endphp
+                                            <img src="{{ $imagePreview }}"
+                                                 alt="TTD"
+                                                 class="signature-preview"
+                                                 data-bs-toggle="tooltip"
+                                                 data-bs-placement="top"
+                                                 title="Tanda Tangan {{ $item->nama }}">
+                                        @else
+                                            <i class="fas fa-minus text-muted"></i>
+                                        @endif
 
                                     @else
                                         {{ data_get($item, $column['field']) ?? '-' }}

@@ -167,4 +167,50 @@
             font-size: 0.7em;
         }
     }
+
+    /* Signature Preview Styles */
+    .signature-preview {
+        max-width: 80px !important;
+        max-height: 50px !important;
+        object-fit: contain !important;
+        display: block !important;
+        margin: 0 auto !important;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        background-color: white;
+    }
+
+    /* Force center alignment for TTD column */
+    td:has(.signature-preview) {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+
+    @media (max-width: 576px) {
+        .judul-modul h3 {
+            font-size: 1.5rem;
+        }
+
+        .judul-modul p {
+            font-size: 0.9rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .table th, .table td {
+            padding: 0.5rem 0.25rem;
+            font-size: 0.8rem;
+        }
+
+        .badge {
+            font-size: 0.7em;
+        }
+
+        .signature-preview {
+            max-width: 60px !important;
+            max-height: 40px !important;
+        }
+    }
 </style>

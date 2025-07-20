@@ -1,30 +1,32 @@
 {{-- resources/views/whistleblower/partials/form-persetujuan.blade.php --}}
 <div class="mb-4">
-    <div class="card border-primary">
-        <div class="card-header bg-primary text-white">
-            <h6 class="card-title mb-0">
-                <i class="fas fa-shield-check me-2"></i>Persetujuan dan Kebijakan
-            </h6>
+    <h6 class="border-bottom pb-2 mb-3">Persetujuan & Kebijakan</h6>
+    
+    <div class="border rounded p-3">
+        <div class="form-check">
+            <input class="form-check-input @error('persetujuan_kebijakan') is-invalid @enderror" 
+                   type="checkbox" id="persetujuan_kebijakan" name="persetujuan_kebijakan" 
+                   value="1" required {{ old('persetujuan_kebijakan') ? 'checked' : '' }}>
+            <label class="form-check-label" for="persetujuan_kebijakan">
+                Saya menyetujui <a href="#" data-bs-toggle="modal" data-bs-target="#kebijakanModal">kebijakan privasi</a> 
+                dan memahami bahwa informasi yang saya berikan akan diproses sesuai dengan prosedur PPKPT 
+                <span class="text-danger">*</span>
+            </label>
+            @error('persetujuan_kebijakan')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
-        <div class="card-body">
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="persetujuan_kebijakan" name="persetujuan_kebijakan" required
-                       {{ old('persetujuan_kebijakan') ? 'checked' : '' }}>
-                <label class="form-check-label fw-bold" for="persetujuan_kebijakan">
-                    Saya menyetujui <a href="#" data-bs-toggle="modal" data-bs-target="#modalKebijakan" class="text-decoration-underline">Kebijakan Privasi</a> dan memahami bahwa informasi yang saya berikan akan digunakan untuk proses penanganan pengaduan <span class="text-danger">*</span>
-                </label>
-                @error('persetujuan_kebijakan')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div class="alert alert-success mb-0">
-                <h6 class="alert-heading">
-                    <i class="fas fa-shield-alt me-2"></i>Jaminan Kerahasiaan
-                </h6>
-                <p class="mb-0">
-                    Identitas dan informasi Anda akan dijaga sesuai dengan protokol keamanan dan kebijakan perlindungan pelapor yang berlaku di institusi.
-                </p>
+        
+        <div class="mt-3">
+            <div class="alert alert-info">
+                <i class="fas fa-shield-alt"></i>
+                <strong>Jaminan Kerahasiaan:</strong>
+                <ul class="mt-2 mb-0">
+                    <li>Identitas pelapor akan dijaga kerahasiaannya</li>
+                    <li>Laporan akan ditangani oleh tim profesional PPKPT</li>
+                    <li>Tidak ada retaliasi terhadap pelapor yang beritikad baik</li>
+                    <li>Proses penanganan mengikuti standar operasional yang berlaku</li>
+                </ul>
             </div>
         </div>
     </div>

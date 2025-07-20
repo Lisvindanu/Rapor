@@ -2,11 +2,88 @@
 @extends('layouts.main2')
 
 @section('navbar')
-    @include('whistleblower.navbar')
+    @include('whistleblower.user.navbar')
 @endsection
 
 @push('styles')
-<link href="{{ asset('css/whistleblower.css') }}" rel="stylesheet">
+<style>
+/* Border fixes untuk dropdown dan form controls */
+.form-select {
+    border: 1px solid #ced4da !important;
+}
+
+.form-control {
+    border: 1px solid #ced4da !important;
+}
+
+.form-check-input {
+    border: 1px solid #ced4da !important;
+}
+
+.form-select:focus {
+    border-color: #86b7fe !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+.form-control:focus {
+    border-color: #86b7fe !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+.form-check-input:focus {
+    border-color: #86b7fe !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+/* Minimal CSS untuk styling yang diperlukan */
+.terlapor-item {
+    transition: all 0.3s ease;
+    border: 1px solid #dee2e6 !important;
+}
+
+.terlapor-item:hover {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.evidence-option {
+    transition: all 0.2s ease;
+    border: 1px solid #dee2e6 !important;
+}
+
+.evidence-option:hover {
+    background-color: #f8f9fa;
+}
+
+#fileUploadDiv, #gdriveDiv {
+    display: none;
+}
+
+#disabilityTypeDiv {
+    display: none;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.alasan-pengaduan-section.border-danger {
+    border-color: #dc3545 !important;
+}
+
+.card {
+    border: 1px solid #dee2e6 !important;
+}
+
+@media (max-width: 768px) {
+    .terlapor-item {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-group-vertical .btn {
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
 @endpush
 
 @section('konten')

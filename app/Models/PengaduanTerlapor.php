@@ -20,13 +20,8 @@ class PengaduanTerlapor extends Model
         'kontak_terlapor',
     ];
 
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
-
     /**
-     * Relationship dengan Pengaduan
+     * Get the pengaduan that owns the terlapor.
      */
     public function pengaduan()
     {
@@ -34,52 +29,15 @@ class PengaduanTerlapor extends Model
     }
 
     /**
-     * Accessor untuk status terlapor yang lebih readable
+     * Get status terlapor label
      */
     public function getStatusTerlaporLabelAttribute()
     {
         $labels = [
             'mahasiswa' => 'Mahasiswa',
-            'pegawai' => 'Pegawai/Dosen',
+            'pegawai' => 'Pegawai',
         ];
 
-        return $labels[$this->status_terlapor] ?? ucfirst($this->status_terlapor);
-    }
-
-    /**
-     * Accessor untuk badge status terlapor
-     */
-    public function getStatusTerlaporBadgeAttribute()
-    {
-        $badges = [
-            'mahasiswa' => 'bg-primary',
-            'pegawai' => 'bg-success',
-        ];
-
-        return $badges[$this->status_terlapor] ?? 'bg-secondary';
-    }
-
-    /**
-     * Scope untuk filter berdasarkan status
-     */
-    public function scopeByStatus($query, $status)
-    {
-        return $query->where('status_terlapor', $status);
-    }
-
-    /**
-     * Scope untuk filter mahasiswa
-     */
-    public function scopeMahasiswa($query)
-    {
-        return $query->where('status_terlapor', 'mahasiswa');
-    }
-
-    /**
-     * Scope untuk filter pegawai
-     */
-    public function scopePegawai($query)
-    {
-        return $query->where('status_terlapor', 'pegawai');
+        return $labels[$this->status_terlapor] ?? 'Unknown';
     }
 }

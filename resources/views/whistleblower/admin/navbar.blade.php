@@ -9,8 +9,8 @@
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <!-- Dashboard -->
                                 <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('whistleblower.admin.dashboard') ? 'active' : '' }}" 
-                                       href="{{ route('whistleblower.admin.dashboard') }}">
+                                    <a class="nav-link {{ request()->routeIs('whistleblower.dashboard') ? 'active' : '' }}" 
+                                       href="{{ route('whistleblower.dashboard') }}">
                                         Dashboard Admin
                                     </a>
                                 </li>
@@ -64,7 +64,8 @@
                                 
                                 <!-- Laporan & Analisis -->
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a class="nav-link dropdown-toggle {{ request()->routeIs('whistleblower.admin.statistik') || request()->routeIs('whistleblower.admin.laporan') ? 'active' : '' }}" 
+                                       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Laporan & Analisis
                                     </a>
                                     <ul class="dropdown-menu">
@@ -74,18 +75,20 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="#">
+                                            <a class="dropdown-item {{ request()->routeIs('whistleblower.admin.statistik') ? 'active' : '' }}" 
+                                               href="{{ route('whistleblower.admin.statistik') }}">
                                                 Statistik Pengaduan
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="#">
+                                            <a class="dropdown-item {{ request()->routeIs('whistleblower.admin.laporan') ? 'active' : '' }}" 
+                                               href="{{ route('whistleblower.admin.laporan') }}">
                                                 Trend Analysis
                                             </a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('whistleblower.admin.pengaduan.export') }}">
+                                            <a class="dropdown-item" href="{{ route('whistleblower.admin.export.excel') }}">
                                                 Export Data
                                             </a>
                                         </li>
@@ -94,12 +97,14 @@
 
                                 <!-- Pengaturan -->
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a class="nav-link dropdown-toggle {{ request()->routeIs('whistleblower.admin.kategori.*') ? 'active' : '' }}" 
+                                       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Pengaturan
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <a class="dropdown-item" href="#">
+                                            <a class="dropdown-item {{ request()->routeIs('whistleblower.admin.kategori.index') ? 'active' : '' }}" 
+                                               href="{{ route('whistleblower.admin.kategori.index') }}">
                                                 Kategori Pengaduan
                                             </a>
                                         </li>
@@ -237,7 +242,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('whistleblower.admin.pengaduan.export') }}" method="GET">
+                <form action="{{ route('whistleblower.admin.export.excel') }}" method="GET">
                     <div class="mb-3">
                         <label class="form-label">Periode Laporan</label>
                         <select name="period" class="form-select">

@@ -1,8 +1,8 @@
-{{-- resources/views/whistleblower/admin/dashboard.blade.php --}}
+{{-- resources/views/whistleblower/user/dashboard.blade.php --}}
 @extends('layouts.main2')
 
 @section('navbar')
-    @include('whistleblower.admin.navbar')
+    @include('whistleblower.user.navbar')
 @endsection
 
 @push('styles')
@@ -48,48 +48,20 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2>Dashboard Admin PPKPT</h2>
+                    <h2>Dashboard Whistleblower</h2>
                     <p class="text-muted">
-                        <i class="fas fa-user-shield"></i> 
-                        {{ session('selected_role') }} - Sistem Pencegahan dan Penanganan Kekerasan Seksual
+                        <i class="fas fa-user"></i> 
+                        Selamat datang, <strong>{{ auth()->user()->name }}</strong>
                     </p>
-                    <div class="d-flex gap-3">
-                        <small class="text-info">
-                            <i class="fas fa-envelope"></i> 
-                            Email: {{ auth()->user()->email }}
-                        </small>
-                        @if(session('selected_role') === 'Admin PPKPT Prodi')
-                            <small class="badge bg-info">
-                                <i class="fas fa-building"></i> 
-                                Unit Kerja: {{ auth()->user()->unit_kerja ?? 'Belum diset' }}
-                            </small>
-                        @endif
-                    </div>
+                    <small class="text-info">
+                        <i class="fas fa-envelope"></i> 
+                        Email: {{ auth()->user()->email }}
+                    </small>
                 </div>
                 <div>
-                    <a href="{{ route('whistleblower.create') }}" class="btn btn-outline-primary me-2">
+                    <a href="{{ route('whistleblower.create') }}" class="btn btn-danger">
                         <i class="fas fa-plus"></i> Buat Laporan
                     </a>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fas fa-cog"></i> Kelola
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('whistleblower.admin.pengaduan.index') }}">
-                                <i class="fas fa-list"></i> Semua Pengaduan
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('whistleblower.admin.pengaduan.pending') }}">
-                                <i class="fas fa-clock"></i> Pengaduan Pending
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('whistleblower.admin.kategori.index') }}">
-                                <i class="fas fa-tags"></i> Kelola Kategori
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('whistleblower.admin.laporan') }}">
-                                <i class="fas fa-chart-bar"></i> Laporan & Statistik
-                            </a></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
 
@@ -111,7 +83,7 @@
 
             <!-- Statistics Cards -->
             <div class="row mb-4">
-                <div class="col-md-2 mb-3">
+                <div class="col-md-3 mb-3">
                     <div class="card bg-primary text-white stats-card">
                         <div class="card-body text-center">
                             <i class="fas fa-file-alt fa-2x mb-2"></i>
@@ -120,7 +92,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2 mb-3">
+                <div class="col-md-3 mb-3">
                     <div class="card bg-warning text-white stats-card">
                         <div class="card-body text-center">
                             <i class="fas fa-clock fa-2x mb-2"></i>
@@ -129,7 +101,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2 mb-3">
+                <div class="col-md-3 mb-3">
                     <div class="card bg-info text-white stats-card">
                         <div class="card-body text-center">
                             <i class="fas fa-spinner fa-2x mb-2"></i>
@@ -138,7 +110,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2 mb-3">
+                <div class="col-md-3 mb-3">
                     <div class="card bg-success text-white stats-card">
                         <div class="card-body text-center">
                             <i class="fas fa-check fa-2x mb-2"></i>
@@ -147,83 +119,50 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2 mb-3">
-                    <div class="card bg-danger text-white stats-card">
-                        <div class="card-body text-center">
-                            <i class="fas fa-times fa-2x mb-2"></i>
-                            <h3>{{ $stats['ditolak'] ?? 0 }}</h3>
-                            <p class="mb-0">Ditolak</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2 mb-3">
-                    <div class="card bg-secondary text-white stats-card">
-                        <div class="card-body text-center">
-                            <i class="fas fa-exclamation fa-2x mb-2"></i>
-                            <h3>{{ $stats['butuh_bukti'] ?? 0 }}</h3>
-                            <p class="mb-0">Butuh Bukti</p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- Quick Actions for Admin -->
+            <!-- Quick Actions -->
             <div class="row mb-4">
-                <div class="col-md-3 mb-3">
-                    <div class="card border-warning">
+                <div class="col-md-4 mb-3">
+                    <div class="card border-danger">
                         <div class="card-body text-center">
-                            <i class="fas fa-clock fa-3x text-warning mb-3"></i>
-                            <h5>Pengaduan Pending</h5>
-                            <p class="text-muted">Review pengaduan yang menunggu</p>
-                            <a href="{{ route('whistleblower.admin.pengaduan.pending') }}" class="btn btn-warning">
-                                Review ({{ $stats['pending'] }})
-                            </a>
+                            <i class="fas fa-plus-circle fa-3x text-danger mb-3"></i>
+                            <h5>Buat Laporan Baru</h5>
+                            <p class="text-muted">Laporkan insiden yang terjadi</p>
+                            <a href="{{ route('whistleblower.create') }}" class="btn btn-danger">Lapor Sekarang</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-md-4 mb-3">
                     <div class="card border-info">
                         <div class="card-body text-center">
                             <i class="fas fa-list fa-3x text-info mb-3"></i>
-                            <h5>Kelola Pengaduan</h5>
-                            <p class="text-muted">Lihat dan kelola semua pengaduan</p>
-                            <a href="{{ route('whistleblower.admin.pengaduan.index') }}" class="btn btn-info">Kelola</a>
+                            <h5>Riwayat Laporan</h5>
+                            <p class="text-muted">Lihat pengaduan yang pernah dibuat</p>
+                            <button class="btn btn-info" onclick="scrollToReports()">Lihat Riwayat</button>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-md-4 mb-3">
                     <div class="card border-success">
                         <div class="card-body text-center">
-                            <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
-                            <h5>Laporan & Statistik</h5>
-                            <p class="text-muted">Lihat laporan dan analisis data</p>
-                            <a href="{{ route('whistleblower.admin.laporan') }}" class="btn btn-success">Lihat Laporan</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="card border-primary">
-                        <div class="card-body text-center">
-                            <i class="fas fa-tags fa-3x text-primary mb-3"></i>
-                            <h5>Kelola Kategori</h5>
-                            <p class="text-muted">Atur kategori pengaduan</p>
-                            <a href="{{ route('whistleblower.admin.kategori.index') }}" class="btn btn-primary">Kelola</a>
+                            <i class="fas fa-phone fa-3x text-success mb-3"></i>
+                            <h5>Kontak Darurat</h5>
+                            <p class="text-muted">Hubungi tim PPKPT</p>
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalKontak">Kontak</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Recent Reports -->
-            <div class="row">
+            <div class="row" id="reports-section">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="card-header">
                             <h5 class="mb-0">
-                                <i class="fas fa-history"></i> Pengaduan Terbaru
+                                <i class="fas fa-history"></i> Riwayat Pengaduan Anda
                             </h5>
-                            <a href="{{ route('whistleblower.admin.pengaduan.index') }}" class="btn btn-sm btn-outline-primary">
-                                Lihat Semua
-                            </a>
                         </div>
                         <div class="card-body">
                             @if($pengaduan->count() > 0)
@@ -232,7 +171,6 @@
                                         <thead class="table-light">
                                             <tr>
                                                 <th>Kode Pengaduan</th>
-                                                <th>Pelapor</th>
                                                 <th>Kategori</th>
                                                 <th>Status</th>
                                                 <th>Terlapor</th>
@@ -244,11 +182,9 @@
                                             @foreach($pengaduan as $item)
                                                 <tr>
                                                     <td>
+                                                        <strong>{{ $item->kode_pengaduan ?? 'N/A' }}</strong>
                                                         @if($item->anonymous)
-                                                            <span class="text-muted">Anonim</span>
-                                                        @else
-                                                            {{ $item->nama_pelapor ?? 'N/A' }}
-                                                            <br><small class="text-muted">{{ $item->email_pelapor }}</small>
+                                                            <span class="badge bg-secondary ms-1">Anonim</span>
                                                         @endif
                                                     </td>
                                                     <td>
@@ -298,27 +234,12 @@
                                                                 <i class="fas fa-eye"></i> Detail
                                                             </a>
                                                             
-                                                            @if($item->status_pengaduan === 'pending')
-                                                                <div class="btn-group btn-group-sm">
-                                                                    <button type="button" class="btn btn-outline-success btn-sm dropdown-toggle" 
-                                                                            data-bs-toggle="dropdown">
-                                                                        <i class="fas fa-check"></i> Proses
-                                                                    </button>
-                                                                    <ul class="dropdown-menu">
-                                                                        <li><a class="dropdown-item" href="#" 
-                                                                               onclick="updateStatus('{{ $item->id }}', 'proses')">
-                                                                            <i class="fas fa-play text-info"></i> Proses
-                                                                        </a></li>
-                                                                        <li><a class="dropdown-item" href="#" 
-                                                                               onclick="updateStatus('{{ $item->id }}', 'butuh_bukti')">
-                                                                            <i class="fas fa-exclamation text-warning"></i> Butuh Bukti
-                                                                        </a></li>
-                                                                        <li><a class="dropdown-item" href="#" 
-                                                                               onclick="updateStatus('{{ $item->id }}', 'ditolak')">
-                                                                            <i class="fas fa-times text-danger"></i> Tolak
-                                                                        </a></li>
-                                                                    </ul>
-                                                                </div>
+                                                            @if(in_array($item->status_pengaduan, ['pending', 'butuh_bukti']))
+                                                                <button type="button" 
+                                                                        class="btn btn-outline-danger btn-sm"
+                                                                        onclick="cancelPengaduan('{{ $item->id }}', '{{ $item->kode_pengaduan }}')">
+                                                                    <i class="fas fa-times"></i> Batal
+                                                                </button>
                                                             @endif
                                                         </div>
                                                     </td>
@@ -336,7 +257,10 @@
                                 <div class="text-center py-4">
                                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                                     <h5 class="text-muted">Belum Ada Pengaduan</h5>
-                                    <p class="text-muted">Belum ada pengaduan yang masuk ke sistem.</p>
+                                    <p class="text-muted">Anda belum pernah membuat laporan pengaduan.</p>
+                                    <a href="{{ route('whistleblower.create') }}" class="btn btn-danger">
+                                        <i class="fas fa-plus"></i> Buat Laporan Pertama
+                                    </a>
                                 </div>
                             @endif
                         </div>
@@ -347,45 +271,76 @@
     </div>
 </div>
 
-<!-- Modal Update Status -->
-<div class="modal fade" id="modalUpdateStatus" tabindex="-1" aria-labelledby="modalUpdateStatusLabel" aria-hidden="true">
+<!-- Modal Kontak -->
+<div class="modal fade" id="modalKontak" tabindex="-1" aria-labelledby="modalKontakLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalUpdateStatusLabel">
-                    <i class="fas fa-edit"></i> Update Status Pengaduan
+                <h5 class="modal-title" id="modalKontakLabel">
+                    <i class="fas fa-phone"></i> Kontak Darurat PPKPT
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formUpdateStatus" method="POST">
-                @csrf
-                @method('PATCH')
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="status_pengaduan" class="form-label">Status Pengaduan</label>
-                        <select class="form-select" id="status_pengaduan" name="status_pengaduan" required>
-                            <option value="">Pilih Status</option>
-                            <option value="pending">Menunggu</option>
-                            <option value="proses">Dalam Proses</option>
-                            <option value="selesai">Selesai</option>
-                            <option value="ditolak">Ditolak</option>
-                            <option value="butuh_bukti">Butuh Bukti Tambahan</option>
-                        </select>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-shield-alt fa-3x text-success"></i>
+                    <h5 class="mt-2">Tim PPKPT Universitas Jenderal Achmad Yani</h5>
+                </div>
+                
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-envelope text-primary me-3"></i>
+                            <div>
+                                <strong>Email</strong><br>
+                                <a href="mailto:ppkpt@unjaya.ac.id">ppkpt@unjaya.ac.id</a>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="keterangan_admin" class="form-label">Keterangan (Opsional)</label>
-                        <textarea class="form-control" id="keterangan_admin" name="keterangan_admin" 
-                                  rows="3" placeholder="Berikan keterangan terkait update status..."></textarea>
+                    <div class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-phone text-success me-3"></i>
+                            <div>
+                                <strong>Telepon</strong><br>
+                                <a href="tel:+622287789000">(022) 8778-9000</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fab fa-whatsapp text-success me-3"></i>
+                            <div>
+                                <strong>WhatsApp</strong><br>
+                                <a href="https://wa.me/6282877890000" target="_blank">+62 828-7789-0000</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-map-marker-alt text-danger me-3"></i>
+                            <div>
+                                <strong>Alamat</strong><br>
+                                Gedung Rektorat Lt. 2<br>
+                                Universitas Jenderal Achmad Yani<br>
+                                Cimahi, Jawa Barat
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Update Status
-                    </button>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Jam Operasional:</strong><br>
+                    Senin - Jumat: 08:00 - 16:00 WIB<br>
+                    Darurat: 24/7 (WhatsApp)
                 </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
         </div>
     </div>
 </div>
@@ -393,25 +348,36 @@
 
 @push('scripts')
 <script>
-function updateStatus(id, status = null) {
-    const modal = new bootstrap.Modal(document.getElementById('modalUpdateStatus'));
-    const form = document.getElementById('formUpdateStatus');
-    const statusSelect = document.getElementById('status_pengaduan');
-    
-    // Set form action
-    form.action = `/whistleblower/${id}/update-status`;
-    
-    // Pre-select status if provided
-    if (status) {
-        statusSelect.value = status;
-    } else {
-        statusSelect.value = '';
+function scrollToReports() {
+    document.getElementById('reports-section').scrollIntoView({ 
+        behavior: 'smooth' 
+    });
+}
+
+function cancelPengaduan(id, kode) {
+    if (confirm(`Apakah Anda yakin ingin membatalkan pengaduan ${kode}?\n\nPengaduan yang dibatalkan tidak dapat dikembalikan.`)) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/whistleblower/${id}/cancel`;
+        
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        form.appendChild(csrfToken);
+        
+        // Add method override
+        const methodField = document.createElement('input');
+        methodField.type = 'hidden';
+        methodField.name = '_method';
+        methodField.value = 'PATCH';
+        form.appendChild(methodField);
+        
+        document.body.appendChild(form);
+        form.submit();
     }
-    
-    // Clear previous keterangan
-    document.getElementById('keterangan_admin').value = '';
-    
-    modal.show();
 }
 
 // Auto-dismiss alerts
@@ -426,9 +392,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
-                                                        <strong>{{ $item->kode_pengaduan ?? 'N/A' }}</strong>
-                                                        @if($item->anonymous)
-                                                            <span class="badge bg-secondary ms-1">Anonim</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>

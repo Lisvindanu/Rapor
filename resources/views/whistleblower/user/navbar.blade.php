@@ -1,4 +1,4 @@
-{{-- resources/views/whistleblower/navbar.blade.php --}}
+{{-- resources/views/whistleblower/user/navbar.blade.php --}}
 <div class="menu-navbar">
     <div class="container">
         <div class="row justify-content-md-center">
@@ -17,7 +17,7 @@
 
                                 <!-- Pengaduan -->
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle {{ request()->routeIs('whistleblower.*') && !request()->routeIs('whistleblower.admin.*') ? 'active' : '' }}"
+                                    <a class="nav-link dropdown-toggle {{ request()->routeIs('whistleblower.create') || request()->routeIs('whistleblower.index') ? 'active' : '' }}"
                                         href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Pengaduan
                                     </a>
@@ -38,7 +38,8 @@
                                             <hr class="dropdown-divider">
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('whistleblower.status-page') }}">
+                                            <a class="dropdown-item {{ request()->routeIs('whistleblower.status-page') ? 'active' : '' }}" 
+                                               href="{{ route('whistleblower.status-page') }}">
                                                 Cek Status (Anonim)
                                             </a>
                                         </li>

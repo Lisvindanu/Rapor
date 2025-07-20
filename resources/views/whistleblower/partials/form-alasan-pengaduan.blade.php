@@ -1,57 +1,48 @@
 {{-- resources/views/whistleblower/partials/form-alasan-pengaduan.blade.php --}}
 <div class="mb-4">
-    <label class="form-label fw-bold">
-        Alasan pengaduan (Silakan centang satu atau lebih pilihan berikut) <span class="text-danger">*</span>
-    </label>
+    <h6 class="border-bottom pb-2 mb-3">Alasan Pengaduan</h6>
     
-    <div class="mt-3">
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" name="alasan_pengaduan[]" value="saksi_khawatir" id="alasan_saksi"
-                   {{ is_array(old('alasan_pengaduan')) && in_array('saksi_khawatir', old('alasan_pengaduan')) ? 'checked' : '' }}>
-            <label class="form-check-label" for="alasan_saksi">
-                Saya seorang saksi yang khawatir dengan keadaan Korban
-            </label>
+    <div class="alasan-pengaduan-section border rounded p-3">
+        <p class="mb-3"><strong>Alasan pengaduan (Silakan centang satu atau lebih pilihan berikut):</strong> <span class="text-danger">*</span></p>
+        
+        <div class="row">
+            @php
+                $alasan_options = [
+                    'kekerasan_seksual' => 'Kekerasan Seksual',
+                    'diskriminasi_gender' => 'Diskriminasi berdasarkan Gender',
+                    'diskriminasi_ras' => 'Diskriminasi berdasarkan Ras/Suku',
+                    'diskriminasi_agama' => 'Diskriminasi berdasarkan Agama',
+                    'diskriminasi_disabilitas' => 'Diskriminasi berdasarkan Disabilitas',
+                    'perundungan' => 'Perundungan (Bullying)',
+                    'pelecehan_verbal' => 'Pelecehan Verbal',
+                    'pelecehan_fisik' => 'Pelecehan Fisik',
+                    'penyalahgunaan_kekuasaan' => 'Penyalahgunaan Kekuasaan',
+                    'lainnya' => 'Lainnya'
+                ];
+                $old_alasan = old('alasan_pengaduan', []);
+            @endphp
+            
+            @foreach($alasan_options as $value => $label)
+                <div class="col-md-6 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input @error('alasan_pengaduan') is-invalid @enderror" 
+                               type="checkbox" 
+                               name="alasan_pengaduan[]" 
+                               value="{{ $value }}" 
+                               id="alasan_{{ $value }}"
+                               {{ in_array($value, $old_alasan) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="alasan_{{ $value }}">
+                            {{ $label }}
+                        </label>
+                    </div>
+                </div>
+            @endforeach
         </div>
         
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" name="alasan_pengaduan[]" value="korban_bantuan" id="alasan_korban"
-                   {{ is_array(old('alasan_pengaduan')) && in_array('korban_bantuan', old('alasan_pengaduan')) ? 'checked' : '' }}>
-            <label class="form-check-label" for="alasan_korban">
-                Saya seorang Korban yang memerlukan bantuan pemulihan
-            </label>
-        </div>
-        
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" name="alasan_pengaduan[]" value="tindak_tegas" id="alasan_tindak"
-                   {{ is_array(old('alasan_pengaduan')) && in_array('tindak_tegas', old('alasan_pengaduan')) ? 'checked' : '' }}>
-            <label class="form-check-label" for="alasan_tindak">
-                Saya ingin Perguruan Tinggi menindak tegas Terlapor
-            </label>
-        </div>
-        
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" name="alasan_pengaduan[]" value="dokumentasi_keamanan" id="alasan_dokumentasi"
-                   {{ is_array(old('alasan_pengaduan')) && in_array('dokumentasi_keamanan', old('alasan_pengaduan')) ? 'checked' : '' }}>
-            <label class="form-check-label" for="alasan_dokumentasi">
-                Saya ingin Satuan Tugas mendokumentasikan kejadiannya, meningkatkan keamanan Perguruan Tinggi dari Kekerasan, dan memberi pelindungan bagi saya
-            </label>
-        </div>
-        
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" name="alasan_pengaduan[]" value="lainnya" id="alasan_lainnya"
-                   {{ is_array(old('alasan_pengaduan')) && in_array('lainnya', old('alasan_pengaduan')) ? 'checked' : '' }}>
-            <label class="form-check-label" for="alasan_lainnya">
-                Lainnya
-            </label>
-        </div>
+        @error('alasan_pengaduan')
+            <div class="text-danger mt-2">
+                <small>{{ $message }}</small>
+            </div>
+        @enderror
     </div>
-    
-    @error('alasan_pengaduan')
-        <div class="invalid-feedback d-block">{{ $message }}</div>
-    @enderror
-    
-    <small class="form-text text-muted">
-        <i class="fas fa-info-circle me-1"></i>
-        Pilih minimal satu alasan yang sesuai dengan situasi Anda
-    </small>
 </div>

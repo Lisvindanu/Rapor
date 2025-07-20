@@ -1,76 +1,14 @@
 {{-- F:\rapor-dosen\resources\views\keuangan\master\partials\styles.blade.php --}}
+
+{{-- CSRF Token - IMPORTANT untuk delete functionality --}}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <style>
-    /* ==== Master Data Base Styles ==== */
-    .page-header {
-        border-bottom: 1px solid #e3e6f0;
-        padding-bottom: 1rem;
+    /* Essential Styles Only */
+    .form-group {
+        margin-bottom: 15px;
     }
 
-    .judul-modul h3 {
-        font-weight: 600;
-        color: #2c3e50;
-    }
-
-    .judul-modul p {
-        color: #6c757d;
-        margin-bottom: 0;
-    }
-
-    /* ==== Table Styles ==== */
-    .table-hover tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.05);
-    }
-
-    .table th {
-        border-top: none;
-        font-weight: 600;
-        font-size: 0.875rem;
-        background-color: #f8f9fa;
-    }
-
-    .table-dark th {
-        background-color: #343a40 !important;
-        color: #fff;
-    }
-
-    /* ==== Button Groups ==== */
-    .btn-group .btn {
-        border-radius: 0;
-        padding: 0.25rem 0.5rem;
-    }
-
-    .btn-group .btn:first-child {
-        border-top-left-radius: 0.375rem;
-        border-bottom-left-radius: 0.375rem;
-    }
-
-    .btn-group .btn:last-child {
-        border-top-right-radius: 0.375rem;
-        border-bottom-right-radius: 0.375rem;
-    }
-
-    /* ==== Badges ==== */
-    .badge {
-        font-size: 0.75em;
-        font-weight: 500;
-    }
-
-    .badge.small {
-        font-size: 0.65em;
-    }
-
-    /* ==== Cards ==== */
-    .card {
-        border: 1px solid #e3e6f0;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    }
-
-    .card-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #e3e6f0;
-    }
-
-    /* ==== Forms ==== */
     .form-label {
         font-weight: 600;
         color: #495057;
@@ -88,19 +26,31 @@
         color: #6c757d;
     }
 
-    /* ==== Alerts ==== */
-    .alert {
-        border-radius: 0.5rem;
-        border: none;
+    /* Button Groups */
+    .btn-group-master {
+        margin-top: 10px;
     }
 
-    .alert-info {
-        background-color: #e7f3ff;
-        color: #0c5460;
-        border-left: 4px solid #0dcaf0;
+    .btn-group-master .btn {
+        margin-right: 5px;
     }
 
-    /* ==== Empty States ==== */
+    .btn-group .btn {
+        border-radius: 0;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .btn-group .btn:first-child {
+        border-top-left-radius: 0.375rem;
+        border-bottom-left-radius: 0.375rem;
+    }
+
+    .btn-group .btn:last-child {
+        border-top-right-radius: 0.375rem;
+        border-bottom-right-radius: 0.375rem;
+    }
+
+    /* Empty State */
     .empty-state {
         text-align: center;
         padding: 3rem 1rem;
@@ -122,16 +72,67 @@
         margin-bottom: 1.5rem;
     }
 
-    /* ==== Responsive Design ==== */
+    /* Table Enhancements */
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+
+    .table th {
+        border-top: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+        background-color: #f8f9fa;
+    }
+
+    /* Badges */
+    .badge {
+        font-size: 0.75em;
+        font-weight: 500;
+    }
+
+    .badge.small {
+        font-size: 0.65em;
+    }
+
+    /* Cards */
+    .card {
+        border: 1px solid #e3e6f0;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e3e6f0;
+    }
+
+    /* Delete Modal Styling */
+    .modal-header {
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #e9ecef;
+    }
+
+    /* Loading States */
+    .btn:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+    .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    /* Responsive Mobile */
     @media (max-width: 768px) {
-        .page-header {
-            padding-bottom: 0.5rem;
+        .container {
+            padding: 0 15px;
         }
 
-        .page-header .d-flex {
-            flex-direction: column;
-            align-items: stretch !important;
-            gap: 1rem;
+        .form-group {
+            margin-bottom: 10px;
         }
 
         .btn-group {
@@ -142,15 +143,15 @@
             border-radius: 0.375rem !important;
             margin-bottom: 0.25rem;
         }
-
-        .table-responsive {
-            font-size: 0.875rem;
-        }
     }
 
     @media (max-width: 576px) {
-        .container {
-            padding: 0 15px;
+        .judul-modul h3 {
+            font-size: 1.5rem;
+        }
+
+        .judul-modul p {
+            font-size: 0.9rem;
         }
 
         .card-body {
@@ -164,6 +165,52 @@
 
         .badge {
             font-size: 0.7em;
+        }
+    }
+
+    /* Signature Preview Styles */
+    .signature-preview {
+        max-width: 80px !important;
+        max-height: 50px !important;
+        object-fit: contain !important;
+        display: block !important;
+        margin: 0 auto !important;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        background-color: white;
+    }
+
+    /* Force center alignment for TTD column */
+    td:has(.signature-preview) {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+
+    @media (max-width: 576px) {
+        .judul-modul h3 {
+            font-size: 1.5rem;
+        }
+
+        .judul-modul p {
+            font-size: 0.9rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .table th, .table td {
+            padding: 0.5rem 0.25rem;
+            font-size: 0.8rem;
+        }
+
+        .badge {
+            font-size: 0.7em;
+        }
+
+        .signature-preview {
+            max-width: 60px !important;
+            max-height: 40px !important;
         }
     }
 </style>

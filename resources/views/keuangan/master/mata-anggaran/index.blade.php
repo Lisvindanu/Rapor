@@ -1,20 +1,11 @@
-{{-- F:\rapor-dosen\resources\views\keuangan\master\mata-anggaran\index.blade.php (REVISED) --}}
+{{-- F:\rapor-dosen\resources\views\keuangan\master\mata-anggaran\index.blade.php --}}
 @extends('layouts.main2')
 
 {{-- Define all configurations at the top --}}
 @php
     $headerConfig = [
-        'icon' => 'fas fa-list-alt',
         'title' => 'Kelola Mata Anggaran',
-        'description' => 'Pengelolaan data master mata anggaran dan sub mata anggaran',
-        'back_route' => route('keuangan'), // FIXED: Changed from keuangan.index to keuangan
-        'back_text' => 'Kembali',
-        'primary_action' => [
-            'route' => route('keuangan.mata-anggaran.create'),
-            'text' => 'Tambah Mata Anggaran',
-            'icon' => 'fas fa-plus',
-            'class' => 'btn-primary'
-        ]
+        'description' => 'Pengelolaan data master mata anggaran dengan hierarki parent-child'
     ];
 
     $filterConfig = [
@@ -22,31 +13,74 @@
         'action_route' => route('keuangan.mata-anggaran.index'),
         'filters' => [
             [
-                'name' => 'tahun_anggaran',
-                'label' => 'Tahun Anggaran',
+                'name' => 'kategori',
+                'label' => 'Kategori',
                 'type' => 'select',
-                'options' => collect(range(date('Y') + 1, date('Y') - 5))->mapWithKeys(fn($year) => [$year => $year]),
+                'options' => [
+                    'debet' => 'Debet (Pengeluaran)',
+                    'kredit' => 'Kredit (Pendapatan)'
+                ],
+                'placeholder' => 'Semua Kategori'
             ]
         ]
     ];
 
+    // Enhanced empty message
+    $emptyMessage = $emptyMessage ?? 'Belum ada data mata anggaran. Klik tombol "Tambah Data" untuk menambahkan mata anggaran pertama.';
+
     $tableConfig = [
         'title' => 'Data Mata Anggaran',
-        'data' => $mataAnggarans ?? [],
+        'data' => $mataAnggarans ?? collect(),
+        'create_route' => route('keuangan.mata-anggaran.create'),
+        'empty_message' => $emptyMessage,
+        'delete_name_field' => 'nama_mata_anggaran',
         'columns' => [
-            ['label' => 'No', 'width' => '5%', 'align' => 'center'],
-            ['label' => 'Kode', 'width' => '15%'],
-            ['label' => 'Nama Mata Anggaran', 'width' => '35%'],
-            ['label' => 'Parent', 'width' => '15%'],
-            ['label' => 'Level', 'width' => '10%', 'align' => 'center'],
-            ['label' => 'Tahun', 'width' => '10%', 'align' => 'center'],
-            ['label' => 'Aksi', 'width' => '10%', 'align' => 'center'],
+            [
+                'label' => 'No',
+                'type' => 'number',
+                'width' => '5%'
+            ],
+            [
+                'label' => 'Kode',
+                'type' => 'badge',
+                'field' => 'kode_mata_anggaran',
+                'badge_class' => 'primary',
+                'width' => '15%'
+            ],
+            [
+                'label' => 'Nama Mata Anggaran',
+                'type' => 'text_with_hierarchy',
+                'field' => 'nama_mata_anggaran',
+                'width' => '35%'
+            ],
+            [
+                'label' => 'Parent',
+                'type' => 'parent_name',
+                'field' => 'kode_mata_anggaran',
+                'relationship' => 'parentMataAnggaran',
+                'width' => '15%'
+            ],
+            [
+                'label' => 'Sub Item',
+                'type' => 'children_count',
+                'width' => '10%'
+            ],
+            [
+                'label' => 'Kategori',
+                'type' => 'kategori_badge',
+                'field' => 'kategori',
+                'width' => '15%'
+            ]
+        ],
+        'actions' => [
+            'show' => route('keuangan.mata-anggaran.show', ':id'),
+            'edit' => route('keuangan.mata-anggaran.edit', ':id'),
+            'delete' => route('keuangan.mata-anggaran.destroy', ':id')
         ]
     ];
 @endphp
 
 @section('css-tambahan')
-    {{-- Include generic master styles --}}
     @include('keuangan.master.partials.styles')
 @endsection
 
@@ -55,16 +89,29 @@
 @endsection
 
 @section('konten')
-    <div class="container py-4">
-        {{-- Include SPECIFIC partials for Mata Anggaran --}}
+    <div class="container">
         @include('keuangan.master.partials.header')
         @include('komponen.message-alert')
-        @include('keuangan.master.mata-anggaran.partials.filter-form')
-        @include('keuangan.master.mata-anggaran.partials.data-table')
+
+        {{-- Enhanced development alert --}}
+        @php
+            $alertConfig = [
+                'type' => 'info',
+                'module' => 'Master Data Mata Anggaran',
+                'status' => 'Ready',
+                'version' => 'v2.0.0',
+                'features' => ['CRUD lengkap', 'Hierarki Parent-Child', 'Kategori Debet/Kredit', 'Search & Filter'],
+                'database' => true,
+                'note' => 'Struktur disederhanakan dengan fokus pada kategori debet/kredit'
+            ];
+        @endphp
+        @include('keuangan.master.partials.development-alert')
+
+        @include('keuangan.master.partials.filter-form')
+        @include('keuangan.master.partials.data-table')
     </div>
 @endsection
 
 @section('js-tambahan')
-    {{-- Include generic master scripts --}}
     @include('keuangan.master.partials.scripts')
 @endsection

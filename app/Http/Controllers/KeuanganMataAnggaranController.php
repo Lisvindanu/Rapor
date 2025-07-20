@@ -3,136 +3,160 @@
 namespace App\Http\Controllers;
 
 use App\Models\KeuanganMataAnggaran;
+use App\Helpers\KeuanganValidationHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
 class KeuanganMataAnggaranController extends Controller
 {
-// app/Http/Controllers/KeuanganMataAnggaranController.php
-
     public function index(Request $request)
     {
         try {
-            Log::info('KeuanganMataAnggaran - Index accessed', [
-                'user_id' => auth()->id(),
-                'search' => $request->search ?? 'none'
-            ]);
+            $query = KeuanganMataAnggaran::with(['parentMataAnggaran', 'childMataAnggaran']);
 
-
-            $query = KeuanganMataAnggaran::with(['parentMataAnggaran'])
-            ->active();
-
+            // Search
             if ($request->filled('search')) {
-                $search = $request->search;
+                $search = trim($request->search);
                 $query->where(function ($q) use ($search) {
-                    $q->where('kode_mata_anggaran', 'like', "%{$search}%")
-                        ->orWhere('nama_mata_anggaran', 'like', "%{$search}%")
-                        ->orWhere('deskripsi', 'like', "%{$search}%");
+                    $q->where('kode_mata_anggaran', 'ilike', "%{$search}%")
+                        ->orWhere('nama_mata_anggaran', 'ilike', "%{$search}%");
                 });
             }
 
-            if ($request->filled('tahun_anggaran')) {
-                $query->byTahunAnggaran($request->tahun_anggaran);
+            // Filter kategori
+            if ($request->filled('kategori')) {
+                $query->where('kategori', $request->kategori);
             }
 
-            $mataAnggarans = $query->orderBy('kode_mata_anggaran')
-                ->paginate(15)
-                ->withQueryString();
+            // Show only parent by default, unless searching
+            if (!$request->filled('search')) {
+                $query->whereNull('parent_mata_anggaran');
+            }
 
-            return view('keuangan.master.mata-anggaran.index', [
-                'mataAnggarans' => $mataAnggarans
+            // Order by Roman numeral for parent
+            $query->orderByRaw("
+                CASE
+                    WHEN kode_mata_anggaran = 'I' THEN 1
+                    WHEN kode_mata_anggaran = 'II' THEN 2
+                    WHEN kode_mata_anggaran = 'III' THEN 3
+                    WHEN kode_mata_anggaran = 'V' THEN 5
+                    WHEN kode_mata_anggaran = 'VI' THEN 6
+                    WHEN kode_mata_anggaran = 'VII' THEN 7
+                    WHEN kode_mata_anggaran = 'VIII' THEN 8
+                    ELSE 999
+                END, kode_mata_anggaran
+            ");
+
+            $perPage = in_array($request->per_page, [10, 15, 25, 50]) ? $request->per_page : 15;
+            $mataAnggarans = $query->paginate($perPage)->withQueryString();
+
+            // Empty message
+            $emptyMessage = 'Belum ada data mata anggaran.';
+            if ($request->filled('search')) {
+                $emptyMessage = "Tidak ditemukan data yang sesuai dengan pencarian '{$request->search}'.";
+            }
+
+            return view('keuangan.master.mata-anggaran.index', compact('mataAnggarans', 'emptyMessage'));
+
+        } catch (Exception $e) {
+            Log::error('KeuanganMataAnggaran - Index error: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat memuat data.');
+        }
+    }
+
+    // API untuk ambil children via AJAX
+    public function getChildren($parentId)
+    {
+        try {
+            $children = KeuanganMataAnggaran::where('parent_mata_anggaran', $parentId)
+                ->orderBy('kode_mata_anggaran')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $children
             ]);
 
         } catch (Exception $e) {
-            Log::error('KeuanganMataAnggaran - Error in index:', [
-                'message' => $e->getMessage(),
-                'line' => $e->getLine()
-            ]);
-
-            return back()->with('error', 'Terjadi kesalahan saat memuat data mata anggaran.');
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
     public function create()
     {
         try {
-            $parentOptions = KeuanganMataAnggaran::active()
-                ->parents()
-                ->orderBy('kode_mata_anggaran')
+            $parentOptions = KeuanganMataAnggaran::whereNull('parent_mata_anggaran')
+                ->orderByRaw("
+                    CASE
+                        WHEN kode_mata_anggaran = 'I' THEN 1
+                        WHEN kode_mata_anggaran = 'II' THEN 2
+                        WHEN kode_mata_anggaran = 'III' THEN 3
+                        WHEN kode_mata_anggaran = 'V' THEN 5
+                        WHEN kode_mata_anggaran = 'VI' THEN 6
+                        WHEN kode_mata_anggaran = 'VII' THEN 7
+                        WHEN kode_mata_anggaran = 'VIII' THEN 8
+                        ELSE 999
+                    END
+                ")
                 ->get();
 
-            $currentYear = date('Y');
-            $tahunOptions = range($currentYear - 2, $currentYear + 2);
-
-            return view('keuangan.master.mata-anggaran.create', compact('parentOptions', 'tahunOptions'));
+            return view('keuangan.master.mata-anggaran.create', compact('parentOptions'));
 
         } catch (Exception $e) {
-            Log::error('KeuanganMataAnggaran - Error in create form:', [
-                'message' => $e->getMessage()
-            ]);
-
+            Log::error('KeuanganMataAnggaran - Create error: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan saat memuat form.');
         }
     }
 
     public function store(Request $request)
     {
+
         try {
-            $validated = $request->validate([
-                'kode_mata_anggaran' => 'required|string|max:20|unique:keuangan_mtang,kode_mata_anggaran',
-                'nama_mata_anggaran' => 'required|string|max:255',
-                'nama_mata_anggaran_en' => 'nullable|string|max:255',
-                'deskripsi' => 'nullable|string',
-                'parent_mata_anggaran' => 'nullable|uuid|exists:keuangan_mtang,id',
-                'kategori' => 'nullable|string|max:100',
-                'alokasi_anggaran' => 'nullable|numeric|min:0',
-                'tahun_anggaran' => 'required|integer|min:2020|max:2030',
-                'status_aktif' => 'boolean'
-            ]);
+            $request->validate(
+                KeuanganValidationHelper::getMataAnggaranRules(),
+                KeuanganValidationHelper::getMessages()
+            );
 
-            $validated['status_aktif'] = $request->has('status_aktif');
-            $validated['sisa_anggaran'] = $validated['alokasi_anggaran'] ?? 0;
+            if ($request->parent_mata_anggaran) {
+                if (!KeuanganValidationHelper::validateParentChild($request->parent_mata_anggaran)) {
+                    return back()->withErrors(['parent_mata_anggaran' => 'Parent tidak valid'])->withInput();
+                }
+            }
 
-            $mataAnggaran = KeuanganMataAnggaran::create($validated);
+            DB::beginTransaction();
 
-            Log::info('KeuanganMataAnggaran - Created successfully:', [
-                'id' => $mataAnggaran->id,
-                'kode' => $mataAnggaran->kode_mata_anggaran,
-                'user_id' => auth()->id()
-            ]);
+            $data = $request->only(['kode_mata_anggaran', 'nama_mata_anggaran', 'parent_mata_anggaran', 'kategori']);
+            $data['kode_mata_anggaran'] = KeuanganValidationHelper::formatKodeMataAnggaran($data['kode_mata_anggaran']);
+
+            KeuanganMataAnggaran::create($data);
+
+            DB::commit();
 
             return redirect()->route('keuangan.mata-anggaran.index')
-                ->with('success', 'Mata anggaran berhasil ditambahkan.');
+                ->with('success', 'Mata anggaran berhasil ditambahkan');
 
         } catch (Exception $e) {
-            Log::error('KeuanganMataAnggaran - Error in store:', [
-                'message' => $e->getMessage(),
-                'request_data' => $request->all()
-            ]);
-
-            return back()->with('error', 'Terjadi kesalahan saat menyimpan mata anggaran.')
-                ->withInput();
+            DB::rollBack();
+            Log::error('KeuanganMataAnggaran - Store error: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()])->withInput();
         }
     }
 
     public function show($id)
     {
         try {
-            $mataAnggaran = KeuanganMataAnggaran::with([
-                'parentMataAnggaran',
-                'childMataAnggaran',
-                'childrenRecursive'
-            ])->findOrFail($id);
+            $mataAnggaran = KeuanganMataAnggaran::with(['parentMataAnggaran', 'childMataAnggaran'])
+                ->findOrFail($id);
 
             return view('keuangan.master.mata-anggaran.show', compact('mataAnggaran'));
 
         } catch (Exception $e) {
-            Log::error('KeuanganMataAnggaran - Error in show:', [
-                'id' => $id,
-                'message' => $e->getMessage()
-            ]);
-
+            Log::error('KeuanganMataAnggaran - Show error: ' . $e->getMessage());
             return back()->with('error', 'Mata anggaran tidak ditemukan.');
         }
     }
@@ -142,26 +166,26 @@ class KeuanganMataAnggaranController extends Controller
         try {
             $mataAnggaran = KeuanganMataAnggaran::findOrFail($id);
 
-            $parentOptions = KeuanganMataAnggaran::active()
-                ->parents()
+            $parentOptions = KeuanganMataAnggaran::whereNull('parent_mata_anggaran')
                 ->where('id', '!=', $id)
-                ->orderBy('kode_mata_anggaran')
+                ->orderByRaw("
+                    CASE
+                        WHEN kode_mata_anggaran = 'I' THEN 1
+                        WHEN kode_mata_anggaran = 'II' THEN 2
+                        WHEN kode_mata_anggaran = 'III' THEN 3
+                        WHEN kode_mata_anggaran = 'V' THEN 5
+                        WHEN kode_mata_anggaran = 'VI' THEN 6
+                        WHEN kode_mata_anggaran = 'VII' THEN 7
+                        WHEN kode_mata_anggaran = 'VIII' THEN 8
+                        ELSE 999
+                    END
+                ")
                 ->get();
 
-            $currentYear = date('Y');
-            $tahunOptions = range($currentYear - 2, $currentYear + 2);
-
-            // FIXED: View path ke master folder
-            return view('keuangan.master.mata-anggaran.edit', compact(
-                'mataAnggaran', 'parentOptions', 'tahunOptions'
-            ));
+            return view('keuangan.master.mata-anggaran.edit', compact('mataAnggaran', 'parentOptions'));
 
         } catch (Exception $e) {
-            Log::error('KeuanganMataAnggaran - Error in edit form:', [
-                'id' => $id,
-                'message' => $e->getMessage()
-            ]);
-
+            Log::error('KeuanganMataAnggaran - Edit error: ' . $e->getMessage());
             return back()->with('error', 'Mata anggaran tidak ditemukan.');
         }
     }
@@ -171,40 +195,33 @@ class KeuanganMataAnggaranController extends Controller
         try {
             $mataAnggaran = KeuanganMataAnggaran::findOrFail($id);
 
-            $validated = $request->validate([
-                'kode_mata_anggaran' => "required|string|max:20|unique:keuangan_mtang,kode_mata_anggaran,{$id}",
-                'nama_mata_anggaran' => 'required|string|max:255',
-                'nama_mata_anggaran_en' => 'nullable|string|max:255',
-                'deskripsi' => 'nullable|string',
-                'parent_mata_anggaran' => 'nullable|uuid|exists:keuangan_mtang,id',
-                'kategori' => 'nullable|string|max:100',
-                'alokasi_anggaran' => 'nullable|numeric|min:0',
-                'tahun_anggaran' => 'required|integer|min:2020|max:2030',
-                'status_aktif' => 'boolean'
-            ]);
+            $request->validate(
+                KeuanganValidationHelper::getMataAnggaranRules($id),
+                KeuanganValidationHelper::getMessages()
+            );
 
-            $validated['status_aktif'] = $request->has('status_aktif');
+            if ($request->parent_mata_anggaran) {
+                if (!KeuanganValidationHelper::validateParentChild($request->parent_mata_anggaran, $id)) {
+                    return back()->withErrors(['parent_mata_anggaran' => 'Parent tidak valid'])->withInput();
+                }
+            }
 
-            $mataAnggaran->update($validated);
+            DB::beginTransaction();
 
-            Log::info('KeuanganMataAnggaran - Updated successfully:', [
-                'id' => $mataAnggaran->id,
-                'kode' => $mataAnggaran->kode_mata_anggaran,
-                'user_id' => auth()->id()
-            ]);
+            $data = $request->only(['kode_mata_anggaran', 'nama_mata_anggaran', 'parent_mata_anggaran', 'kategori']);
+            $data['kode_mata_anggaran'] = KeuanganValidationHelper::formatKodeMataAnggaran($data['kode_mata_anggaran']);
+
+            $mataAnggaran->update($data);
+
+            DB::commit();
 
             return redirect()->route('keuangan.mata-anggaran.index')
-                ->with('success', 'Mata anggaran berhasil diperbarui.');
+                ->with('success', 'Mata anggaran berhasil diperbarui');
 
         } catch (Exception $e) {
-            Log::error('KeuanganMataAnggaran - Error in update:', [
-                'id' => $id,
-                'message' => $e->getMessage(),
-                'request_data' => $request->all()
-            ]);
-
-            return back()->with('error', 'Terjadi kesalahan saat memperbarui mata anggaran.')
-                ->withInput();
+            DB::rollBack();
+            Log::error('KeuanganMataAnggaran - Update error: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Gagal memperbarui data: ' . $e->getMessage()])->withInput();
         }
     }
 
@@ -213,29 +230,21 @@ class KeuanganMataAnggaranController extends Controller
         try {
             $mataAnggaran = KeuanganMataAnggaran::findOrFail($id);
 
-            if ($mataAnggaran->hasChildren()) {
-                return back()->with('error', 'Tidak dapat menghapus mata anggaran yang memiliki sub mata anggaran.');
+            if ($mataAnggaran->childMataAnggaran()->exists()) {
+                return back()->with('error', 'Tidak dapat menghapus mata anggaran yang masih memiliki sub mata anggaran');
             }
 
-            $kode = $mataAnggaran->kode_mata_anggaran;
+            DB::beginTransaction();
             $mataAnggaran->delete();
-
-            Log::info('KeuanganMataAnggaran - Deleted successfully:', [
-                'id' => $id,
-                'kode' => $kode,
-                'user_id' => auth()->id()
-            ]);
+            DB::commit();
 
             return redirect()->route('keuangan.mata-anggaran.index')
-                ->with('success', 'Mata anggaran berhasil dihapus.');
+                ->with('success', 'Mata anggaran berhasil dihapus');
 
         } catch (Exception $e) {
-            Log::error('KeuanganMataAnggaran - Error in destroy:', [
-                'id' => $id,
-                'message' => $e->getMessage()
-            ]);
-
-            return back()->with('error', 'Terjadi kesalahan saat menghapus mata anggaran.');
+            DB::rollBack();
+            Log::error('KeuanganMataAnggaran - Delete error: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat menghapus mata anggaran');
         }
     }
 }

@@ -18,9 +18,10 @@ use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\KeuanganLaporanController;
 use App\Http\Controllers\KeuanganMataAnggaranController;
-use App\Http\Controllers\KeuanganSubMataAnggaranController;
+use App\Http\Controllers\KeuanganSumberDanaController;
 use App\Http\Controllers\WhistleblowerController;
 use App\Http\Controllers\WhistleblowerAdminController;
+
 
 
 /*
@@ -592,44 +593,61 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         });
 
         // Master Mata Anggaran Routes
-        // Nama grup diubah untuk menambahkan awalan 'keuangan.' secara manual
         Route::prefix('mata-anggaran')->name('keuangan.mata-anggaran.')->group(function () {
-            // Nama rute menjadi: 'keuangan.mata-anggaran.index'
             Route::get('/', "KeuanganMataAnggaranController@index")->name('index');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.create'
             Route::get('/create', "KeuanganMataAnggaranController@create")->name('create');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.store'
             Route::post('/', "KeuanganMataAnggaranController@store")->name('store');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.show'
             Route::get('/{id}', "KeuanganMataAnggaranController@show")->name('show');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.edit'
             Route::get('/{id}/edit', "KeuanganMataAnggaranController@edit")->name('edit');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.update'
             Route::put('/{id}', "KeuanganMataAnggaranController@update")->name('update');
-            // Nama rute menjadi: 'keuangan.mata-anggaran.destroy'
             Route::delete('/{id}', "KeuanganMataAnggaranController@destroy")->name('destroy');
+
+            // API untuk ambil children via AJAX
+            Route::get('/{parentId}/children', "KeuanganMataAnggaranController@getChildren")->name('children');
         });
 
-        // Master Sub Mata Anggaran Routes
-        // Nama grup diubah untuk menambahkan awalan 'keuangan.' secara manual
-        Route::prefix('mata-anggaran/{parentId}/sub')->name('keuangan.sub-mata-anggaran.')->group(function () {
-            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.index'
-            Route::get('/', "KeuanganSubMataAnggaranController@index")->name('index');
-            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.create'
-            Route::get('/create', "KeuanganSubMataAnggaranController@create")->name('create');
-            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.store'
-            Route::post('/', "KeuanganSubMataAnggaranController@store")->name('store');
-            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.edit'
-            Route::get('/{id}/edit', "KeuanganSubMataAnggaranController@edit")->name('edit');
-            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.update'
-            Route::put('/{id}', "KeuanganSubMataAnggaranController@update")->name('update');
-            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.destroy'
-            Route::delete('/{id}', "KeuanganSubMataAnggaranController@destroy")->name('destroy');
-
-            // API endpoint for getting sub mata anggaran by parent
-            // Nama rute menjadi: 'keuangan.sub-mata-anggaran.api.by-parent'
-            Route::get('/api/by-parent', "KeuanganSubMataAnggaranController@getByParent")->name('api.by-parent');
+        // Master Tahun Anggaran Routes
+        Route::prefix('tahun-anggaran')->name('keuangan.tahun-anggaran.')->group(function () {
+            Route::get('/', 'KeuanganTahunAnggaranController@index')->name('index');
+            Route::get('/create', 'KeuanganTahunAnggaranController@create')->name('create');
+            Route::post('/', 'KeuanganTahunAnggaranController@store')->name('store');
+            Route::get('/{id}', 'KeuanganTahunAnggaranController@show')->name('show');
+            Route::get('/{id}/edit', 'KeuanganTahunAnggaranController@edit')->name('edit');
+            Route::put('/{id}', 'KeuanganTahunAnggaranController@update')->name('update');
+            Route::delete('/{id}', 'KeuanganTahunAnggaranController@destroy')->name('destroy');
         });
 
+        Route::prefix('program')->name('keuangan.program.')->group(function () {
+            Route::get('/', 'KeuanganProgramController@index')->name('index');
+            Route::get('/create', 'KeuanganProgramController@create')->name('create');
+            Route::post('/', 'KeuanganProgramController@store')->name('store');
+            Route::get('/{id}', 'KeuanganProgramController@show')->name('show');
+            Route::get('/{id}/edit', 'KeuanganProgramController@edit')->name('edit');
+            Route::put('/{id}', 'KeuanganProgramController@update')->name('update');
+            Route::delete('/{id}', 'KeuanganProgramController@destroy')->name('destroy');
+        });
+
+        Route::prefix('sumber-dana')->name('keuangan.sumber-dana.')->group(function () {
+            Route::get('/', [KeuanganSumberDanaController::class, 'index'])->name('index');
+            Route::get('/create', [KeuanganSumberDanaController::class, 'create'])->name('create');
+            Route::post('/', [KeuanganSumberDanaController::class, 'store'])->name('store');
+            Route::get('/{id}', [KeuanganSumberDanaController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [KeuanganSumberDanaController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [KeuanganSumberDanaController::class, 'update'])->name('update');
+            Route::delete('/{id}', [KeuanganSumberDanaController::class, 'destroy'])->name('destroy');
+        });
+
+
+
+
+        Route::prefix('tanda-tangan')->name('keuangan.tanda-tangan.')->group(function () {
+            Route::get('/', 'KeuanganTandaTanganController@index')->name('index');
+            Route::get('/create', 'KeuanganTandaTanganController@create')->name('create');
+            Route::post('/', 'KeuanganTandaTanganController@store')->name('store');
+            Route::get('/{id}', 'KeuanganTandaTanganController@show')->name('show');
+            Route::get('/{id}/edit', 'KeuanganTandaTanganController@edit')->name('edit');
+            Route::put('/{id}', 'KeuanganTandaTanganController@update')->name('update');
+            Route::delete('/{id}', 'KeuanganTandaTanganController@destroy')->name('destroy');
+        });
     });
 });

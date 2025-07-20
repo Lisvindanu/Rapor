@@ -5,262 +5,175 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\KeuanganMataAnggaran;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class KeuanganMataAnggaranSeeder extends Seeder
 {
     public function run(): void
     {
-        $tahunAnggaran = date('Y');
+        // Disable foreign key checks for truncation, syntax depends on the database
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        }
 
-        // Data mata anggaran sesuai gambar yang diberikan
+        $this->command->info('🗑️ Menghapus data lama...');
+        KeuanganMataAnggaran::truncate();
+
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        } elseif (DB::getDriverName() === 'pgsql') {
+            // For PostgreSQL, truncate with cascade handles it
+            // No need for a separate command here if using TRUNCATE ... CASCADE
+        }
+
+        $this->command->info('📝 Membuat data mata anggaran baru...');
+
+        // Data mata anggaran lengkap sesuai gambar
         $mataAnggaranData = [
+            // I. IMPLEMENTASI VISI DAN MISI
             [
-                'kode' => '1',
-                'nama' => 'IMPLEMENTASI VISI DAN MISI',
-                'nama_en' => 'Implementation of Vision and Mission',
-                'kategori' => 'Visi Misi',
+                'kode' => 'I', 'nama' => 'IMPLEMENTASI VISI DAN MISI', 'kategori' => 'debet',
                 'children' => [
-                    [
-                        'kode' => '1.2',
-                        'nama' => 'Pendanaan Kegiatan (Diskusi, Seminar Ke-Islaman dan Ke-Sundaan, SPJ dll.)',
-                        'nama_en' => 'Activity Funding (Discussion, Islamic and Sundanese Seminars, SPJ etc.)',
-                        'alokasi' => 5000000
-                    ],
-                    [
-                        'kode' => '1.3',
-                        'nama' => 'Haji, Umroh dan Qurban',
-                        'nama_en' => 'Hajj, Umrah and Qurban',
-                        'alokasi' => 3000000
-                    ]
+                    ['kode' => '1.1', 'nama' => 'Bantuan Keagamaan', 'kategori' => 'debet'],
+                    ['kode' => '1.2', 'nama' => 'Pendanaan Kegiatan (Diskusi, Seminar Ke-Islaman dan Ke-Sunda-an, SPJ dll.)', 'kategori' => 'debet'],
+                    ['kode' => '1.3', 'nama' => 'Haji, Umroh dan Qurban', 'kategori' => 'debet'],
                 ]
             ],
+            // II. PENDIDIKAN DAN PENGAJARAN
             [
-                'kode' => '2',
-                'nama' => 'PENDIDIKAN DAN PENGAJARAN',
-                'nama_en' => 'Education and Teaching',
-                'kategori' => 'Pendidikan',
+                'kode' => 'II', 'nama' => 'PENDIDIKAN DAN PENGAJARAN', 'kategori' => 'debet',
                 'children' => [
-                    [
-                        'kode' => '2.2',
-                        'nama' => 'Evaluasi Kurikulum dan Perangkat Pembelajaran',
-                        'nama_en' => 'Curriculum and Learning Tools Evaluation',
-                        'alokasi' => 2500000
-                    ],
-                    [
-                        'kode' => '2.4',
-                        'nama' => 'Peningkatan Status/Reakreditasi Program Studi',
-                        'nama_en' => 'Status Improvement/Reaccreditation of Study Programs',
-                        'alokasi' => 8000000
-                    ],
-                    [
-                        'kode' => '2.5',
-                        'nama' => 'Dana Ujian',
-                        'nama_en' => 'Examination Fund',
-                        'alokasi' => 1500000
-                    ],
-                    [
-                        'kode' => '2.6',
-                        'nama' => 'Bantuan Studi Lanjut',
-                        'nama_en' => 'Further Study Assistance',
-                        'alokasi' => 10000000
-                    ],
-                    [
-                        'kode' => '2.8',
-                        'nama' => 'Monitoring dan Evaluasi Pendidikan dan Pengajaran',
-                        'nama_en' => 'Education and Teaching Monitoring and Evaluation',
-                        'alokasi' => 3000000
-                    ]
+                    ['kode' => '2.1', 'nama' => 'Honorarium Mengajar/Praktikum/Ujian dan Bimbingan', 'kategori' => 'debet'],
+                    ['kode' => '2.2', 'nama' => 'Evaluasi Kurikulum dan Perangkat Pembelajaran', 'kategori' => 'debet'],
+                    ['kode' => '2.3', 'nama' => 'Workshop/Seminar/Pelatihan Dosen', 'kategori' => 'debet'],
+                    ['kode' => '2.4', 'nama' => 'Peningkatan Status/Reakreditasi Program Studi', 'kategori' => 'debet'],
+                    ['kode' => '2.5', 'nama' => 'Dana Ujian', 'kategori' => 'debet'],
+                    ['kode' => '2.6', 'nama' => 'Bantuan Studi Lanjut', 'kategori' => 'debet'],
+                    ['kode' => '2.7', 'nama' => 'Langganan Jurnal Ilmiah/Buku', 'kategori' => 'debet'],
+                    ['kode' => '2.8', 'nama' => 'Monitoring dan Evaluasi Pendidikan dan Pengajaran', 'kategori' => 'debet'],
                 ]
             ],
+            // III. PENELITIAN
             [
-                'kode' => '3',
-                'nama' => 'PENELITIAN',
-                'nama_en' => 'Research',
-                'kategori' => 'Penelitian',
+                'kode' => 'III', 'nama' => 'PENELITIAN', 'kategori' => 'debet',
                 'children' => [
-                    [
-                        'kode' => '3.4',
-                        'nama' => 'Dana Kepakaran Penelitian',
-                        'nama_en' => 'Research Expertise Fund',
-                        'alokasi' => 15000000
-                    ]
+                    ['kode' => '3.1', 'nama' => 'Bantuan Penelitian Internal', 'kategori' => 'debet'],
+                    ['kode' => '3.2', 'nama' => 'Workshop/Seminar/Pelatihan Penelitian', 'kategori' => 'debet'],
+                    ['kode' => '3.3', 'nama' => 'Seminar/Publikasi Hasil Penelitian', 'kategori' => 'debet'],
+                    ['kode' => '3.4', 'nama' => 'Dana Kepakaran Penelitian', 'kategori' => 'debet'],
                 ]
             ],
+            // IV. PENGABDIAN MASYARAKAT
             [
-                'kode' => '5',
-                'nama' => 'PEMBINAAN KEMAHASISWAAN',
-                'nama_en' => 'Student Development',
-                'kategori' => 'Kemahasiswaan',
+                'kode' => 'IV', 'nama' => 'PENGABDIAN MASYARAKAT', 'kategori' => 'debet',
                 'children' => [
-                    [
-                        'kode' => '5.1',
-                        'nama' => 'Pembinaan & Pengemb.Pendaran Mahasiswa',
-                        'nama_en' => 'Student Leadership Development',
-                        'alokasi' => 4000000
-                    ],
-                    [
-                        'kode' => '5.3',
-                        'nama' => 'Lomba Kreativitas dan Prestasi Mahasiswa',
-                        'nama_en' => 'Student Creativity and Achievement Competition',
-                        'alokasi' => 6000000
-                    ]
+                    ['kode' => '4.1', 'nama' => 'Honorarium Panitia/Peserta/Narasumber', 'kategori' => 'debet'],
+                    ['kode' => '4.2', 'nama' => 'Pembuatan Proposal, ATK, Penggandaan', 'kategori' => 'debet'],
+                    ['kode' => '4.3', 'nama' => 'Transportasi dan Akomodasi', 'kategori' => 'debet'],
+                    ['kode' => '4.4', 'nama' => 'Konsumsi', 'kategori' => 'debet'],
+                    ['kode' => '4.5', 'nama' => 'Publikasi', 'kategori' => 'debet'],
+                    ['kode' => '4.6', 'nama' => 'Lain-lain', 'kategori' => 'debet'],
                 ]
             ],
+            // V. PEMBINAAN KEMAHASISWAAN
             [
-                'kode' => '6',
-                'nama' => 'KESEJAHTERAAN PEGAWAI DAN DOSEN',
-                'nama_en' => 'Employee and Lecturer Welfare',
-                'kategori' => 'Kesejahteraan',
+                'kode' => 'V', 'nama' => 'PEMBINAAN KEMAHASISWAAN', 'kategori' => 'debet',
                 'children' => [
-                    [
-                        'kode' => '6.2',
-                        'nama' => 'Dana Kesehatan Pegawai',
-                        'nama_en' => 'Employee Health Fund',
-                        'alokasi' => 7500000
-                    ],
-                    [
-                        'kode' => '6.3',
-                        'nama' => 'Asuransi Pegawai dan Pensiun',
-                        'nama_en' => 'Employee Insurance and Pension',
-                        'alokasi' => 12000000
-                    ],
-                    [
-                        'kode' => '6.4',
-                        'nama' => 'Bantuan musibah/Pernikahan/Kelahiran dll.',
-                        'nama_en' => 'Disaster/Wedding/Birth Assistance etc.',
-                        'alokasi' => 5000000
-                    ],
-                    [
-                        'kode' => '6.6',
-                        'nama' => 'Transport Perjalanan Dinas Tenaga Pendidikan dan Kependidikan',
-                        'nama_en' => 'Official Travel Transport for Education Personnel',
-                        'alokasi' => 8000000
-                    ],
-                    [
-                        'kode' => '6.7',
-                        'nama' => 'Panitia Adhok & Incentif Lain-lain',
-                        'nama_en' => 'Ad-hoc Committee & Other Incentives',
-                        'alokasi' => 4500000
-                    ],
-                    [
-                        'kode' => '6.8',
-                        'nama' => 'Biaya Pengendalian Manajemen',
-                        'nama_en' => 'Management Control Costs',
-                        'alokasi' => 3500000
-                    ],
-                    [
-                        'kode' => '6.10',
-                        'nama' => 'Pembinaan Pegawai',
-                        'nama_en' => 'Employee Development',
-                        'alokasi' => 6000000
-                    ]
+                    ['kode' => '5.1', 'nama' => 'Pembinaan & Pengemb. Penalaran Mahasiswa', 'kategori' => 'debet'],
+                    ['kode' => '5.2', 'nama' => 'Bantuan Kegiatan Mahasiswa', 'kategori' => 'debet'],
+                    ['kode' => '5.3', 'nama' => 'Lomba Kreativitas dan Prestasi Mahasiswa', 'kategori' => 'debet'],
+                    ['kode' => '5.4', 'nama' => 'Bantuan Lain-lain', 'kategori' => 'debet'],
                 ]
             ],
+            // VI. KESEJAHTERAAN PEGAWAI DAN DOSEN
             [
-                'kode' => '7',
-                'nama' => 'SARANA DAN PRASARANA',
-                'nama_en' => 'Facilities and Infrastructure',
-                'kategori' => 'Sarana Prasarana',
+                'kode' => 'VI', 'nama' => 'KESEJAHTERAAN PEGAWAI DAN DOSEN', 'kategori' => 'debet',
                 'children' => [
-                    [
-                        'kode' => '7.1',
-                        'nama' => 'ATK dan Sejenisnya',
-                        'nama_en' => 'Office Supplies and Similar',
-                        'alokasi' => 4000000
-                    ],
-                    [
-                        'kode' => '7.2',
-                        'nama' => 'Pengadaan Inventaris Kantor',
-                        'nama_en' => 'Office Inventory Procurement',
-                        'alokasi' => 15000000
-                    ],
-                    [
-                        'kode' => '7.3',
-                        'nama' => 'Listrik, Air, Ledeng dan Telepon',
-                        'nama_en' => 'Electricity, Water, Plumbing and Telephone',
-                        'alokasi' => 18000000
-                    ],
-                    [
-                        'kode' => '7.4',
-                        'nama' => 'Pemeliharaan Sarana dan Prasarana',
-                        'nama_en' => 'Facilities and Infrastructure Maintenance',
-                        'alokasi' => 25000000
-                    ],
-                    [
-                        'kode' => '7.5',
-                        'nama' => 'Kebersihan Lingkungan',
-                        'nama_en' => 'Environmental Cleanliness',
-                        'alokasi' => 6000000
-                    ],
-                    [
-                        'kode' => '7.7',
-                        'nama' => 'Pengembangan Teknologi Informasi dan Komunikasi',
-                        'nama_en' => 'Information and Communication Technology Development',
-                        'alokasi' => 20000000
-                    ]
+                    ['kode' => '6.1', 'nama' => 'Incentif Kehadiran Dosen dan Tenaga Kependidikan', 'kategori' => 'debet'],
+                    ['kode' => '6.2', 'nama' => 'Dana Kesehatan Pegawai', 'kategori' => 'debet'],
+                    ['kode' => '6.3', 'nama' => 'Asuransi Pegawai dan Pensiun', 'kategori' => 'debet'],
+                    ['kode' => '6.4', 'nama' => 'Bantuan musibah/Pernikahan/Kelahiran dll.', 'kategori' => 'debet'],
+                    ['kode' => '6.5', 'nama' => 'Tunjangan Hari Raya', 'kategori' => 'debet'],
+                    ['kode' => '6.6', 'nama' => 'Transport Perjalanan Dinas Tenaga Pendidikan dan Kependidikan', 'kategori' => 'debet'],
+                    ['kode' => '6.7', 'nama' => 'Panitia Adchok & Incentif Lain-lain', 'kategori' => 'debet'],
+                    ['kode' => '6.8', 'nama' => 'Biaya Pengendalian Manajemen', 'kategori' => 'debet'],
+                    ['kode' => '6.9', 'nama' => 'Seragam Pegawai', 'kategori' => 'debet'],
+                    ['kode' => '6.10', 'nama' => 'Pembinaan Pegawai', 'kategori' => 'debet'],
                 ]
             ],
+            // VII. SARANA DAN PRASARANA
             [
-                'kode' => '8',
-                'nama' => 'KERJASAMA, PROMOSI DAN BANTUAN SOSIAL/KELEMBAGAAN',
-                'nama_en' => 'Cooperation, Promotion and Social/Institutional Aid',
-                'kategori' => 'Kerjasama',
+                'kode' => 'VII', 'nama' => 'SARANA DAN PRASARANA', 'kategori' => 'debet',
                 'children' => [
-                    [
-                        'kode' => '8.2',
-                        'nama' => 'Promosi',
-                        'nama_en' => 'Promotion',
-                        'alokasi' => 8000000
-                    ],
-                    [
-                        'kode' => '8.3',
-                        'nama' => 'Bantuan Sosial/Kelembagaan',
-                        'nama_en' => 'Social/Institutional Aid',
-                        'alokasi' => 5000000
-                    ]
+                    ['kode' => '7.1', 'nama' => 'ATK dan Sejenisnya', 'kategori' => 'debet'],
+                    ['kode' => '7.2', 'nama' => 'Pengadaan Inventaris Kantor', 'kategori' => 'debet'],
+                    ['kode' => '7.3', 'nama' => 'Listrik, Air, Ledeng dan Telepon', 'kategori' => 'debet'],
+                    ['kode' => '7.4', 'nama' => 'Pemeliharaan Sarana dan Prasarana', 'kategori' => 'debet'],
+                    ['kode' => '7.5', 'nama' => 'Kebersihan Lingkungan', 'kategori' => 'debet'],
+                    ['kode' => '7.6', 'nama' => 'Keamanan', 'kategori' => 'debet'],
+                    ['kode' => '7.7', 'nama' => 'Pengembangan Teknologi Informasi dan Komunikasi', 'kategori' => 'debet'],
                 ]
-            ]
+            ],
+            // VIII. KERJASAMA, PROMOSI DAN BANTUAN SOSIAL/KELEMBAGAAN
+            [
+                'kode' => 'VIII', 'nama' => 'KERJASAMA, PROMOSI DAN BANTUAN SOSIAL/KELEMBAGAAN', 'kategori' => 'debet',
+                'children' => [
+                    ['kode' => '8.1', 'nama' => 'Kerjasama Kelembagaan', 'kategori' => 'debet'],
+                    ['kode' => '8.2', 'nama' => 'Promosi', 'kategori' => 'debet'],
+                    ['kode' => '8.3', 'nama' => 'Bantuan Sosial/Kelembagaan', 'kategori' => 'debet'],
+                ]
+            ],
+            // IX. PENDAPATAN
+            [
+                'kode' => 'IX', 'nama' => 'PENDAPATAN', 'kategori' => 'kredit',
+                'children' => [
+                    ['kode' => '9.1', 'nama' => 'Dana Pengembangan', 'kategori' => 'kredit'],
+                    ['kode' => '9.2', 'nama' => 'Dana Registrasi', 'kategori' => 'kredit'],
+                    ['kode' => '9.3', 'nama' => 'Dana SKS', 'kategori' => 'kredit'],
+                    ['kode' => '9.4', 'nama' => 'Dana Ujian', 'kategori' => 'kredit'],
+                    ['kode' => '9.5', 'nama' => 'Dana Lain-lain', 'kategori' => 'kredit'],
+                    ['kode' => '9.6', 'nama' => 'Dana Perpustakaan', 'kategori' => 'kredit'],
+                    ['kode' => '9.7', 'nama' => 'Dana Kemahasiswaan', 'kategori' => 'kredit'],
+                    ['kode' => '9.8', 'nama' => 'Dana Praktikum', 'kategori' => 'kredit'],
+                    ['kode' => '9.9', 'nama' => 'Dana Wisuda', 'kategori' => 'kredit'],
+                    ['kode' => '9.10', 'nama' => 'Pendapatan lain-lain', 'kategori' => 'kredit'],
+                ]
+            ],
         ];
 
         foreach ($mataAnggaranData as $parentData) {
-            // Create parent mata anggaran
             $parent = KeuanganMataAnggaran::create([
                 'id' => Str::uuid(),
                 'kode_mata_anggaran' => $parentData['kode'],
                 'nama_mata_anggaran' => $parentData['nama'],
-                'nama_mata_anggaran_en' => $parentData['nama_en'],
-                'kategori' => $parentData['kategori'],
                 'parent_mata_anggaran' => null,
-                'level_mata_anggaran' => 0,
-                'alokasi_anggaran' => 0,
-                'sisa_anggaran' => 0,
-                'tahun_anggaran' => $tahunAnggaran,
-                'status_aktif' => true,
-                'created_by' => null,
-                'updated_by' => null,
+                'kategori' => $parentData['kategori'],
             ]);
 
-            // Create children mata anggaran
+            $this->command->info("✅ Parent: {$parent->kode_mata_anggaran} - {$parent->nama_mata_anggaran}");
+
             if (isset($parentData['children'])) {
                 foreach ($parentData['children'] as $childData) {
-                    KeuanganMataAnggaran::create([
+                    $child = KeuanganMataAnggaran::create([
                         'id' => Str::uuid(),
                         'kode_mata_anggaran' => $childData['kode'],
                         'nama_mata_anggaran' => $childData['nama'],
-                        'nama_mata_anggaran_en' => $childData['nama_en'],
                         'parent_mata_anggaran' => $parent->id,
-                        'level_mata_anggaran' => 1,
-                        'alokasi_anggaran' => $childData['alokasi'],
-                        'sisa_anggaran' => $childData['alokasi'],
-                        'tahun_anggaran' => $tahunAnggaran,
-                        'status_aktif' => true,
-                        'created_by' => null,
-                        'updated_by' => null,
+                        'kategori' => $childData['kategori'],
                     ]);
+
+                    $this->command->info("   ↳ Child: {$child->kode_mata_anggaran} - {$child->nama_mata_anggaran}");
                 }
             }
         }
 
-        $this->command->info('Keuangan Mata Anggaran seeder completed successfully!');
+        $parentCount = KeuanganMataAnggaran::whereNull('parent_mata_anggaran')->count();
+        $childCount = KeuanganMataAnggaran::whereNotNull('parent_mata_anggaran')->count();
+
+        $this->command->info('');
+        $this->command->info('🎉 Keuangan Mata Anggaran seeder completed successfully!');
+        $this->command->info("📊 Total Parent: {$parentCount}");
+        $this->command->info("📊 Total Children: {$childCount}");
+        $this->command->info("📊 Total Records: " . ($parentCount + $childCount));
     }
 }

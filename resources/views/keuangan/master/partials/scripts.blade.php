@@ -1,178 +1,141 @@
 {{-- F:\rapor-dosen\resources\views\keuangan\master\partials\scripts.blade.php --}}
 <script>
-    // Master Data Handler Class
-    class KeuanganMasterHandler {
-        constructor() {
-            this.init();
-        }
-
-        init() {
-            this.bindEvents();
-            this.initializeComponents();
-            console.log('🎯 Keuangan Master Data Module v1.0.0');
-            console.log('📋 Pattern: Clean Architecture | Status: Ready');
-        }
-
-        bindEvents() {
-            // Auto-submit forms on filter change
-            this.bindFilterEvents();
-
-            // Initialize tooltips
-            this.initTooltips();
-
-            // Bind action confirmations
-            this.bindActionConfirmations();
-
-            // Bind search functionality
-            this.bindSearchEvents();
-        }
-
-        bindFilterEvents() {
-            const filterSelects = document.querySelectorAll('select[name^="filter"], select[name="tahun_anggaran"], select[name="status"]');
-            filterSelects.forEach(select => {
-                select.addEventListener('change', function() {
-                    // Add loading state
-                    this.style.opacity = '0.6';
-                    this.disabled = true;
-
-                    // Submit form
-                    this.form.submit();
-                });
-            });
-        }
-
-        initTooltips() {
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title], [data-bs-toggle="tooltip"]'));
-            const tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl, {
-                    delay: { show: 500, hide: 100 }
-                });
-            });
-        }
-
-        bindActionConfirmations() {
-            // Delete confirmations
-            const deleteButtons = document.querySelectorAll('form[onsubmit*="confirm"] button[type="submit"]');
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    const form = this.closest('form');
-                    const itemName = form.dataset.itemName || 'data ini';
-
-                    if (!confirm(`Yakin ingin menghapus ${itemName}? Aksi ini tidak bisa dibatalkan.`)) {
-                        e.preventDefault();
-                        return false;
-                    }
-
-                    // Add loading state
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                    this.disabled = true;
-                });
-            });
-        }
-
-        bindSearchEvents() {
-            const searchInput = document.getElementById('search');
-            if (searchInput) {
-                let searchTimeout;
-
-                searchInput.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-
-                    // Add visual feedback
-                    this.style.borderColor = '#ffc107';
-
-                    searchTimeout = setTimeout(() => {
-                        this.style.borderColor = '';
-                    }, 500);
-                });
-
-                // Clear search
-                const clearSearchBtn = document.querySelector('[data-action="clear-search"]');
-                if (clearSearchBtn) {
-                    clearSearchBtn.addEventListener('click', function() {
-                        searchInput.value = '';
-                        searchInput.form.submit();
-                    });
-                }
-            }
-        }
-
-        initializeComponents() {
-            // Initialize any additional components
-            this.initDataTable();
-            this.initFormValidation();
-        }
-
-        initDataTable() {
-            // Add zebra striping enhancement
-            const tables = document.querySelectorAll('.table-hover');
-            tables.forEach(table => {
-                const rows = table.querySelectorAll('tbody tr');
-                rows.forEach((row, index) => {
-                    if (index % 2 === 0) {
-                        row.style.backgroundColor = 'rgba(0,0,0,0.02)';
-                    }
-                });
-            });
-        }
-
-        initFormValidation() {
-            // Real-time validation for required fields
-            const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
-            requiredFields.forEach(field => {
-                field.addEventListener('blur', function() {
-                    if (!this.value.trim()) {
-                        this.classList.add('is-invalid');
-                    } else {
-                        this.classList.remove('is-invalid');
-                    }
-                });
-
-                field.addEventListener('input', function() {
-                    if (this.value.trim()) {
-                        this.classList.remove('is-invalid');
-                    }
-                });
-            });
-        }
-
-        // Utility methods
-        showLoading(element) {
-            element.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-            element.disabled = true;
-        }
-
-        hideLoading(element, originalText) {
-            element.innerHTML = originalText;
-            element.disabled = false;
-        }
-
-        showNotification(message, type = 'info') {
-            // Simple notification system
-            const notification = document.createElement('div');
-            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-            notification.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-
-            document.body.appendChild(notification);
-
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 5000);
-        }
-    }
-
-    // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
-        window.masterHandler = new KeuanganMasterHandler();
-    });
+        console.log('🎯 Keuangan Master Data - Ready');
 
-    // Export for use in other scripts
-    window.KeuanganMasterHandler = KeuanganMasterHandler;
+        // Global CSRF Token Helper
+        window.getCsrfToken = function() {
+            // Try meta tag first
+            const metaToken = document.querySelector('meta[name="csrf-token"]');
+            if (metaToken) {
+                return metaToken.getAttribute('content');
+            }
+
+            // Fallback: try hidden input
+            const hiddenToken = document.querySelector('input[name="_token"]');
+            if (hiddenToken) {
+                return hiddenToken.value;
+            }
+
+            // Fallback: try any form token
+            const formToken = document.querySelector('form input[name="_token"]');
+            if (formToken) {
+                return formToken.value;
+            }
+
+            console.error('CSRF token not found!');
+            return null;
+        };
+
+        // Setup jQuery AJAX dengan CSRF token
+        if (typeof $ !== 'undefined') {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': window.getCsrfToken()
+                }
+            });
+            console.log('✅ jQuery AJAX setup with CSRF token');
+        }
+
+        // Filter auto-submit - HANYA untuk filter di index page, bukan form
+        const filterSelects = document.querySelectorAll('.filter-form select[name="kategori"], .filter-form select[name="status"]');
+        filterSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                this.style.opacity = '0.6';
+                this.disabled = true;
+                this.form.submit();
+            });
+        });
+
+        // Delete confirmations untuk form-based delete (fallback)
+        const deleteForms = document.querySelectorAll('form[onsubmit*="confirm"]');
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const itemName = form.dataset.itemName || 'data ini';
+                if (!confirm(`Yakin ingin menghapus ${itemName}?`)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Show loading
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    submitBtn.disabled = true;
+                }
+            });
+        });
+
+        // Table row click to detail (if detail button exists)
+        const tableRows = document.querySelectorAll('#masterDataTable tbody tr, .data-table tbody tr');
+        tableRows.forEach(row => {
+            row.addEventListener('click', function(e) {
+                if (!e.target.closest('button') && !e.target.closest('form') && !e.target.closest('.btn')) {
+                    const detailBtn = this.querySelector('a[title="Lihat Detail"]');
+                    if (detailBtn) {
+                        window.location.href = detailBtn.href;
+                    }
+                }
+            });
+        });
+
+        // Search input visual feedback
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                this.style.borderColor = '#ffc107';
+                searchTimeout = setTimeout(() => {
+                    this.style.borderColor = '';
+                }, 500);
+            });
+        }
+
+        // Initialize tooltips if Bootstrap is available
+        if (typeof bootstrap !== 'undefined') {
+            const tooltips = document.querySelectorAll('[title]');
+            tooltips.forEach(el => {
+                new bootstrap.Tooltip(el, { delay: { show: 500, hide: 100 } });
+            });
+        }
+
+        // Form validation enhancement
+        const forms = document.querySelectorAll('form[id*="Form"], form[id*="form"]');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn && !submitBtn.disabled) {
+                    submitBtn.disabled = true;
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Memproses...';
+
+                    // Re-enable button after 10 seconds as failsafe
+                    setTimeout(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }, 10000);
+                }
+            });
+        });
+
+        // Auto-hide alerts after 8 seconds
+        const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    try {
+                        bsAlert.close();
+                    } catch (e) {
+                        alert.style.display = 'none';
+                    }
+                } else {
+                    alert.style.display = 'none';
+                }
+            }, 8000);
+        });
+
+        console.log('✅ CSRF Token available:', !!window.getCsrfToken());
+    });
 </script>

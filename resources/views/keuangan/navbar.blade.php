@@ -21,18 +21,19 @@
 
                                 {{-- Master Data --}}
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle disabled" href="#" id="navbarMaster" role="button"
-                                       data-bs-toggle="dropdown" aria-expanded="false" tabindex="-1" aria-disabled="true">
+                                    <a class="nav-link dropdown-toggle {{ Request::routeIs('keuangan.mata-anggaran*') ? 'active' : '' }}" href="#" id="navbarMaster" role="button"
+                                       data-bs-toggle="dropdown" aria-expanded="false">
                                         Master Data
-                                        <small class="text-muted">(dev)</small>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarMaster">
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Kategori Transaksi</a></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Mata Anggaran</a></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Unit Kerja</a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Kategori Transaksi <small class="text-muted">(dev)</small></a></li>
+                                        <li><a class="dropdown-item {{ Request::routeIs('keuangan.mata-anggaran*') ? 'active' : '' }}" href="{{ route('keuangan.mata-anggaran.index') }}">
+                                                Mata Anggaran <span class="badge bg-success ms-1">Ready</span>
+                                            </a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Unit Kerja <small class="text-muted">(dev)</small></a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Periode Akademik</a></li>
-                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Template Laporan</a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Periode Akademik <small class="text-muted">(dev)</small></a></li>
+                                        <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Template Laporan <small class="text-muted">(dev)</small></a></li>
                                     </ul>
                                 </li>
 

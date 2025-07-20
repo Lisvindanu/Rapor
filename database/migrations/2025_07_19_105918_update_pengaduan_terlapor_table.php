@@ -11,14 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Cek apakah tabel sudah ada, jika ya drop dulu untuk clean install
+        if (Schema::hasTable('pengaduan_terlapor')) {
+            Schema::dropIfExists('pengaduan_terlapor');
+        }
+
+        // Pastikan tabel whistle_pengaduan ada
+        if (!Schema::hasTable('whistle_pengaduan')) {
+            throw new \Exception('Tabel whistle_pengaduan tidak ditemukan. Pastikan migration create_pengaduan_table sudah dijalankan.');
+        }
+
         Schema::create('pengaduan_terlapor', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pengaduan_id')->constrained('pengaduan')->onDelete('cascade');
+            
+            // Foreign key ke whistle_pengaduan dengan UUID
+            $table->uuid('pengaduan_id');
+            $table->foreign('pengaduan_id')->references('id')->on('whistle_pengaduan')->onDelete('cascade');
+            
             $table->string('nama_terlapor');
             $table->enum('status_terlapor', ['mahasiswa', 'pegawai']);
-            $table->string('nomor_identitas')->nullable(); // NIM untuk mahasiswa, NIP untuk pegawai
-            $table->string('unit_kerja_fakultas')->nullable(); // Fakultas/Prodi/Unit Kerja
-            $table->string('kontak_terlapor')->nullable(); // Email/No HP untuk konfirmasi
+            $table->string('nomor_identitas')->nullable(); 
+            $table->string('unit_kerja_fakultas')->nullable(); 
+            $table->string('kontak_terlapor')->nullable(); 
             $table->timestamps();
 
             // Index untuk performa

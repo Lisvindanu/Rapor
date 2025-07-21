@@ -88,10 +88,6 @@ class Krs extends Model
     public function hitungJumlahPresensi2()
     {
         $jumlahPresensi = $this->presensiKuliahs()->count();
-        // $jumlahHadir = $this->presensiKuliahs()
-        //     ->where('presensi', 'HADIR')
-        //     ->orWhere('presensi', null)
-        //     ->count();
         $jumlahHadir = $this->presensiKuliahs()
             ->where(function ($query) {
                 $query->where('presensi', 'HADIR')

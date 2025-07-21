@@ -31,41 +31,41 @@ class GetDataPresensi extends Command
     public function handle()
     {
         $periode = '20242';
-        $programstudi = 'Teknik Informatika';
+        // $programstudi = 'Teknik Informatika';
 
-        // $programstudi = [
-        //     'Teknik Industri',
-        //     'Teknologi Pangan',
-        //     'Teknik Mesin',
-        //     'Teknik Informatika',
-        //     'Teknik Lingkungan',
-        //     'Perencanaan Wilayah dan Kota'
-        // ];
+        $programstudi = [
+            'Teknik Industri',
+            'Teknologi Pangan',
+            'Teknik Mesin',
+            'Teknik Informatika',
+            'Teknik Lingkungan',
+            'Perencanaan Wilayah dan Kota'
+        ];
 
-        // PresensiKuliah::where('periodeakademik', $periode)
+        PresensiKuliah::where('periodeakademik', $periode)
             // ->where('programstudi', 'ilike', '%' . $programstudi . '%')
-            // ->whereIn('programstudi', [
-            //     'Teknik Industri',
-            //     'Teknologi Pangan',
-            //     'Teknik Mesin',
-            //     'Teknik Informatika',
-            //     'Teknik Lingkungan',
-            //     'Perencanaan Wilayah dan Kota'
-            // ])
-            // ->delete();
+            ->whereIn('programstudi', [
+                'Teknik Industri',
+                'Teknologi Pangan',
+                'Teknik Mesin',
+                'Teknik Informatika',
+                'Teknik Lingkungan',
+                'Perencanaan Wilayah dan Kota'
+            ])
+            ->delete();
 
         $kelasKuliah = KelasKuliah::where('periodeakademik', $periode)
-            ->where('programstudi', 'ilike', '%' . $programstudi . '%')
+            // ->where('programstudi', 'ilike', '%' . $programstudi . '%')
             // // ->where('kodemk', 'HSW213182')
             // ->get();
-            // ->whereIn('programstudi', [
-            //     'Teknik Industri',
-            //     'Teknologi Pangan',
-            //     'Teknik Mesin',
-            //     'Teknik Informatika',
-            //     'Teknik Lingkungan',
-            //     'Perencanaan Wilayah dan Kota'
-            // ])
+            ->whereIn('programstudi', [
+                'Teknik Industri',
+                'Teknologi Pangan',
+                'Teknik Mesin',
+                'Teknik Informatika',
+                'Teknik Lingkungan',
+                'Perencanaan Wilayah dan Kota'
+            ])
             ->get();
 
             

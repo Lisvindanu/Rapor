@@ -1,3 +1,4 @@
+{{-- F:\rapor-dosen\resources\views\keuangan\partials\quick-actions.blade.php --}}
 <div class="card">
     <div class="card-header" style="background-color: #fff; margin-top:10px">
         <div class="row">
@@ -30,11 +31,11 @@
                 </a>
             </div>
             <div class="col-md-6 mb-2">
-                <button class="btn btn-warning w-100 quick-action-btn"
-                        onclick="handleQuickAction('Master Data')"
-                        data-action="master-data">
+                <a href="{{ route('keuangan.master-data') }}"
+                   class="btn btn-warning w-100 quick-action-btn"
+                   data-action="master-data">
                     <i class="fas fa-cog"></i> Master Data
-                </button>
+                </a>
             </div>
         </div>
     </div>

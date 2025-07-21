@@ -19,6 +19,7 @@ use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\KeuanganLaporanController;
 use App\Http\Controllers\KeuanganMataAnggaranController;
 use App\Http\Controllers\KeuanganSumberDanaController;
+use App\Http\Controllers\KeuanganMasterDataController;
 
 
 /*
@@ -528,6 +529,8 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
 
         // Dashboard -> Nama rute tetap 'keuangan'
         Route::get('/', "KeuanganController@index")->name('keuangan');
+
+        Route::get('/master-data', "KeuanganMasterDataController@index")->name('keuangan.master-data');
 
         // Laporan routes -> Nama rute tetap 'keuangan.laporan' dan 'keuangan.laporan.print'
         Route::prefix('laporan')->group(function () {

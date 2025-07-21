@@ -21,14 +21,32 @@
 
                                 {{-- Master Data --}}
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle {{ Request::routeIs('keuangan.mata-anggaran*') ? 'active' : '' }}" href="#" id="navbarMaster" role="button"
+                                    <a class="nav-link dropdown-toggle {{
+                                        Request::routeIs('keuangan.mata-anggaran*') ||
+                                        Request::routeIs('keuangan.program*') ||
+                                        Request::routeIs('keuangan.sumber-dana*') ||
+                                        Request::routeIs('keuangan.tahun-anggaran*') ||
+                                        Request::routeIs('keuangan.tanda-tangan*') ? 'active' : ''
+                                    }}" href="#" id="navbarMaster" role="button"
                                        data-bs-toggle="dropdown" aria-expanded="false">
                                         Master Data
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarMaster">
                                         <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Kategori Transaksi <small class="text-muted">(dev)</small></a></li>
                                         <li><a class="dropdown-item {{ Request::routeIs('keuangan.mata-anggaran*') ? 'active' : '' }}" href="{{ route('keuangan.mata-anggaran.index') }}">
-                                                Mata Anggaran <span class="badge bg-success ms-1">Ready</span>
+                                                Mata Anggaran
+                                            </a></li>
+                                        <li><a class="dropdown-item {{ Request::routeIs('keuangan.program*') ? 'active' : '' }}" href="{{ route('keuangan.program.index') }}">
+                                                Program
+                                            </a></li>
+                                        <li><a class="dropdown-item {{ Request::routeIs('keuangan.sumber-dana*') ? 'active' : '' }}" href="{{ route('keuangan.sumber-dana.index') }}">
+                                                Sumber Dana
+                                            </a></li>
+                                        <li><a class="dropdown-item {{ Request::routeIs('keuangan.tahun-anggaran*') ? 'active' : '' }}" href="{{ route('keuangan.tahun-anggaran.index') }}">
+                                                Tahun Anggaran
+                                            </a></li>
+                                        <li><a class="dropdown-item {{ Request::routeIs('keuangan.tanda-tangan*') ? 'active' : '' }}" href="{{ route('keuangan.tanda-tangan.index') }}">
+                                                Tanda Tangan
                                             </a></li>
                                         <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Unit Kerja <small class="text-muted">(dev)</small></a></li>
                                         <li><hr class="dropdown-divider"></li>

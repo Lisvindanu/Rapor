@@ -43,13 +43,13 @@ class HitungPresensiKRS extends Command
                 'Perencanaan Wilayah dan Kota'
             ])
         ->whereIn('periodemasuk', [
-                '20181',
-                '20191',
-                '20201',
-                '20211',
-                '20221',
-                '20231',
-                '20241',
+                '20182',
+                '20192',
+                '20202',
+                '20212',
+                '20222',
+                '20232',
+                '20242',
             ])
         ->get();
 

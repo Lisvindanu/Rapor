@@ -31,7 +31,7 @@ class GetDataPresensi extends Command
     public function handle()
     {
         $periode = '20242';
-        // $programstudi = 'Ilmu Hukum';
+        // $programstudi = 'Teknik Informatika';
 
         $programstudi = [
             'Teknik Industri',
@@ -71,7 +71,7 @@ class GetDataPresensi extends Command
             
         $count_insert = 0;
 
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTc1MjczNDcxOSwiZXhwIjoxNzUyNzM4MzE5fQ.p3v0ju4E0gFSSdznjgRhrIdGZYY1LX0rSFJrOywKBoU"; // Ganti dengan token yang valid
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTc1MzA2ODQ4MiwiZXhwIjoxNzUzMDcyMDgyfQ.2Vadev3pXLG72EaI7iF6m6QJG7UYrFMjbdBGc1jd-8w"; // Ganti dengan token yang valid
         $limit = 1000;
 
         $formData = [];

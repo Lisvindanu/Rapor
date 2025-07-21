@@ -62,6 +62,7 @@ class MasterLaporanController extends Controller
                 return [
                     'nrp' => $mhs->nim,
                     'nama' => $mhs->nama,
+                    'no_hp' => $mhs->nohp,
                     'program_studi' => $mhs->programstudi,
                     'status_mahasiswa' => $mhs->statusmahasiswa,
                     'perwalian' => collect($mhs->perwalian)

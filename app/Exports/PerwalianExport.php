@@ -43,7 +43,7 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
         }
 
         return array_merge(
-            ['No', 'NRP', 'Nama', 'Program Studi', 'Status Mahasiswa'],
+            ['No', 'NRP', 'Nama', 'No Hp','Program Studi', 'Status Mahasiswa'],
             $periodeCols,
             [
                 'Total DPP Belum Lunas (Rp)', 
@@ -345,6 +345,7 @@ class PerwalianExport implements FromCollection, WithHeadings, WithMapping
             $no++,
             $row->nim,
             $row->nama,
+            $row->nohp,
             $row->programstudi,
             $row->statusmahasiswa,
         ], $periodeData, [

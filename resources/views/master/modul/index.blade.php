@@ -79,8 +79,13 @@
                                         @foreach ($moduls as $modul)
                                             <tr>
                                                 <td class="text-center">{{ $modul->nama_modul }}</td>
-                                                <td class="text-center"><a
-                                                        href="{{ route($modul->tautan) }}">{{ $modul->tautan }}</a></td>
+                                                <td class="text-center">
+                                                    @if (Route::has($modul->tautan))
+                                                        <a href="{{ route($modul->tautan) }}">{{ $modul->tautan }}</a>
+                                                    @else
+                                                        <span class="text-muted">{{ $modul->tautan }}</span>
+                                                    @endif
+                                                </td>
                                                 <td class="text-center">
                                                     @if ($modul->icon)
                                                         <img src="{{ asset('path/to/icon/' . $modul->icon) }}"
@@ -95,14 +100,6 @@
                                                         class="btn btn-sm btn-warning">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <form method="POST" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Anda yakin ingin menghapus modul ini?')">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
                                                 </td>
                                             </tr>
                                         @endforeach

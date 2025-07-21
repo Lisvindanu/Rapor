@@ -29,7 +29,7 @@ class synKRS extends Command
      */
     public function handle()
     {
-        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTc1MjQ2MjM1MSwiZXhwIjoxNzUyNDY1OTUxfQ.QK5ktfBdDIg6pjZfF6bw0e0FolRj0PXSp5rt7wK5fDM";
+        $accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjaWQiOiJ1bnBhcyIsImlhdCI6MTc1MjczNDUxOCwiZXhwIjoxNzUyNzM4MTE4fQ.cEpBHatRzElN0Imu52qrBURyNvmUTziJwZ8ZXAjgWi0";
         $limit = 1000;
 
         $formData = [];
@@ -61,16 +61,16 @@ class synKRS extends Command
 
         // kelaskuliah where in idperiode
         $kelasKuliah = KelasKuliah::where('periodeakademik', '20242')
-            // ->whereIn('programstudi', [
-            //     'Teknik Industri',
-            //     'Teknologi Pangan',
-            //     'Teknik Mesin',
-            //     'Teknik Informatika',
-            //     'Teknik Lingkungan',
-            //     'Perencanaan Wilayah dan Kota'
-            // ])
-            ->where('programstudi', 'Ilmu Hukum')
-            // ->where('kodemk', 'IF21W0705')
+            ->whereIn('programstudi', [
+                'Teknik Industri',
+                'Teknologi Pangan',
+                'Teknik Mesin',
+                'Teknik Informatika',
+                'Teknik Lingkungan',
+                'Perencanaan Wilayah dan Kota'
+            ])
+            // ->where('programstudi', 'Ilmu Hukum')
+            // ->where('kodemk', 'HSW212122')
             ->get();
 
         foreach ($kelasKuliah as $kelas) {
@@ -124,8 +124,8 @@ class synKRS extends Command
 
                         // Jika data krs sudah ada, perbarui
                         if ($krs) {
+                            $krs->update($krsData);
                             $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' sudah ada, perbarui data');
-                            // $krs->update($krsData);
                         } else {
                             Krs::create($krsData);
                             $this->info('KRS ' . $krsData['nim'] . ' - ' . $krsData['idmk'] . ' berhasil disimpan');

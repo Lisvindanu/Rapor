@@ -58,11 +58,6 @@
                         Email: {{ auth()->user()->email }}
                     </small>
                 </div>
-                <div>
-                    <a href="{{ route('whistleblower.create') }}" class="btn btn-danger">
-                        <i class="fas fa-plus"></i> Buat Laporan
-                    </a>
-                </div>
             </div>
 
             @if(session('success'))

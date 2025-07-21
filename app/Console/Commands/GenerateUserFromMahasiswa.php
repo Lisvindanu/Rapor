@@ -35,7 +35,7 @@ class GenerateUserFromMahasiswa extends Command
     {
         $mhs = Mahasiswa::whereDoesntHave('user')
             ->where('statusmahasiswa', 'Aktif')
-            ->where('periodemasuk', '20241')
+            ->where('periodemasuk', '20242')
             // ->where('programstudi', 'Ilmu Hukum')
             // ->where('nim', '203040106')
             // ->where('jenispegawai', 'Pegawai')

@@ -14,7 +14,6 @@
         @include('keuangan.transaksi.partials.header')
         @include('komponen.message-alert')
         @include('keuangan.transaksi.partials.detail-content')
-        @include('keuangan.transaksi.partials.action-buttons')
     </div>
 @endsection
 

@@ -79,6 +79,43 @@
         padding: 0.375rem 0.75rem;
     }
 
+    /* Override badge colors to black text for consistency */
+    .badge-primary {
+        background-color: #e3f2fd !important;
+        color: #000 !important;
+        border: 1px solid #bbdefb;
+    }
+
+    .badge-secondary {
+        background-color: #f5f5f5 !important;
+        color: #000 !important;
+        border: 1px solid #e0e0e0;
+    }
+
+    .badge-warning {
+        background-color: #fff3cd !important;
+        color: #000 !important;
+        border: 1px solid #ffeaa7;
+    }
+
+    .badge-success {
+        background-color: #d4edda !important;
+        color: #000 !important;
+        border: 1px solid #c3e6cb;
+    }
+
+    .badge-danger {
+        background-color: #f8d7da !important;
+        color: #000 !important;
+        border: 1px solid #f5c6cb;
+    }
+
+    .badge-info {
+        background-color: #d1ecf1 !important;
+        color: #000 !important;
+        border: 1px solid #bee5eb;
+    }
+
     /* Empty state */
     .empty-state {
         text-align: center;

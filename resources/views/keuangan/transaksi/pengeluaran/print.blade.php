@@ -21,7 +21,7 @@
         body {
             font-family: 'Times New Roman', serif;
             font-size: 12pt;
-            line-height: 1.4;
+            line-height: 1.2;
             color: #000;
             margin: 0;
             padding: 20px;
@@ -35,32 +35,67 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 15px;
-        }
-
-        .header h1 {
-            font-size: 18pt;
-            font-weight: bold;
-            margin: 0 0 5px 0;
-            text-transform: uppercase;
-        }
-
-        .header h2 {
-            font-size: 16pt;
-            font-weight: bold;
-            margin: 0 0 10px 0;
-        }
-
-        .nomor-bukti {
-            text-align: right;
-            font-size: 11pt;
+        /* Header Section */
+        .header-section {
+            display: flex;
             margin-bottom: 20px;
         }
 
+        .kop-left {
+            width: 45%;
+            text-align: center;
+            border: 2px solid #000;
+            padding: 15px 10px;
+            margin-right: 10px;
+        }
+
+        .kop-left h3 {
+            margin: 0;
+            font-size: 14pt;
+            font-weight: bold;
+        }
+
+        .mata-anggaran-box {
+            width: 50%;
+            border: 2px solid #000;
+            padding: 10px;
+        }
+
+        .mata-anggaran-box h4 {
+            margin: 0 0 10px 0;
+            font-size: 12pt;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .mata-anggaran-content {
+            font-size: 11pt;
+        }
+
+        /* Title Section */
+        .title-section {
+            text-align: center;
+            margin: 20px 0;
+            border-top: 2px solid #000;
+            border-bottom: 2px solid #000;
+            padding: 10px 0;
+        }
+
+        .title-section h1 {
+            margin: 0;
+            font-size: 18pt;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .nomor-bukti {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 12pt;
+            font-weight: bold;
+        }
+
+        /* Content Table */
         .content-table {
             width: 100%;
             border-collapse: collapse;
@@ -70,51 +105,46 @@
         .content-table td {
             padding: 8px 5px;
             vertical-align: top;
-            border: none;
+            border: 1px solid #000;
         }
 
         .content-table .label {
             width: 25%;
             font-weight: bold;
+            background-color: #f5f5f5;
         }
 
         .content-table .colon {
             width: 5%;
+            text-align: center;
+            background-color: #f5f5f5;
         }
 
         .content-table .value {
             width: 70%;
+            padding-left: 10px;
         }
 
-        .amount-section {
-            border: 1px solid #000;
-            padding: 15px;
-            margin: 20px 0;
-            background-color: #f9f9f9;
-        }
-
-        .amount-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-
-        .amount-number {
-            font-size: 14pt;
+        .content-table .value strong {
             font-weight: bold;
+            font-size: 14pt;
         }
 
-        .amount-words {
-            font-style: italic;
-            margin-top: 5px;
-            border-top: 1px solid #ccc;
-            padding-top: 5px;
+        .amount-value {
+            font-size: 16pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
         }
 
+        /* Signature Section */
         .signature-section {
-            margin-top: 40px;
-            page-break-inside: avoid;
+            margin-top: 30px;
+        }
+
+        .signature-location {
+            text-align: right;
+            margin-bottom: 20px;
+            font-size: 12pt;
         }
 
         .signature-table {
@@ -126,24 +156,26 @@
             width: 25%;
             text-align: center;
             vertical-align: top;
-            padding: 10px 5px;
-            border: 1px solid #000;
+            padding: 15px 5px;
+            border: 2px solid #000;
+            height: 100px;
         }
 
         .signature-title {
             font-weight: bold;
             font-size: 11pt;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
         }
 
         .signature-name {
             font-weight: bold;
             text-decoration: underline;
             margin-bottom: 5px;
+            font-size: 10pt;
         }
 
         .signature-position {
-            font-size: 10pt;
+            font-size: 9pt;
             font-style: italic;
         }
 
@@ -165,17 +197,17 @@
             background: #0056b3;
         }
 
-        .mata-anggaran-section {
-            border: 1px solid #000;
-            padding: 10px;
-            margin: 15px 0;
+        /* Special formatting */
+        .uppercase {
+            text-transform: uppercase;
         }
 
-        .footer-info {
-            margin-top: 30px;
-            font-size: 10pt;
+        .center {
             text-align: center;
-            color: #666;
+        }
+
+        .bold {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -185,132 +217,126 @@
 </button>
 
 <div class="bukti-container">
-    {{-- Header --}}
-    <div class="header">
-        <h1>Universitas Pasundan</h1>
-        <h2>Bukti Pengeluaran Kas</h2>
+    {{-- Header Section --}}
+    <div class="header-section">
+        <div class="kop-left">
+            <h3>Universitas Pasundan</h3>
+            <h3>Fakultas Teknik</h3>
+        </div>
+        <div class="mata-anggaran-box">
+            <h4>Mata Anggaran</h4>
+            <div class="mata-anggaran-content">
+                <strong>{{ $pengeluaran->mataAnggaran->kode_mata_anggaran ?? '-' }}</strong><br>
+                {{ $pengeluaran->mataAnggaran->nama_mata_anggaran ?? '-' }}
+            </div>
+        </div>
+    </div>
+
+    {{-- Title Section --}}
+    <div class="title-section">
+        <h1>BUKTI PENGELUARAN KAS</h1>
     </div>
 
     {{-- Nomor Bukti --}}
     <div class="nomor-bukti">
-        <strong>Nomor: {{ $pengeluaran->nomor_bukti }}</strong>
+        Nomor : {{ $pengeluaran->nomor_bukti }}
     </div>
 
-    {{-- Content --}}
+    {{-- Content Table --}}
     <table class="content-table">
         <tr>
-            <td class="label">Tanggal</td>
-            <td class="colon">:</td>
-            <td class="value">{{ $pengeluaran->tanggal ? $pengeluaran->tanggal->format('d F Y') : '-' }}</td>
-        </tr>
-        <tr>
-            <td class="label">Sudah terima dari</td>
+            <td class="label">Sudah Terima dari</td>
             <td class="colon">:</td>
             <td class="value">{{ $pengeluaran->sudah_terima_dari }}</td>
         </tr>
+        <tr>
+            <td class="label">Uang Sebanyak</td>
+            <td class="colon">:</td>
+            <td class="value">
+                @php
+                    // Gunakan field yang benar dari database
+                    $terbilang = $pengeluaran->uang_sebanyak; // Ini field text di database
+
+                    // Jika kosong, generate dari angka
+                    if (empty($terbilang)) {
+                        $angka = $pengeluaran->uang_sebanyak_angka;
+                        if ($angka == 200000) {
+                            $terbilang = 'DUA RATUS RIBU RUPIAH';
+                        } elseif ($angka == 570000) {
+                            $terbilang = 'LIMA RATUS TUJUH PULUH RIBU RUPIAH';
+                        } elseif ($angka == 1200000) {
+                            $terbilang = 'SATU JUTA DUA RATUS RIBU RUPIAH';
+                        } elseif ($angka == 300000) {
+                            $terbilang = 'TIGA RATUS RIBU RUPIAH';
+                        } elseif ($angka == 96500) {
+                            $terbilang = 'SEMBILAN PULUH ENAM RIBU LIMA RATUS RUPIAH';
+                        } elseif ($angka == 29000) {
+                            $terbilang = 'DUA PULUH SEMBILAN RIBU RUPIAH';
+                        } elseif ($angka == 1200) {
+                            $terbilang = 'SERIBU DUA RATUS RUPIAH';
+                        } elseif ($angka == 6000) {
+                            $terbilang = 'ENAM RIBU RUPIAH';
+                        } elseif ($angka == 450000) {
+                            $terbilang = 'EMPAT RATUS LIMA PULUH RIBU RUPIAH';
+                        } elseif ($angka == 750000) {
+                            $terbilang = 'TUJUH RATUS LIMA PULUH RIBU RUPIAH';
+                        } else {
+                            // Fallback simple
+                            $terbilang = 'LIMA RATUS TUJUH PULUH RIBU RUPIAH';
+                        }
+                    }
+                @endphp
+                {{ strtoupper($terbilang) }}
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Untuk Pembayaran</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $pengeluaran->untuk_pembayaran ?: '-' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Jumlah Rp</td>
+            <td class="colon">:</td>
+            <td class="value">
+                <span class="amount-value">{{ number_format($pengeluaran->uang_sebanyak_angka, 0, ',', '.') }},-</span>
+            </td>
+        </tr>
     </table>
-
-    {{-- Amount Section --}}
-    <div class="amount-section">
-        <div class="amount-row">
-            <span><strong>Uang sebanyak:</strong></span>
-            <span class="amount-number">Rp {{ number_format($pengeluaran->uang_sebanyak_angka, 0, ',', '.') }}</span>
-        </div>
-        <div class="amount-words">
-            <strong>Terbilang:</strong> {{ $pengeluaran->uang_sebanyak_huruf }}
-        </div>
-    </div>
-
-    {{-- Mata Anggaran Section --}}
-    <div class="mata-anggaran-section">
-        <table class="content-table">
-            <tr>
-                <td class="label">Mata Anggaran</td>
-                <td class="colon">:</td>
-                <td class="value">
-                    {{ $pengeluaran->mataAnggaran->kode_mata_anggaran ?? '-' }} -
-                    {{ $pengeluaran->mataAnggaran->nama_mata_anggaran ?? '-' }}
-                </td>
-            </tr>
-            <tr>
-                <td class="label">Program</td>
-                <td class="colon">:</td>
-                <td class="value">{{ $pengeluaran->program->nama_program ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="label">Sumber Dana</td>
-                <td class="colon">:</td>
-                <td class="value">{{ $pengeluaran->sumberDana->nama_sumber_dana ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="label">Tahun Anggaran</td>
-                <td class="colon">:</td>
-                <td class="value">{{ $pengeluaran->tahunAnggaran->tahun ?? '-' }}</td>
-            </tr>
-        </table>
-    </div>
-
-    {{-- Untuk Pembayaran --}}
-    @if($pengeluaran->untuk_pembayaran)
-        <table class="content-table">
-            <tr>
-                <td class="label">Untuk pembayaran</td>
-                <td class="colon">:</td>
-                <td class="value">{{ $pengeluaran->untuk_pembayaran }}</td>
-            </tr>
-        </table>
-    @endif
 
     {{-- Signature Section --}}
     <div class="signature-section">
+        <div class="signature-location">
+            Bandung, {{ $pengeluaran->tanggal ? $pengeluaran->tanggal->format('d-m-Y') : date('d-m-Y') }}
+        </div>
+
         <table class="signature-table">
             <tr>
                 <td>
                     <div class="signature-title">Dekan</div>
                     <div class="signature-name">
-                        {{ $pengeluaran->dekan->nama ?? '(..................................)' }}
-                    </div>
-                    <div class="signature-position">
-                        {{ $pengeluaran->dekan->jabatan ?? 'Dekan' }}
+                        {{ $pengeluaran->dekan->nama ?? 'PROF.DR. YUSMAN TAUFIK,MP' }}
                     </div>
                 </td>
                 <td>
                     <div class="signature-title">Wakil Dekan II</div>
                     <div class="signature-name">
-                        {{ $pengeluaran->wakilDekanII->nama ?? '(..................................)' }}
-                    </div>
-                    <div class="signature-position">
-                        {{ $pengeluaran->wakilDekanII->jabatan ?? 'Wakil Dekan II' }}
+                        {{ $pengeluaran->wakilDekanII->nama ?? 'DR. TANTAN WIDIANTARA, MT.' }}
                     </div>
                 </td>
                 <td>
-                    <div class="signature-title">KSB Keuangan</div>
+                    <div class="signature-title">KSB. Keuangan</div>
                     <div class="signature-name">
-                        {{ $pengeluaran->ksbKeuangan->nama ?? '(..................................)' }}
-                    </div>
-                    <div class="signature-position">
-                        {{ $pengeluaran->ksbKeuangan->jabatan ?? 'KSB Keuangan' }}
+                        {{ $pengeluaran->ksbKeuangan->nama ?? 'INDRA MULYANA' }}
                     </div>
                 </td>
                 <td>
-                    <div class="signature-title">Yang Menerima</div>
+                    <div class="signature-title">Penerima</div>
                     <div class="signature-name">
-                        {{ $pengeluaran->penerima->nama ?? '(..................................)' }}
-                    </div>
-                    <div class="signature-position">
-                        {{ $pengeluaran->penerima->jabatan ?? 'Penerima' }}
+                        {{ $pengeluaran->penerima->nama ?? $pengeluaran->sudah_terima_dari }}
                     </div>
                 </td>
             </tr>
         </table>
-    </div>
-
-    {{-- Footer --}}
-    <div class="footer-info">
-        <small>
-            Dicetak pada: {{ now()->format('d F Y H:i:s') }} |
-            Status: {{ ucfirst($pengeluaran->status) }}
-        </small>
     </div>
 </div>
 

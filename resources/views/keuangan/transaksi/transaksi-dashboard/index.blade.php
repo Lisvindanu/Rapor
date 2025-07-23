@@ -114,7 +114,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <a href="{{ route('keuangan.laporan.index') }}"
+                                    <a href="{{ route('keuangan.laporan') }}"
                                        class="btn btn-info w-100 transaksi-btn">
                                         <i class="fas fa-chart-bar me-2"></i>
                                         Laporan Keuangan

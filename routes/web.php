@@ -632,6 +632,8 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::post('/print-laporan', "KeuanganLaporanController@printLaporan")->name('keuangan.laporan.print');
         });
 
+
+
         // Master Mata Anggaran Routes
         Route::prefix('mata-anggaran')->name('keuangan.mata-anggaran.')->group(function () {
             Route::get('/', "KeuanganMataAnggaranController@index")->name('index');

@@ -39,14 +39,21 @@ class KeuanganPengeluaranSeeder extends Seeder
      */
     private function validateMasterData(): bool
     {
-        $tahunAktif = KeuanganTahunAnggaran::where('is_active', true)->first();
+        // Gunakan scope aktif() untuk mendapatkan tahun anggaran yang sedang aktif
+        $tahunAktif = KeuanganTahunAnggaran::aktif()->first();
+
+        // Jika tidak ada tahun aktif, ambil tahun anggaran terbaru
+        if (!$tahunAktif) {
+            $tahunAktif = KeuanganTahunAnggaran::orderBy('tgl_awal_anggaran', 'desc')->first();
+        }
+
         $mataAnggaranCount = KeuanganMataAnggaran::count();
         $programCount = KeuanganProgram::count();
         $sumberDanaCount = KeuanganSumberDana::count();
         $tandaTanganCount = KeuanganTandaTangan::count();
 
         if (!$tahunAktif) {
-            $this->command->error('❌ Tidak ada tahun anggaran aktif. Jalankan KeuanganTahunAnggaranSeeder terlebih dahulu.');
+            $this->command->error('❌ Tidak ada tahun anggaran. Jalankan KeuanganTahunAnggaranSeeder terlebih dahulu.');
             return false;
         }
 
@@ -70,7 +77,8 @@ class KeuanganPengeluaranSeeder extends Seeder
             return false;
         }
 
-        $this->command->info('✅ Master data validation passed');
+        $statusInfo = $tahunAktif->is_aktif ? 'aktif' : 'tersedia';
+        $this->command->info("✅ Master data validation passed (Tahun anggaran {$tahunAktif->tahun_anggaran} - {$statusInfo})");
         return true;
     }
 
@@ -79,8 +87,12 @@ class KeuanganPengeluaranSeeder extends Seeder
      */
     private function getMasterData(): array
     {
+        // Prioritas: tahun aktif > tahun terbaru
+        $tahunAnggaran = KeuanganTahunAnggaran::aktif()->first()
+            ?? KeuanganTahunAnggaran::orderBy('tgl_awal_anggaran', 'desc')->first();
+
         return [
-            'tahunAktif' => KeuanganTahunAnggaran::where('is_active', true)->first(),
+            'tahunAnggaran' => $tahunAnggaran,
             'mataAnggarans' => KeuanganMataAnggaran::all(),
             'programs' => KeuanganProgram::all(),
             'sumberDanas' => KeuanganSumberDana::all(),
@@ -213,7 +225,7 @@ class KeuanganPengeluaranSeeder extends Seeder
                 'mata_anggaran_id' => $mataAnggaran->id,
                 'program_id' => $program->id,
                 'sumber_dana_id' => $sumberDana->id,
-                'tahun_anggaran_id' => $masterData['tahunAktif']->id,
+                'tahun_anggaran_id' => $masterData['tahunAnggaran']->id,
                 'dekan_id' => $signatures['dekan']->id,
                 'wakil_dekan_ii_id' => $signatures['wakil_dekan']->id,
                 'ksb_keuangan_id' => $signatures['ksb_keuangan']->id,
@@ -225,7 +237,7 @@ class KeuanganPengeluaranSeeder extends Seeder
             $this->command->info("   ✓ Created: {$pengeluaran->nomor_bukti} - {$data['status']} - Rp " . number_format($data['uang_sebanyak_angka']));
         }
 
-        $this->displaySummary($sampleData);
+        $this->displaySummary($sampleData, $masterData['tahunAnggaran']);
     }
 
     /**
@@ -261,7 +273,7 @@ class KeuanganPengeluaranSeeder extends Seeder
     /**
      * Display seeding summary
      */
-    private function displaySummary(array $sampleData): void
+    private function displaySummary(array $sampleData, $tahunAnggaran): void
     {
         $statusCounts = collect($sampleData)->countBy('status');
         $totalAmount = collect($sampleData)->sum('uang_sebanyak_angka');
@@ -269,6 +281,7 @@ class KeuanganPengeluaranSeeder extends Seeder
         $this->command->info('');
         $this->command->info('📊 SEEDING SUMMARY');
         $this->command->info('==================');
+        $this->command->info('Tahun Anggaran: ' . $tahunAnggaran->tahun_anggaran . ' (' . $tahunAnggaran->periode_lengkap . ')');
         $this->command->info('Total Transactions: ' . count($sampleData));
         $this->command->info('Total Amount: Rp ' . number_format($totalAmount));
         $this->command->info('');

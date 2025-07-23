@@ -100,7 +100,7 @@
             'pending': '{{ route("keuangan.pengeluaran.index") }}?status=pending',
             'approved': '{{ route("keuangan.pengeluaran.index") }}?status=approved',
             'paid': '{{ route("keuangan.pengeluaran.index") }}?status=paid',
-            'value': '{{ route("keuangan.laporan.index") }}'
+            'value': '{{ route("keuangan.laporan") }}'
         };
 
         if (routes[transaksiType]) {
@@ -267,7 +267,7 @@
         // Ctrl/Cmd + R = Reports
         if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
             e.preventDefault();
-            window.location.href = '{{ route("keuangan.laporan.index") }}';
+            window.location.href = '{{ route("keuangan.laporan") }}';
         }
     });
 

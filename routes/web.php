@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\KeuanganPengeluaranController;
+use App\Http\Controllers\KeuanganTransaksiDashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use FontLib\Table\Type\name;
@@ -22,8 +24,6 @@ use App\Http\Controllers\KeuanganSumberDanaController;
 use App\Http\Controllers\KeuanganMasterDataController;
 use App\Http\Controllers\WhistleblowerController;
 use App\Http\Controllers\WhistleblowerAdminController;
-use App\Http\Controllers\KeuanganPengeluaranController;
-
 
 
 /*
@@ -600,10 +600,19 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         // Dashboard -> Nama rute tetap 'keuangan'
         Route::get('/', "KeuanganController@index")->name('keuangan');
 
-        Route::get('/master-data', "KeuanganMasterDataController@index")->name('keuangan.master-data');
 
-        // Pengeluaran Kas Routes
-        Route::prefix('pengeluaran')->name('pengeluaran.')->group(function () {
+        // Dashboard Transaksi
+        Route::prefix('transaksi')->name('keuangan.transaksi.')->group(function () {
+            Route::get('/', [KeuanganTransaksiDashboardController::class, 'index'])->name('dashboard');
+            Route::get('/statistics', [KeuanganTransaksiDashboardController::class, 'getStatisticsJson'])->name('statistics');
+            Route::get('/chart-data', [KeuanganTransaksiDashboardController::class, 'getChartData'])->name('chart-data');
+            Route::get('/top-mata-anggaran', [KeuanganTransaksiDashboardController::class, 'getTopMataAnggaran'])->name('top-mata-anggaran');
+            Route::get('/status-distribution', [KeuanganTransaksiDashboardController::class, 'getStatusDistribution'])->name('status-distribution');
+            Route::get('/export', [KeuanganTransaksiDashboardController::class, 'export'])->name('export');
+        });
+
+// Pengeluaran Kas
+        Route::prefix('pengeluaran')->name('keuangan.pengeluaran.')->group(function () {
             Route::get('/', [KeuanganPengeluaranController::class, 'index'])->name('index');
             Route::get('/create', [KeuanganPengeluaranController::class, 'create'])->name('create');
             Route::post('/', [KeuanganPengeluaranController::class, 'store'])->name('store');
@@ -611,11 +620,11 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::get('/{id}/edit', [KeuanganPengeluaranController::class, 'edit'])->name('edit');
             Route::put('/{id}', [KeuanganPengeluaranController::class, 'update'])->name('update');
             Route::delete('/{id}', [KeuanganPengeluaranController::class, 'destroy'])->name('destroy');
-
-            // Print & PDF Routes
             Route::get('/{id}/print', [KeuanganPengeluaranController::class, 'print'])->name('print');
             Route::get('/{id}/pdf', [KeuanganPengeluaranController::class, 'pdf'])->name('pdf');
         });
+
+        Route::get('/master-data', "KeuanganMasterDataController@index")->name('keuangan.master-data');
 
         // Laporan routes -> Nama rute tetap 'keuangan.laporan' dan 'keuangan.laporan.print'
         Route::prefix('laporan')->group(function () {

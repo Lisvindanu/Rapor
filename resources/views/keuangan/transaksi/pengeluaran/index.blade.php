@@ -7,9 +7,9 @@
         'description' => 'Kelola bukti pengeluaran kas dan transaksi keuangan',
         'icon' => 'fas fa-money-bill-wave',
         'breadcrumbs' => [
-            ['text' => 'Dashboard', 'url' => route('dashboard')],
-            ['text' => 'Keuangan', 'url' => route('keuangan.dashboard')],
-            ['text' => 'Transaksi', 'url' => '#'],
+            ['text' => 'Dashboard', 'url' => route('gate')],
+            ['text' => 'Keuangan', 'url' => route('keuangan')],
+            ['text' => 'Transaksi', 'url' => route('keuangan.transaksi.dashboard')],
             ['text' => 'Pengeluaran Kas', 'active' => true]
         ],
         'primary_action' => [

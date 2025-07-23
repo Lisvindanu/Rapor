@@ -18,8 +18,9 @@
     $tableConfig = [
         'title' => 'Data Bukti Pengeluaran Kas',
         'data' => $pengeluarans,
-        'create_route' => route('keuangan.pengeluaran.create'),
+        'create_route' => '#', // Changed to # untuk modal
         'create_button_text' => 'Tambah Pengeluaran',
+        'create_button_class' => 'btn-create-modal', // NEW: class for modal trigger
         'empty_message' => 'Belum ada data pengeluaran kas. Klik tombol "Tambah Pengeluaran" untuk membuat bukti pengeluaran pertama.',
         'delete_name_field' => 'nomor_bukti',
         'columns' => [
@@ -70,7 +71,8 @@
         ],
         'actions' => [
             'show' => route('keuangan.pengeluaran.show', ':id'),
-            'edit' => route('keuangan.pengeluaran.edit', ':id'),
+            'edit' => '#', // Changed to # untuk modal
+            'edit_modal' => true, // NEW: enable modal edit
             'delete' => route('keuangan.pengeluaran.destroy', ':id'),
             'print' => route('keuangan.pengeluaran.print', ':id')
         ],
@@ -126,6 +128,7 @@
         'version' => 'v1.0.0',
         'features' => [
             'CRUD Bukti Pengeluaran',
+            'Modal Create/Edit',
             'Auto Generate Nomor Bukti',
             'Status Workflow',
             'Print & PDF Export',
@@ -133,6 +136,17 @@
             'PostgreSQL Optimized'
         ],
         'database' => true,
-        'note' => 'Sesuai dengan template bukti pengeluaran kas fakultas'
+        'note' => 'Sesuai dengan template bukti pengeluaran kas fakultas - dengan modal support'
     ];
 @endphp
+
+{{-- Include Modal Form --}}
+@section('additional-content')
+    @include('keuangan.transaksi.partials.modal-form')
+@endsection
+
+{{-- Additional Scripts --}}
+@section('additional-scripts')
+    @include('keuangan.transaksi.partials.modal-scripts')
+    @include('keuangan.transaksi.partials.form-scripts')
+@endsection

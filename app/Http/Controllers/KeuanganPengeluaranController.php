@@ -46,6 +46,24 @@ class KeuanganPengeluaranController extends Controller
         return view('keuangan.transaksi.pengeluaran.create', compact('formOptions'));
     }
 
+    // NEW: AJAX Create - untuk modal
+    public function createModal()
+    {
+        $tahunAktif = KeuanganTahunAnggaran::where('is_active', true)->first();
+
+        if (!$tahunAktif) {
+            return response()->json(['error' => 'Tidak ada tahun anggaran aktif.'], 400);
+        }
+
+        $formOptions = $this->getFormOptions();
+        $formOptions['tahunAktif'] = $tahunAktif;
+
+        return response()->json([
+            'success' => true,
+            'formOptions' => $formOptions
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate(
@@ -58,10 +76,27 @@ class KeuanganPengeluaranController extends Controller
             $pengeluaran = KeuanganPengeluaran::create($request->all());
             DB::commit();
 
+            // Check if AJAX request for modal
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Bukti pengeluaran kas berhasil dibuat.',
+                    'data' => $pengeluaran->load(['mataAnggaran', 'program', 'penerima'])
+                ]);
+            }
+
             return redirect()->route('keuangan.pengeluaran.show', $pengeluaran->id)
                 ->with('message', 'Bukti pengeluaran kas berhasil dibuat.');
         } catch (Exception $e) {
             DB::rollBack();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menyimpan: ' . $e->getMessage()
+                ], 500);
+            }
+
             return back()->with('error', 'Gagal menyimpan: ' . $e->getMessage())->withInput();
         }
     }
@@ -89,11 +124,32 @@ class KeuanganPengeluaranController extends Controller
         return view('keuangan.transaksi.pengeluaran.edit', compact('pengeluaran', 'formOptions'));
     }
 
+    // NEW: AJAX Edit - untuk modal
+    public function editModal($id)
+    {
+        $pengeluaran = KeuanganPengeluaran::findOrFail($id);
+
+        if (!$pengeluaran->canBeEdited()) {
+            return response()->json(['error' => 'Data tidak dapat diedit pada status ini.'], 400);
+        }
+
+        $formOptions = $this->getFormOptions();
+
+        return response()->json([
+            'success' => true,
+            'data' => $pengeluaran,
+            'formOptions' => $formOptions
+        ]);
+    }
+
     public function update(Request $request, $id)
     {
         $pengeluaran = KeuanganPengeluaran::findOrFail($id);
 
         if (!$pengeluaran->canBeEdited()) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Data tidak dapat diedit pada status ini.'], 400);
+            }
             return back()->with('error', 'Data tidak dapat diedit pada status ini.');
         }
 
@@ -107,10 +163,27 @@ class KeuanganPengeluaranController extends Controller
             $pengeluaran->update($request->all());
             DB::commit();
 
+            // Check if AJAX request for modal
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Bukti pengeluaran kas berhasil diperbarui.',
+                    'data' => $pengeluaran->load(['mataAnggaran', 'program', 'penerima'])
+                ]);
+            }
+
             return redirect()->route('keuangan.pengeluaran.show', $pengeluaran->id)
                 ->with('message', 'Bukti pengeluaran kas berhasil diperbarui.');
         } catch (Exception $e) {
             DB::rollBack();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal memperbarui: ' . $e->getMessage()
+                ], 500);
+            }
+
             return back()->with('error', 'Gagal memperbarui: ' . $e->getMessage())->withInput();
         }
     }

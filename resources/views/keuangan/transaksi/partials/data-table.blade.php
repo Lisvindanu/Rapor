@@ -5,6 +5,7 @@
         'data' => collect(),
         'create_route' => '#',
         'create_button_text' => 'Tambah Data',
+        'create_button_class' => '', // NEW: for modal trigger
         'empty_message' => 'Belum ada data.',
         'delete_name_field' => 'id',
         'columns' => [],
@@ -24,9 +25,15 @@
                 </h6>
             </div>
             <div class="col-auto">
-                <a href="{{ $tableConfig['create_route'] }}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus me-1"></i>{{ $tableConfig['create_button_text'] }}
-                </a>
+                @if($tableConfig['create_button_class'])
+                    <button type="button" class="btn btn-primary btn-sm {{ $tableConfig['create_button_class'] }}">
+                        <i class="fas fa-plus me-1"></i>{{ $tableConfig['create_button_text'] }}
+                    </button>
+                @else
+                    <a href="{{ $tableConfig['create_route'] }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>{{ $tableConfig['create_button_text'] }}
+                    </a>
+                @endif
             </div>
         </div>
     </div>
@@ -116,12 +123,21 @@
                                         </a>
                                     @endif
 
-                                    @if(isset($tableConfig['actions']['edit']))
-                                        <a href="{{ str_replace(':id', $item->id, $tableConfig['actions']['edit']) }}"
-                                           class="btn btn-warning btn-sm"
-                                           title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                    @if(isset($tableConfig['actions']['edit']) && $item->canBeEdited())
+                                        @if(isset($tableConfig['actions']['edit_modal']) && $tableConfig['actions']['edit_modal'])
+                                            <button type="button"
+                                                    class="btn btn-warning btn-sm btn-edit-modal"
+                                                    data-id="{{ $item->id }}"
+                                                    title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        @else
+                                            <a href="{{ str_replace(':id', $item->id, $tableConfig['actions']['edit']) }}"
+                                               class="btn btn-warning btn-sm"
+                                               title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        @endif
                                     @endif
 
                                     @if(isset($tableConfig['actions']['print']))
@@ -148,7 +164,7 @@
                                         @endforeach
                                     @endif
 
-                                    @if(isset($tableConfig['actions']['delete']))
+                                    @if(isset($tableConfig['actions']['delete']) && $item->canBeDeleted())
                                         <button type="button"
                                                 class="btn btn-danger btn-sm delete-btn"
                                                 data-url="{{ str_replace(':id', $item->id, $tableConfig['actions']['delete']) }}"
@@ -188,9 +204,15 @@
                 <i class="fas fa-inbox"></i>
                 <h5 class="mt-3">Belum Ada Data</h5>
                 <p class="text-muted">{{ $tableConfig['empty_message'] }}</p>
-                <a href="{{ $tableConfig['create_route'] }}" class="btn btn-primary">
-                    <i class="fas fa-plus me-1"></i>{{ $tableConfig['create_button_text'] }}
-                </a>
+                @if($tableConfig['create_button_class'])
+                    <button type="button" class="btn btn-primary {{ $tableConfig['create_button_class'] }}">
+                        <i class="fas fa-plus me-1"></i>{{ $tableConfig['create_button_text'] }}
+                    </button>
+                @else
+                    <a href="{{ $tableConfig['create_route'] }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>{{ $tableConfig['create_button_text'] }}
+                    </a>
+                @endif
             </div>
         @endif
     </div>

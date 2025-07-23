@@ -615,6 +615,11 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::prefix('pengeluaran')->name('keuangan.pengeluaran.')->group(function () {
             Route::get('/', [KeuanganPengeluaranController::class, 'index'])->name('index');
             Route::get('/create', [KeuanganPengeluaranController::class, 'create'])->name('create');
+
+            // NEW: Route untuk modal AJAX
+            Route::get('/create-modal', [KeuanganPengeluaranController::class, 'createModal'])->name('create.modal');
+            Route::get('/{id}/edit-modal', [KeuanganPengeluaranController::class, 'editModal'])->name('edit.modal');
+
             Route::post('/', [KeuanganPengeluaranController::class, 'store'])->name('store');
             Route::get('/{id}', [KeuanganPengeluaranController::class, 'show'])->name('show');
             Route::get('/{id}/edit', [KeuanganPengeluaranController::class, 'edit'])->name('edit');
@@ -623,6 +628,7 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::get('/{id}/print', [KeuanganPengeluaranController::class, 'print'])->name('print');
             Route::get('/{id}/pdf', [KeuanganPengeluaranController::class, 'pdf'])->name('pdf');
         });
+
 
         Route::get('/master-data', "KeuanganMasterDataController@index")->name('keuangan.master-data');
 

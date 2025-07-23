@@ -107,11 +107,10 @@
                                     </a>
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <a href="{{ route('keuangan.pengeluaran.create') }}"
-                                       class="btn btn-success w-100 transaksi-btn">
+                                    <button type="button" class="btn btn-success w-100 transaksi-btn btn-create-modal">
                                         <i class="fas fa-plus-circle me-2"></i>
                                         Buat Pengeluaran
-                                    </a>
+                                    </button>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <a href="{{ route('keuangan.laporan') }}"
@@ -194,6 +193,9 @@
                                 </div>
                                 <div class="col-4">
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="button" class="btn btn-sm btn-success btn-create-modal me-2">
+                                            <i class="fas fa-plus me-1"></i>Tambah
+                                        </button>
                                         <a href="{{ route('keuangan.pengeluaran.index') }}" class="btn btn-sm btn-outline-primary">
                                             Lihat Semua
                                         </a>
@@ -254,11 +256,17 @@
                                                             <i class="fas fa-eye"></i>
                                                         </a>
                                                         @if($transaction->canBeEdited())
-                                                            <a href="{{ route('keuangan.pengeluaran.edit', $transaction->id) }}"
-                                                               class="btn btn-warning btn-sm" title="Edit">
+                                                            <button type="button"
+                                                                    class="btn btn-warning btn-sm btn-edit-modal"
+                                                                    data-id="{{ $transaction->id }}"
+                                                                    title="Edit">
                                                                 <i class="fas fa-edit"></i>
-                                                            </a>
+                                                            </button>
                                                         @endif
+                                                        <a href="{{ route('keuangan.pengeluaran.print', $transaction->id) }}"
+                                                           class="btn btn-secondary btn-sm" target="_blank" title="Print">
+                                                            <i class="fas fa-print"></i>
+                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -270,10 +278,10 @@
                                 <div class="text-center py-4">
                                     <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
                                     <p class="text-muted">Belum ada transaksi terbaru</p>
-                                    <a href="{{ route('keuangan.pengeluaran.create') }}" class="btn btn-primary">
+                                    <button type="button" class="btn btn-primary btn-create-modal">
                                         <i class="fas fa-plus me-1"></i>
                                         Buat Transaksi Pertama
-                                    </a>
+                                    </button>
                                 </div>
                             @endif
                         </div>
@@ -282,8 +290,12 @@
             </div>
         </div>
     </div>
+
+    {{-- Include Modal Form --}}
+    @include('keuangan.transaksi.partials.modal-form')
 @endsection
 
 @section('js-tambahan')
     @include('keuangan.transaksi.transaksi-dashboard.partials.scripts')
+    @include('keuangan.transaksi.partials.modal-scripts')
 @endsection

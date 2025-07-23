@@ -18,9 +18,15 @@
         @include('keuangan.transaksi.partials.filter-form')
         @include('keuangan.transaksi.partials.data-table')
     </div>
+
+    {{-- Additional Content Section - for modals --}}
+    @yield('additional-content')
 @endsection
 
 @section('js-tambahan')
     @include('keuangan.transaksi.partials.scripts')
     @include('keuangan.transaksi.partials.delete-script')
+
+    {{-- Additional Scripts Section --}}
+    @yield('additional-scripts')
 @endsection

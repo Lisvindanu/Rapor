@@ -1,18 +1,13 @@
 {{-- F:\rapor-dosen\resources\views\keuangan\transaksi\transaksi-dashboard\partials\scripts.blade.php --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('💰 Transaksi Dashboard v1.0.0 - Production Ready');
-        console.log('📊 Clean architecture for financial transactions');
+        console.log('💰 Transaksi Dashboard v1.0.0 - Simple & Clean');
 
-        // Initialize dashboard components
+        // Initialize basic features
         initializeStatsCards();
-        initializeTransaksiButtons();
+        initializeButtons();
         initializeListItems();
         initializeTableActions();
-        animateCards();
-        startRealTimeUpdates();
-
-        console.log('✅ Transaksi Dashboard ready');
     });
 
     function initializeStatsCards() {
@@ -23,9 +18,9 @@
                 handleStatsCardClick(transaksiType);
             });
 
-            // Add hover effect
+            // Simple hover effect
             card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-5px) scale(1.02)';
+                this.style.transform = 'translateY(-5px)';
             });
 
             card.addEventListener('mouseleave', function() {
@@ -34,7 +29,7 @@
         });
     }
 
-    function initializeTransaksiButtons() {
+    function initializeButtons() {
         const transaksiBtns = document.querySelectorAll('.transaksi-btn');
         transaksiBtns.forEach(btn => {
             btn.addEventListener('mouseenter', function() {
@@ -44,12 +39,6 @@
 
             btn.addEventListener('mouseleave', function() {
                 this.style.transform = '';
-            });
-
-            // Add click analytics
-            btn.addEventListener('click', function() {
-                const action = this.textContent.trim();
-                logDashboardAction('button_click', action);
             });
         });
     }
@@ -71,7 +60,7 @@
     }
 
     function initializeTableActions() {
-        // Initialize table row hover effects
+        // Table row hover effects
         const tableRows = document.querySelectorAll('.table tbody tr');
         tableRows.forEach(row => {
             row.addEventListener('mouseenter', function() {
@@ -84,14 +73,13 @@
             });
         });
 
-        // Initialize action buttons
-        const actionBtns = document.querySelectorAll('.btn-group .btn');
-        actionBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                const action = this.getAttribute('title') || 'action';
-                logDashboardAction('table_action', action);
+        // Initialize tooltips
+        if (typeof bootstrap !== 'undefined') {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-        });
+        }
     }
 
     function handleStatsCardClick(transaksiType) {
@@ -104,115 +92,8 @@
         };
 
         if (routes[transaksiType]) {
-            // Add loading state
-            showLoadingState();
-
-            // Navigate to route
             window.location.href = routes[transaksiType];
-
-            // Log action
-            logDashboardAction('stats_card_click', transaksiType);
         }
-    }
-
-    function animateCards() {
-        const cards = document.querySelectorAll('.card');
-        cards.forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.1}s`;
-            card.classList.add('fade-in-up');
-        });
-
-        // Animate stats cards with stagger
-        const statsCards = document.querySelectorAll('.stats-card');
-        statsCards.forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.2}s`;
-        });
-    }
-
-    function startRealTimeUpdates() {
-        // Update timestamp every minute
-        setInterval(updateTimestamp, 60000);
-
-        // Refresh stats every 5 minutes (optional)
-        // setInterval(refreshStats, 300000);
-    }
-
-    function updateTimestamp() {
-        const timestampElements = document.querySelectorAll('.timestamp');
-        const now = new Date();
-        const formattedTime = now.toLocaleTimeString('id-ID');
-
-        timestampElements.forEach(element => {
-            element.textContent = formattedTime;
-        });
-    }
-
-    function refreshStats() {
-        // Optional: Implement AJAX stats refresh
-        fetch(window.location.href, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                updateStatsDisplay(data.statistics);
-            })
-            .catch(error => {
-                console.warn('Stats refresh failed:', error);
-            });
-    }
-
-    function updateStatsDisplay(stats) {
-        // Update stats cards with new data
-        Object.keys(stats).forEach(key => {
-            const element = document.querySelector(`[data-stat="${key}"] h3`);
-            if (element) {
-                element.textContent = stats[key];
-            }
-        });
-    }
-
-    function showLoadingState() {
-        // Add loading overlay or spinner
-        const overlay = document.createElement('div');
-        overlay.className = 'loading-overlay';
-        overlay.innerHTML = `
-            <div class="d-flex justify-content-center align-items-center h-100">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(overlay);
-
-        // Remove after 2 seconds (fallback)
-        setTimeout(() => {
-            if (overlay.parentNode) {
-                overlay.parentNode.removeChild(overlay);
-            }
-        }, 2000);
-    }
-
-    function logDashboardAction(action, detail) {
-        // Log user interactions for analytics
-        const logData = {
-            action: action,
-            detail: detail,
-            timestamp: new Date().toISOString(),
-            page: 'transaksi_dashboard',
-            user_agent: navigator.userAgent
-        };
-
-        // Send to analytics endpoint (optional)
-        if (typeof gtag !== 'undefined') {
-            gtag('event', action, {
-                event_category: 'dashboard_interaction',
-                event_label: detail
-            });
-        }
-
-        console.log('📊 Dashboard Action:', logData);
     }
 
     // Utility functions
@@ -250,59 +131,13 @@
         return statusLabels[status] || status;
     }
 
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        // Ctrl/Cmd + N = New transaction
-        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-            e.preventDefault();
-            window.location.href = '{{ route("keuangan.pengeluaran.create") }}';
-        }
-
-        // Ctrl/Cmd + L = View transactions
-        if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
-            e.preventDefault();
-            window.location.href = '{{ route("keuangan.pengeluaran.index") }}';
-        }
-
-        // Ctrl/Cmd + R = Reports
-        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-            e.preventDefault();
-            window.location.href = '{{ route("keuangan.laporan") }}';
-        }
-    });
-
-    // Tooltip initialization
-    if (typeof bootstrap !== 'undefined') {
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-    }
-
     // Export functions for external use
     window.TransaksiDashboard = {
-        refreshStats: refreshStats,
-        logAction: logDashboardAction,
         formatCurrency: formatCurrency,
         formatNumber: formatNumber,
         getStatusBadgeClass: getStatusBadgeClass,
         getStatusLabel: getStatusLabel
     };
-
-    // Performance monitoring
-    window.addEventListener('load', function() {
-        const loadTime = performance.now();
-        console.log(`🚀 Dashboard loaded in ${loadTime.toFixed(2)}ms`);
-
-        // Log performance metrics
-        logDashboardAction('page_load', `${loadTime.toFixed(2)}ms`);
-    });
-
-    // Error handling
-    window.addEventListener('error', function(e) {
-        console.error('Dashboard Error:', e.error);
-        logDashboardAction('error', e.error.message);
-    });
 
     // Responsive breakpoint detection
     function detectBreakpoint() {
@@ -357,50 +192,3 @@
     // Initialize breakpoint detection
     document.body.setAttribute('data-breakpoint', detectBreakpoint());
 </script>
-
-<style>
-    .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.8);
-        z-index: 9999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .fade-in-up {
-        animation: fadeInUp 0.5s ease-out forwards;
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Keyboard shortcut indicators */
-    .shortcut-hint {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        font-size: 0.7rem;
-        background: rgba(0,0,0,0.1);
-        padding: 2px 4px;
-        border-radius: 2px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .transaksi-btn:hover .shortcut-hint {
-        opacity: 1;
-    }
-</style>

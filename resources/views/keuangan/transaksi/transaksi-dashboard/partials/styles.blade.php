@@ -1,5 +1,18 @@
 {{-- F:\rapor-dosen\resources\views\keuangan\transaksi\transaksi-dashboard\partials\styles.blade.php --}}
 <style>
+    /* Basic card styling - same as master */
+    .card {
+        border: 1px solid #e3e6f0;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border-radius: 0.375rem;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e3e6f0;
+    }
+
+    /* Stats cards - simple without gradient */
     .stats-card {
         transition: all 0.3s ease;
         cursor: pointer;
@@ -12,6 +25,7 @@
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     }
 
+    /* Standard button styling */
     .transaksi-btn {
         transition: all 0.3s ease;
         margin-bottom: 8px;
@@ -23,6 +37,7 @@
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
+    /* List group styling */
     .list-group-item {
         border: 1px solid #e3e6f0;
         transition: all 0.2s ease;
@@ -33,17 +48,7 @@
         transform: translateX(5px);
     }
 
-    .card {
-        border: 1px solid #e3e6f0;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        border-radius: 0.375rem;
-    }
-
-    .card-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #e3e6f0;
-    }
-
+    /* Standard layout */
     .isi-konten {
         margin-top: 20px;
     }
@@ -59,27 +64,28 @@
         margin-bottom: 0;
     }
 
-    /* Transaction specific styles */
+    /* Simple solid colors - no gradients */
     .bg-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background-color: #4e73df !important;
     }
 
     .bg-warning {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+        background-color: #f6c23e !important;
     }
 
     .bg-success {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+        background-color: #1cc88a !important;
     }
 
     .bg-info {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+        background-color: #36b9cc !important;
     }
 
     .bg-danger {
-        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+        background-color: #e74a3b !important;
     }
 
+    /* Table styling */
     .table-responsive {
         border-radius: 0.375rem;
         overflow: hidden;
@@ -103,25 +109,22 @@
         margin: 0 1px;
     }
 
-    /* Badge styles */
+    /* Badge styling */
     .badge {
         font-size: 0.75rem;
         padding: 0.375rem 0.75rem;
     }
 
-    /* Alert styles */
+    /* Alert styling */
     .alert {
         border: none;
         border-radius: 0.5rem;
     }
 
     .alert-info {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
-
-    .alert-info .btn-close {
-        filter: brightness(0) invert(1);
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
     }
 
     /* Responsive Mobile */
@@ -193,94 +196,4 @@
             font-size: 0.8rem;
         }
     }
-
-    /* Animation */
-    .stats-card {
-        animation: fadeInUp 0.5s ease-out;
-    }
-
-    .transaksi-btn {
-        animation: fadeInLeft 0.5s ease-out;
-    }
-
-    .list-group-item {
-        animation: fadeInRight 0.5s ease-out;
-    }
-
-    .card {
-        animation: fadeInUp 0.6s ease-out;
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes fadeInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes fadeInRight {
-        from {
-            opacity: 0;
-            transform: translateX(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    /* Loading states */
-    .loading-skeleton {
-        background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
-        background-size: 400% 100%;
-        animation: loading 1.4s ease infinite;
-    }
-
-    @keyframes loading {
-        0% {
-            background-position: 100% 50%;
-        }
-        100% {
-            background-position: 0% 50%;
-        }
-    }
-
-    /* Status indicators */
-    .status-indicator {
-        position: relative;
-        padding-left: 1.5rem;
-    }
-
-    .status-indicator::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: currentColor;
-    }
-
-    .status-draft::before { background-color: #6c757d; }
-    .status-pending::before { background-color: #ffc107; }
-    .status-approved::before { background-color: #28a745; }
-    .status-rejected::before { background-color: #dc3545; }
-    .status-paid::before { background-color: #17a2b8; }
 </style>

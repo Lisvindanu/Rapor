@@ -3,7 +3,6 @@
 
 @section('css-tambahan')
     @include('keuangan.transaksi.partials.styles')
-    @include('keuangan.transaksi.partials.detail-styles')
 @endsection
 
 @section('navbar')

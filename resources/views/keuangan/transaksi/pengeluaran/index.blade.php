@@ -4,20 +4,7 @@
 @php
     $headerConfig = [
         'title' => 'Pencatatan Pengeluaran Kas',
-        'description' => 'Kelola bukti pengeluaran kas dan transaksi keuangan',
-        'icon' => 'fas fa-money-bill-wave',
-        'breadcrumbs' => [
-            ['text' => 'Dashboard', 'url' => route('gate')],
-            ['text' => 'Keuangan', 'url' => route('keuangan')],
-            ['text' => 'Transaksi', 'url' => route('keuangan.transaksi.dashboard')],
-            ['text' => 'Pengeluaran Kas', 'active' => true]
-        ],
-        'primary_action' => [
-            'route' => route('keuangan.pengeluaran.create'),
-            'text' => 'Tambah Pengeluaran',
-            'icon' => 'fas fa-plus',
-            'class' => 'btn-warning'
-        ]
+        'description' => 'Kelola bukti pengeluaran kas dan transaksi keuangan'
     ];
 
     // Calculate statistics from data

@@ -11,78 +11,21 @@
     ];
 
     $alertConfig = array_merge($defaultAlertConfig, $alertConfig ?? []);
-
-    $alertClass = match($alertConfig['type']) {
-        'success' => 'alert-success',
-        'warning' => 'alert-warning',
-        'danger' => 'alert-danger',
-        'info' => 'alert-info',
-        default => 'alert-info'
-    };
-
-    $statusClass = match($alertConfig['status']) {
-        'Ready' => 'success',
-        'Development' => 'warning',
-        'Testing' => 'info',
-        'Maintenance' => 'danger',
-        default => 'secondary'
-    };
 @endphp
 
-<div class="alert {{ $alertClass }} development-alert" role="alert">
-    <div class="row align-items-center">
-        <div class="col-lg-8">
-            <div class="d-flex align-items-center">
-                <div class="me-3">
-                    @if($alertConfig['type'] === 'success')
-                        <i class="fas fa-check-circle fa-2x text-white"></i>
-                    @elseif($alertConfig['type'] === 'warning')
-                        <i class="fas fa-exclamation-triangle fa-2x text-white"></i>
-                    @elseif($alertConfig['type'] === 'danger')
-                        <i class="fas fa-times-circle fa-2x text-white"></i>
-                    @else
-                        <i class="fas fa-info-circle fa-2x text-white"></i>
-                    @endif
-                </div>
-                <div>
-                    <h6 class="alert-heading mb-1 text-white">
-                        <strong>{{ $alertConfig['module'] }}</strong>
-                        <span class="badge badge-{{ $statusClass }} ms-2">{{ $alertConfig['status'] }}</span>
-                        <small class="badge badge-light ms-1">{{ $alertConfig['version'] }}</small>
-                    </h6>
-
-                    @if(!empty($alertConfig['features']))
-                        <div class="mb-2">
-                            <small class="text-white-75">Features:</small>
-                            @foreach($alertConfig['features'] as $feature)
-                                <span class="badge badge-light me-1">{{ $feature }}</span>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    @if($alertConfig['note'])
-                        <p class="mb-0 text-white-75">
-                            <i class="fas fa-sticky-note me-1"></i>{{ $alertConfig['note'] }}
-                        </p>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 text-lg-end text-start mt-3 mt-lg-0">
-            <div class="d-flex align-items-center justify-content-lg-end justify-content-start">
+<div class="alert alert-{{ $alertConfig['type'] }} alert-dismissible fade show" role="alert">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-info-circle me-2"></i>
+        <div class="flex-grow-1">
+            <strong>{{ $alertConfig['module'] }}:</strong>
+            {{ $alertConfig['note'] ?: 'Modul dalam pengembangan untuk mengelola data transaksi keuangan.' }}
+            <small class="d-block mt-1">
+                Versi: {{ $alertConfig['version'] }} | Status: {{ $alertConfig['status'] }}
                 @if($alertConfig['database'])
-                    <div class="me-3">
-                        <i class="fas fa-database text-white me-1"></i>
-                        <small class="text-white-75">Database Ready</small>
-                    </div>
+                    | Database: Ready
                 @endif
-
-                <div>
-                    <i class="fas fa-code text-white me-1"></i>
-                    <small class="text-white-75">Clean Architecture</small>
-                </div>
-            </div>
+            </small>
         </div>
     </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>

@@ -38,7 +38,8 @@
                     <thead>
                     <tr>
                         @foreach($tableConfig['columns'] as $column)
-                            <th style="width: {{ $column['width'] ?? 'auto' }}">
+                            <th style="width: {{ $column['width'] ?? 'auto' }}"
+                                class="{{ isset($column['type']) && $column['type'] === 'currency' ? 'text-end' : '' }}">
                                 {{ $column['label'] }}
                             </th>
                         @endforeach
@@ -64,8 +65,8 @@
 
                                     @elseif($column['type'] === 'currency')
                                         <span class="text-end d-block font-weight-bold">
-                                                Rp {{ number_format(data_get($item, $column['field'], 0), 0, ',', '.') }}
-                                            </span>
+                                            Rp {{ number_format(data_get($item, $column['field'], 0), 0, ',', '.') }}
+                                        </span>
 
                                     @elseif($column['type'] === 'status_badge')
                                         @php
@@ -106,10 +107,10 @@
 
                             {{-- Actions Column --}}
                             <td class="text-center">
-                                <div class="btn-group" role="group">
+                                <div class="d-flex justify-content-center gap-1">
                                     @if(isset($tableConfig['actions']['show']))
                                         <a href="{{ str_replace(':id', $item->id, $tableConfig['actions']['show']) }}"
-                                           class="btn btn-info btn-sm btn-action"
+                                           class="btn btn-info btn-sm"
                                            title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
@@ -117,7 +118,7 @@
 
                                     @if(isset($tableConfig['actions']['edit']))
                                         <a href="{{ str_replace(':id', $item->id, $tableConfig['actions']['edit']) }}"
-                                           class="btn btn-warning btn-sm btn-action"
+                                           class="btn btn-warning btn-sm"
                                            title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -125,7 +126,7 @@
 
                                     @if(isset($tableConfig['actions']['print']))
                                         <a href="{{ str_replace(':id', $item->id, $tableConfig['actions']['print']) }}"
-                                           class="btn btn-secondary btn-sm btn-action"
+                                           class="btn btn-secondary btn-sm"
                                            title="Print"
                                            target="_blank">
                                             <i class="fas fa-print"></i>
@@ -135,7 +136,7 @@
                                     @if(isset($tableConfig['custom_actions']))
                                         @foreach($tableConfig['custom_actions'] as $action)
                                             <a href="{{ str_replace(':id', $item->id, $action['route']) }}"
-                                               class="{{ $action['class'] ?? 'btn btn-primary btn-sm' }} btn-action"
+                                               class="{{ $action['class'] ?? 'btn btn-primary btn-sm' }}"
                                                title="{{ $action['title'] ?? $action['text'] }}"
                                                @if(isset($action['target'])) target="{{ $action['target'] }}" @endif>
                                                 @if(isset($action['icon']))
@@ -149,7 +150,7 @@
 
                                     @if(isset($tableConfig['actions']['delete']))
                                         <button type="button"
-                                                class="btn btn-danger btn-sm btn-action delete-btn"
+                                                class="btn btn-danger btn-sm delete-btn"
                                                 data-url="{{ str_replace(':id', $item->id, $tableConfig['actions']['delete']) }}"
                                                 data-name="{{ data_get($item, $tableConfig['delete_name_field']) }}"
                                                 title="Hapus">

@@ -10,15 +10,18 @@
     $filterConfig = array_merge($defaultFilterConfig, $filterConfig ?? []);
 @endphp
 
-<div class="card filter-card">
+<div class="card mb-3">
+    <div class="card-header">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-filter me-2"></i>{{ $filterConfig['title'] }}
+        </h6>
+    </div>
     <div class="card-body">
         <form method="GET" action="{{ $filterConfig['action_route'] }}" class="mb-0">
             <div class="row align-items-end">
                 {{-- Search Input --}}
                 <div class="col-lg-4 col-md-6 mb-3">
-                    <label for="search" class="form-label text-white">
-                        <i class="fas fa-search me-1"></i>Pencarian
-                    </label>
+                    <label for="search" class="form-label">Pencarian</label>
                     <input type="text"
                            class="form-control"
                            id="search"
@@ -30,7 +33,7 @@
                 {{-- Dynamic Filters --}}
                 @foreach($filterConfig['filters'] as $filter)
                     <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-                        <label for="{{ $filter['name'] }}" class="form-label text-white">
+                        <label for="{{ $filter['name'] }}" class="form-label">
                             {{ $filter['label'] }}
                         </label>
 
@@ -66,11 +69,10 @@
                 {{-- Action Buttons --}}
                 <div class="col-lg-2 col-md-6 mb-3">
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-light btn-sm flex-fill">
+                        <button type="submit" class="btn btn-primary btn-sm flex-fill">
                             <i class="fas fa-filter me-1"></i>Filter
                         </button>
-
-                        <a href="{{ $filterConfig['action_route'] }}" class="btn btn-outline-light btn-sm">
+                        <a href="{{ $filterConfig['action_route'] }}" class="btn btn-outline-secondary btn-sm">
                             <i class="fas fa-undo me-1"></i>Reset
                         </a>
                     </div>
@@ -82,13 +84,13 @@
                 <div class="row mt-2">
                     <div class="col-12">
                         <div class="d-flex flex-wrap gap-2 align-items-center">
-                            <small class="text-white-75 me-2">Filter aktif:</small>
+                            <small class="text-muted me-2">Filter aktif:</small>
 
                             @if(request('search'))
-                                <span class="badge badge-light">
+                                <span class="badge bg-primary">
                                     Pencarian: "{{ request('search') }}"
                                     <a href="{{ request()->fullUrlWithQuery(['search' => null]) }}"
-                                       class="text-dark ms-1">
+                                       class="text-white ms-1">
                                         <i class="fas fa-times"></i>
                                     </a>
                                 </span>
@@ -96,7 +98,7 @@
 
                             @foreach($filterConfig['filters'] as $filter)
                                 @if(request($filter['name']))
-                                    <span class="badge badge-light">
+                                    <span class="badge bg-secondary">
                                         {{ $filter['label'] }}:
                                         @if($filter['type'] === 'select' && isset($filter['options'][request($filter['name'])]))
                                             "{{ $filter['options'][request($filter['name'])] }}"
@@ -104,7 +106,7 @@
                                             "{{ request($filter['name']) }}"
                                         @endif
                                         <a href="{{ request()->fullUrlWithQuery([$filter['name'] => null]) }}"
-                                           class="text-dark ms-1">
+                                           class="text-white ms-1">
                                             <i class="fas fa-times"></i>
                                         </a>
                                     </span>

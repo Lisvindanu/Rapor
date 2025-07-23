@@ -110,7 +110,9 @@
                 <div class="card-body">
                     <form action="{{ route('whistleblower.store') }}" method="POST" enctype="multipart/form-data" id="pengaduanForm">
                         @csrf
-
+                        <!-- Opsi Anonim -->
+                        @include('whistleblower.partials.form-anonim')
+                        
                         <!-- Status Pelapor -->
                         @include('whistleblower.partials.form-status-pelapor')
 
@@ -122,12 +124,9 @@
 
                         <!-- Alasan Pengaduan -->
                         @include('whistleblower.partials.form-alasan-pengaduan')
-
+                        
                         <!-- Upload Bukti -->
                         @include('whistleblower.partials.form-upload-bukti')
-
-                        <!-- Opsi Anonim -->
-                        @include('whistleblower.partials.form-anonim')
 
                         <!-- Persetujuan -->
                         @include('whistleblower.partials.form-persetujuan')

@@ -22,6 +22,8 @@ use App\Http\Controllers\KeuanganSumberDanaController;
 use App\Http\Controllers\KeuanganMasterDataController;
 use App\Http\Controllers\WhistleblowerController;
 use App\Http\Controllers\WhistleblowerAdminController;
+use App\Http\Controllers\KeuanganPengeluaranController;
+
 
 
 /*
@@ -527,29 +529,29 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     Route::prefix('whistleblower')->name('whistleblower.')->middleware(['auth'])->group(function () {
         // Dashboard user - route utama yang akan mengarahkan ke dashboard yang sesuai
         Route::get('/', [WhistleblowerController::class, 'dashboard'])->name('dashboard');
-        
+
         // Form pengaduan
         Route::get('/create', [WhistleblowerController::class, 'create'])->name('create');
         Route::post('/store', [WhistleblowerController::class, 'store'])->name('store');
-        
+
         // Pengaduan CRUD
         Route::get('/pengaduan', [WhistleblowerController::class, 'index'])->name('index');
         Route::get('/pengaduan/{id}', [WhistleblowerController::class, 'show'])->name('show');
         Route::delete('/pengaduan/{id}', [WhistleblowerController::class, 'destroy'])->name('destroy');
-        
+
         // Fitur cancel pengaduan
         Route::patch('/{id}/cancel', [WhistleblowerController::class, 'cancel'])->name('cancel');
-        
+
         // Update status pengaduan (admin only)
         Route::patch('/{id}/update-status', [WhistleblowerController::class, 'updateStatus'])->name('update-status');
-        
+
         // Success page
         Route::get('/success/{kodePengaduan}', [WhistleblowerController::class, 'success'])->name('success');
-        
+
         // Cek status untuk pengaduan anonim
         Route::get('/status', [WhistleblowerController::class, 'statusPage'])->name('status-page');
         Route::post('/status/check', [WhistleblowerController::class, 'checkStatus'])->name('check-status');
-        
+
         // Legacy routes (backward compatibility)
         Route::get('/riwayat', [WhistleblowerController::class, 'index'])->name('riwayat');
         Route::get('/detail/{id}', [WhistleblowerController::class, 'show'])->name('detail');
@@ -559,25 +561,25 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
     Route::prefix('admin/whistleblower')->name('whistleblower.admin.')->middleware(['auth'])->group(function () {
         // Dashboard admin
         Route::get('/', [WhistleblowerController::class, 'dashboard'])->name('dashboard');
-        
+
         // Kelola pengaduan
         Route::get('/pengaduan', [WhistleblowerController::class, 'adminIndex'])->name('pengaduan.index');
         Route::get('/pengaduan/pending', [WhistleblowerController::class, 'adminPending'])->name('pengaduan.pending');
         Route::get('/pengaduan/{id}', [WhistleblowerController::class, 'show'])->name('pengaduan.show');
-        
+
         // Update status pengaduan
         Route::patch('/pengaduan/{id}/status', [WhistleblowerController::class, 'updateStatus'])->name('pengaduan.update-status');
-        
+
         // Kelola kategori
         Route::get('/kategori', [WhistleblowerController::class, 'kategoriIndex'])->name('kategori.index');
         Route::post('/kategori', [WhistleblowerController::class, 'kategoriStore'])->name('kategori.store');
         Route::patch('/kategori/{id}', [WhistleblowerController::class, 'kategoriUpdate'])->name('kategori.update');
         Route::delete('/kategori/{id}', [WhistleblowerController::class, 'kategoriDestroy'])->name('kategori.destroy');
-        
+
         // Export data
         Route::get('/export/excel', [WhistleblowerController::class, 'exportExcel'])->name('export.excel');
         Route::get('/export/pdf', [WhistleblowerController::class, 'exportPdf'])->name('export.pdf');
-        
+
         // Statistik dan laporan
         Route::get('/statistik', [WhistleblowerController::class, 'statistik'])->name('statistik');
         Route::get('/laporan/{periode?}', [WhistleblowerController::class, 'laporan'])->name('laporan');
@@ -599,6 +601,21 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
         Route::get('/', "KeuanganController@index")->name('keuangan');
 
         Route::get('/master-data', "KeuanganMasterDataController@index")->name('keuangan.master-data');
+
+        // Pengeluaran Kas Routes
+        Route::prefix('pengeluaran')->name('pengeluaran.')->group(function () {
+            Route::get('/', [KeuanganPengeluaranController::class, 'index'])->name('index');
+            Route::get('/create', [KeuanganPengeluaranController::class, 'create'])->name('create');
+            Route::post('/', [KeuanganPengeluaranController::class, 'store'])->name('store');
+            Route::get('/{id}', [KeuanganPengeluaranController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [KeuanganPengeluaranController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [KeuanganPengeluaranController::class, 'update'])->name('update');
+            Route::delete('/{id}', [KeuanganPengeluaranController::class, 'destroy'])->name('destroy');
+
+            // Print & PDF Routes
+            Route::get('/{id}/print', [KeuanganPengeluaranController::class, 'print'])->name('print');
+            Route::get('/{id}/pdf', [KeuanganPengeluaranController::class, 'pdf'])->name('pdf');
+        });
 
         // Laporan routes -> Nama rute tetap 'keuangan.laporan' dan 'keuangan.laporan.print'
         Route::prefix('laporan')->group(function () {
@@ -650,9 +667,6 @@ Route::namespace('App\Http\Controllers')->middleware('auth')->group(function () 
             Route::put('/{id}', [KeuanganSumberDanaController::class, 'update'])->name('update');
             Route::delete('/{id}', [KeuanganSumberDanaController::class, 'destroy'])->name('destroy');
         });
-
-
-
 
         Route::prefix('tanda-tangan')->name('keuangan.tanda-tangan.')->group(function () {
             Route::get('/', 'KeuanganTandaTanganController@index')->name('index');

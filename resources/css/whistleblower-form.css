@@ -1,0 +1,294 @@
+/* resources/css/whistleblower-form.css */
+
+/* Form Sections Styling */
+.form-section {
+    position: relative;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 1.5rem;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.section-title {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #007bff;
+    display: inline-block;
+}
+
+.section-title i {
+    color: #007bff;
+    margin-right: 0.5rem;
+}
+
+/* Fix untuk dropdown borders */
+.form-select, .form-control {
+    border: 1px solid #ced4da !important;
+    border-radius: 0.375rem;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+/* Required field indicator */
+.form-label.required::after,
+.form-label .required::after {
+    content: " *";
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Terlapor Items Styling */
+.terlapor-item {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.terlapor-item:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-color: #007bff;
+}
+
+.remove-terlapor {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.remove-terlapor:hover {
+    opacity: 1;
+}
+
+/* Evidence Type Selector */
+.evidence-type-selector .form-check {
+    margin-bottom: 0;
+}
+
+.evidence-option .form-check-input {
+    display: none;
+}
+
+.evidence-card {
+    border: 2px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 100%;
+    background-color: #fff;
+}
+
+.evidence-card:hover {
+    border-color: #007bff;
+    background-color: #f8f9fa;
+}
+
+.evidence-option input:checked + label .evidence-card {
+    border-color: #007bff;
+    background-color: #e3f2fd;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.evidence-card i {
+    color: #6c757d;
+    transition: color 0.3s ease;
+}
+
+.evidence-option input:checked + label .evidence-card i {
+    color: #007bff;
+}
+
+.evidence-section {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+/* Checkbox Group Styling */
+.checkbox-group .form-check {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.checkbox-group .form-check:hover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+
+.checkbox-group .form-check-input:checked + .form-check-label {
+    font-weight: 500;
+    color: #007bff;
+}
+
+/* Anonim Option Card */
+.anonim-option-card {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+}
+
+.anonim-info .alert {
+    margin-bottom: 0;
+}
+
+.anonim-benefits {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 0.375rem;
+    padding: 1rem;
+}
+
+/* Persetujuan Card */
+.persetujuan-card {
+    background-color: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+}
+
+.persetujuan-info .alert {
+    margin-bottom: 0;
+}
+
+/* File Preview */
+#file-preview .alert {
+    background-color: #d1edff;
+    border-color: #007bff;
+    color: #004085;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    color: white;
+}
+
+.loading-overlay .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Form Header Alerts */
+.alert.border-left-primary {
+    border-left: 4px solid #007bff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-section {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .evidence-card {
+        padding: 1rem 0.5rem;
+    }
+    
+    .evidence-card i {
+        font-size: 1.5rem;
+    }
+    
+    .terlapor-item {
+        padding: 1rem;
+    }
+    
+    .anonim-option-card,
+    .persetujuan-card {
+        padding: 1rem;
+    }
+}
+
+/* Button Styling */
+.btn-outline-primary {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+/* Modal Enhancements */
+.modal-header {
+    background-color: #007bff;
+    color: white;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+.accordion-button {
+    font-weight: 500;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #e3f2fd;
+    color: #007bff;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.form-section {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Print Styles */
+@media print {
+    .btn, .modal, .loading-overlay {
+        display: none !important;
+    }
+    
+    .form-section {
+        border-bottom: 1px solid #000;
+        page-break-inside: avoid;
+    }
+}

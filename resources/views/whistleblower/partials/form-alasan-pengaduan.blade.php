@@ -1,48 +1,68 @@
 {{-- resources/views/whistleblower/partials/form-alasan-pengaduan.blade.php --}}
-<div class="mb-4">
-    <h6 class="border-bottom pb-2 mb-3">Alasan Pengaduan</h6>
-    
-    <div class="alasan-pengaduan-section border rounded p-3">
-        <p class="mb-3"><strong>Alasan pengaduan (Silakan centang satu atau lebih pilihan berikut):</strong> <span class="text-danger">*</span></p>
-        
-        <div class="row">
-            @php
-                $alasan_options = [
-                    'kekerasan_seksual' => 'Kekerasan Seksual',
-                    'diskriminasi_gender' => 'Diskriminasi berdasarkan Gender',
-                    'diskriminasi_ras' => 'Diskriminasi berdasarkan Ras/Suku',
-                    'diskriminasi_agama' => 'Diskriminasi berdasarkan Agama',
-                    'diskriminasi_disabilitas' => 'Diskriminasi berdasarkan Disabilitas',
-                    'perundungan' => 'Perundungan (Bullying)',
-                    'pelecehan_verbal' => 'Pelecehan Verbal',
-                    'pelecehan_fisik' => 'Pelecehan Fisik',
-                    'penyalahgunaan_kekuasaan' => 'Penyalahgunaan Kekuasaan',
-                    'lainnya' => 'Lainnya'
-                ];
-                $old_alasan = old('alasan_pengaduan', []);
-            @endphp
-            
-            @foreach($alasan_options as $value => $label)
-                <div class="col-md-6 mb-2">
-                    <div class="form-check">
-                        <input class="form-check-input @error('alasan_pengaduan') is-invalid @enderror" 
-                               type="checkbox" 
-                               name="alasan_pengaduan[]" 
-                               value="{{ $value }}" 
-                               id="alasan_{{ $value }}"
-                               {{ in_array($value, $old_alasan) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="alasan_{{ $value }}">
-                            {{ $label }}
-                        </label>
-                    </div>
-                </div>
-            @endforeach
+<div class="form-section mb-4">
+    <h6 class="section-title">
+        <i class="fas fa-question-circle"></i>
+        Alasan pengaduan (Silakan centang satu atau lebih pilihan berikut)
+    </h6>
+
+    <div class="checkbox-group">
+        <div class="form-check mb-2">
+            <input class="form-check-input @error('alasan_pengaduan') is-invalid @enderror" 
+                   type="checkbox" name="alasan_pengaduan[]" 
+                   value="saksi_khawatir" id="alasan1"
+                   {{ in_array('saksi_khawatir', old('alasan_pengaduan', [])) ? 'checked' : '' }}>
+            <label class="form-check-label" for="alasan1">
+                Saya seorang saksi yang khawatir dengan keadaan Korban
+            </label>
         </div>
-        
-        @error('alasan_pengaduan')
-            <div class="text-danger mt-2">
-                <small>{{ $message }}</small>
-            </div>
-        @enderror
+
+        <div class="form-check mb-2">
+            <input class="form-check-input @error('alasan_pengaduan') is-invalid @enderror" 
+                   type="checkbox" name="alasan_pengaduan[]" 
+                   value="korban_bantuan" id="alasan2"
+                   {{ in_array('korban_bantuan', old('alasan_pengaduan', [])) ? 'checked' : '' }}>
+            <label class="form-check-label" for="alasan2">
+                Saya seorang Korban yang memerlukan bantuan pemulihan
+            </label>
+        </div>
+
+        <div class="form-check mb-2">
+            <input class="form-check-input @error('alasan_pengaduan') is-invalid @enderror" 
+                   type="checkbox" name="alasan_pengaduan[]" 
+                   value="tindak_tegas" id="alasan3"
+                   {{ in_array('tindak_tegas', old('alasan_pengaduan', [])) ? 'checked' : '' }}>
+            <label class="form-check-label" for="alasan3">
+                Saya ingin Perguruan Tinggi menindak tegas Terlapor
+            </label>
+        </div>
+
+        <div class="form-check mb-2">
+            <input class="form-check-input @error('alasan_pengaduan') is-invalid @enderror" 
+                   type="checkbox" name="alasan_pengaduan[]" 
+                   value="dokumentasi_keamanan" id="alasan4"
+                   {{ in_array('dokumentasi_keamanan', old('alasan_pengaduan', [])) ? 'checked' : '' }}>
+            <label class="form-check-label" for="alasan4">
+                Saya ingin Satuan Tugas mendokumentasikan kejadiannya, meningkatkan keamanan Perguruan Tinggi dari Kekerasan, dan memberi pelindungan bagi saya
+            </label>
+        </div>
+
+        <div class="form-check mb-2">
+            <input class="form-check-input @error('alasan_pengaduan') is-invalid @enderror" 
+                   type="checkbox" name="alasan_pengaduan[]" 
+                   value="lainnya" id="alasan5"
+                   {{ in_array('lainnya', old('alasan_pengaduan', [])) ? 'checked' : '' }}>
+            <label class="form-check-label" for="alasan5">
+                Lainnya
+            </label>
+        </div>
     </div>
+
+    @error('alasan_pengaduan')
+        <div class="invalid-feedback d-block">{{ $message }}</div>
+    @enderror
+
+    <small class="form-text text-muted">
+        <i class="fas fa-info-circle"></i>
+        Pilih minimal satu alasan yang sesuai dengan situasi Anda
+    </small>
 </div>

@@ -1,4 +1,4 @@
-{{-- resources/views/whistleblower/success.blade.php --}}
+{{-- resources/views/whistleblower/user/success.blade.php --}}
 @extends('layouts.main2')
 
 @section('navbar')
@@ -8,74 +8,47 @@
 @section('konten')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card border-success">
-                <div class="card-header bg-success text-white text-center">
-                    <h4 class="mb-0">
-                        <i class="fas fa-check-circle"></i> Pengaduan Berhasil Dikirim
-                    </h4>
-                </div>
-                <div class="card-body text-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body text-center py-5">
                     <div class="mb-4">
-                        <i class="fas fa-clipboard-check fa-4x text-success mb-3"></i>
-                        <h5>Terima kasih atas laporan Anda!</h5>
-                        <p class="text-muted">
-                            Pengaduan Anda telah berhasil dikirim dan akan segera ditindaklanjuti oleh tim PPKPT.
-                        </p>
+                        <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
                     </div>
-
+                    
+                    <h2 class="text-success mb-3">Pengaduan Berhasil Dikirim!</h2>
+                    
                     <div class="alert alert-info">
-                        <h6><i class="fas fa-info-circle"></i> Informasi Pengaduan</h6>
-                        <div class="row">
-                            <div class="col-md-6 text-start">
-                                <strong>Kode Pengaduan:</strong>
-                            </div>
-                            <div class="col-md-6 text-start">
-                                <span class="badge bg-primary fs-6">{{ $pengaduan->kode_pengaduan }}</span>
-                            </div>
+                        <h5 class="mb-3">
+                            <i class="fas fa-info-circle"></i>
+                            Kode Pengaduan Anda
+                        </h5>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <code class="fs-4 text-primary bg-light px-3 py-2 rounded" id="kodePengaduan">
+                                {{ $pengaduan->kode_pengaduan }}
+                            </code>
+                            <button class="btn btn-outline-primary btn-sm ms-2" onclick="copyKode()" title="Copy kode">
+                                <i class="fas fa-copy"></i>
+                            </button>
                         </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6 text-start">
-                                <strong>Tanggal Pengaduan:</strong>
-                            </div>
-                            <div class="col-md-6 text-start">
-                                {{ $pengaduan->tanggal_pengaduan->format('d/m/Y H:i:s') }}
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6 text-start">
-                                <strong>Status:</strong>
-                            </div>
-                            <div class="col-md-6 text-start">
-                                <span class="badge bg-warning">{{ $pengaduan->status_label }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="alert alert-warning">
-                        <h6><i class="fas fa-exclamation-triangle"></i> Penting!</h6>
-                        <p class="mb-1">
-                            <strong>Simpan kode pengaduan</strong> <code>{{ $pengaduan->kode_pengaduan }}</code> untuk melacak status pengaduan Anda.
-                        </p>
-                        <small class="text-muted">
-                            Anda dapat menggunakan kode ini untuk mengecek status pengaduan melalui menu "Cek Status" atau melihatnya di dashboard.
+                        <small class="text-muted mt-2 d-block">
+                            Simpan kode ini untuk melacak status pengaduan Anda
                         </small>
                     </div>
 
-                    <div class="row text-start">
+                    <div class="row mt-4">
                         <div class="col-md-6">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h6><i class="fas fa-clock"></i> Waktu Respon</h6>
-                                    <p class="mb-0">Tim PPKPT akan merespons dalam <strong>maksimal 3x24 jam</strong></p>
+                                    <h6><i class="fas fa-clock text-warning"></i> Status Saat Ini</h6>
+                                    <span class="badge bg-warning">Menunggu Review</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h6><i class="fas fa-shield-alt"></i> Kerahasiaan</h6>
-                                    <p class="mb-0">Identitas Anda dijaga kerahasiaannya sesuai kebijakan PPKPT</p>
+                                    <h6><i class="fas fa-calendar text-info"></i> Tanggal Pengaduan</h6>
+                                    <small>{{ $pengaduan->created_at->format('d/m/Y H:i') }}</small>
                                 </div>
                             </div>
                         </div>
@@ -83,45 +56,47 @@
 
                     <div class="mt-4">
                         <h6>Langkah Selanjutnya:</h6>
-                        <ol class="text-start">
-                            <li>Tim PPKPT akan melakukan review awal pengaduan Anda</li>
-                            <li>Jika diperlukan, tim akan meminta informasi atau bukti tambahan</li>
-                            <li>Proses investigasi akan dilakukan sesuai prosedur yang berlaku</li>
-                            <li>Anda akan mendapat update status melalui dashboard</li>
-                        </ol>
+                        <ul class="list-unstyled text-start">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Tim PPKPT akan melakukan review awal dalam 2-3 hari kerja
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-envelope text-primary me-2"></i>
+                                Anda akan menerima konfirmasi melalui email: <strong>{{ Auth::user()->email }}</strong>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-search text-info me-2"></i>
+                                Proses investigasi akan dimulai sesuai prosedur yang berlaku
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-phone text-warning me-2"></i>
+                                Tim mungkin akan menghubungi Anda untuk klarifikasi lebih lanjut
+                            </li>
+                        </ul>
                     </div>
 
                     <div class="mt-4">
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                            <a href="{{ route('whistleblower.dashboard') }}" class="btn btn-primary">
-                                <i class="fas fa-tachometer-alt"></i> Ke Dashboard
-                            </a>
-                            <a href="{{ route('whistleblower.show', $pengaduan->id) }}" class="btn btn-outline-primary">
-                                <i class="fas fa-eye"></i> Lihat Detail
-                            </a>
-                            <a href="{{ route('whistleblower.create') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-plus"></i> Buat Pengaduan Lain
-                            </a>
-                        </div>
+                        <a href="{{ route('whistleblower.dashboard') }}" class="btn btn-primary me-2">
+                            <i class="fas fa-tachometer-alt"></i> Ke Dashboard
+                        </a>
+                        <a href="{{ route('whistleblower.show', $pengaduan->id) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-eye"></i> Lihat Detail
+                        </a>
                     </div>
-                </div>
-            </div>
 
-            <!-- Contact Info -->
-            <div class="card mt-4">
-                <div class="card-body text-center">
-                    <h6><i class="fas fa-phone"></i> Butuh Bantuan?</h6>
-                    <p class="mb-1">Jika Anda memerlukan bantuan atau memiliki pertanyaan:</p>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <small>
-                                <strong>Email:</strong> ppkpt@unpas.ac.id
-                            </small>
-                        </div>
-                        <div class="col-md-6">
-                            <small>
-                                <strong>Telepon:</strong> (022) 4233644 ext. 1234
-                            </small>
+                    <div class="mt-4 pt-3 border-top">
+                        <h6 class="text-muted">Butuh Bantuan?</h6>
+                        <p class="small text-muted mb-2">
+                            Hubungi Tim PPKPT jika ada pertanyaan atau keluhan
+                        </p>
+                        <div>
+                            <a href="mailto:ppkpt@unpas.ac.id" class="btn btn-sm btn-outline-secondary me-2">
+                                <i class="fas fa-envelope"></i> ppkpt@unpas.ac.id
+                            </a>
+                            <a href="tel:+622220193300" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-phone"></i> (022) 2019-3300
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -129,31 +104,26 @@
         </div>
     </div>
 </div>
-@endsection
 
-@push('scripts')
 <script>
-// Auto copy to clipboard when code is clicked
-document.addEventListener('DOMContentLoaded', function() {
-    const codeElement = document.querySelector('code');
-    if (codeElement) {
-        codeElement.style.cursor = 'pointer';
-        codeElement.title = 'Klik untuk copy';
+function copyKode() {
+    const kode = document.getElementById('kodePengaduan').textContent.trim();
+    navigator.clipboard.writeText(kode).then(function() {
+        // Show success feedback
+        const btn = event.target.closest('button');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-success');
         
-        codeElement.addEventListener('click', function() {
-            navigator.clipboard.writeText(this.textContent).then(function() {
-                // Show temporary success message
-                const originalText = codeElement.textContent;
-                codeElement.textContent = 'Copied!';
-                codeElement.style.color = '#28a745';
-                
-                setTimeout(function() {
-                    codeElement.textContent = originalText;
-                    codeElement.style.color = '';
-                }, 2000);
-            });
-        });
-    }
-});
+        setTimeout(function() {
+            btn.innerHTML = originalHtml;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-primary');
+        }, 2000);
+    }).catch(function(err) {
+        alert('Gagal menyalin kode: ' + err);
+    });
+}
 </script>
-@endpush
+@endsection

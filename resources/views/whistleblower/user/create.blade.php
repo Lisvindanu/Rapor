@@ -112,7 +112,7 @@
                         @csrf
                         <!-- Opsi Anonim -->
                         @include('whistleblower.partials.form-anonim')
-                        
+
                         <!-- Status Pelapor -->
                         @include('whistleblower.partials.form-status-pelapor')
 
@@ -127,6 +127,7 @@
                         
                         <!-- Upload Bukti -->
                         @include('whistleblower.partials.form-upload-bukti')
+
 
                         <!-- Persetujuan -->
                         @include('whistleblower.partials.form-persetujuan')

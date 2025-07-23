@@ -3,16 +3,76 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Pengaduan;
+use App\Models\KategoriPengaduan;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Models\Pengaduan;
-use App\Models\PengaduanTerlapor;
+use Illuminate\Support\Facades\Storage;
 
 class WhistleblowerController extends Controller
 {
     /**
-     * Check if user is admin PPKPT and redirect accordingly
+     * Mengarahkan ke dashboard yang sesuai berdasarkan role
+     * FIX: Menambahkan method dashboard() yang hilang
+     */
+    public function dashboard()
+    {
+        $selectedRole = session('selected_role');
+        
+        if (in_array($selectedRole, ['Admin PPKPT Fakultas', 'Admin PPKPT Prodi'])) {
+            return $this->adminDashboard();
+        } else {
+            return $this->userDashboard();
+        }
+    }
+
+    /**
+     * Dashboard untuk user biasa (pelapor)
+     */
+    public function userDashboard()
+    {
+        $user = Auth::user();
+        
+        // Ambil pengaduan milik user ini
+        $pengaduan = Pengaduan::where('email_pelapor', $user->email)
+            ->with('kategori')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $stats = [
+            'total_pengaduan' => Pengaduan::where('email_pelapor', $user->email)->count(),
+            'pending' => Pengaduan::where('email_pelapor', $user->email)->where('status_pengaduan', 'pending')->count(),
+            'proses' => Pengaduan::where('email_pelapor', $user->email)->where('status_pengaduan', 'proses')->count(),
+            'selesai' => Pengaduan::where('email_pelapor', $user->email)->where('status_pengaduan', 'selesai')->count(),
+        ];
+
+        return view('whistleblower.user.dashboard', compact('pengaduan', 'stats'));
+    }
+
+    /**
+     * Dashboard untuk admin PPKPT
+     */
+    public function adminDashboard()
+    {
+        $pengaduan = Pengaduan::with('kategori')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        $stats = [
+            'total_pengaduan' => Pengaduan::count(),
+            'pending' => Pengaduan::where('status_pengaduan', 'pending')->count(),
+            'proses' => Pengaduan::where('status_pengaduan', 'proses')->count(),
+            'selesai' => Pengaduan::where('status_pengaduan', 'selesai')->count(),
+            'ditolak' => Pengaduan::where('status_pengaduan', 'ditolak')->count(),
+            'butuh_bukti' => Pengaduan::where('status_pengaduan', 'butuh_bukti')->count(),
+        ];
+
+        return view('whistleblower.admin.dashboard', compact('pengaduan', 'stats'));
+    }
+
+    /**
+     * Check if user is admin PPKPT
      */
     private function checkUserRole()
     {
@@ -21,114 +81,29 @@ class WhistleblowerController extends Controller
     }
 
     /**
-     * Dashboard method that was missing (route calls this)
-     */
-    public function dashboard()
-    {
-        // Check user role and redirect to appropriate dashboard
-        if ($this->checkUserRole()) {
-            return $this->adminDashboard();
-        } else {
-            return $this->userDashboard();
-        }
-    }
-
-    /**
-     * User Dashboard - untuk pelapor biasa
-     * FIXED: Menggunakan table whistle_pengaduan dengan joins
-     */
-    public function userDashboard()
-    {
-        $user = Auth::user();
-
-        // Using DB facade with proper joins
-        $pengaduan = DB::table('whistle_pengaduan')
-            ->leftJoin('ref_kategori_pengaduan', 'whistle_pengaduan.kategori_pengaduan_id', '=', 'ref_kategori_pengaduan.id')
-            ->leftJoin('pengaduan_terlapor', 'whistle_pengaduan.id', '=', 'pengaduan_terlapor.pengaduan_id')
-            ->where('whistle_pengaduan.email_pelapor', $user->email)
-            ->select(
-                'whistle_pengaduan.*',
-                'ref_kategori_pengaduan.nama_kategori',
-                'pengaduan_terlapor.nama_terlapor'
-            )
-            ->orderBy('whistle_pengaduan.created_at', 'desc')
-            ->paginate(10);
-
-        $stats = [
-            'total_pengaduan' => DB::table('whistle_pengaduan')->where('email_pelapor', $user->email)->count(),
-            'pending' => DB::table('whistle_pengaduan')->where('email_pelapor', $user->email)->where('status_pengaduan', 'pending')->count(),
-            'proses' => DB::table('whistle_pengaduan')->where('email_pelapor', $user->email)->where('status_pengaduan', 'proses')->count(),
-            'selesai' => DB::table('whistle_pengaduan')->where('email_pelapor', $user->email)->where('status_pengaduan', 'selesai')->count(),
-        ];
-
-        return view('whistleblower.user.dashboard', compact('pengaduan', 'stats'));
-    }
-
-    /**
-     * Admin Dashboard - untuk admin PPKPT
-     * FIXED: Menggunakan table whistle_pengaduan dengan joins
-     */
-    private function adminDashboard()
-    {
-        $pengaduan = DB::table('whistle_pengaduan')
-            ->leftJoin('ref_kategori_pengaduan', 'whistle_pengaduan.kategori_pengaduan_id', '=', 'ref_kategori_pengaduan.id')
-            ->leftJoin('pengaduan_terlapor', 'whistle_pengaduan.id', '=', 'pengaduan_terlapor.pengaduan_id')
-            ->select(
-                'whistle_pengaduan.*',
-                'ref_kategori_pengaduan.nama_kategori',
-                'pengaduan_terlapor.nama_terlapor'
-            )
-            ->orderBy('whistle_pengaduan.created_at', 'desc')
-            ->paginate(10);
-
-        $stats = [
-            'total_pengaduan' => DB::table('whistle_pengaduan')->count(),
-            'pending' => DB::table('whistle_pengaduan')->where('status_pengaduan', 'pending')->count(),
-            'proses' => DB::table('whistle_pengaduan')->where('status_pengaduan', 'proses')->count(),
-            'selesai' => DB::table('whistle_pengaduan')->where('status_pengaduan', 'selesai')->count(),
-            'ditolak' => DB::table('whistle_pengaduan')->where('status_pengaduan', 'ditolak')->count(),
-            'butuh_bukti' => DB::table('whistle_pengaduan')->where('status_pengaduan', 'butuh_bukti')->count(),
-        ];
-
-        return view('whistleblower.admin.dashboard', compact('pengaduan', 'stats'));
-    }
-
-    /**
-     * Show form to create new pengaduan
+     * Form create pengaduan
      */
     public function create()
     {
         // Cek jika admin, tampilkan pesan error
-        $selectedRole = session('selected_role');
-        if (in_array($selectedRole, ['Admin PPKPT Fakultas', 'Admin PPKPT Prodi'])) {
+        if ($this->checkUserRole()) {
             return redirect()->route('whistleblower.dashboard')
                 ->with('error', 'Admin tidak dapat membuat pengaduan.');
         }
 
-        // Get kategori from database (tanpa filter is_active karena kolom tidak ada)
-        $kategori = DB::table('ref_kategori_pengaduan')
-            ->orderBy('nama_kategori')
-            ->get();
-
-        if ($kategori->isEmpty()) {
-            Log::warning('No active kategori found for whistleblower form');
-        } else {
-            Log::info('Found ' . $kategori->count() . ' active categories');
-        }
-        
+        $kategori = KategoriPengaduan::where('is_active', true)->get();
         $user = Auth::user();
         
         return view('whistleblower.user.create', compact('kategori', 'user'));
     }
 
     /**
-     * Store new pengaduan with terlapor data
+     * Store pengaduan baru dengan data terlapor
      */
     public function store(Request $request)
     {
-        // Cek jika admin, tampilkan pesan error
-        $selectedRole = session('selected_role');
-        if (in_array($selectedRole, ['Admin PPKPT Fakultas', 'Admin PPKPT Prodi'])) {
+        // Cek jika admin
+        if ($this->checkUserRole()) {
             return redirect()->route('whistleblower.dashboard')
                 ->with('error', 'Admin tidak dapat membuat pengaduan.');
         }
@@ -181,9 +156,8 @@ class WhistleblowerController extends Controller
             // Generate kode pengaduan
             $kode_pengaduan = 'WB-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
-            // Create pengaduan using DB insert to whistle_pengaduan table
-            $pengaduan_id = DB::table('whistle_pengaduan')->insertGetId([
-                'id' => \Illuminate\Support\Str::uuid(),
+            // Create pengaduan
+            $pengaduan = Pengaduan::create([
                 'kode_pengaduan' => $kode_pengaduan,
                 'judul_pengaduan' => 'Pengaduan - ' . substr($validated['cerita_singkat_peristiwa'], 0, 50) . '...',
                 'uraian_pengaduan' => $validated['deskripsi_pengaduan'] ?? $validated['cerita_singkat_peristiwa'],
@@ -202,131 +176,217 @@ class WhistleblowerController extends Controller
                 'jenis_disabilitas' => $validated['jenis_disabilitas'],
                 'alasan_pengaduan' => json_encode($validated['alasan_pengaduan']),
                 'evidence_type' => $validated['evidence_type'],
+                'file_bukti' => $file_path,
                 'evidence_gdrive_link' => $validated['evidence_gdrive_link'],
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
 
             // Create terlapor data
             foreach ($validated['terlapor'] as $terlapor_data) {
-                DB::table('pengaduan_terlapor')->insert([
-                    'pengaduan_id' => $pengaduan_id,
+                $pengaduan->terlapor()->create([
                     'nama_terlapor' => $terlapor_data['nama_terlapor'] ?? 'Tidak disebutkan',
                     'status_terlapor' => $terlapor_data['status_terlapor'],
                     'nomor_identitas' => $terlapor_data['nomor_identitas'],
                     'unit_kerja_fakultas' => $terlapor_data['unit_kerja_fakultas'],
                     'kontak_terlapor' => $terlapor_data['kontak_terlapor'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ]);
             }
 
             DB::commit();
 
-            return redirect()->route('whistleblower.dashboard')
-                ->with('success', 'Pengaduan berhasil dikirim dengan kode: ' . $kode_pengaduan . '. Terima kasih atas laporan Anda.');
+            return redirect()->route('whistleblower.success', $kode_pengaduan)
+                ->with('success', 'Pengaduan berhasil dikirim dengan kode: ' . $kode_pengaduan);
 
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('Error creating pengaduan: ' . $e->getMessage());
-            
-            return back()->withInput()
-                ->with('error', 'Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.');
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
     /**
-     * Show specific pengaduan
-     * FIXED: Menggunakan table whistle_pengaduan dengan joins
+     * Halaman sukses setelah submit
      */
+    public function success($kodePengaduan)
+    {
+        $pengaduan = Pengaduan::where('kode_pengaduan', $kodePengaduan)->first();
+        
+        if (!$pengaduan) {
+            return redirect()->route('whistleblower.dashboard')
+                ->with('error', 'Pengaduan tidak ditemukan.');
+        }
+
+        return view('whistleblower.user.success', compact('pengaduan'));
+    }
+
+    /**
+     * Batalkan pengaduan
+     */
+    public function cancel($id)
+    {
+        $pengaduan = Pengaduan::findOrFail($id);
+        
+        // Cek ownership
+        if ($pengaduan->email_pelapor !== Auth::user()->email) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk membatalkan pengaduan ini.');
+        }
+
+        // Cek status yang bisa dibatalkan
+        if (!in_array($pengaduan->status_pengaduan, ['pending', 'butuh_bukti'])) {
+            return redirect()->back()->with('error', 'Pengaduan dengan status ini tidak dapat dibatalkan.');
+        }
+
+        $pengaduan->update(['status_pengaduan' => 'dibatalkan']);
+
+        return redirect()->route('whistleblower.dashboard')
+            ->with('success', 'Pengaduan berhasil dibatalkan.');
+    }
+
+    // Method yang sudah ada sebelumnya tetap sama...
+    public function index()
+    {
+        $user = Auth::user();
+        $pengaduan = Pengaduan::where('email_pelapor', $user->email)
+            ->with('kategori')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('whistleblower.user.index', compact('pengaduan'));
+    }
+
     public function show($id)
     {
-        $pengaduan = DB::table('whistle_pengaduan')
-            ->leftJoin('ref_kategori_pengaduan', 'whistle_pengaduan.kategori_pengaduan_id', '=', 'ref_kategori_pengaduan.id')
-            ->select('whistle_pengaduan.*', 'ref_kategori_pengaduan.nama_kategori')
-            ->where('whistle_pengaduan.id', $id)
-            ->first();
-
-        if (!$pengaduan) {
-            abort(404, 'Pengaduan tidak ditemukan.');
-        }
+        $pengaduan = Pengaduan::with(['kategori', 'terlapor'])->findOrFail($id);
         
-        // Get terlapor data
-        $terlapor = DB::table('pengaduan_terlapor')
-            ->where('pengaduan_id', $id)
-            ->get();
-        
-        // Check authorization
-        $user = Auth::user();
-        $isAdmin = $this->checkUserRole();
-        
-        if (!$isAdmin && $pengaduan->email_pelapor !== $user->email) {
-            abort(403, 'Anda tidak memiliki akses untuk melihat pengaduan ini.');
+        // Check access permissions
+        if (!$this->checkUserRole() && $pengaduan->email_pelapor !== Auth::user()->email) {
+            return redirect()->route('whistleblower.dashboard')
+                ->with('error', 'Anda tidak memiliki izin untuk melihat pengaduan ini.');
         }
 
-        // Parse alasan pengaduan JSON
-        $alasan_pengaduan = [];
-        if ($pengaduan->alasan_pengaduan) {
-            $alasan_pengaduan = json_decode($pengaduan->alasan_pengaduan, true) ?? [];
-        }
-
-        return view('whistleblower.user.show', compact('pengaduan', 'terlapor', 'alasan_pengaduan', 'isAdmin'));
+        return view('whistleblower.user.show', compact('pengaduan'));
     }
 
-    /**
-     * Update pengaduan status (admin only)
-     */
+    public function adminIndex()
+    {
+        if (!$this->checkUserRole()) {
+            return redirect()->route('whistleblower.dashboard')
+                ->with('error', 'Akses ditolak.');
+        }
+
+        $pengaduan = Pengaduan::with('kategori')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view('whistleblower.admin.index', compact('pengaduan'));
+    }
+
+    public function adminPending()
+    {
+        if (!$this->checkUserRole()) {
+            return redirect()->route('whistleblower.dashboard')
+                ->with('error', 'Akses ditolak.');
+        }
+
+        $pengaduan = Pengaduan::where('status_pengaduan', 'pending')
+            ->with('kategori')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view('whistleblower.admin.pending', compact('pengaduan'));
+    }
+
     public function updateStatus(Request $request, $id)
     {
         if (!$this->checkUserRole()) {
-            abort(403, 'Unauthorized');
+            return redirect()->route('whistleblower.dashboard')
+                ->with('error', 'Akses ditolak.');
         }
 
-        $validated = $request->validate([
+        $request->validate([
             'status_pengaduan' => 'required|in:pending,proses,selesai,ditolak,butuh_bukti',
-            'keterangan_admin' => 'nullable|string',
+            'catatan_admin' => 'nullable|string'
         ]);
 
-        DB::table('whistle_pengaduan')
-            ->where('id', $id)
-            ->update([
-                'status_pengaduan' => $validated['status_pengaduan'],
-                'updated_at' => now(),
-            ]);
+        $pengaduan = Pengaduan::findOrFail($id);
+        $pengaduan->update([
+            'status_pengaduan' => $request->status_pengaduan,
+            'catatan_admin' => $request->catatan_admin,
+            'updated_at' => now()
+        ]);
 
         return redirect()->back()
             ->with('success', 'Status pengaduan berhasil diupdate.');
     }
 
-    /**
-     * Cancel pengaduan (user only)
-     */
-    public function cancel($id)
+    // Method lain yang sudah ada tetap sama...
+    public function kategoriIndex()
     {
-        $user = Auth::user();
-        $pengaduan = DB::table('whistle_pengaduan')
-            ->where('id', $id)
-            ->where('email_pelapor', $user->email)
-            ->first();
-
-        if (!$pengaduan) {
-            abort(404, 'Pengaduan tidak ditemukan.');
+        if (!$this->checkUserRole()) {
+            return redirect()->route('whistleblower.dashboard')
+                ->with('error', 'Akses ditolak.');
         }
 
-        // Check if pengaduan can be cancelled
-        if (!in_array($pengaduan->status_pengaduan, ['pending', 'butuh_bukti'])) {
+        $kategori = KategoriPengaduan::orderBy('nama_kategori')->get();
+        return view('whistleblower.admin.kategori', compact('kategori'));
+    }
+
+    public function kategoriStore(Request $request)
+    {
+        if (!$this->checkUserRole()) {
+            return redirect()->route('whistleblower.dashboard')
+                ->with('error', 'Akses ditolak.');
+        }
+
+        $request->validate([
+            'nama_kategori' => 'required|string|max:255|unique:ref_kategori_pengaduan',
+            'deskripsi_kategori' => 'nullable|string'
+        ]);
+
+        KategoriPengaduan::create($request->all());
+
+        return redirect()->back()
+            ->with('success', 'Kategori berhasil ditambahkan.');
+    }
+
+    public function kategoriUpdate(Request $request, $id)
+    {
+        if (!$this->checkUserRole()) {
+            return redirect()->route('whistleblower.dashboard')
+                ->with('error', 'Akses ditolak.');
+        }
+
+        $request->validate([
+            'nama_kategori' => 'required|string|max:255|unique:ref_kategori_pengaduan,nama_kategori,' . $id,
+            'deskripsi_kategori' => 'nullable|string',
+            'is_active' => 'boolean'
+        ]);
+
+        $kategori = KategoriPengaduan::findOrFail($id);
+        $kategori->update($request->all());
+
+        return redirect()->back()
+            ->with('success', 'Kategori berhasil diupdate.');
+    }
+
+    public function kategoriDestroy($id)
+    {
+        if (!$this->checkUserRole()) {
+            return redirect()->route('whistleblower.dashboard')
+                ->with('error', 'Akses ditolak.');
+        }
+
+        $kategori = KategoriPengaduan::findOrFail($id);
+        
+        // Cek apakah kategori digunakan
+        if ($kategori->pengaduan()->count() > 0) {
             return redirect()->back()
-                ->with('error', 'Pengaduan tidak dapat dibatalkan pada status ini.');
+                ->with('error', 'Kategori tidak dapat dihapus karena masih digunakan.');
         }
 
-        DB::table('whistle_pengaduan')
-            ->where('id', $id)
-            ->update([
-                'status_pengaduan' => 'dibatalkan',
-                'updated_at' => now(),
-            ]);
+        $kategori->delete();
 
-        return redirect()->route('whistleblower.dashboard')
-            ->with('success', 'Pengaduan berhasil dibatalkan.');
+        return redirect()->back()
+            ->with('success', 'Kategori berhasil dihapus.');
     }
 }

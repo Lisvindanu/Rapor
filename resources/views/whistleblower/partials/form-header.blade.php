@@ -1,32 +1,30 @@
 {{-- resources/views/whistleblower/partials/form-header.blade.php --}}
-<div class="card mb-4">
-    <div class="card-body text-center">
-        <h3 class="card-title">Form Pelaporan</h3>
-        <p class="card-text">
-            Form ini digunakan untuk melaporkan tindakan kekerasan seksual, diskriminasi, dan perundungan di lingkungan
-            Universitas Pasundan.
-        </p>
-        <div class="mt-3">
+<div class="alert alert-info border-left-primary mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h6 class="mb-1">
+                <i class="fas fa-info-circle"></i>
+                Informasi Pelapor
+            </h6>
+            <p class="mb-0 small">
+                Anda sedang login sebagai: <strong>{{ $user->email }}</strong>
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end">
             <small class="text-muted">
-                <i class="fas fa-user"></i>
-                Pelapor: <strong>{{ $user->name ?? 'N/A' }}</strong>
-            </small>
-            <br>
-            <small class="text-info">
-                <i class="fas fa-envelope"></i>
-                Email: <strong>{{ $user->email ?? 'N/A' }}</strong>
+                <i class="fas fa-shield-alt"></i>
+                Data akan dijaga kerahasiaannya
             </small>
         </div>
     </div>
 </div>
 
-<!-- Alert Informasi -->
-<div class="alert alert-info mb-4">
-    <h6><i class="fas fa-info-circle"></i> Informasi Penting:</h6>
-    <ul class="mb-0">
-        <li>Pastikan informasi yang Anda berikan benar dan akurat</li>
-        <li>Anda dapat memilih untuk melapor secara anonim</li>
-        <li>Bukti pendukung wajib dilampirkan</li>
-        <li>Laporan akan ditindaklanjuti sesuai dengan prosedur yang berlaku</li>
+<div class="alert alert-warning">
+    <h6><i class="fas fa-exclamation-triangle"></i> Panduan Pelaporan</h6>
+    <ul class="mb-0 small">
+        <li>Pastikan informasi yang disampaikan adalah <strong>benar dan dapat dipertanggungjawabkan</strong></li>
+        <li>Lampirkan bukti pendukung (file atau link Google Drive) yang <strong>wajib</strong> disertakan</li>
+        <li>Tim PPKPT akan merahasiakan identitas pelapor sesuai kebijakan yang berlaku</li>
+        <li>Proses investigasi akan dilakukan secara objektif dan profesional</li>
     </ul>
 </div>

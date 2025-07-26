@@ -1,385 +1,459 @@
-// resources/js/whistleblower-form.js
+// resources/js/whistleblower/form.js
+// JavaScript untuk form whistleblower - Clean & Complete Version
 
-document.addEventListener('DOMContentLoaded', function() {
-    let terlapor_index = 0;
-
-    // Initialize form
-    initializeForm();
-    
-    // Form initialization
-    function initializeForm() {
-        // Add first terlapor item
-        addTerlapor();
-        
-        // Initialize event listeners
-        setupEventListeners();
-        
-        // Initialize evidence type toggle
-        toggleEvidenceType();
-        
-        // Initialize disability toggle
-        toggleDisabilityField();
+class WhistleblowerForm {
+    constructor() {
+        this.terlamorIndex = 1;
+        this.init();
     }
 
-    // Setup all event listeners
-    function setupEventListeners() {
-        // Add terlapor button
-        document.getElementById('add-terlapor').addEventListener('click', addTerlapor);
-        
-        // Evidence type radio buttons
-        document.querySelectorAll('input[name="evidence_type"]').forEach(radio => {
-            radio.addEventListener('change', toggleEvidenceType);
-        });
-        
-        // Disability select
-        document.getElementById('memiliki_disabilitas').addEventListener('change', toggleDisabilityField);
-        
-        // File input change
-        const fileInput = document.getElementById('file_bukti');
-        if (fileInput) {
-            fileInput.addEventListener('change', handleFileChange);
-        }
-        
-        // Google Drive link validation
-        const gdriveInput = document.getElementById('evidence_gdrive_link');
-        if (gdriveInput) {
-            gdriveInput.addEventListener('input', validateGdriveLink);
-        }
-        
-        // Form submission
-        document.getElementById('whistleblowerForm').addEventListener('submit', handleFormSubmit);
+    init() {
+        this.setupDisabilityToggle();
+        this.setupTerlamorHandling();
+        this.setupFileUpload();
+        this.setupFormValidation();
+        this.setupResetForm();
     }
 
-    // Add new terlapor item
-    function addTerlapor() {
+    // Toggle untuk jenis disabilitas
+    setupDisabilityToggle() {
+        const memilikiDisabilitas = document.getElementById('memiliki_disabilitas');
+        const jenisDisabilitasDiv = document.getElementById('jenis_disabilitas_div');
+        
+        if (memilikiDisabilitas && jenisDisabilitasDiv) {
+            memilikiDisabilitas.addEventListener('change', function() {
+                if (this.checked) {
+                    jenisDisabilitasDiv.style.display = 'block';
+                    document.getElementById('jenis_disabilitas').required = true;
+                } else {
+                    jenisDisabilitasDiv.style.display = 'none';
+                    document.getElementById('jenis_disabilitas').required = false;
+                    document.getElementById('jenis_disabilitas').value = '';
+                }
+            });
+            
+            // Check on page load
+            if (memilikiDisabilitas.checked) {
+                jenisDisabilitasDiv.style.display = 'block';
+                document.getElementById('jenis_disabilitas').required = true;
+            }
+        }
+    }
+
+    // Setup handling untuk tambah/hapus terlapor
+    setupTerlamorHandling() {
+        const btnAddTerlapor = document.getElementById('btn-add-terlapor');
+        
+        if (btnAddTerlapor) {
+            btnAddTerlapor.addEventListener('click', () => {
+                this.addTerlapor();
+            });
+        }
+
+        // Setup remove function globally
+        window.removeTerlapor = (button) => {
+            this.removeTerlapor(button);
+        };
+    }
+
+    // Tambah terlapor baru
+    addTerlapor() {
+        this.terlamorIndex++;
         const container = document.getElementById('terlapor-container');
-        const template = document.getElementById('terlapor-template');
         
-        if (!template) {
-            console.error('Terlapor template not found');
+        const newTerlapor = document.createElement('div');
+        newTerlapor.className = 'terlapor-item';
+        newTerlapor.setAttribute('data-index', this.terlamorIndex);
+        
+        newTerlapor.innerHTML = `
+            <button type="button" class="btn-remove-terlapor" onclick="removeTerlapor(this)">
+                <i class="fas fa-times"></i>
+            </button>
+            <h6>Terlapor ${this.terlamorIndex}</h6>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nama Terlapor <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" 
+                           name="terlapor[${this.terlamorIndex-1}][nama_terlapor]" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Status <span class="text-danger">*</span></label>
+                    <select class="form-select" name="terlapor[${this.terlamorIndex-1}][status_terlapor]" required>
+                        <option value="">Pilih Status</option>
+                        <option value="mahasiswa">Mahasiswa</option>
+                        <option value="pegawai">Pegawai</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nomor Identitas (NIM/NIP)</label>
+                    <input type="text" class="form-control" 
+                           name="terlapor[${this.terlamorIndex-1}][nomor_identitas]" 
+                           placeholder="Opsional">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Unit Kerja/Fakultas</label>
+                    <input type="text" class="form-control" 
+                           name="terlapor[${this.terlamorIndex-1}][unit_kerja_fakultas]" 
+                           placeholder="Opsional">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Kontak Terlapor <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" 
+                       name="terlapor[${this.terlamorIndex-1}][kontak_terlapor]" 
+                       placeholder="Email atau Nomor Telepon" required>
+            </div>
+        `;
+        
+        container.appendChild(newTerlapor);
+        
+        // Add smooth animation
+        newTerlapor.style.opacity = '0';
+        newTerlapor.style.transform = 'translateY(-20px)';
+        
+        // Trigger animation
+        requestAnimationFrame(() => {
+            newTerlapor.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            newTerlapor.style.opacity = '1';
+            newTerlapor.style.transform = 'translateY(0)';
+        });
+
+        console.log(`Terlapor ${this.terlamorIndex} berhasil ditambahkan`);
+    }
+
+    // Hapus terlapor
+    removeTerlapor(button) {
+        const terlamorItem = button.closest('.terlapor-item');
+        const container = document.getElementById('terlapor-container');
+        
+        // Don't allow removing if it's the only terlapor
+        if (container.children.length <= 1) {
+            alert('Minimal harus ada satu terlapor');
             return;
         }
         
-        const clone = template.content.cloneNode(true);
+        // Add smooth remove animation
+        terlamorItem.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        terlamorItem.style.opacity = '0';
+        terlamorItem.style.transform = 'translateX(100%)';
         
-        // Replace INDEX with actual index
-        const inputs = clone.querySelectorAll('input, select');
-        inputs.forEach(input => {
-            if (input.name) {
-                input.name = input.name.replace('INDEX', terlapor_index);
-            }
+        // Remove element after animation
+        setTimeout(() => {
+            terlamorItem.remove();
+            this.updateTerlamorNumbering();
+            console.log('Terlapor berhasil dihapus');
+        }, 400);
+    }
+
+    // Update numbering setelah hapus terlapor
+    updateTerlamorNumbering() {
+        const terlamorItems = document.querySelectorAll('.terlapor-item');
+        
+        terlamorItems.forEach((item, index) => {
+            const h6 = item.querySelector('h6');
+            h6.textContent = `Terlapor ${index + 1}`;
+            
+            // Update name attributes
+            const inputs = item.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                const name = input.getAttribute('name');
+                if (name) {
+                    const newName = name.replace(/\[\d+\]/, `[${index}]`);
+                    input.setAttribute('name', newName);
+                }
+            });
         });
         
-        // Update terlapor number
-        const numberSpan = clone.querySelector('.terlapor-number');
-        if (numberSpan) {
-            numberSpan.textContent = terlapor_index + 1;
-        }
+        // Reset index counter
+        this.terlamorIndex = terlamorItems.length;
+    }
+
+    // Setup file upload functionality
+    setupFileUpload() {
+        const fileInput = document.getElementById('file_bukti');
+        const fileUploadArea = document.getElementById('file-upload-area');
         
-        // Add remove event listener
-        const removeBtn = clone.querySelector('.remove-terlapor');
-        if (removeBtn) {
-            removeBtn.addEventListener('click', function() {
-                removeTerlapor(this);
+        if (fileInput && fileUploadArea) {
+            // Click to browse
+            fileUploadArea.addEventListener('click', (e) => {
+                // Prevent triggering if clicking on existing file display
+                if (!fileUploadArea.classList.contains('file-selected')) {
+                    fileInput.click();
+                }
+            });
+            
+            // Drag and drop handlers
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+            
+            fileUploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+            });
+            
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (this.validateFileType(file) && this.validateFileSize(file)) {
+                        fileInput.files = files;
+                        this.updateFileDisplay(file);
+                    }
+                }
+            });
+            
+            // File change handler
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    if (this.validateFileType(file) && this.validateFileSize(file)) {
+                        this.updateFileDisplay(file);
+                    } else {
+                        e.target.value = '';
+                    }
+                }
             });
         }
-        
-        container.appendChild(clone);
-        terlapor_index++;
-        
-        // Update remove button visibility
-        updateRemoveButtons();
     }
 
-    // Remove terlapor item
-    function removeTerlapor(button) {
-        const terlapor_item = button.closest('.terlapor-item');
-        if (terlapor_item) {
-            terlapor_item.remove();
-            updateTerlapor_numbers();
-            updateRemoveButtons();
+    // Validasi tipe file
+    validateFileType(file) {
+        const allowedTypes = ['application/pdf', 'application/msword', 
+                             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                             'image/jpeg', 'image/png', 'image/jpg'];
+        
+        if (!allowedTypes.includes(file.type)) {
+            alert('Tipe file tidak didukung. Harap upload file: PDF, DOC, DOCX, JPG, atau PNG');
+            return false;
+        }
+        return true;
+    }
+
+    // Validasi ukuran file
+    validateFileSize(file) {
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        
+        if (file.size > maxSize) {
+            alert('Ukuran file terlalu besar. Maksimal 10MB');
+            return false;
+        }
+        return true;
+    }
+
+    // Update tampilan file yang dipilih
+    updateFileDisplay(file) {
+        const fileUploadArea = document.getElementById('file-upload-area');
+        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+        
+        fileUploadArea.classList.add('file-selected');
+        fileUploadArea.innerHTML = `
+            <i class="fas fa-file-alt"></i>
+            <h6>${file.name}</h6>
+            <p class="text-muted">${fileSize} MB</p>
+            <small class="text-success">
+                <i class="fas fa-check-circle me-1"></i>
+                File berhasil dipilih
+            </small>
+            <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removeSelectedFile()">
+                <i class="fas fa-times me-1"></i>Hapus File
+            </button>
+        `;
+        
+        console.log(`File dipilih: ${file.name} (${fileSize} MB)`);
+    }
+
+    // Setup form validation
+    setupFormValidation() {
+        const form = document.getElementById('whistleblowerForm');
+        const submitBtn = document.getElementById('btnSubmit');
+        
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                if (!this.validateForm()) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Show loading state
+                this.showLoadingState(submitBtn);
+            });
+        }
+
+        // Google Drive URL validation
+        const evidenceGdriveLink = document.getElementById('evidence_gdrive_link');
+        if (evidenceGdriveLink) {
+            evidenceGdriveLink.addEventListener('input', function() {
+                const url = this.value.trim();
+                
+                if (url && !url.includes('drive.google.com')) {
+                    this.setCustomValidity('Harus berupa link Google Drive yang valid');
+                    this.classList.add('is-invalid');
+                    this.classList.remove('is-valid');
+                } else {
+                    this.setCustomValidity('');
+                    this.classList.remove('is-invalid');
+                    if (url) {
+                        this.classList.add('is-valid');
+                    } else {
+                        this.classList.remove('is-valid');
+                    }
+                }
+            });
         }
     }
 
-    // Update terlapor numbers after removal
-    function updateTerlapor_numbers() {
-        const terlapor_items = document.querySelectorAll('.terlapor-item');
-        terlapor_items.forEach((item, index) => {
-            const numberSpan = item.querySelector('.terlapor-number');
-            if (numberSpan) {
-                numberSpan.textContent = index + 1;
-            }
-        });
-    }
-
-    // Update remove button visibility (hide if only one terlapor)
-    function updateRemoveButtons() {
-        const terlapor_items = document.querySelectorAll('.terlapor-item');
-        const removeButtons = document.querySelectorAll('.remove-terlapor');
-        
-        removeButtons.forEach(btn => {
-            btn.style.display = terlapor_items.length > 1 ? 'inline-block' : 'none';
-        });
-    }
-
-    // Toggle evidence type (file vs Google Drive)
-    function toggleEvidenceType() {
-        const evidenceType = document.querySelector('input[name="evidence_type"]:checked');
-        const fileSection = document.getElementById('file-upload-section');
-        const gdriveSection = document.getElementById('gdrive-upload-section');
-        
-        if (!evidenceType || !fileSection || !gdriveSection) return;
-        
-        if (evidenceType.value === 'file') {
-            fileSection.style.display = 'block';
-            gdriveSection.style.display = 'none';
-            
-            // Clear Google Drive input
-            const gdriveInput = document.getElementById('evidence_gdrive_link');
-            if (gdriveInput) gdriveInput.value = '';
-            
-            // Set file input as required
-            const fileInput = document.getElementById('file_bukti');
-            if (fileInput) fileInput.required = true;
-        } else {
-            fileSection.style.display = 'none';
-            gdriveSection.style.display = 'block';
-            
-            // Clear file input
-            const fileInput = document.getElementById('file_bukti');
-            if (fileInput) {
-                fileInput.value = '';
-                fileInput.required = false;
-                clearFile();
-            }
-            
-            // Set Google Drive input as required
-            const gdriveInput = document.getElementById('evidence_gdrive_link');
-            if (gdriveInput) gdriveInput.required = true;
-        }
-    }
-
-    // Toggle disability field
-    function toggleDisabilityField() {
-        const disabilitySelect = document.getElementById('memiliki_disabilitas');
-        const disabilityWrapper = document.getElementById('jenis_disabilitas_wrapper');
-        const disabilityInput = document.getElementById('jenis_disabilitas');
-        
-        if (!disabilitySelect || !disabilityWrapper) return;
-        
-        if (disabilitySelect.value === '1') {
-            disabilityWrapper.style.display = 'block';
-            if (disabilityInput) disabilityInput.required = true;
-        } else {
-            disabilityWrapper.style.display = 'none';
-            if (disabilityInput) {
-                disabilityInput.required = false;
-                disabilityInput.value = '';
-            }
-        }
-    }
-
-    // Handle file change
-    function handleFileChange(event) {
-        const file = event.target.files[0];
-        const preview = document.getElementById('file-preview');
-        const fileName = document.getElementById('file-name');
-        
-        if (!preview || !fileName) return;
-        
-        if (file) {
-            // Validate file size (10MB)
-            if (file.size > 10 * 1024 * 1024) {
-                alert('Ukuran file terlalu besar. Maksimal 10MB.');
-                event.target.value = '';
-                preview.style.display = 'none';
-                return;
-            }
-            
-            // Validate file type
-            const allowedTypes = ['application/pdf', 'application/msword', 
-                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                'image/jpeg', 'image/jpg', 'image/png'];
-            
-            if (!allowedTypes.includes(file.type)) {
-                alert('Format file tidak didukung. Gunakan PDF, DOC, DOCX, JPG, atau PNG.');
-                event.target.value = '';
-                preview.style.display = 'none';
-                return;
-            }
-            
-            fileName.textContent = file.name;
-            preview.style.display = 'block';
-        } else {
-            preview.style.display = 'none';
-        }
-    }
-
-    // Clear file input
-    window.clearFile = function() {
+    // Validasi form sebelum submit
+    validateForm() {
         const fileInput = document.getElementById('file_bukti');
-        const preview = document.getElementById('file-preview');
         
-        if (fileInput) fileInput.value = '';
-        if (preview) preview.style.display = 'none';
-    };
-
-    // Validate Google Drive link
-    function validateGdriveLink(event) {
-        const url = event.target.value;
-        const validation = document.getElementById('gdrive-validation');
-        
-        if (!validation) return;
-        
-        if (url && !url.includes('drive.google.com')) {
-            validation.style.display = 'block';
-        } else {
-            validation.style.display = 'none';
-        }
-    }
-
-    // Accept policy from modal
-    window.acceptPolicy = function() {
-        const checkbox = document.getElementById('persetujuan_kebijakan');
-        if (checkbox) {
-            checkbox.checked = true;
-        }
-        
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalKebijakan'));
-        if (modal) {
-            modal.hide();
-        }
-    };
-
-    // Reset form
-    window.resetForm = function() {
-        if (confirm('Apakah Anda yakin ingin mereset form? Semua data yang sudah diisi akan hilang.')) {
-            document.getElementById('whistleblowerForm').reset();
-            
-            // Clear terlapor items and add one
-            const container = document.getElementById('terlapor-container');
-            if (container) {
-                container.innerHTML = '';
-                terlapor_index = 0;
-                addTerlapor();
-            }
-            
-            // Reset other elements
-            clearFile();
-            toggleEvidenceType();
-            toggleDisabilityField();
-            
-            // Hide validation elements
-            const gdriveValidation = document.getElementById('gdrive-validation');
-            if (gdriveValidation) gdriveValidation.style.display = 'none';
-        }
-    };
-
-    // Handle form submission
-    function handleFormSubmit(event) {
-        event.preventDefault();
-        
-        if (!validateForm()) {
+        // Check required file upload
+        if (!fileInput.files.length) {
+            alert('Harap upload file bukti terlebih dahulu');
+            fileInput.focus();
             return false;
         }
         
-        // Show loading overlay
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        if (loadingOverlay) {
-            loadingOverlay.classList.remove('d-none');
+        // Check terlapor data
+        const terlamorItems = document.querySelectorAll('.terlapor-item');
+        if (terlamorItems.length === 0) {
+            alert('Minimal harus ada satu data terlapor');
+            return false;
         }
         
-        // Disable submit button
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
-        }
-        
-        // Submit form
-        event.target.submit();
+        console.log('Form validation passed');
+        return true;
     }
 
-    // Validate form before submission
-    function validateForm() {
-        let isValid = true;
-        const form = document.getElementById('whistleblowerForm');
+    // Show loading state pada button
+    showLoadingState(button) {
+        button.classList.add('btn-loading');
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Mengirim Laporan...';
         
-        // Check required fields
-        const requiredFields = form.querySelectorAll('[required]');
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                field.classList.add('is-invalid');
-                isValid = false;
-            } else {
-                field.classList.remove('is-invalid');
-            }
-        });
-        
-        // Check alasan pengaduan
-        const alasanCheckboxes = form.querySelectorAll('input[name="alasan_pengaduan[]"]:checked');
-        if (alasanCheckboxes.length === 0) {
-            alert('Silakan pilih minimal satu alasan pengaduan.');
-            isValid = false;
-        }
-        
-        // Check terlapor
-        const terlaporItems = document.querySelectorAll('.terlapor-item');
-        if (terlaporItems.length === 0) {
-            alert('Silakan tambahkan minimal satu informasi terlapor.');
-            isValid = false;
-        }
-        
-        // Validate each terlapor
-        terlaporItems.forEach((item, index) => {
-            const statusSelect = item.querySelector('select[name*="status_terlapor"]');
-            const kontakInput = item.querySelector('input[name*="kontak_terlapor"]');
-            
-            if (!statusSelect || !statusSelect.value) {
-                statusSelect.classList.add('is-invalid');
-                isValid = false;
-            }
-            
-            if (!kontakInput || !kontakInput.value.trim()) {
-                kontakInput.classList.add('is-invalid');
-                isValid = false;
-            }
-        });
-        
-        // Check evidence
-        const evidenceType = document.querySelector('input[name="evidence_type"]:checked');
-        if (evidenceType) {
-            if (evidenceType.value === 'file') {
-                const fileInput = document.getElementById('file_bukti');
-                if (!fileInput || !fileInput.files[0]) {
-                    alert('Silakan upload file bukti.');
-                    isValid = false;
-                }
-            } else if (evidenceType.value === 'gdrive') {
-                const gdriveInput = document.getElementById('evidence_gdrive_link');
-                if (!gdriveInput || !gdriveInput.value.trim()) {
-                    alert('Silakan masukkan link Google Drive.');
-                    isValid = false;
-                }
-            }
-        }
-        
-        // Check agreement
-        const agreement = document.getElementById('persetujuan_kebijakan');
-        if (!agreement || !agreement.checked) {
-            alert('Silakan setujui kebijakan dan syarat ketentuan.');
-            isValid = false;
-        }
-        
-        if (!isValid) {
-            // Scroll to first error
-            const firstError = form.querySelector('.is-invalid');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-        
-        return isValid;
+        console.log('Form sedang disubmit...');
     }
+
+    // Setup reset form functionality
+    setupResetForm() {
+        const resetBtn = document.getElementById('btnReset');
+        
+        if (resetBtn) {
+            resetBtn.addEventListener('click', (e) => {
+                if (!confirm('Apakah Anda yakin ingin mereset form? Semua data yang telah diisi akan hilang.')) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Reset dengan delay untuk animasi
+                setTimeout(() => {
+                    this.resetAllSections();
+                    console.log('Form berhasil direset');
+                }, 100);
+            });
+        }
+    }
+
+    // Reset semua section form
+    resetAllSections() {
+        // Reset file upload area
+        this.resetFileUploadArea();
+        
+        // Reset terlapor ke satu saja
+        this.resetTerlapor();
+        
+        // Hide jenis disabilitas
+        const jenisDisabilitasDiv = document.getElementById('jenis_disabilitas_div');
+        if (jenisDisabilitasDiv) {
+            jenisDisabilitasDiv.style.display = 'none';
+            const jenisDisabilitas = document.getElementById('jenis_disabilitas');
+            if (jenisDisabilitas) {
+                jenisDisabilitas.required = false;
+                jenisDisabilitas.value = '';
+            }
+        }
+        
+        // Reset Google Drive link validation
+        const evidenceGdriveLink = document.getElementById('evidence_gdrive_link');
+        if (evidenceGdriveLink) {
+            evidenceGdriveLink.classList.remove('is-valid', 'is-invalid');
+        }
+    }
+
+    // Reset file upload area
+    resetFileUploadArea() {
+        const fileUploadArea = document.getElementById('file-upload-area');
+        if (fileUploadArea) {
+            fileUploadArea.classList.remove('file-selected', 'dragover');
+            fileUploadArea.innerHTML = `
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h6>Drag & Drop file atau klik untuk browse</h6>
+                <p class="text-muted">Format: PDF, DOC, DOCX, JPG, PNG (Max: 10MB)</p>
+                <input type="file" class="form-control" 
+                       id="file_bukti" name="file_bukti" 
+                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+            `;
+            
+            // Re-setup file upload functionality
+            this.setupFileUpload();
+        }
+    }
+
+    // Reset terlapor ke default (hanya satu)
+    resetTerlapor() {
+        const container = document.getElementById('terlapor-container');
+        if (container) {
+            // Hapus semua terlapor kecuali yang pertama
+            const terlamorItems = container.querySelectorAll('.terlapor-item');
+            for (let i = 1; i < terlamorItems.length; i++) {
+                terlamorItems[i].remove();
+            }
+            
+            // Reset index counter
+            this.terlamorIndex = 1;
+        }
+    }
+}
+
+// Global function untuk hapus file
+window.removeSelectedFile = function() {
+    const fileInput = document.getElementById('file_bukti');
+    const fileUploadArea = document.getElementById('file-upload-area');
+    
+    if (fileInput) fileInput.value = '';
+    
+    if (fileUploadArea) {
+        fileUploadArea.classList.remove('file-selected');
+        fileUploadArea.innerHTML = `
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h6>Drag & Drop file atau klik untuk browse</h6>
+            <p class="text-muted">Format: PDF, DOC, DOCX, JPG, PNG (Max: 10MB)</p>
+            <input type="file" class="form-control" 
+                   id="file_bukti" name="file_bukti" 
+                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+        `;
+        
+        // Re-setup file upload
+        const formInstance = window.whistleblowerFormInstance;
+        if (formInstance) {
+            formInstance.setupFileUpload();
+        }
+    }
+    
+    console.log('File dihapus');
+};
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    window.whistleblowerFormInstance = new WhistleblowerForm();
+    console.log('Whistleblower Form initialized successfully');
 });

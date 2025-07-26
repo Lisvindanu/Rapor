@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pengaduan;
 use App\Models\KategoriPengaduan;
+use App\Models\RefKategoriPengaduan; 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -91,10 +92,12 @@ class WhistleblowerController extends Controller
                 ->with('error', 'Admin tidak dapat membuat pengaduan.');
         }
 
-        $kategori = KategoriPengaduan::where('is_active', true)->get();
-        $user = Auth::user();
+        // Gunakan model RefKategoriPengaduan
+        $kategori_pengaduan = RefKategoriPengaduan::all();
         
-        return view('whistleblower.user.create', compact('kategori', 'user'));
+        $user = Auth::user();
+
+        return view('whistleblower.user.create', compact('kategori_pengaduan', 'user'));
     }
 
     /**
@@ -102,106 +105,84 @@ class WhistleblowerController extends Controller
      */
     public function store(Request $request)
     {
-        // Cek jika admin
-        if ($this->checkUserRole()) {
-            return redirect()->route('whistleblower.dashboard')
-                ->with('error', 'Admin tidak dapat membuat pengaduan.');
+        $validated = $request->validate([
+            'nama_pelapor' => 'required|string|max:255',
+            'status_pelapor' => 'required|in:saksi,korban',
+            'memiliki_disabilitas' => 'boolean',
+            'jenis_disabilitas' => 'nullable|string|max:255',
+            'kategori_pengaduan_id' => 'required|exists:ref_kategori_pengaduan,id',
+            'tanggal_kejadian' => 'required|date',
+            'lokasi_kejadian' => 'required|string|max:255',
+            'cerita_singkat_peristiwa' => 'required|string',
+            'alasan_pengaduan' => 'required|array|min:1',
+            'alasan_pengaduan.*' => 'string',
+            'terlapor' => 'required|array|min:1',
+            'terlapor.*.nama_terlapor' => 'required|string|max:255',
+            'terlapor.*.status_terlapor' => 'required|in:mahasiswa,pegawai',
+            'terlapor.*.nomor_identitas' => 'nullable|string|max:255',
+            'terlapor.*.unit_kerja_fakultas' => 'nullable|string|max:255',
+            'terlapor.*.kontak_terlapor' => 'required|string|max:255',
+            'file_bukti' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'evidence_gdrive_link' => 'nullable|url',
+            'persetujuan_kebijakan' => 'required|accepted',
+        ]);
+
+        $user = Auth::user();
+        
+        // Handle file upload
+        $file_path = null;
+        if ($request->hasFile('file_bukti')) {
+            $file = $request->file('file_bukti');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file_path = $file->storeAs('bukti_pengaduan', $filename, 'public');
         }
 
-        try {
-            DB::beginTransaction();
-
-            // Validation
-            $validated = $request->validate([
-                'nama_pelapor' => 'required|string|max:255',
-                'kategori_pengaduan_id' => 'required|exists:ref_kategori_pengaduan,id',
-                'status_pelapor' => 'required|in:saksi,korban',
-                'cerita_singkat_peristiwa' => 'required|string',
-                'tanggal_kejadian' => 'nullable|date',
-                'lokasi_kejadian' => 'nullable|string|max:255',
-                'memiliki_disabilitas' => 'boolean',
-                'jenis_disabilitas' => 'nullable|string',
-                'alasan_pengaduan' => 'required|array|min:1',
-                'evidence_type' => 'required|in:file,gdrive',
-                'file_bukti' => 'required_if:evidence_type,file|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
-                'evidence_gdrive_link' => 'required_if:evidence_type,gdrive|url',
-                'deskripsi_pengaduan' => 'nullable|string',
-                'submit_anonim' => 'boolean',
-                'terlapor' => 'required|array|min:1',
-                'terlapor.*.nama_terlapor' => 'nullable|string|max:255',
-                'terlapor.*.status_terlapor' => 'required|in:mahasiswa,pegawai',
-                'terlapor.*.nomor_identitas' => 'nullable|string|max:255',
-                'terlapor.*.unit_kerja_fakultas' => 'nullable|string|max:255',
-                'terlapor.*.kontak_terlapor' => 'required|string|max:255',
-                'persetujuan_kebijakan' => 'required|accepted',
-            ]);
-
-            $user = Auth::user();
-            
-            // Handle file upload
-            $file_path = null;
-            if ($validated['evidence_type'] === 'file' && $request->hasFile('file_bukti')) {
-                $file = $request->file('file_bukti');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file_path = $file->storeAs('bukti_pengaduan', $filename, 'public');
-            }
-
-            // Handle anonymous submission
-            $nama_pelapor = $validated['nama_pelapor'];
-            $submit_anonim = $request->boolean('submit_anonim');
-            if ($submit_anonim) {
-                $nama_pelapor = 'Anonim';
-            }
-
-            // Generate kode pengaduan
-            $kode_pengaduan = 'WB-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
-
-            // Create pengaduan
-            $pengaduan = Pengaduan::create([
-                'kode_pengaduan' => $kode_pengaduan,
-                'judul_pengaduan' => 'Pengaduan - ' . substr($validated['cerita_singkat_peristiwa'], 0, 50) . '...',
-                'uraian_pengaduan' => $validated['deskripsi_pengaduan'] ?? $validated['cerita_singkat_peristiwa'],
-                'anonymous' => $submit_anonim,
-                'status_pengaduan' => 'pending',
-                'kategori_pengaduan_id' => $validated['kategori_pengaduan_id'],
-                'tanggal_pengaduan' => now(),
-                'pelapor_id' => $user->id,
-                'nama_pelapor' => $nama_pelapor,
-                'email_pelapor' => $user->email,
-                'status_pelapor' => $validated['status_pelapor'],
-                'cerita_singkat_peristiwa' => $validated['cerita_singkat_peristiwa'],
-                'tanggal_kejadian' => $validated['tanggal_kejadian'],
-                'lokasi_kejadian' => $validated['lokasi_kejadian'],
-                'memiliki_disabilitas' => $request->boolean('memiliki_disabilitas'),
-                'jenis_disabilitas' => $validated['jenis_disabilitas'],
-                'alasan_pengaduan' => json_encode($validated['alasan_pengaduan']),
-                'evidence_type' => $validated['evidence_type'],
-                'file_bukti' => $file_path,
-                'evidence_gdrive_link' => $validated['evidence_gdrive_link'],
-            ]);
-
-            // Create terlapor data
-            foreach ($validated['terlapor'] as $terlapor_data) {
-                $pengaduan->terlapor()->create([
-                    'nama_terlapor' => $terlapor_data['nama_terlapor'] ?? 'Tidak disebutkan',
-                    'status_terlapor' => $terlapor_data['status_terlapor'],
-                    'nomor_identitas' => $terlapor_data['nomor_identitas'],
-                    'unit_kerja_fakultas' => $terlapor_data['unit_kerja_fakultas'],
-                    'kontak_terlapor' => $terlapor_data['kontak_terlapor'],
-                ]);
-            }
-
-            DB::commit();
-
-            return redirect()->route('whistleblower.success', $kode_pengaduan)
-                ->with('success', 'Pengaduan berhasil dikirim dengan kode: ' . $kode_pengaduan);
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        // Handle anonymous submission
+        $nama_pelapor = $validated['nama_pelapor'];
+        $submit_anonim = $request->boolean('submit_anonim');
+        if ($submit_anonim) {
+            $nama_pelapor = 'Anonim';
         }
+
+        // Generate kode pengaduan
+        $kode_pengaduan = 'WB-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+        // Create pengaduan
+        $pengaduan = Pengaduan::create([
+            'kode_pengaduan' => $kode_pengaduan,
+            'judul_pengaduan' => 'Pengaduan - ' . substr($validated['cerita_singkat_peristiwa'], 0, 50) . '...',
+            'uraian_pengaduan' => $validated['cerita_singkat_peristiwa'],
+            'anonymous' => $submit_anonim,
+            'status_pengaduan' => 'pending',
+            'kategori_pengaduan_id' => $validated['kategori_pengaduan_id'],
+            'tanggal_pengaduan' => now(),
+            'pelapor_id' => $user->id,
+            'nama_pelapor' => $nama_pelapor,
+            'email_pelapor' => $user->email,
+            'status_pelapor' => $validated['status_pelapor'],
+            'cerita_singkat_peristiwa' => $validated['cerita_singkat_peristiwa'],
+            'tanggal_kejadian' => $validated['tanggal_kejadian'],
+            'lokasi_kejadian' => $validated['lokasi_kejadian'],
+            'memiliki_disabilitas' => $request->boolean('memiliki_disabilitas'),
+            'jenis_disabilitas' => $validated['jenis_disabilitas'],
+            'alasan_pengaduan' => $validated['alasan_pengaduan'],
+            'evidence_type' => 'file',
+            'evidence_gdrive_link' => $validated['evidence_gdrive_link'],
+        ]);
+
+        // Create terlapor data
+        foreach ($validated['terlapor'] as $terlapor_data) {
+            $pengaduan->terlapor()->create([
+                'nama_terlapor' => $terlapor_data['nama_terlapor'],
+                'status_terlapor' => $terlapor_data['status_terlapor'],
+                'nomor_identitas' => $terlapor_data['nomor_identitas'],
+                'unit_kerja_fakultas' => $terlapor_data['unit_kerja_fakultas'],
+                'kontak_terlapor' => $terlapor_data['kontak_terlapor'],
+            ]);
+        }
+
+        return redirect()->route('whistleblower.success', $kode_pengaduan)
+            ->with('success', 'Pengaduan berhasil dikirim dengan kode: ' . $kode_pengaduan);
     }
 
     /**

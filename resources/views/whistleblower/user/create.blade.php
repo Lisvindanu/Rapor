@@ -1,4 +1,4 @@
-{{-- resources/views/whistleblower/create.blade.php --}}
+{{-- resources/views/whistleblower/user/create.blade.php --}}
 @extends('layouts.main2')
 
 @section('navbar')
@@ -6,152 +6,54 @@
 @endsection
 
 @push('styles')
-<style>
-/* Border fixes untuk dropdown dan form controls */
-.form-select {
-    border: 1px solid #ced4da !important;
-}
-
-.form-control {
-    border: 1px solid #ced4da !important;
-}
-
-.form-check-input {
-    border: 1px solid #ced4da !important;
-}
-
-.form-select:focus {
-    border-color: #86b7fe !important;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-}
-
-.form-control:focus {
-    border-color: #86b7fe !important;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-}
-
-.form-check-input:focus {
-    border-color: #86b7fe !important;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-}
-
-/* Minimal CSS untuk styling yang diperlukan */
-.terlapor-item {
-    transition: all 0.3s ease;
-    border: 1px solid #dee2e6 !important;
-}
-
-.terlapor-item:hover {
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.evidence-option {
-    transition: all 0.2s ease;
-    border: 1px solid #dee2e6 !important;
-}
-
-.evidence-option:hover {
-    background-color: #f8f9fa;
-}
-
-#fileUploadDiv, #gdriveDiv {
-    display: none;
-}
-
-#disabilityTypeDiv {
-    display: none;
-}
-
-.is-invalid {
-    border-color: #dc3545 !important;
-}
-
-.alasan-pengaduan-section.border-danger {
-    border-color: #dc3545 !important;
-}
-
-.card {
-    border: 1px solid #dee2e6 !important;
-}
-
-@media (max-width: 768px) {
-    .terlapor-item {
-        margin-bottom: 1rem;
-    }
-    
-    .btn-group-vertical .btn {
-        margin-bottom: 0.5rem;
-    }
-}
-</style>
+    <link href="{{ asset('css/whistleblower-form.css') }}" rel="stylesheet">
 @endpush
 
 @section('konten')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <!-- Header -->
-            @include('whistleblower.partials.form-header')
+        <div class="col-md-10 col-lg-8">
+            <div class="whistleblower-form">
+                <!-- Header -->
+                @include('whistleblower.user.partials.form-header')
 
-            @if(session('error'))
-                <div class="alert alert-danger mb-4">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    {{ session('error') }}
-                </div>
-            @endif
+                <!-- Alert Informasi -->
+                @include('whistleblower.user.partials.form-alert')
 
-            <!-- Form Pengaduan -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-edit"></i> Form Pengaduan
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <form action="{{ route('whistleblower.store') }}" method="POST" enctype="multipart/form-data" id="pengaduanForm">
-                        @csrf
-                        <!-- Opsi Anonim -->
-                        @include('whistleblower.partials.form-anonim')
+                <!-- Form -->
+                <form action="{{ route('whistleblower.store') }}" method="POST" enctype="multipart/form-data" id="whistleblowerForm">
+                    @csrf
+                    
+                    <!-- Opsi Anonim -->
+                    @include('whistleblower.user.partials.form-anonim')
+                    
+                    <!-- Informasi Pelapor -->
+                    @include('whistleblower.user.partials.form-pelapor')
 
-                        <!-- Status Pelapor -->
-                        @include('whistleblower.partials.form-status-pelapor')
+                    <!-- Informasi Terlapor -->
+                    @include('whistleblower.user.partials.form-terlapor')
 
-                        <!-- Informasi Terlapor -->
-                        @include('whistleblower.partials.form-terlapor')
+                    <!-- Detail Peristiwa -->
+                    @include('whistleblower.user.partials.form-peristiwa')
 
-                        <!-- Detail Peristiwa -->
-                        @include('whistleblower.partials.form-detail-peristiwa')
+                    <!-- Upload Bukti -->
+                    @include('whistleblower.user.partials.form-upload')
 
-                        <!-- Alasan Pengaduan -->
-                        @include('whistleblower.partials.form-alasan-pengaduan')
-                        
-                        <!-- Upload Bukti -->
-                        @include('whistleblower.partials.form-upload-bukti')
+                    <!-- Persetujuan -->
+                    @include('whistleblower.user.partials.form-persetujuan')
 
-
-                        <!-- Persetujuan -->
-                        @include('whistleblower.partials.form-persetujuan')
-
-                        <!-- Tombol Submit -->
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ route('whistleblower.dashboard') }}" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-arrow-left"></i> Batal
-                            </a>
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-paper-plane"></i> Kirim Pengaduan
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Submit Buttons -->
+                    @include('whistleblower.user.partials.form-buttons')
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Kebijakan -->
-@include('whistleblower.partials.modal-kebijakan')
+<!-- Modal Kebijakan Privasi -->
+@include('whistleblower.user.partials.modal-kebijakan')
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/whistleblower/form.js') }}"></script>
+    <script src="{{ asset('js/whistleblower/form.js') }}"></script>
 @endpush

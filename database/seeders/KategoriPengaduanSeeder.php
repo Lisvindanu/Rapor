@@ -1,90 +1,67 @@
 <?php
 
-namespace Database\Seeders;
-
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
-class KategoriPengaduanSeeder extends Seeder
+return new class extends Migration
 {
     /**
-     * Run the database seeds.
+     * Run the migrations.
      */
-    public function run(): void
+    public function up(): void
     {
-        $this->command->info('📝 Cek struktur tabel dan membuat data kategori pengaduan...');
-
-        // Cek kolom yang ada di tabel
-        $columns = Schema::getColumnListing('ref_kategori_pengaduan');
-        $this->command->info('Kolom yang tersedia: ' . implode(', ', $columns));
-
-        // Data kategori
-        $kategori = [
-            'Kekerasan Seksual',
-            'Pelecehan Seksual',
-            'Diskriminasi',
-            'Bullying/Perundungan',
-            'Penyalahgunaan Wewenang',
-            'Lainnya'
+        // 1. Hapus data pengaduan yang sudah ada (data test)
+        DB::table('pengaduan_terlapor')->delete();
+        DB::table('pengaduan')->delete();
+        
+        // 2. Reset auto increment jika diperlukan
+        if (config('database.default') === 'mysql') {
+            DB::statement('ALTER TABLE pengaduan AUTO_INCREMENT = 1');
+            DB::statement('ALTER TABLE pengaduan_terlapor AUTO_INCREMENT = 1');
+        } elseif (config('database.default') === 'pgsql') {
+            DB::statement('ALTER SEQUENCE pengaduan_id_seq RESTART WITH 1');
+            DB::statement('ALTER SEQUENCE pengaduan_terlapor_id_seq RESTART WITH 1');
+        }
+        
+        // 3. Hapus kategori lama dan insert yang baru
+        DB::table('kategori_pengaduan')->delete();
+        
+        // 4. Insert kategori baru
+        $kategoris = [
+            [
+                'nama_kategori' => 'Kekerasan/Pelecehan',
+                'deskripsi_kategori' => 'Laporan terkait kekerasan fisik, psikis, atau pelecehan dalam bentuk apapun',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_kategori' => 'Diskriminasi',
+                'deskripsi_kategori' => 'Laporan terkait diskriminasi berdasarkan ras, agama, gender, atau latar belakang lainnya',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_kategori' => 'Bullying/Perundungan',
+                'deskripsi_kategori' => 'Laporan terkait intimidasi, perundungan, atau bullying dalam bentuk apapun',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ];
 
-        // Hapus data lama
-        try {
-            DB::table('ref_kategori_pengaduan')->delete();
-            $this->command->info('🗑️ Data lama berhasil dihapus');
-        } catch (\Exception $e) {
-            $this->command->warning('Warning: ' . $e->getMessage());
-        }
-
-        $success = 0;
-
-        // Insert dengan hanya kolom yang pasti ada
-        foreach ($kategori as $nama) {
-            try {
-                $data = [];
-                
-                // Field yang wajib ada
-                if (in_array('id', $columns)) {
-                    $data['id'] = Str::uuid();
-                }
-                
-                if (in_array('nama_kategori', $columns)) {
-                    $data['nama_kategori'] = $nama;
-                }
-                
-                // Field optional
-                if (in_array('is_active', $columns)) {
-                    $data['is_active'] = true;
-                }
-                
-                if (in_array('created_at', $columns)) {
-                    $data['created_at'] = now();
-                }
-                
-                if (in_array('updated_at', $columns)) {
-                    $data['updated_at'] = now();
-                }
-
-                // Jika ada kolom deskripsi
-                if (in_array('deskripsi', $columns)) {
-                    $data['deskripsi'] = "Kategori pengaduan: $nama";
-                }
-                
-                DB::table('ref_kategori_pengaduan')->insert($data);
-                $this->command->line("   ✅ {$nama}");
-                $success++;
-                
-            } catch (\Exception $e) {
-                $this->command->line("   ❌ {$nama}: " . $e->getMessage());
-            }
-        }
-
-        $this->command->info("✅ Total {$success} kategori berhasil dibuat!");
-        
-        // Verifikasi hasil
-        $count = DB::table('ref_kategori_pengaduan')->count();
-        $this->command->info("📊 Total data di database: {$count}");
+        DB::table('kategori_pengaduan')->insert($kategoris);
     }
-}
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        // Tidak perlu rollback karena ini cleanup
+        // Jika diperlukan, bisa tambahkan logic restore data lama
+    }
+};
